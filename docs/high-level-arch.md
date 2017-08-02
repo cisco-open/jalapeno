@@ -48,3 +48,10 @@ A multi-site Voltron deployment might map well to a division of responsibilities
 ### Time-series Data
 
 In addition to relying on the instantaneous state of the network, Voltron could also store and expose historical information. However, Neo4j may not be the ideal tool for this purpose and the architecture should be reassessed if time-series data becomes a requirement.
+
+## Open Questions
+
+1. Is network topology inferred based on telemetry or somehow explicitly configured?
+2. What sort of user interface (if any) needs to be provided)?
+3. How are services onboarded? Is a catalog of services required?
+4. How is Voltron itself monitored?
