@@ -57,35 +57,47 @@ In addition to relying on the instantaneous state of the network, Voltron could 
 
 ## Packaging & Deploy Automation
 
-*TODO: describe how Voltron infra, framework, and services will be packaged and deployed*
+*TODO: describe how Voltron infra, framework, and services will be packaged, deployed, versioned, and upgraded*
+*Author: Matt & Jeff*
 
 ## Configuration
 
 *TODO: describe important points of configuration*
+*Author: Jeff*
 
-## User Interface
+## User Interface / Visibility
 
 *TODO: describe the end-user interface*
+*Author: Rachael & Jeff*
 
 ## Logging & Monitoring
 
 *TODO: describe requirements and mechanism for monitoring voltron*
+*Author: Omar & Rachael*
 
 ## High Availability
 
 *TODO: describe the high availability story for Voltron*
+*Author: Jeff*
 
 ## Test Considerations
 
 *TODO: describe the test strategy for voltron*
+*Author: Rachael*
 
 ## Development Environment
 
 *TODO: describe the development environment, CI pipeline, and any developer tooling*
+*Author: Matt & Dan*
 
 ## Documentation
 
 *TODO: describe what tools will be used for generating documentation*
+*Author: Matt & Dan*
+
+## Infrastructure
+
+*Author: Erez & Omar*
 
 ## Open Questions
 
