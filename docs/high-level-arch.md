@@ -80,6 +80,10 @@ In addition to relying on the instantaneous state of the network, Voltron could 
 *TODO: describe the high availability story for Voltron*
 *Author: Jeff*
 
+Perhaps some amazing technological advancement will occur and a day will come when Voltron is capable of orchestrating every individual flow through every part of the network. Since such a day is incredibly unlikely, we assert that Voltron will be used primarily for steering traffic that has somehow been deemed "special". We are making unconventional decisions about how to forward certain flows that would otherwise be sent along the same path as everything else.  As this backup forwarding mechanism will persist even if Voltron suffers an outage, high availability requirements for Voltron seem substantially lower priority than other engineering problems.
+
+This is not to say that we will not have multiple instances of certain parts of Voltron's infrastructure.  However, these instances will serve primarily to increase the performance of a Voltron system and not the availability.  When Voltron's services start maintaining state to address use cases in network flow management, we will determine an appropriate path for repliating that state and ensuring access to it remains uninterrupted.
+
 ## Test Considerations
 
 *TODO: describe the test strategy for voltron*
