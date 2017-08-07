@@ -94,12 +94,9 @@ Areas of configuration:
 
 Non-k8s-specific service configuration should be provided through yaml files that are read upon service startup.
 
-### Global Platform Configuration
-
 
 ## User Interface / Visibility
 
-*TODO: describe the end-user interface*
 *Author: Rachael & Jeff*
 
 The specifics of a Voltron user interface are highly dependent on its function:
@@ -118,14 +115,15 @@ The specifics of a Voltron user interface are highly dependent on its function:
   * Configuration
       - adjusting platform parameters
 
-    With the use of etcd as a redundant keystore, it should be possible to tweak basic parameters of containers deployed via k8s without disrupting Voltron services.  
+    With the use of etcd as a redundant keystore, it should be possible to tweak basic parameters of containers deployed via k8s without disrupting Voltron services.  Providing a means of tweaking configuration knobs declared in the Voltron services should be straightforward by exposing the options on a generic UI container.  This process assumes that the service has a means for updating its config on the fly rather than reloading.
 
   * Diagnosis/Troubleshooting
       - viewing event log
       - performance statistics
 
+    At minimum, an event log to both retrieve the persistent log and to show events in real-time will aid troubleshooting.  While building a harness for tracing services is probably overkill, intelligent use of the Kafka bus to both publish and subscribe to service events should make this function relatively simple.
 
-Furthermore, an individual service may wish to have other visualizations to accompany it, or the service may only provide visualization as its core function.  It seems desirable (if not obvious) to have any visualization service follow the same template as any other service on Voltron.
+Furthermore, an individual service may wish to have other visualizations to accompany it, or the service may only provide visualization as its core function.  It seems desirable (if not obvious) to have any pure visualization service follow the same template as any other service on Voltron.
 
 
 ## Logging & Monitoring
@@ -170,3 +168,5 @@ Individual services may define their own schemes for achieving high availability
 ## Open Questions
 
 1. What does telemetry contain? Is it documented?
+  * Update, 8/7: Bruce/Drew/Remington helping BXB team access live stream and documenttion
+2. What is the lifecycle of a service from installation to removal?
