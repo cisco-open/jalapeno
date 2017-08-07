@@ -74,11 +74,12 @@ Preliminary thoughts:
 ## Configuration
 
 *TODO: describe important points of configuration*
+
 *Author: Jeff*
 
 Areas of configuration:
  * For build time:
-    - Services to include in deployer bundle *this feels like we either need an enhancement to the work stream to build a "custom installer" (which is really just some k8s API commands) to install services on an already-deployed instance or do have a "custom builder" that creates manifests for auto-deployment at system startup time*
+    - Services to include in deployer bundle _*this feels like we either need an enhancement to the work stream to build a "custom installer" (which is really just some k8s API commands) to install services on an already-deployed instance or do have a "custom builder" that creates manifests for auto-deployment at system startup time*_
     - Target deployment environment (bare metal vs. VM vs. AWS)
  * For runtime:
     - Footprint of Voltron services (how many minions, how many cores, how much RAM, etc.)
@@ -101,10 +102,38 @@ Non-k8s-specific service configuration should be provided through yaml files tha
 *TODO: describe the end-user interface*
 *Author: Rachael & Jeff*
 
+The specifics of a Voltron user interface are highly dependent on its function:
+  * Monitoring
+      - health of platform
+      - currently loaded services and health
+      - performance statistics
+
+    [Heapster](https://kubernetes.io/docs/tasks/debug-application-cluster/resource-usage-monitoring/) is an endorsed dashboard for k8s that will cover its basics.
+
+    For the Voltron platform, a dashboard should contain the following basic monitoring elements:
+      - List of installed services and health status (taken from health checks specified in k8s yaml)
+      - Kafka statistics over time (# producers/consumers, # and list of topics, resource utilization)
+      - DB statistics over time (resource utilization, # entries, total queries, queries/sec, etc.)
+      - Front-end statistics over time (resource utilization, total queries, queries/sec, etc.)
+  * Configuration
+      - adjusting platform parameters
+
+    With the use of etcd as a redundant keystore, it should be possible to tweak basic parameters of containers deployed via k8s without disrupting Voltron services.  
+
+  * Diagnosis/Troubleshooting
+      - viewing event log
+      - performance statistics
+
+
+Furthermore, an individual service may wish to have other visualizations to accompany it, or the service may only provide visualization as its core function.  It seems desirable (if not obvious) to have any visualization service follow the same template as any other service on Voltron.
+
+
 ## Logging & Monitoring
 
 *TODO: describe requirements and mechanism for monitoring voltron*
 *Author: Omar & Rachael*
+
+_side comment from byzek that may be obvious: the logging service should be constructed just like any other solves-a-use-case service.  It pulls data from the platform (in this case, probably off of a Kakfa topic), performs persistence/journaling operations, and publishes an API for outside users to access._
 
 ## High Availability
 
