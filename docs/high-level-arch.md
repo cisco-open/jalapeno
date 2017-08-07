@@ -60,10 +60,35 @@ In addition to relying on the instantaneous state of the network, Voltron could 
 *TODO: describe how Voltron infra, framework, and services will be packaged, deployed, versioned, and upgraded*
 *Author: Matt & Jeff*
 
+Preliminary thoughts:
+ - If we're using kubernetes, we need to have at minimum at k8s installer that will deploy its [base components and requirements](https://kubernetes.io/docs/concepts/overview/components/) on a system or set of systems.  For simplicity, we should start with an all-in-one deployment model (controller and node on same system) until it becomes clear we need to scale beyond.
+ - The base installer should run as a standalone script or Ansible playbook....or a combination thereof (there's always the bootstrapping problem of getting the tools loaded you need to run the tools).  Lots of such examples exist that could be leveraged.
+ - To facilitate running on AWS, we should build cloud images that can easily be deployed.  In the process, we're also defining a more generic VM image that will be capable of running for standalone deployments and especially automated testing. (*TODO: investigate corporate AWS account*)
+ - We assume that a Voltron Service will comprise several containers working together to achieve a use case, so a service should provide its own set of yaml files associated with running it on a k8s cluster.  However, we should not require that a service creator understands the intricacies of k8s, hence we should provide simpler tools or templates for generation of k8s templates.
+ - A Voltron deployment needs to know which services to load; these ultimately translate into k8s templates, but they imply some variety of manifest to define what should load.  The interaction with the services framework is implied, as well, although most of the framework duties are already covered by the kubectl API and don't need to be reinvented.
+ - We will start with fixed revisions of depdendent components (k8s, graph db, kafka, etc.) to keep sands from shifting beneath us, although our build system should take into account the potential for upgrade as we rev Voltron in the future.
+ - We should not make assumptions about public connectivity to download dependent packages, implying we should stand up our own Docker repository at a Voltron deployment that is pre-loaded with all the needed images.
+ - For the current phase, we should assume updates are a wipe and replace (see HA section below).
+
 ## Configuration
 
 *TODO: describe important points of configuration*
 *Author: Jeff*
+
+Areas of configuration:
+ - For build time:
+  - Services to include
+ - For runtime:
+  - Footprint of Voltron services (how many cores, how much RAM, etc.)
+  - Volumes location (for the container holding the graph DB) (*needed?*)
+ - Individual service configuration:
+  - Where to find services registry (for locating frontend, etcd, Kafka, graph DB, etc.)
+  - Warmup parameters
+  - Topology subset to solve specific use case
+  - Min time between graph DB queries
+
+### Global Platform Configuration
+
 
 ## User Interface / Visibility
 
@@ -77,12 +102,16 @@ In addition to relying on the instantaneous state of the network, Voltron could 
 
 ## High Availability
 
-*TODO: describe the high availability story for Voltron*
 *Author: Jeff*
 
+### Global Platform Considerations
 Perhaps some amazing technological advancement will occur and a day will come when Voltron is capable of orchestrating every individual flow through every part of the network. Since such a day is incredibly unlikely, we assert that Voltron will be used primarily for steering traffic that has somehow been deemed "special". We are making unconventional decisions about how to forward certain flows that would otherwise be sent along the same path as everything else.  As this backup forwarding mechanism will persist even if Voltron suffers an outage, high availability requirements for Voltron seem substantially lower priority than other engineering problems.
 
-This is not to say that we will not have multiple instances of certain parts of Voltron's infrastructure.  However, these instances will serve primarily to increase the performance of a Voltron system and not the availability.  When Voltron's services start maintaining state to address use cases in network flow management, we will determine an appropriate path for repliating that state and ensuring access to it remains uninterrupted.
+This is not to say that we will not have multiple instances of certain parts of Voltron's infrastructure.  However, these instances will serve primarily to increase the performance of a Voltron system and not the availability.  When Voltron's services start maintaining state to address use cases in network flow management, we will determine an appropriate path for repliating that state and ensuring access to it remains uninterrupted.  Starting with Kubernetes's built-in [High Availability mechanisms](https://kubernetes.io/docs/admin/high-availability) would be a prudent first step.
+
+### Individual Services
+Individual services may define their own schemes for achieving high availability through lower-volume, simpler cache replication schemes, or simply by maintaining multiple replicas of a responder or querier.  In cases where an algorithm performs more complex computations or creates state in the warmup phase, the service may enlist redis or memcached for storing computations or complex query results.  If it becomes evident that multiple services find consistent use of such distributed stores useful, the Votron platform should provide a global instance instead of allowing each service to spin up its own.
+
 
 ## Test Considerations
 
