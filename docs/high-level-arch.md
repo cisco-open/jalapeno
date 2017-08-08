@@ -178,7 +178,23 @@ Individual services may define their own schemes for achieving high availability
 ## Development Environment
 
 *TODO: describe the development environment, CI pipeline, and any developer tooling*
+
 *Author: Matt & Dan*
+
+Voltron uses the following developer tooling:
+
+- **Source Control** - Github (either wwwin-github or github.com)
+- **Code Review** - Github Pull Request
+- **Defect Tracking** - Github Issues
+- **Task Management** - TBD - Rally?
+- **Language** - Go (for data processing) and Ansible (for automation)
+- **Continuous Integration** - TBD - Jenkins?
+- **Packaging** - Docker
+- **Test Framework** - TBD - go test?
+
+As all components of Voltron are containerized, a complete local dev environment should be possible without virtualization. However, given the use of Ansible for automation and Kubernetes for cluster management, a VM environment is recommended. To facilitate development, a Vagrantfile is included to launch a suitable virtual machine and install both Voltron and its dependencies. 
+
+Enabling local development may also require the creation of a telemetry simulator (which can generate fake telemetry and forward it to a Kafka queue) as well as one or more mock Services.
 
 ## Documentation
 
