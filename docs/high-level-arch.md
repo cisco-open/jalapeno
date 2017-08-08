@@ -60,7 +60,8 @@ In addition to relying on the instantaneous state of the network, Voltron could 
 *TODO: describe how Voltron infra, framework, and services will be packaged, deployed, versioned, and upgraded*
 *Author: Matt & Jeff*
 
-Preliminary thoughts:
+### Requirements
+
  - Top priority is making it easy to stand up a Voltron instance to start creating services and solving use cases in minimal time.  If any troubleshooting or debugging time is spent in this phase of service creation, we have failed.  Documentation of "how to interact with Voltron" will be another critical requirement, but that's for another section.  Bottom line, if it's too hard to solve problems with Voltron, nobody will use and we will have squandered a huge opportunity.
  - If we're using kubernetes, we need to have at minimum at k8s installer that will deploy its [base components and requirements](https://kubernetes.io/docs/concepts/overview/components/) on a system or set of systems.  For simplicity, we should start with an all-in-one deployment model (controller and node on same system) until it becomes clear we need to scale beyond.
  - The base installer should run as a standalone script or Ansible playbook....or a combination thereof (there's always the bootstrapping problem of getting the tools loaded you need to run the tools).  Lots of such examples exist that could be leveraged.
@@ -70,6 +71,29 @@ Preliminary thoughts:
  - We will start with fixed revisions of depdendent components (k8s, graph db, kafka, etc.) to keep sands from shifting beneath us, although our build system should take into account the potential for upgrade as we rev Voltron in the future.
  - We should not make assumptions about public connectivity to download dependent packages, implying we should stand up our own Docker repository at a Voltron deployment that is pre-loaded with all the needed images.
  - For the foreseeable future, we should assume updates are a wipe and replace (see HA section below).
+
+### Voltron Platform Packaging & Deployment
+
+The Voltron Platform and Infrastructure dependencies are packaged as a single tarball - `voltron-0.0.0.tgz` - where `0.0.0` is replaced by a legitimate version number. The package is a self-contained artifact. It contains all the images and automation scripts reqiured for fully deploying the Voltron Platform to an existing cluster of one or more SSH-able Linux servers. The contents of the tarball are structured as an Ansible project with an Ansible role per component. Each component must include its version number as part of the role name. Components include:
+
+1. Kubernetes
+2. Docker Registry
+3. Kafka
+4. Graph Database
+5. Data Processing layers
+6. Built-in Services that Voltron may provide by default
+7. Logging & Monitoring components
+8. User Interface components
+
+A top-level Ansible inventory file and playbook tie together the entire deployment. After editing the inventory with environment-specific information, Voltron can be deployed with a single Ansible command. A separate playbook could be provided for upgrade. 
+
+A secondary layer of packaging can be used to further simplify deployment for specific environments. For example, an ISO or kernelrd/initrd can be provided for bare metal installation. A VM image (such as qcow2, ova, vmdk) can be provide for deploying to a public cloud or local virtualization environment. Note that the secondary packaging could be an image of a completely pre-installed Voltron system (i.e. a snapshot of a system on which the ansible playbook has already been run) or simply an image that includes the tarball itself and any tools (i.e. ansible, python) pre-installed. In the latter case, the secondary package could also be a docker image. With such an image available on docker hub, an entire Voltron system could be deployed through a single docker command such as `docker run cisco/voltron <list of machines to install>`.
+
+### Voltron Services Packaging & Deployment
+
+In Voltron's initial phase, packaging and deployment of Voltron services will match the Voltron platform. Each Service is pacakged as a self-contained Ansible role - including all images and automation required for that Service. The Ansible role can be rolled into the larger `voltron-0.0.0.tgz` tarball or stand alone (e.g. `myservice-0.0.0.tgz`). In this phase, Services will be deployed just like any other component of Voltron.
+
+In the future, Voltron Services should be treated more like plugins and may even be presented in a catalog-like format such that an operator can pick and choose which Services to deploy. In this model, a Service might also define dependencies on other Services that may be required. Achieving a catalog-like user experience may be realized either through the same Ansible role tarball as described above or through another form of packaging. For example, Sigma could be used to represent Service dependencies and each Voltron Service could be packaged as a Sigma Plugin container.
 
 ## Configuration
 
