@@ -175,6 +175,22 @@ Individual services may define their own schemes for achieving high availability
 *TODO: describe the test strategy for voltron*
 *Author: Rachael*
 
+Developers are responsible for writing and testing their code with unit tests.
+Regularly scheduled testing of release candidate code includes functional tests, security tests, performance tests, endurance tests, scale tests, and stress tests.
+
+
+Components for a test infrastructure:
+
+- **Test Scheduling** - Jenkins
+- **Build Chains / Test Chains** - Jenkins Pipeline
+- **Source and Test Artifacts** - Github or Nexus
+- **Test Provenance** - a relational database (mySQL / Postgres)
+- **Test Lifecycle Monitoring** - TBD.  Necessary for Endurance / Scale / and Stress tests.  Voltron's monitoring system should be employed here, with added intellegence about the phase of the test.
+- **Virtual Testbeds** - TBD.  Dynamic testbed creation is critical both for development and for longer term testing.  Options include VIRL, Paul Duda's version of VIRL, Mandelbrot OpenNebula Solution.  Bruce has a static testbed taht has been used for previous Voltron testing.
+- **Physical Testbeds** - TBD.  Options include RTP lab & SJ Building 9 lab.  Issue: Segment Routing is not enabled in the SJ lab.
+- **Workload Generator** - TBD.  SJ lab has Ixia.  Need to check into RTP lab work generator.
+- **Dashboard / Visibility into Test status** - Start with Jenkins.  Alternate views will be necessary (performance views / historical views ...).  This ties in with Voltron Dashboard needs.
+
 ## Development Environment
 
 *TODO: describe the development environment, CI pipeline, and any developer tooling*
