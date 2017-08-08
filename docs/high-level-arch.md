@@ -183,7 +183,20 @@ Individual services may define their own schemes for achieving high availability
 ## Documentation
 
 *TODO: describe what tools will be used for generating documentation*
+
 *Author: Matt & Dan*
+
+All documentation will be written in [markdown](https://guides.github.com/features/mastering-markdown/). Documentation will be version controlled alongside Voltron source code (i.e. in the same git repository). A feature is not considered done until both the code and documentation are updated (ideally in the same merge commit). The following markdown documents will be maintained over the lifetime of Voltron in `docs/` directory:
+
+1. architecture.md - describes the components of Voltron and how they fit together (this document)
+2. deployment.md - describes how to configure, install, and upgrade Voltron
+3. operations.md - describes how to use and monitor Voltron on a day-to-day basis
+4. api.md - describes the API (should be auto-generated via Swagger)
+5. hacking.md - describes how to contribute to Voltron source code
+
+Each Voltron Service may be maintained in a separate repository with its own Service-specific documentation. In general, each Service should provide the same five documents listed here or a meaningful equivalent.
+
+Documentation can be published as static HTML using Jekyll if desired and either hosted using Github Pages or a separate server. Documentation can also be converted into PDF or other formats using tools such as pandoc.
 
 ## Infrastructure
 
