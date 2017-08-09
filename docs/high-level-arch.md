@@ -60,7 +60,8 @@ In addition to relying on the instantaneous state of the network, Voltron could 
 *TODO: describe how Voltron infra, framework, and services will be packaged, deployed, versioned, and upgraded*
 *Author: Matt & Jeff*
 
-Preliminary thoughts:
+### Requirements
+
  - Top priority is making it easy to stand up a Voltron instance to start creating services and solving use cases in minimal time.  If any troubleshooting or debugging time is spent in this phase of service creation, we have failed.  Documentation of "how to interact with Voltron" will be another critical requirement, but that's for another section.  Bottom line, if it's too hard to solve problems with Voltron, nobody will use and we will have squandered a huge opportunity.
  - If we're using kubernetes, we need to have at minimum at k8s installer that will deploy its [base components and requirements](https://kubernetes.io/docs/concepts/overview/components/) on a system or set of systems.  For simplicity, we should start with an all-in-one deployment model (controller and node on same system) until it becomes clear we need to scale beyond.
  - The base installer should run as a standalone script or Ansible playbook....or a combination thereof (there's always the bootstrapping problem of getting the tools loaded you need to run the tools).  Lots of such examples exist that could be leveraged.
@@ -70,6 +71,29 @@ Preliminary thoughts:
  - We will start with fixed revisions of depdendent components (k8s, graph db, kafka, etc.) to keep sands from shifting beneath us, although our build system should take into account the potential for upgrade as we rev Voltron in the future.
  - We should not make assumptions about public connectivity to download dependent packages, implying we should stand up our own Docker repository at a Voltron deployment that is pre-loaded with all the needed images.
  - For the foreseeable future, we should assume updates are a wipe and replace (see HA section below).
+
+### Voltron Platform Packaging & Deployment
+
+The Voltron Platform and Infrastructure dependencies are packaged as a single tarball - `voltron-0.0.0.tgz` - where `0.0.0` is replaced by a legitimate version number. The package is a self-contained artifact. It contains all the images and automation scripts reqiured for fully deploying the Voltron Platform to an existing cluster of one or more SSH-able Linux servers. The contents of the tarball are structured as an Ansible project with an Ansible role per component. Each component must include its version number as part of the role name. Components include:
+
+1. Kubernetes
+2. Docker Registry
+3. Kafka
+4. Graph Database
+5. Data Processing layers
+6. Built-in Services that Voltron may provide by default
+7. Logging & Monitoring components
+8. User Interface components
+
+A top-level Ansible inventory file and playbook tie together the entire deployment. After editing the inventory with environment-specific information, Voltron can be deployed with a single Ansible command. A separate playbook could be provided for upgrade. 
+
+A secondary layer of packaging can be used to further simplify deployment for specific environments. For example, an ISO or kernelrd/initrd can be provided for bare metal installation. A VM image (such as qcow2, ova, vmdk) can be provide for deploying to a public cloud or local virtualization environment. Note that the secondary packaging could be an image of a completely pre-installed Voltron system (i.e. a snapshot of a system on which the ansible playbook has already been run) or simply an image that includes the tarball itself and any tools (i.e. ansible, python) pre-installed. In the latter case, the secondary package could also be a docker image. With such an image available on docker hub, an entire Voltron system could be deployed through a single docker command such as `docker run cisco/voltron <list of machines to install>`.
+
+### Voltron Services Packaging & Deployment
+
+In Voltron's initial phase, packaging and deployment of Voltron services will match the Voltron platform. Each Service is pacakged as a self-contained Ansible role - including all images and automation required for that Service. The Ansible role can be rolled into the larger `voltron-0.0.0.tgz` tarball or stand alone (e.g. `myservice-0.0.0.tgz`). In this phase, Services will be deployed just like any other component of Voltron.
+
+In the future, Voltron Services should be treated more like plugins and may even be presented in a catalog-like format such that an operator can pick and choose which Services to deploy. In this model, a Service might also define dependencies on other Services that may be required. Achieving a catalog-like user experience may be realized either through the same Ansible role tarball as described above or through another form of packaging. For example, Sigma could be used to represent Service dependencies and each Voltron Service could be packaged as a Sigma Plugin container.
 
 ## Configuration
 
@@ -151,15 +175,60 @@ Individual services may define their own schemes for achieving high availability
 *TODO: describe the test strategy for voltron*
 *Author: Rachael*
 
+Developers are responsible for writing and testing their code with unit tests.
+Regularly scheduled testing of release candidate code includes functional tests, security tests, performance tests, endurance tests, scale tests, and stress tests.
+
+
+Components for a test infrastructure:
+
+- **Test Scheduling** - Jenkins
+- **Build Chains / Test Chains** - Jenkins Pipeline
+- **Source and Test Artifacts** - Github or Nexus
+- **Test Provenance** - a relational database (mySQL / Postgres)
+- **Test Lifecycle Monitoring** - TBD.  Necessary for Endurance / Scale / and Stress tests.  Voltron's monitoring system should be employed here, with added intellegence about the phase of the test.
+- **Virtual Testbeds** - TBD.  Dynamic testbed creation is critical both for development and for longer term testing.  Options include VIRL, Paul Duda's version of VIRL, Mandelbrot OpenNebula Solution.  Bruce has a static testbed taht has been used for previous Voltron testing.
+- **Physical Testbeds** - TBD.  Options include RTP lab & SJ Building 9 lab.  Issue: Segment Routing is not enabled in the SJ lab.
+- **Workload Generator** - TBD.  SJ lab has Ixia.  Need to check into RTP lab work generator.
+- **Dashboard / Visibility into Test status** - Start with Jenkins.  Alternate views will be necessary (performance views / historical views ...).  This ties in with Voltron Dashboard needs.
+
 ## Development Environment
 
 *TODO: describe the development environment, CI pipeline, and any developer tooling*
+
 *Author: Matt & Dan*
+
+Voltron uses the following developer tooling:
+
+- **Source Control** - Github (either wwwin-github or github.com)
+- **Code Review** - Github Pull Request
+- **Defect Tracking** - Github Issues
+- **Task Management** - TBD - Rally?
+- **Language** - Go (for data processing) and Ansible (for automation)
+- **Continuous Integration** - TBD - Jenkins?
+- **Packaging** - Docker
+- **Test Framework** - TBD - go test?
+
+As all components of Voltron are containerized, a complete local dev environment should be possible without virtualization. However, given the use of Ansible for automation and Kubernetes for cluster management, a VM environment is recommended. To facilitate development, a Vagrantfile is included to launch a suitable virtual machine and install both Voltron and its dependencies. 
+
+Enabling local development may also require the creation of a telemetry simulator (which can generate fake telemetry and forward it to a Kafka queue) as well as one or more mock Services.
 
 ## Documentation
 
 *TODO: describe what tools will be used for generating documentation*
+
 *Author: Matt & Dan*
+
+All documentation will be written in [markdown](https://guides.github.com/features/mastering-markdown/). Documentation will be version controlled alongside Voltron source code (i.e. in the same git repository). A feature is not considered done until both the code and documentation are updated (ideally in the same merge commit). The following markdown documents will be maintained over the lifetime of Voltron in `docs/` directory:
+
+1. architecture.md - describes the components of Voltron and how they fit together (this document)
+2. deployment.md - describes how to configure, install, and upgrade Voltron
+3. operations.md - describes how to use and monitor Voltron on a day-to-day basis
+4. api.md - describes the API (should be auto-generated via Swagger)
+5. hacking.md - describes how to contribute to Voltron source code
+
+Each Voltron Service may be maintained in a separate repository with its own Service-specific documentation. In general, each Service should provide the same five documents listed here or a meaningful equivalent.
+
+Documentation can be published as static HTML using Jekyll if desired and either hosted using Github Pages or a separate server. Documentation can also be converted into PDF or other formats using tools such as pandoc.
 
 ## Infrastructure
 
