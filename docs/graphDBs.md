@@ -53,6 +53,12 @@ Pros and Cons of graph DB offerings. All the Graph Databases leverage a "graph q
 - Mixed reviews on performance, apparently slow in some situations.
 - Memory management issues (the beta release fixes these issues by [doing something cute](https://www.arangodb.com/2017/05/rocksdb-integration-arangodb-faqs/) with [RocksDB](http://rocksdb.org/)). We should be able to resolve if deploy in a container
 
+#### Performance benchmarks of Arrangodb
+- http://www.marcoyuen.com/articles/2016/06/28/arangodb-performance-pecularities.html
+- https://maxdemarzi.com/2015/10/16/benchmarks-and-superchargers/
+
+
+
 ## [JanusGraph](http://janusgraph.org/) ~The DB formally known as Titan~
 
 #### Pros
