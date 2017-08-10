@@ -153,7 +153,7 @@ Furthermore, an individual service may wish to have other visualizations to acco
 ## Logging & Monitoring
 
 *TODO: describe requirements and mechanism for monitoring voltron*
-*Author: Omar & Rachael*
+*Author: Rachael & Erez & Omar*
 
 _side comment from byzek that may be obvious: the logging service should be constructed just like any other solves-a-use-case service.  It pulls data from the platform (in this case, probably off of a Kakfa topic), performs persistence/journaling operations, and publishes an API for outside users to access._
 
@@ -233,6 +233,8 @@ Documentation can be published as static HTML using Jekyll if desired and either
 ## Infrastructure
 
 *Author: Erez & Omar*
+
+- Openshift
 
 ## Open Questions
 
