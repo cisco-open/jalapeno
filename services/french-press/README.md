@@ -14,6 +14,6 @@ When the endpoint queries the Voltron API GW, it gets a response that takes it t
 
 Within Voltron, there's a combination of topology, telemetry, and probe metrics to enable the French Press Service to perform its computation and return a result the querying endpoint:
 
-![vService Flow](doc/flow.pdf)
+![vService Flow](doc/flow.png)
 
 *these docs generated from graffles and PPTs in the [main Voltron docs directory](../../docs)*
