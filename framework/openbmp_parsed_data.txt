@@ -1,0 +1,3698 @@
+Available Topics:
+	openbmp.parsed.unicast_prefix: line 11
+	openbmp.parsed.ls_node: line 555
+	openbmp.parsed.base_attribute: line 795
+	openbmp.parsed.ls_link: line 2251
+	openbmp.parsed.collector: line 2937
+	openbmp.parsed.peer: line 3297
+	openbmp.parsed.ls_prefix: line 3331
+
+
+openbmp.parsed.unicast_prefix:
+	timestamp: 2017-09-18 16:03:41.683572
+	action: add
+	as_path:
+	as_path_count: 0
+	med: 0
+	ext_community_list:
+	isatomicagg: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	nexthop: 10.1.1.4
+	aggregator:
+	is_adj_rib_in: 1
+	hash: 2905310a01881126ae7eed46f0d2e183
+	router_ip: 10.20.0.58
+	prefix: 10.1.1.4
+	path_id: 0
+	sequence: 0
+	base_attr_hash: 437464b1dd0e8d19061a0f83346348f2
+	peer_ip: 10.1.1.1
+	origin: igp
+	is_nexthop_ipv: 1
+	isprepolicy: 1
+	origin_as: 0
+	local_pref: 100
+	labels: 3
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	prefix_len: 32
+	community_list:
+	cluster_list: 10.1.1.1
+	originator_id: 10.1.1.4
+	is_ipv: 1
+
+
+openbmp.parsed.unicast_prefix:
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	prefix_len: 32
+	med: 0
+	cluster_list: 10.1.1.1
+	is_nexthop_ipv: 1
+	origin: igp
+	path_id: 0
+	is_adj_rib_in: 1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	base_attr_hash: 094ff2cf7d6c0d32e1611724014b63ff
+	peer_asn: 100000
+	ext_community_list:
+	isatomicagg: 0
+	sequence: 1
+	originator_id: 10.1.1.3
+	as_path:
+	nexthop: 10.1.1.3
+	is_ipv: 1
+	community_list:
+	hash: 6215d213d48e27fe11fb938dff0097a7
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.683700
+	prefix: 10.1.1.3
+	as_path_count: 0
+	aggregator:
+	action: add
+	origin_as: 0
+	local_pref: 100
+	labels: 3
+	isprepolicy: 1
+
+
+openbmp.parsed.unicast_prefix:
+	origin_as: 0
+	isatomicagg: 0
+	originator_id: 10.1.1.2
+	isprepolicy: 1
+	timestamp: 2017-09-18 16:03:41.683702
+	ext_community_list:
+	peer_asn: 100000
+	prefix_len: 32
+	as_path_count: 0
+	cluster_list: 10.1.1.1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	as_path:
+	med: 0
+	is_nexthop_ipv: 1
+	action: add
+	path_id: 0
+	router_ip: 10.20.0.58
+	base_attr_hash: 980e0c366f0f614afce3152323a14c67
+	is_ipv: 1
+	origin: igp
+	aggregator:
+	sequence: 2
+	community_list:
+	labels: 3
+	is_adj_rib_in: 1
+	prefix: 10.1.1.2
+	nexthop: 10.1.1.2
+	local_pref: 100
+	hash: cc906f2bb686b93d0e1a3aa1471924bd
+
+
+openbmp.parsed.unicast_prefix:
+	action: add
+	router_ip: 10.20.0.58
+	nexthop: 10.1.1.1
+	local_pref: 100
+	community_list:
+	labels: 3
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:03:41.683703
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	as_path:
+	ext_community_list:
+	isprepolicy: 1
+	sequence: 3
+	peer_ip: 10.1.1.1
+	origin: igp
+	as_path_count: 0
+	aggregator:
+	originator_id:
+	prefix_len: 32
+	is_ipv: 1
+	med: 0
+	cluster_list:
+	isatomicagg: 0
+	prefix: 10.1.1.1
+	origin_as: 0
+	is_nexthop_ipv: 1
+	is_adj_rib_in: 1
+	hash: 2a403b4f47697aef0c1c6a6981035985
+	path_id: 0
+
+
+openbmp.parsed.unicast_prefix:
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:03:41.683720
+	as_path:
+	is_adj_rib_in: 1
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	nexthop: 10:1:1::4
+	community_list:
+	prefix_len: 128
+	local_pref: 100
+	aggregator:
+	hash: d9d8d9e3c245e9f2de4d4c9f37d6bcda
+	origin_as: 0
+	isprepolicy: 1
+	originator_id: 10.1.1.4
+	path_id: 0
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	as_path_count: 0
+	base_attr_hash: d8593f6bbb29f193f52d73d3a9523726
+	is_ipv: 0
+	isatomicagg: 0
+	origin: igp
+	med: 0
+	ext_community_list:
+	cluster_list: 10.1.1.1
+	is_nexthop_ipv: 0
+	sequence: 4
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	prefix: 10:1:1::4
+	labels:
+
+
+openbmp.parsed.unicast_prefix:
+	cluster_list: 10.1.1.1
+	path_id: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	timestamp: 2017-09-18 16:03:41.683721
+	prefix: 10:1:1::3
+	as_path_count: 0
+	labels:
+	base_attr_hash: 1438b3097a94b09511c5851388ed420f
+	prefix_len: 128
+	is_ipv: 0
+	aggregator:
+	origin_as: 0
+	local_pref: 100
+	is_adj_rib_in: 1
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	as_path:
+	nexthop: 10:1:1::3
+	isatomicagg: 0
+	sequence: 5
+	router_ip: 10.20.0.58
+	origin: igp
+	med: 0
+	isprepolicy: 1
+	action: add
+	peer_asn: 100000
+	ext_community_list:
+	is_nexthop_ipv: 0
+	hash: c5664c77714fdaba4f6176b43b005477
+	community_list:
+	originator_id: 10.1.1.3
+
+
+openbmp.parsed.unicast_prefix:
+	originator_id:
+	peer_asn: 100000
+	as_path:
+	aggregator:
+	as_path_count: 0
+	isatomicagg: 0
+	is_ipv: 0
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.683723
+	prefix_len: 128
+	nexthop: 10:1:1::1
+	labels:
+	action: add
+	sequence: 6
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	origin_as: 0
+	local_pref: 100
+	cluster_list:
+	prefix: 10:1:1::1
+	med: 0
+	is_nexthop_ipv: 0
+	community_list:
+	ext_community_list:
+	isprepolicy: 1
+	is_adj_rib_in: 1
+	hash: 64342b678ec72f75f04aafbe3be7e797
+	base_attr_hash: 77bc0fa7ea06e3e133f30b745e5bdf9a
+	origin: igp
+	router_ip: 10.20.0.58
+	path_id: 0
+
+
+openbmp.parsed.unicast_prefix:
+	hash: 57d7cb6af0e3e0901e57f1f4c4acd11c
+	isatomicagg: 0
+	as_path_count: 0
+	isprepolicy: 1
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	prefix: 10:1:1::2
+	is_nexthop_ipv: 0
+	path_id: 0
+	labels:
+	base_attr_hash: bdb472e4ebc1781c199a7fd1d2ea730f
+	as_path:
+	cluster_list: 10.1.1.1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	origin: igp
+	med: 0
+	local_pref: 100
+	originator_id: 10.1.1.2
+	is_adj_rib_in: 1
+	action: add
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:03:41.683724
+	aggregator:
+	ext_community_list:
+	sequence: 7
+	is_ipv: 0
+	nexthop: 10:1:1::2
+	community_list:
+	peer_ip: 10.1.1.1
+	prefix_len: 128
+	origin_as: 0
+
+
+openbmp.parsed.unicast_prefix:
+	base_attr_hash: 437464b1dd0e8d19061a0f83346348f2
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin: igp
+	as_path_count: 0
+	cluster_list: 10.1.1.1
+	is_nexthop_ipv: 1
+	originator_id: 10.1.1.4
+	is_adj_rib_in: 1
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:05:50.624404
+	is_ipv: 1
+	as_path:
+	nexthop: 10.1.1.4
+	hash: 2905310a01881126ae7eed46f0d2e183
+	ext_community_list:
+	peer_asn: 100000
+	prefix: 10.1.1.4
+	prefix_len: 32
+	community_list:
+	path_id: 0
+	isprepolicy: 1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	origin_as: 0
+	med: 0
+	local_pref: 100
+	action: add
+	aggregator:
+	sequence: 0
+	isatomicagg: 0
+	labels: 3
+
+
+openbmp.parsed.unicast_prefix:
+	med: 0
+	hash: 6215d213d48e27fe11fb938dff0097a7
+	router_ip: 10.20.0.58
+	is_ipv: 1
+	as_path:
+	cluster_list: 10.1.1.1
+	path_id: 0
+	labels: 3
+	aggregator:
+	ext_community_list:
+	is_nexthop_ipv: 1
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	prefix: 10.1.1.3
+	prefix_len: 32
+	isprepolicy: 1
+	action: add
+	peer_ip: 10.1.1.1
+	originator_id: 10.1.1.3
+	origin_as: 0
+	is_adj_rib_in: 1
+	nexthop: 10.1.1.3
+	community_list:
+	isatomicagg: 0
+	base_attr_hash: 094ff2cf7d6c0d32e1611724014b63ff
+	timestamp: 2017-09-18 16:05:50.624468
+	origin: igp
+	as_path_count: 0
+	local_pref: 100
+	sequence: 1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+
+
+openbmp.parsed.unicast_prefix:
+	hash: cc906f2bb686b93d0e1a3aa1471924bd
+	router_ip: 10.20.0.58
+	base_attr_hash: 980e0c366f0f614afce3152323a14c67
+	aggregator:
+	path_id: 0
+	is_nexthop_ipv: 1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:05:50.624470
+	nexthop: 10.1.1.2
+	med: 0
+	sequence: 2
+	as_path_count: 0
+	local_pref: 100
+	community_list:
+	origin: igp
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	prefix: 10.1.1.2
+	ext_community_list:
+	cluster_list: 10.1.1.1
+	isatomicagg: 0
+	labels: 3
+	action: add
+	as_path:
+	originator_id: 10.1.1.2
+	is_adj_rib_in: 1
+	prefix_len: 32
+	is_ipv: 1
+	origin_as: 0
+	isprepolicy: 1
+
+
+openbmp.parsed.unicast_prefix:
+	prefix: 10.1.1.1
+	as_path_count: 0
+	is_adj_rib_in: 1
+	sequence: 3
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:05:50.624471
+	prefix_len: 32
+	origin: igp
+	as_path:
+	originator_id:
+	labels: 3
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	med: 0
+	is_nexthop_ipv: 1
+	isprepolicy: 1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	aggregator:
+	origin_as: 0
+	hash: 2a403b4f47697aef0c1c6a6981035985
+	peer_asn: 100000
+	is_ipv: 1
+	community_list:
+	action: add
+	ext_community_list:
+	cluster_list:
+	nexthop: 10.1.1.1
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	local_pref: 100
+	isatomicagg: 0
+	path_id: 0
+	router_ip: 10.20.0.58
+
+
+openbmp.parsed.unicast_prefix:
+	nexthop: 10:1:1::4
+	cluster_list: 10.1.1.1
+	sequence: 4
+	hash: d9d8d9e3c245e9f2de4d4c9f37d6bcda
+	timestamp: 2017-09-18 16:05:50.633507
+	as_path_count: 0
+	isatomicagg: 0
+	originator_id: 10.1.1.4
+	isprepolicy: 1
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin: igp
+	aggregator:
+	is_ipv: 0
+	origin_as: 0
+	path_id: 0
+	labels:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	med: 0
+	peer_asn: 100000
+	prefix: 10:1:1::4
+	prefix_len: 128
+	action: add
+	local_pref: 100
+	community_list:
+	ext_community_list:
+	is_nexthop_ipv: 0
+	is_adj_rib_in: 1
+	router_ip: 10.20.0.58
+	base_attr_hash: d8593f6bbb29f193f52d73d3a9523726
+	as_path:
+
+
+openbmp.parsed.unicast_prefix:
+	router_ip: 10.20.0.58
+	prefix_len: 128
+	isprepolicy: 1
+	is_adj_rib_in: 1
+	action: add
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path_count: 0
+	med: 0
+	aggregator:
+	ext_community_list:
+	sequence: 5
+	hash: c5664c77714fdaba4f6176b43b005477
+	peer_asn: 100000
+	cluster_list: 10.1.1.1
+	peer_ip: 10.1.1.1
+	prefix: 10:1:1::3
+	isatomicagg: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	origin_as: 0
+	timestamp: 2017-09-18 16:05:50.633508
+	is_ipv: 0
+	origin: igp
+	nexthop: 10:1:1::3
+	path_id: 0
+	base_attr_hash: 1438b3097a94b09511c5851388ed420f
+	as_path:
+	local_pref: 100
+	community_list:
+	is_nexthop_ipv: 0
+	originator_id: 10.1.1.3
+	labels:
+
+
+openbmp.parsed.unicast_prefix:
+	is_adj_rib_in: 1
+	hash: 64342b678ec72f75f04aafbe3be7e797
+	originator_id:
+	path_id: 0
+	as_path_count: 0
+	ext_community_list:
+	as_path:
+	aggregator:
+	isatomicagg: 0
+	timestamp: 2017-09-18 16:05:50.633510
+	origin: igp
+	prefix_len: 128
+	is_ipv: 0
+	action: add
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin_as: 0
+	med: 0
+	labels:
+	sequence: 6
+	base_attr_hash: 77bc0fa7ea06e3e133f30b745e5bdf9a
+	peer_asn: 100000
+	local_pref: 100
+	cluster_list:
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	is_nexthop_ipv: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	prefix: 10:1:1::1
+	isprepolicy: 1
+	nexthop: 10:1:1::1
+	community_list:
+
+
+openbmp.parsed.unicast_prefix:
+	sequence: 7
+	base_attr_hash: bdb472e4ebc1781c199a7fd1d2ea730f
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	as_path_count: 0
+	path_id: 0
+	labels:
+	hash: 57d7cb6af0e3e0901e57f1f4c4acd11c
+	origin: igp
+	timestamp: 2017-09-18 16:05:50.636880
+	as_path:
+	origin_as: 0
+	local_pref: 100
+	ext_community_list:
+	isprepolicy: 1
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	is_ipv: 0
+	nexthop: 10:1:1::2
+	med: 0
+	aggregator:
+	community_list:
+	isatomicagg: 0
+	prefix_len: 128
+	originator_id: 10.1.1.2
+	prefix: 10:1:1::2
+	cluster_list: 10.1.1.1
+	is_nexthop_ipv: 0
+	is_adj_rib_in: 1
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+
+
+openbmp.parsed.ls_node:
+	peer_ip: 10.1.1.1
+	name: v0-p4
+	action: add
+	router_ip: 10.20.0.58
+	hash: f1a834524e1871d6d0aedfdd3a90f66b
+	ospf_area_id:
+	flags:
+	sequence: 0
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	ls_id: 0
+	protocol: IS-IS_L2
+	nexthop: 10.1.1.1
+	is_adj_rib_in: 1
+	routing_id: 0
+	local_pref: 100
+	isprepolicy: 1
+	peer_asn: 100000
+	igp_router_id: 0000.0000.0004.0000
+	router_id: 0.0.0.0
+	mt_id:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	timestamp: 2017-09-18 16:03:41.683756
+	med: 0
+	ls_sr_capabilities: IV 8000 16000
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	isis_area_id: 49.0901
+	as_path:
+
+
+openbmp.parsed.ls_node:
+	timestamp: 2017-09-18 16:03:41.696379
+	igp_router_id: 0000.0000.0003.0000
+	mt_id:
+	med: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	routing_id: 0
+	ls_id: 0
+	isprepolicy: 1
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	isis_area_id: 49.0901
+	local_pref: 100
+	sequence: 1
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	router_id: 0.0.0.0
+	protocol: IS-IS_L2
+	flags:
+	ls_sr_capabilities: IV 8000 16000
+	action: add
+	ospf_area_id:
+	name: v0-p3
+	hash: 95dc3a2aded2100e90d485b75ad7df60
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	as_path:
+	nexthop: 10.1.1.1
+	is_adj_rib_in: 1
+
+
+openbmp.parsed.ls_node:
+	protocol: IS-IS_L2
+	router_id: 0.0.0.0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	ospf_area_id:
+	isis_area_id: 49.0901
+	action: add
+	hash: c2679dc1c0d5615c23b3ec45f59f6b15
+	mt_id:
+	name: v0-l2
+	peer_asn: 100000
+	local_pref: 100
+	nexthop: 10.1.1.1
+	flags:
+	ls_sr_capabilities: IV 8000 16000
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	med: 0
+	isprepolicy: 1
+	is_adj_rib_in: 1
+	timestamp: 2017-09-18 16:03:41.696393
+	router_ip: 10.20.0.58
+	igp_router_id: 0000.0000.0002.0000
+	as_path:
+	sequence: 2
+	peer_ip: 10.1.1.1
+	routing_id: 0
+	ls_id: 0
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+
+
+openbmp.parsed.ls_node:
+	peer_ip: 10.1.1.1
+	mt_id:
+	isis_area_id: 49.0901
+	isprepolicy: 1
+	peer_asn: 100000
+	ls_id: 0
+	timestamp: 2017-09-18 16:03:41.696399
+	routing_id: 0
+	flags:
+	local_pref: 100
+	med: 0
+	action: add
+	as_path:
+	nexthop: 10.1.1.1
+	ls_sr_capabilities: IV 65000 100000
+	hash: 9b20947913e9b23f4d5ccf4174e9eba4
+	protocol: IS-IS_L2
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	router_id: 10.1.1.1
+	sequence: 3
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	name: v0-l1
+	is_adj_rib_in: 1
+	igp_router_id: 0000.0000.0001.0000
+	ospf_area_id:
+
+
+openbmp.parsed.ls_node:
+	peer_asn: 100000
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	routing_id: 0
+	mt_id:
+	name: v0-p4
+	igp_router_id: 0000.0000.0004.0000
+	peer_ip: 10.1.1.1
+	protocol: IS-IS_L2
+	flags:
+	med: 0
+	action: add
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	timestamp: 2017-09-18 16:05:50.624541
+	ls_id: 0
+	isis_area_id: 49.0901
+	isprepolicy: 1
+	as_path:
+	local_pref: 100
+	ls_sr_capabilities: IV 8000 16000
+	hash: f1a834524e1871d6d0aedfdd3a90f66b
+	is_adj_rib_in: 1
+	sequence: 0
+	router_ip: 10.20.0.58
+	ospf_area_id:
+	nexthop: 10.1.1.1
+	router_id: 0.0.0.0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+
+
+openbmp.parsed.ls_node:
+	action: add
+	router_ip: 10.20.0.58
+	ls_id: 0
+	ospf_area_id:
+	isis_area_id: 49.0901
+	protocol: IS-IS_L2
+	flags:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	timestamp: 2017-09-18 16:05:50.633402
+	isprepolicy: 1
+	is_adj_rib_in: 1
+	sequence: 1
+	peer_ip: 10.1.1.1
+	mt_id:
+	as_path:
+	ls_sr_capabilities: IV 8000 16000
+	router_id: 0.0.0.0
+	local_pref: 100
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_asn: 100000
+	med: 0
+	name: v0-p3
+	hash: 95dc3a2aded2100e90d485b75ad7df60
+	igp_router_id: 0000.0000.0003.0000
+	routing_id: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	nexthop: 10.1.1.1
+
+
+openbmp.parsed.ls_node:
+	ospf_area_id:
+	mt_id:
+	isis_area_id: 49.0901
+	router_ip: 10.20.0.58
+	igp_router_id: 0000.0000.0002.0000
+	routing_id: 0
+	as_path:
+	isprepolicy: 1
+	ls_sr_capabilities: IV 8000 16000
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	router_id: 0.0.0.0
+	flags:
+	action: add
+	hash: c2679dc1c0d5615c23b3ec45f59f6b15
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:05:50.633444
+	ls_id: 0
+	med: 0
+	name: v0-l2
+	sequence: 2
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	nexthop: 10.1.1.1
+	is_adj_rib_in: 1
+	protocol: IS-IS_L2
+	local_pref: 100
+
+
+openbmp.parsed.ls_node:
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_id: 10.1.1.1
+	ls_id: 0
+	flags:
+	hash: 9b20947913e9b23f4d5ccf4174e9eba4
+	peer_asn: 100000
+	as_path:
+	ls_sr_capabilities: IV 65000 100000
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	timestamp: 2017-09-18 16:05:50.633448
+	is_adj_rib_in: 1
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	routing_id: 0
+	protocol: IS-IS_L2
+	mt_id:
+	isis_area_id: 49.0901
+	isprepolicy: 1
+	nexthop: 10.1.1.1
+	sequence: 3
+	router_ip: 10.20.0.58
+	igp_router_id: 0000.0000.0001.0000
+	ospf_area_id:
+	local_pref: 100
+	med: 0
+	name: v0-l1
+
+
+openbmp.parsed.base_attribute:
+	local_pref: 100
+	community_list:
+	cluster_list: 10.1.1.1
+	originator_id: 10.1.1.4
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin_as: 0
+	nexthop: 10.1.1.4
+	med: 0
+	is_nexthop_ipv: 1
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.683572
+	aggregator:
+	ext_community_list:
+	action: add
+	peer_asn: 100000
+	as_path:
+	origin: igp
+	as_path_count: 0
+	isatomicagg: 0
+	sequence: 0
+	hash: 437464b1dd0e8d19061a0f83346348f2
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+
+
+openbmp.parsed.base_attribute:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.683700
+	as_path_count: 0
+	med: 0
+	sequence: 1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	local_pref: 100
+	ext_community_list:
+	origin: igp
+	community_list:
+	is_nexthop_ipv: 1
+	originator_id: 10.1.1.3
+	nexthop: 10.1.1.3
+	cluster_list: 10.1.1.1
+	isatomicagg: 0
+	as_path:
+	origin_as: 0
+	aggregator:
+	action: add
+	hash: 094ff2cf7d6c0d32e1611724014b63ff
+	peer_asn: 100000
+
+
+openbmp.parsed.base_attribute:
+	community_list:
+	ext_community_list:
+	originator_id: 10.1.1.2
+	sequence: 2
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin: igp
+	origin_as: 0
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	as_path_count: 0
+	nexthop: 10.1.1.2
+	med: 0
+	aggregator:
+	action: add
+	hash: 980e0c366f0f614afce3152323a14c67
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	timestamp: 2017-09-18 16:03:41.683702
+	as_path:
+	local_pref: 100
+	cluster_list: 10.1.1.1
+
+
+openbmp.parsed.base_attribute:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:03:41.683703
+	origin: igp
+	isatomicagg: 0
+	sequence: 3
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	as_path:
+	as_path_count: 0
+	origin_as: 0
+	med: 0
+	local_pref: 100
+	ext_community_list:
+	is_nexthop_ipv: 1
+	cluster_list:
+	action: add
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	nexthop: 10.1.1.1
+	aggregator:
+	community_list:
+	originator_id:
+
+
+openbmp.parsed.base_attribute:
+	sequence: 4
+	as_path:
+	med: 0
+	aggregator:
+	cluster_list: 10.1.1.1
+	is_nexthop_ipv: 0
+	originator_id: 10.1.1.4
+	action: add
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin: igp
+	as_path_count: 0
+	nexthop: 10:1:1::4
+	community_list:
+	hash: d8593f6bbb29f193f52d73d3a9523726
+	peer_asn: 100000
+	local_pref: 100
+	isatomicagg: 0
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.683720
+	origin_as: 0
+	ext_community_list:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+
+
+openbmp.parsed.base_attribute:
+	community_list:
+	isatomicagg: 0
+	is_nexthop_ipv: 0
+	originator_id: 10.1.1.3
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	timestamp: 2017-09-18 16:03:41.683721
+	origin: igp
+	as_path_count: 0
+	origin_as: 0
+	med: 0
+	local_pref: 100
+	peer_ip: 10.1.1.1
+	sequence: 5
+	router_ip: 10.20.0.58
+	peer_asn: 100000
+	nexthop: 10:1:1::3
+	ext_community_list:
+	cluster_list: 10.1.1.1
+	action: add
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path:
+	aggregator:
+	hash: 1438b3097a94b09511c5851388ed420f
+
+
+openbmp.parsed.base_attribute:
+	peer_ip: 10.1.1.1
+	ext_community_list:
+	is_nexthop_ipv: 0
+	action: add
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:03:41.683723
+	origin: igp
+	as_path:
+	isatomicagg: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	as_path_count: 0
+	sequence: 6
+	hash: 77bc0fa7ea06e3e133f30b745e5bdf9a
+	router_ip: 10.20.0.58
+	origin_as: 0
+	nexthop: 10:1:1::1
+	med: 0
+	local_pref: 100
+	aggregator:
+	community_list:
+	cluster_list:
+	originator_id:
+
+
+openbmp.parsed.base_attribute:
+	sequence: 7
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	cluster_list: 10.1.1.1
+	action: add
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin: igp
+	origin_as: 0
+	aggregator:
+	ext_community_list:
+	is_nexthop_ipv: 0
+	hash: bdb472e4ebc1781c199a7fd1d2ea730f
+	as_path:
+	nexthop: 10:1:1::2
+	local_pref: 100
+	community_list:
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:03:41.683724
+	as_path_count: 0
+	med: 0
+	isatomicagg: 0
+	originator_id: 10.1.1.2
+
+
+openbmp.parsed.base_attribute:
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	as_path:
+	as_path_count: 0
+	nexthop: 10.1.1.1
+	local_pref: 100
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	community_list:
+	cluster_list:
+	isatomicagg: 0
+	originator_id:
+	aggregator:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.683748
+	med: 0
+	ext_community_list:
+	sequence: 8
+	action: add
+	origin_as: 0
+	is_nexthop_ipv: 1
+	origin: igp
+
+
+openbmp.parsed.base_attribute:
+	ext_community_list:
+	originator_id:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	med: 0
+	origin: igp
+	isatomicagg: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	aggregator:
+	cluster_list:
+	is_nexthop_ipv: 1
+	sequence: 9
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.683754
+	as_path:
+	as_path_count: 0
+	origin_as: 0
+	nexthop: 10.1.1.1
+	action: add
+	router_ip: 10.20.0.58
+	local_pref: 100
+	community_list:
+
+
+openbmp.parsed.base_attribute:
+	med: 0
+	local_pref: 100
+	aggregator:
+	ext_community_list:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	origin_as: 0
+	originator_id:
+	cluster_list:
+	isatomicagg: 0
+	as_path:
+	as_path_count: 0
+	nexthop: 10.1.1.1
+	community_list:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	origin: igp
+	is_nexthop_ipv: 1
+	action: add
+	sequence: 10
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	timestamp: 2017-09-18 16:03:41.683756
+
+
+openbmp.parsed.base_attribute:
+	med: 0
+	local_pref: 100
+	aggregator:
+	action: add
+	peer_ip: 10.1.1.1
+	nexthop: 10.1.1.1
+	as_path_count: 0
+	is_nexthop_ipv: 1
+	originator_id:
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:03:41.683757
+	as_path:
+	origin_as: 0
+	cluster_list:
+	isatomicagg: 0
+	sequence: 11
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_asn: 100000
+	community_list:
+	ext_community_list:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin: igp
+
+
+openbmp.parsed.base_attribute:
+	cluster_list:
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	timestamp: 2017-09-18 16:03:41.696355
+	med: 0
+	is_nexthop_ipv: 1
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	isatomicagg: 0
+	local_pref: 100
+	origin: igp
+	as_path:
+	origin_as: 0
+	nexthop: 10.1.1.1
+	aggregator:
+	community_list:
+	ext_community_list:
+	originator_id:
+	sequence: 12
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	as_path_count: 0
+
+
+openbmp.parsed.base_attribute:
+	origin: igp
+	as_path_count: 0
+	aggregator:
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	action: add
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	med: 0
+	local_pref: 100
+	ext_community_list:
+	peer_ip: 10.1.1.1
+	origin_as: 0
+	nexthop: 10.1.1.1
+	sequence: 13
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_asn: 100000
+	community_list:
+	cluster_list:
+	originator_id:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	timestamp: 2017-09-18 16:03:41.696377
+	as_path:
+
+
+openbmp.parsed.base_attribute:
+	sequence: 14
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	origin_as: 0
+	cluster_list:
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:03:41.696379
+	as_path:
+	local_pref: 100
+	aggregator:
+	action: add
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	ext_community_list:
+	community_list:
+	originator_id:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin: igp
+	as_path_count: 0
+	nexthop: 10.1.1.1
+	med: 0
+
+
+openbmp.parsed.base_attribute:
+	is_nexthop_ipv: 1
+	aggregator:
+	ext_community_list:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	local_pref: 100
+	isatomicagg: 0
+	sequence: 15
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.696380
+	nexthop: 10.1.1.1
+	med: 0
+	cluster_list:
+	action: add
+	router_ip: 10.20.0.58
+	as_path_count: 0
+	origin_as: 0
+	community_list:
+	originator_id:
+	origin: igp
+	as_path:
+
+
+openbmp.parsed.base_attribute:
+	aggregator:
+	isatomicagg: 0
+	sequence: 16
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:03:41.696391
+	origin: igp
+	originator_id:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	as_path:
+	ext_community_list:
+	is_nexthop_ipv: 1
+	action: add
+	peer_ip: 10.1.1.1
+	as_path_count: 0
+	nexthop: 10.1.1.1
+	community_list:
+	cluster_list:
+	router_ip: 10.20.0.58
+	origin_as: 0
+	med: 0
+	local_pref: 100
+
+
+openbmp.parsed.base_attribute:
+	med: 0
+	local_pref: 100
+	aggregator:
+	action: add
+	router_ip: 10.20.0.58
+	peer_asn: 100000
+	origin: igp
+	nexthop: 10.1.1.1
+	ext_community_list:
+	cluster_list:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	sequence: 17
+	origin_as: 0
+	isatomicagg: 0
+	originator_id:
+	is_nexthop_ipv: 1
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.696393
+	as_path:
+	as_path_count: 0
+	community_list:
+
+
+openbmp.parsed.base_attribute:
+	med: 0
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	timestamp: 2017-09-18 16:03:41.696394
+	nexthop: 10.1.1.1
+	local_pref: 100
+	is_nexthop_ipv: 1
+	originator_id:
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	as_path_count: 0
+	origin_as: 0
+	aggregator:
+	isatomicagg: 0
+	sequence: 18
+	router_ip: 10.20.0.58
+	as_path:
+	ext_community_list:
+	cluster_list:
+	peer_asn: 100000
+	origin: igp
+	community_list:
+
+
+openbmp.parsed.base_attribute:
+	action: add
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	community_list:
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	originator_id:
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:03:41.696395
+	as_path_count: 0
+	med: 0
+	local_pref: 100
+	cluster_list:
+	sequence: 19
+	peer_ip: 10.1.1.1
+	origin: igp
+	as_path:
+	nexthop: 10.1.1.1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	origin_as: 0
+	aggregator:
+	ext_community_list:
+
+
+openbmp.parsed.base_attribute:
+	action: add
+	sequence: 20
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	timestamp: 2017-09-18 16:03:41.696397
+	as_path:
+	as_path_count: 0
+	community_list:
+	ext_community_list:
+	cluster_list:
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	origin: igp
+	med: 0
+	local_pref: 100
+	originator_id:
+	nexthop: 10.1.1.1
+	is_nexthop_ipv: 1
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	origin_as: 0
+	aggregator:
+	isatomicagg: 0
+
+
+openbmp.parsed.base_attribute:
+	router_ip: 10.20.0.58
+	as_path_count: 0
+	aggregator:
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	originator_id:
+	action: add
+	peer_asn: 100000
+	as_path:
+	nexthop: 10.1.1.1
+	cluster_list:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	med: 0
+	local_pref: 100
+	sequence: 21
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.696399
+	origin: igp
+	origin_as: 0
+	community_list:
+	ext_community_list:
+
+
+openbmp.parsed.base_attribute:
+	as_path_count: 0
+	local_pref: 100
+	aggregator:
+	cluster_list:
+	origin: igp
+	router_ip: 10.20.0.58
+	origin_as: 0
+	community_list:
+	sequence: 22
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:03:41.696400
+	nexthop: 10.1.1.1
+	med: 0
+	isatomicagg: 0
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path:
+	ext_community_list:
+	is_nexthop_ipv: 1
+	originator_id:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+
+
+openbmp.parsed.base_attribute:
+	timestamp: 2017-09-18 16:03:41.696401
+	as_path_count: 0
+	originator_id:
+	action: add
+	sequence: 23
+	aggregator:
+	community_list:
+	is_nexthop_ipv: 1
+	as_path:
+	origin_as: 0
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	isatomicagg: 0
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	nexthop: 10.1.1.1
+	med: 0
+	local_pref: 100
+	ext_community_list:
+	cluster_list:
+	peer_ip: 10.1.1.1
+	origin: igp
+
+
+openbmp.parsed.base_attribute:
+	origin_as: 0
+	nexthop: 10.1.1.1
+	ext_community_list:
+	sequence: 24
+	peer_asn: 100000
+	origin: igp
+	as_path:
+	med: 0
+	aggregator:
+	cluster_list:
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.696418
+	as_path_count: 0
+	community_list:
+	originator_id:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	local_pref: 100
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+
+
+openbmp.parsed.base_attribute:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:03:41.696434
+	origin_as: 0
+	med: 0
+	local_pref: 100
+	sequence: 25
+	as_path:
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	peer_asn: 100000
+	nexthop: 10.1.1.1
+	community_list:
+	action: add
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin: igp
+	as_path_count: 0
+	aggregator:
+	ext_community_list:
+	cluster_list:
+	originator_id:
+
+
+openbmp.parsed.base_attribute:
+	is_nexthop_ipv: 1
+	sequence: 26
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:03:41.696435
+	origin_as: 0
+	community_list:
+	isatomicagg: 0
+	aggregator:
+	cluster_list:
+	nexthop: 10.1.1.1
+	action: add
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	origin: igp
+	as_path:
+	med: 0
+	originator_id:
+	as_path_count: 0
+	local_pref: 100
+	ext_community_list:
+
+
+openbmp.parsed.base_attribute:
+	action: add
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	origin: igp
+	originator_id:
+	community_list:
+	cluster_list:
+	is_nexthop_ipv: 1
+	sequence: 27
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path:
+	local_pref: 100
+	med: 0
+	aggregator:
+	ext_community_list:
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:03:41.699966
+	as_path_count: 0
+	origin_as: 0
+	nexthop: 10.1.1.1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	isatomicagg: 0
+
+
+openbmp.parsed.base_attribute:
+	as_path:
+	origin_as: 0
+	sequence: 0
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:05:50.624404
+	aggregator:
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	med: 0
+	nexthop: 10.1.1.4
+	community_list:
+	ext_community_list:
+	isatomicagg: 0
+	hash: 437464b1dd0e8d19061a0f83346348f2
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin: igp
+	local_pref: 100
+	cluster_list: 10.1.1.1
+	is_nexthop_ipv: 1
+	originator_id: 10.1.1.4
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	as_path_count: 0
+
+
+openbmp.parsed.base_attribute:
+	timestamp: 2017-09-18 16:05:50.624468
+	local_pref: 100
+	aggregator:
+	community_list:
+	med: 0
+	isatomicagg: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path_count: 0
+	as_path:
+	nexthop: 10.1.1.3
+	ext_community_list:
+	is_nexthop_ipv: 1
+	action: add
+	hash: 094ff2cf7d6c0d32e1611724014b63ff
+	peer_ip: 10.1.1.1
+	origin: igp
+	originator_id: 10.1.1.3
+	sequence: 1
+	peer_asn: 100000
+	origin_as: 0
+	cluster_list: 10.1.1.1
+
+
+openbmp.parsed.base_attribute:
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	timestamp: 2017-09-18 16:05:50.624470
+	nexthop: 10.1.1.2
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	action: add
+	sequence: 2
+	origin: igp
+	community_list:
+	originator_id: 10.1.1.2
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	origin_as: 0
+	local_pref: 100
+	ext_community_list:
+	cluster_list: 10.1.1.1
+	hash: 980e0c366f0f614afce3152323a14c67
+	as_path:
+	med: 0
+	aggregator:
+	peer_asn: 100000
+	as_path_count: 0
+
+
+openbmp.parsed.base_attribute:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:05:50.624471
+	origin: igp
+	as_path:
+	aggregator:
+	isatomicagg: 0
+	action: add
+	sequence: 3
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	cluster_list:
+	originator_id:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	nexthop: 10.1.1.1
+	is_nexthop_ipv: 1
+	router_ip: 10.20.0.58
+	as_path_count: 0
+	origin_as: 0
+	med: 0
+	local_pref: 100
+	community_list:
+	ext_community_list:
+
+
+openbmp.parsed.base_attribute:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	origin: igp
+	aggregator:
+	originator_id:
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path_count: 0
+	local_pref: 100
+	community_list:
+	cluster_list:
+	action: add
+	sequence: 4
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	med: 0
+	ext_community_list:
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:05:50.624518
+	as_path:
+	origin_as: 0
+	nexthop: 10.1.1.1
+
+
+openbmp.parsed.base_attribute:
+	isatomicagg: 0
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	as_path:
+	cluster_list:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	as_path_count: 0
+	community_list:
+	is_nexthop_ipv: 1
+	sequence: 5
+	peer_ip: 10.1.1.1
+	med: 0
+	aggregator:
+	ext_community_list:
+	nexthop: 10.1.1.1
+	local_pref: 100
+	originator_id:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:05:50.624534
+	origin: igp
+	origin_as: 0
+
+
+openbmp.parsed.base_attribute:
+	timestamp: 2017-09-18 16:05:50.624541
+	as_path_count: 0
+	nexthop: 10.1.1.1
+	local_pref: 100
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_ip: 10.1.1.1
+	origin: igp
+	as_path:
+	origin_as: 0
+	community_list:
+	action: add
+	sequence: 6
+	is_nexthop_ipv: 1
+	originator_id:
+	aggregator:
+	med: 0
+	ext_community_list:
+	cluster_list:
+	isatomicagg: 0
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+
+
+openbmp.parsed.base_attribute:
+	peer_asn: 100000
+	nexthop: 10.1.1.1
+	med: 0
+	originator_id:
+	as_path_count: 0
+	aggregator:
+	cluster_list:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	origin: igp
+	origin_as: 0
+	community_list:
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	action: add
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	timestamp: 2017-09-18 16:05:50.624542
+	sequence: 7
+	as_path:
+	local_pref: 100
+	ext_community_list:
+
+
+openbmp.parsed.base_attribute:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	origin: igp
+	ext_community_list:
+	is_nexthop_ipv: 1
+	sequence: 8
+	origin_as: 0
+	nexthop: 10.1.1.1
+	med: 0
+	local_pref: 100
+	originator_id:
+	as_path:
+	aggregator:
+	cluster_list:
+	action: add
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:05:50.624543
+	as_path_count: 0
+	community_list:
+	isatomicagg: 0
+
+
+openbmp.parsed.base_attribute:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	timestamp: 2017-09-18 16:05:50.633393
+	as_path_count: 0
+	aggregator:
+	community_list:
+	ext_community_list:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	action: add
+	sequence: 9
+	peer_ip: 10.1.1.1
+	origin_as: 0
+	med: 0
+	origin: igp
+	as_path:
+	nexthop: 10.1.1.1
+	local_pref: 100
+	cluster_list:
+	originator_id:
+
+
+openbmp.parsed.base_attribute:
+	peer_ip: 10.1.1.1
+	origin_as: 0
+	sequence: 10
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	isatomicagg: 0
+	origin: igp
+	med: 0
+	cluster_list:
+	as_path_count: 0
+	aggregator:
+	community_list:
+	ext_community_list:
+	is_nexthop_ipv: 1
+	action: add
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:05:50.633402
+	nexthop: 10.1.1.1
+	local_pref: 100
+	originator_id:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path:
+
+
+openbmp.parsed.base_attribute:
+	sequence: 11
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:05:50.633403
+	local_pref: 100
+	action: add
+	peer_asn: 100000
+	aggregator:
+	originator_id:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	origin: igp
+	as_path_count: 0
+	nexthop: 10.1.1.1
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	as_path:
+	origin_as: 0
+	med: 0
+	community_list:
+	ext_community_list:
+	cluster_list:
+
+
+openbmp.parsed.base_attribute:
+	origin_as: 0
+	nexthop: 10.1.1.1
+	aggregator:
+	is_nexthop_ipv: 1
+	sequence: 12
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	as_path_count: 0
+	med: 0
+	local_pref: 100
+	community_list:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	origin: igp
+	as_path:
+	ext_community_list:
+	isatomicagg: 0
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:05:50.633441
+	cluster_list:
+	originator_id:
+
+
+openbmp.parsed.base_attribute:
+	as_path:
+	med: 0
+	local_pref: 100
+	cluster_list:
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	community_list:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	timestamp: 2017-09-18 16:05:50.633444
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_ip: 10.1.1.1
+	as_path_count: 0
+	origin_as: 0
+	aggregator:
+	isatomicagg: 0
+	action: add
+	sequence: 13
+	is_nexthop_ipv: 1
+	originator_id:
+	nexthop: 10.1.1.1
+	ext_community_list:
+	peer_asn: 100000
+	origin: igp
+
+
+openbmp.parsed.base_attribute:
+	action: add
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	cluster_list:
+	community_list:
+	is_nexthop_ipv: 1
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	as_path:
+	origin_as: 0
+	nexthop: 10.1.1.1
+	local_pref: 100
+	ext_community_list:
+	isatomicagg: 0
+	sequence: 14
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	origin: igp
+	aggregator:
+	originator_id:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	timestamp: 2017-09-18 16:05:50.633445
+	as_path_count: 0
+	med: 0
+
+
+openbmp.parsed.base_attribute:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	nexthop: 10.1.1.1
+	aggregator:
+	originator_id:
+	action: add
+	peer_ip: 10.1.1.1
+	as_path:
+	as_path_count: 0
+	origin_as: 0
+	local_pref: 100
+	ext_community_list:
+	cluster_list:
+	router_ip: 10.20.0.58
+	is_nexthop_ipv: 1
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	community_list:
+	isatomicagg: 0
+	sequence: 15
+	timestamp: 2017-09-18 16:05:50.633446
+	origin: igp
+	med: 0
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+
+
+openbmp.parsed.base_attribute:
+	sequence: 16
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	nexthop: 10.1.1.1
+	med: 0
+	is_nexthop_ipv: 1
+	action: add
+	aggregator:
+	as_path_count: 0
+	timestamp: 2017-09-18 16:05:50.633447
+	origin: igp
+	origin_as: 0
+	local_pref: 100
+	community_list:
+	ext_community_list:
+	peer_asn: 100000
+	router_ip: 10.20.0.58
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path:
+	cluster_list:
+	isatomicagg: 0
+	originator_id:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+
+
+openbmp.parsed.base_attribute:
+	action: add
+	router_ip: 10.20.0.58
+	as_path_count: 0
+	origin_as: 0
+	community_list:
+	cluster_list:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:05:50.633448
+	med: 0
+	originator_id:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	origin: igp
+	as_path:
+	local_pref: 100
+	ext_community_list:
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	sequence: 17
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	nexthop: 10.1.1.1
+	aggregator:
+
+
+openbmp.parsed.base_attribute:
+	cluster_list:
+	is_nexthop_ipv: 1
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:05:50.633449
+	aggregator:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path:
+	origin_as: 0
+	nexthop: 10.1.1.1
+	local_pref: 100
+	sequence: 18
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	ext_community_list:
+	originator_id:
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	community_list:
+	med: 0
+	isatomicagg: 0
+	peer_ip: 10.1.1.1
+	origin: igp
+	as_path_count: 0
+
+
+openbmp.parsed.base_attribute:
+	sequence: 19
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:05:50.633450
+	origin: igp
+	originator_id:
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	action: add
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path:
+	origin_as: 0
+	local_pref: 100
+	community_list:
+	cluster_list:
+	isatomicagg: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	as_path_count: 0
+	nexthop: 10.1.1.1
+	med: 0
+	aggregator:
+	ext_community_list:
+	is_nexthop_ipv: 1
+
+
+openbmp.parsed.base_attribute:
+	peer_ip: 10.1.1.1
+	nexthop: 10.1.1.1
+	local_pref: 100
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	community_list:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:05:50.633502
+	origin: igp
+	as_path:
+	aggregator:
+	cluster_list:
+	action: add
+	sequence: 20
+	peer_asn: 100000
+	as_path_count: 0
+	origin_as: 0
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	med: 0
+	ext_community_list:
+	originator_id:
+
+
+openbmp.parsed.base_attribute:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	origin: igp
+	med: 0
+	ext_community_list:
+	cluster_list:
+	isatomicagg: 0
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:05:50.633503
+	aggregator:
+	is_nexthop_ipv: 1
+	sequence: 21
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	as_path:
+	as_path_count: 0
+	origin_as: 0
+	nexthop: 10.1.1.1
+	community_list:
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	local_pref: 100
+	originator_id:
+	action: add
+
+
+openbmp.parsed.base_attribute:
+	sequence: 22
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	as_path:
+	community_list:
+	cluster_list:
+	router_ip: 10.20.0.58
+	origin_as: 0
+	nexthop: 10.1.1.1
+	med: 0
+	ext_community_list:
+	isatomicagg: 0
+	is_nexthop_ipv: 1
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:05:50.633504
+	origin: igp
+	local_pref: 100
+	aggregator:
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	as_path_count: 0
+	originator_id:
+
+
+openbmp.parsed.base_attribute:
+	aggregator:
+	ext_community_list:
+	action: add
+	sequence: 23
+	origin: igp
+	origin_as: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	local_pref: 100
+	is_nexthop_ipv: 1
+	hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	med: 0
+	as_path_count: 0
+	nexthop: 10.1.1.1
+	community_list:
+	cluster_list:
+	isatomicagg: 0
+	peer_ip: 10.1.1.1
+	timestamp: 2017-09-18 16:05:50.633506
+	as_path:
+	originator_id:
+
+
+openbmp.parsed.base_attribute:
+	originator_id: 10.1.1.4
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	timestamp: 2017-09-18 16:05:50.633507
+	origin_as: 0
+	aggregator:
+	community_list:
+	is_nexthop_ipv: 0
+	hash: d8593f6bbb29f193f52d73d3a9523726
+	router_ip: 10.20.0.58
+	as_path:
+	as_path_count: 0
+	nexthop: 10:1:1::4
+	med: 0
+	peer_ip: 10.1.1.1
+	origin: igp
+	local_pref: 100
+	ext_community_list:
+	cluster_list: 10.1.1.1
+	sequence: 24
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	isatomicagg: 0
+
+
+openbmp.parsed.base_attribute:
+	community_list:
+	is_nexthop_ipv: 0
+	sequence: 25
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	origin: igp
+	as_path:
+	as_path_count: 0
+	nexthop: 10:1:1::3
+	originator_id: 10.1.1.3
+	peer_ip: 10.1.1.1
+	aggregator:
+	action: add
+	router_ip: 10.20.0.58
+	origin_as: 0
+	med: 0
+	ext_community_list:
+	cluster_list: 10.1.1.1
+	hash: 1438b3097a94b09511c5851388ed420f
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:05:50.633508
+	local_pref: 100
+	isatomicagg: 0
+
+
+openbmp.parsed.base_attribute:
+	sequence: 26
+	hash: 77bc0fa7ea06e3e133f30b745e5bdf9a
+	nexthop: 10:1:1::1
+	community_list:
+	origin_as: 0
+	aggregator:
+	ext_community_list:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	origin: igp
+	as_path:
+	cluster_list:
+	is_nexthop_ipv: 0
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	as_path_count: 0
+	med: 0
+	isatomicagg: 0
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:05:50.633510
+	local_pref: 100
+	originator_id:
+
+
+openbmp.parsed.base_attribute:
+	peer_asn: 100000
+	nexthop: 10:1:1::2
+	ext_community_list:
+	isatomicagg: 0
+	originator_id: 10.1.1.2
+	action: add
+	sequence: 27
+	peer_ip: 10.1.1.1
+	as_path_count: 0
+	origin_as: 0
+	community_list:
+	cluster_list: 10.1.1.1
+	hash: bdb472e4ebc1781c199a7fd1d2ea730f
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	origin: igp
+	aggregator:
+	is_nexthop_ipv: 0
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	timestamp: 2017-09-18 16:05:50.636880
+	local_pref: 100
+	router_ip: 10.20.0.58
+	as_path:
+	med: 0
+
+
+openbmp.parsed.ls_link:
+	peer_ip: 10.1.1.1
+	max_resv_bw: 0
+	link_protection:
+	sequence: 0
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	routing_id: 0
+	ospf_area_id:
+	mpls_proto_mask:
+	link_name:
+	igp_metric: 10
+	srlg:
+	timestamp: 2017-09-18 16:03:41.683748
+	router_id: ::
+	isis_area_id:
+	as_path:
+	local_pref: 100
+	intf_ip: 2:2:2::12
+	remote_igp_router_id: 0000.0000.0004.0000
+	remote_node_asn: 100000
+	is_adj_rib_in: 1
+	action: add
+	protocol: IS-IS_L2
+	nexthop: 10.1.1.1
+	local_link_id: 0
+	nei_ip: 2:2:2::13
+	unresv_bw:
+	local_node_hash: c2679dc1c0d5615c23b3ec45f59f6b15
+	router_ip: 10.20.0.58
+	admin_group: 0
+	local_node_asn: 100000
+	peer_node_sid:
+	isprepolicy: 1
+	ls_adjacency_sid: VL 0 24003, FVL 0 24007
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	max_link_bw: 0
+	te_default_metric: 0
+	hash: ec65a21f442dbdc0bc3538ab5103476c
+	igp_router_id: 0000.0000.0002.0000
+	ls_id: 0
+	med: 0
+	mt_id: 0
+	remote_link_id: 0
+	remote_node_hash: f1a834524e1871d6d0aedfdd3a90f66b
+	remote_router_id: ::
+
+
+openbmp.parsed.ls_link:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	link_protection:
+	local_node_asn: 100000
+	is_adj_rib_in: 1
+	ls_adjacency_sid: VL 0 24002, FVL 0 24005
+	router_ip: 10.20.0.58
+	peer_asn: 100000
+	med: 0
+	mt_id: 0
+	te_default_metric: 10
+	mpls_proto_mask:
+	peer_node_sid:
+	action: add
+	as_path:
+	local_pref: 100
+	nexthop: 10.1.1.1
+	remote_link_id: 0
+	igp_metric: 10
+	link_name:
+	isprepolicy: 1
+	hash: 5b9297ec5dfee1a90f5d68789a72924d
+	igp_router_id: 0000.0000.0001.0000
+	ospf_area_id:
+	isis_area_id:
+	protocol: IS-IS_L2
+	intf_ip: 0.2.0.2
+	unresv_bw: 0, 0, 0, 0, 0, 0, 0, 0
+	remote_node_hash: f1a834524e1871d6d0aedfdd3a90f66b
+	local_node_hash: 9b20947913e9b23f4d5ccf4174e9eba4
+	remote_igp_router_id: 0000.0000.0004.0000
+	sequence: 1
+	timestamp: 2017-09-18 16:03:41.683754
+	routing_id: 0
+	nei_ip: 0.2.0.2
+	remote_router_id: 0.0.0.0
+	peer_ip: 10.1.1.1
+	admin_group: 0
+	remote_node_asn: 100000
+	router_id: 10.1.1.1
+	local_link_id: 0
+	max_resv_bw: 0
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	ls_id: 0
+	max_link_bw: 1000000
+	srlg:
+
+
+openbmp.parsed.ls_link:
+	action: add
+	ls_id: 0
+	as_path:
+	igp_metric: 10
+	link_name:
+	sequence: 2
+	igp_router_id: 0000.0000.0002.0000
+	ospf_area_id:
+	mt_id: 0
+	mpls_proto_mask:
+	isprepolicy: 1
+	is_adj_rib_in: 1
+	router_id: ::
+	link_protection:
+	remote_node_hash: 95dc3a2aded2100e90d485b75ad7df60
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	isis_area_id:
+	local_pref: 100
+	unresv_bw:
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:03:41.696355
+	routing_id: 0
+	srlg:
+	local_node_asn: 100000
+	remote_node_asn: 100000
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_ip: 10.1.1.1
+	med: 0
+	nexthop: 10.1.1.1
+	local_link_id: 0
+	intf_ip: 2:2:2::10
+	max_resv_bw: 0
+	te_default_metric: 0
+	local_node_hash: c2679dc1c0d5615c23b3ec45f59f6b15
+	remote_router_id: ::
+	hash: a65cbdafcba54c7b9869897a5ba1f922
+	protocol: IS-IS_L2
+	remote_link_id: 0
+	admin_group: 0
+	remote_igp_router_id: 0000.0000.0003.0000
+	ls_adjacency_sid: VL 0 24005, FVL 0 24009
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	nei_ip: 2:2:2::11
+	max_link_bw: 0
+	peer_node_sid:
+
+
+openbmp.parsed.ls_link:
+	srlg:
+	remote_node_hash: 95dc3a2aded2100e90d485b75ad7df60
+	local_node_hash: 9b20947913e9b23f4d5ccf4174e9eba4
+	hash: 9431248babb487145ad46f4e78edefa5
+	igp_router_id: 0000.0000.0001.0000
+	med: 0
+	nexthop: 10.1.1.1
+	te_default_metric: 10
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	protocol: IS-IS_L2
+	mpls_proto_mask:
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	routing_id: 0
+	mt_id: 0
+	local_node_asn: 100000
+	remote_node_asn: 100000
+	peer_node_sid:
+	is_adj_rib_in: 1
+	router_id: 10.1.1.1
+	local_pref: 100
+	remote_link_id: 0
+	unresv_bw: 0, 0, 0, 0, 0, 0, 0, 0
+	remote_igp_router_id: 0000.0000.0003.0000
+	timestamp: 2017-09-18 16:03:41.696377
+	ospf_area_id:
+	intf_ip: 0.2.0.2
+	nei_ip: 0.2.0.2
+	remote_router_id: 0.0.0.0
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	as_path:
+	admin_group: 0
+	isprepolicy: 1
+	sequence: 3
+	ls_id: 0
+	igp_metric: 10
+	link_protection:
+	link_name:
+	isis_area_id:
+	local_link_id: 0
+	max_link_bw: 1000000
+	max_resv_bw: 0
+	ls_adjacency_sid: VL 0 24007, FVL 0 24009
+
+
+openbmp.parsed.ls_link:
+	timestamp: 2017-09-18 16:03:41.696434
+	nexthop: 10.1.1.1
+	admin_group: 0
+	te_default_metric: 0
+	ls_adjacency_sid:
+	isprepolicy: 1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_asn: 100000
+	protocol: EPE
+	med: 0
+	nei_ip: 2.2.2.2
+	link_protection:
+	remote_node_asn: 65000
+	igp_router_id:
+	ospf_area_id:
+	as_path:
+	remote_link_id: 0
+	intf_ip: 2.2.2.3
+	link_name:
+	local_node_hash: 6ed5aeb7f5ca0bbea84bdbadb61996e9
+	sequence: 8
+	ls_id: 0
+	unresv_bw:
+	mpls_proto_mask:
+	is_adj_rib_in: 1
+	routing_id: 0
+	remote_node_hash: c4e1a72f5633b241e0c82cdcc0f4f797
+	remote_igp_router_id:
+	remote_router_id: 10.1.1.0
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	router_id: 10.1.1.1
+	local_pref: 100
+	local_link_id: 0
+	srlg:
+	hash: 473c4d3888b23fe0aec1f68f6cce5d15
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_ip: 10.1.1.1
+	isis_area_id:
+	max_link_bw: 0
+	peer_node_sid: VL 0 24003
+	action: add
+	router_ip: 10.20.0.58
+	mt_id: 0
+	igp_metric: 0
+	max_resv_bw: 0
+	local_node_asn: 100000
+
+
+openbmp.parsed.ls_link:
+	remote_node_hash: 6ed5aeb7f5ca0bbea84bdbadb61996e9
+	remote_node_asn: 100000
+	action: add
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	ls_id: 0
+	isis_area_id:
+	as_path:
+	mpls_proto_mask:
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:03:41.696435
+	igp_router_id:
+	med: 0
+	local_node_hash: 6ed5aeb7f5ca0bbea84bdbadb61996e9
+	remote_igp_router_id:
+	router_id: 10.1.1.1
+	igp_metric: 0
+	remote_router_id: 10.1.1.4
+	link_protection:
+	peer_node_sid: VL 0 24002
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	routing_id: 0
+	ospf_area_id:
+	admin_group: 0
+	unresv_bw:
+	te_default_metric: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	local_link_id: 0
+	remote_link_id: 0
+	is_adj_rib_in: 1
+	ls_adjacency_sid:
+	hash: 0a13afa921309caf0d1dbec34efc0e5c
+	local_pref: 100
+	nei_ip: 2.2.2.9
+	srlg:
+	local_node_asn: 100000
+	peer_asn: 100000
+	nexthop: 10.1.1.1
+	intf_ip: 2.2.2.8
+	max_link_bw: 0
+	link_name:
+	isprepolicy: 1
+	sequence: 9
+	protocol: EPE
+	mt_id: 0
+	max_resv_bw: 0
+
+
+openbmp.parsed.ls_link:
+	local_link_id: 0
+	unresv_bw:
+	ls_adjacency_sid:
+	hash: 2c549e6271580c157be000c5de71c85d
+	router_ip: 10.20.0.58
+	peer_ip: 10.1.1.1
+	nei_ip: 2.2.2.7
+	max_resv_bw: 0
+	mpls_proto_mask:
+	remote_igp_router_id:
+	med: 0
+	nexthop: 10.1.1.1
+	mt_id: 0
+	remote_link_id: 0
+	remote_router_id: 10.1.1.3
+	local_node_asn: 100000
+	isprepolicy: 1
+	sequence: 10
+	timestamp: 2017-09-18 16:03:41.699966
+	igp_metric: 0
+	remote_node_hash: 6ed5aeb7f5ca0bbea84bdbadb61996e9
+	local_pref: 100
+	te_default_metric: 0
+	local_node_hash: 6ed5aeb7f5ca0bbea84bdbadb61996e9
+	peer_asn: 100000
+	igp_router_id:
+	ls_id: 0
+	isis_area_id:
+	max_link_bw: 0
+	peer_node_sid: VL 0 24001
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	protocol: EPE
+	as_path:
+	remote_node_asn: 100000
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	ospf_area_id:
+	srlg:
+	link_name:
+	admin_group: 0
+	link_protection:
+	is_adj_rib_in: 1
+	action: add
+	router_id: 10.1.1.1
+	routing_id: 0
+	intf_ip: 2.2.2.6
+
+
+openbmp.parsed.ls_link:
+	remote_link_id: 0
+	remote_igp_router_id: 0000.0000.0004.0000
+	isprepolicy: 1
+	is_adj_rib_in: 1
+	timestamp: 2017-09-18 16:05:50.624518
+	router_ip: 10.20.0.58
+	isis_area_id:
+	protocol: IS-IS_L2
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	as_path:
+	igp_metric: 10
+	max_resv_bw: 0
+	unresv_bw:
+	remote_node_asn: 100000
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	igp_router_id: 0000.0000.0002.0000
+	router_id: ::
+	local_pref: 100
+	remote_router_id: ::
+	local_node_asn: 100000
+	hash: ec65a21f442dbdc0bc3538ab5103476c
+	ls_id: 0
+	ospf_area_id:
+	peer_node_sid:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	mt_id: 0
+	intf_ip: 2:2:2::12
+	nei_ip: 2:2:2::13
+	link_protection:
+	mpls_proto_mask:
+	local_node_hash: c2679dc1c0d5615c23b3ec45f59f6b15
+	sequence: 0
+	peer_ip: 10.1.1.1
+	routing_id: 0
+	med: 0
+	local_link_id: 0
+	remote_node_hash: f1a834524e1871d6d0aedfdd3a90f66b
+	ls_adjacency_sid: VL 0 24003, FVL 0 24007
+	action: add
+	admin_group: 0
+	max_link_bw: 0
+	te_default_metric: 0
+	srlg:
+	link_name:
+	nexthop: 10.1.1.1
+
+
+openbmp.parsed.ls_link:
+	action: add
+	timestamp: 2017-09-18 16:05:50.624534
+	peer_asn: 100000
+	ospf_area_id:
+	as_path:
+	med: 0
+	unresv_bw: 0, 0, 0, 0, 0, 0, 0, 0
+	link_name:
+	remote_node_hash: f1a834524e1871d6d0aedfdd3a90f66b
+	router_ip: 10.20.0.58
+	local_link_id: 0
+	igp_metric: 10
+	te_default_metric: 10
+	mpls_proto_mask:
+	srlg:
+	peer_node_sid:
+	remote_node_asn: 100000
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_id: 10.1.1.1
+	local_pref: 100
+	nei_ip: 0.2.0.2
+	link_protection:
+	remote_igp_router_id: 0000.0000.0004.0000
+	remote_router_id: 0.0.0.0
+	nexthop: 10.1.1.1
+	mt_id: 0
+	sequence: 1
+	igp_router_id: 0000.0000.0001.0000
+	protocol: IS-IS_L2
+	local_node_hash: 9b20947913e9b23f4d5ccf4174e9eba4
+	local_node_asn: 100000
+	isprepolicy: 1
+	ls_adjacency_sid: VL 0 24002, FVL 0 24005
+	max_link_bw: 1000000
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	routing_id: 0
+	ls_id: 0
+	intf_ip: 0.2.0.2
+	admin_group: 0
+	max_resv_bw: 0
+	hash: 5b9297ec5dfee1a90f5d68789a72924d
+	isis_area_id:
+	remote_link_id: 0
+	is_adj_rib_in: 1
+
+
+openbmp.parsed.ls_link:
+	remote_node_asn: 100000
+	isprepolicy: 1
+	med: 0
+	local_node_hash: c2679dc1c0d5615c23b3ec45f59f6b15
+	protocol: IS-IS_L2
+	nexthop: 10.1.1.1
+	remote_link_id: 0
+	igp_metric: 10
+	max_link_bw: 0
+	local_node_asn: 100000
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	routing_id: 0
+	te_default_metric: 0
+	srlg:
+	router_ip: 10.20.0.58
+	router_id: ::
+	local_pref: 100
+	link_protection:
+	link_name:
+	remote_router_id: ::
+	is_adj_rib_in: 1
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	ls_id: 0
+	as_path:
+	mt_id: 0
+	local_link_id: 0
+	intf_ip: 2:2:2::10
+	max_resv_bw: 0
+	mpls_proto_mask:
+	timestamp: 2017-09-18 16:05:50.624543
+	isis_area_id:
+	nei_ip: 2:2:2::11
+	admin_group: 0
+	remote_igp_router_id: 0000.0000.0003.0000
+	ls_adjacency_sid: VL 0 24005, FVL 0 24009
+	sequence: 2
+	ospf_area_id:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	igp_router_id: 0000.0000.0002.0000
+	unresv_bw:
+	remote_node_hash: 95dc3a2aded2100e90d485b75ad7df60
+	peer_node_sid:
+	action: add
+	hash: a65cbdafcba54c7b9869897a5ba1f922
+
+
+openbmp.parsed.ls_link:
+	nei_ip: 0.2.0.2
+	admin_group: 0
+	te_default_metric: 10
+	link_protection:
+	local_link_id: 0
+	peer_asn: 100000
+	mpls_proto_mask:
+	remote_node_hash: 95dc3a2aded2100e90d485b75ad7df60
+	remote_igp_router_id: 0000.0000.0003.0000
+	action: add
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_ip: 10.1.1.1
+	igp_router_id: 0000.0000.0001.0000
+	ospf_area_id:
+	med: 0
+	nexthop: 10.1.1.1
+	sequence: 3
+	max_resv_bw: 0
+	local_node_asn: 100000
+	is_adj_rib_in: 1
+	igp_metric: 10
+	routing_id: 0
+	local_pref: 100
+	mt_id: 0
+	peer_node_sid:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	router_id: 10.1.1.1
+	link_name:
+	remote_node_asn: 100000
+	isprepolicy: 1
+	timestamp: 2017-09-18 16:05:50.633393
+	ls_id: 0
+	protocol: IS-IS_L2
+	remote_link_id: 0
+	srlg:
+	remote_router_id: 0.0.0.0
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	router_ip: 10.20.0.58
+	isis_area_id:
+	as_path:
+	intf_ip: 0.2.0.2
+	max_link_bw: 1000000
+	unresv_bw: 0, 0, 0, 0, 0, 0, 0, 0
+	local_node_hash: 9b20947913e9b23f4d5ccf4174e9eba4
+	hash: 9431248babb487145ad46f4e78edefa5
+	ls_adjacency_sid: VL 0 24007, FVL 0 24009
+
+
+openbmp.parsed.ls_link:
+	local_pref: 100
+	te_default_metric: 0
+	peer_node_sid: VL 0 24003
+	timestamp: 2017-09-18 16:05:50.633503
+	igp_router_id:
+	isis_area_id:
+	max_resv_bw: 0
+	link_protection:
+	link_name:
+	ls_id: 0
+	protocol: EPE
+	mt_id: 0
+	as_path:
+	nei_ip: 2.2.2.2
+	igp_metric: 0
+	med: 0
+	intf_ip: 2.2.2.3
+	srlg:
+	remote_router_id: 10.1.1.0
+	local_node_asn: 100000
+	sequence: 8
+	hash: 473c4d3888b23fe0aec1f68f6cce5d15
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	ls_adjacency_sid:
+	mpls_proto_mask:
+	remote_node_hash: c4e1a72f5633b241e0c82cdcc0f4f797
+	local_node_hash: 6ed5aeb7f5ca0bbea84bdbadb61996e9
+	remote_node_asn: 65000
+	peer_asn: 100000
+	nexthop: 10.1.1.1
+	unresv_bw:
+	max_link_bw: 0
+	isprepolicy: 1
+	is_adj_rib_in: 1
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_ip: 10.1.1.1
+	admin_group: 0
+	ospf_area_id:
+	local_link_id: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_id: 10.1.1.1
+	routing_id: 0
+	remote_igp_router_id:
+	action: add
+	router_ip: 10.20.0.58
+	remote_link_id: 0
+
+
+openbmp.parsed.ls_link:
+	is_adj_rib_in: 1
+	hash: 0a13afa921309caf0d1dbec34efc0e5c
+	remote_igp_router_id:
+	remote_node_asn: 100000
+	ls_id: 0
+	nexthop: 10.1.1.1
+	nei_ip: 2.2.2.9
+	igp_metric: 0
+	link_protection:
+	router_ip: 10.20.0.58
+	igp_router_id:
+	routing_id: 0
+	remote_router_id: 10.1.1.4
+	mt_id: 0
+	remote_link_id: 0
+	intf_ip: 2.2.2.8
+	unresv_bw:
+	remote_node_hash: 6ed5aeb7f5ca0bbea84bdbadb61996e9
+	sequence: 9
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_id: 10.1.1.1
+	local_node_asn: 100000
+	isprepolicy: 1
+	max_resv_bw: 0
+	srlg:
+	peer_asn: 100000
+	isis_area_id:
+	med: 0
+	te_default_metric: 0
+	link_name:
+	peer_node_sid: VL 0 24002
+	ls_adjacency_sid:
+	action: add
+	local_pref: 100
+	max_link_bw: 0
+	local_link_id: 0
+	mpls_proto_mask:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	timestamp: 2017-09-18 16:05:50.633504
+	as_path:
+	local_node_hash: 6ed5aeb7f5ca0bbea84bdbadb61996e9
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_ip: 10.1.1.1
+	ospf_area_id:
+	protocol: EPE
+	admin_group: 0
+
+
+openbmp.parsed.ls_link:
+	te_default_metric: 0
+	isprepolicy: 1
+	action: add
+	routing_id: 0
+	max_resv_bw: 0
+	remote_link_id: 0
+	ls_adjacency_sid:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	igp_router_id:
+	local_pref: 100
+	med: 0
+	nei_ip: 2.2.2.7
+	link_protection:
+	mpls_proto_mask:
+	sequence: 10
+	timestamp: 2017-09-18 16:05:50.633506
+	ls_id: 0
+	remote_router_id: 10.1.1.3
+	mt_id: 0
+	remote_node_hash: 6ed5aeb7f5ca0bbea84bdbadb61996e9
+	protocol: EPE
+	unresv_bw:
+	srlg:
+	is_adj_rib_in: 1
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	link_name:
+	local_node_hash: 6ed5aeb7f5ca0bbea84bdbadb61996e9
+	peer_node_sid: VL 0 24001
+	hash: 2c549e6271580c157be000c5de71c85d
+	local_link_id: 0
+	admin_group: 0
+	nexthop: 10.1.1.1
+	max_link_bw: 0
+	local_node_asn: 100000
+	isis_area_id:
+	as_path:
+	intf_ip: 2.2.2.6
+	igp_metric: 0
+	remote_igp_router_id:
+	peer_ip: 10.1.1.1
+	router_id: 10.1.1.1
+	ospf_area_id:
+	remote_node_asn: 100000
+
+
+openbmp.parsed.collector:
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers:
+	router_count: 0
+	timestamp: 2017-09-18 16:03:08.376850
+	action: started
+	sequence: 0
+
+
+openbmp.parsed.collector:
+	routers: 10.20.0.55
+	router_count: 1
+	timestamp: 2017-09-18 16:03:08.699691
+	action: change
+	sequence: 1
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+
+
+openbmp.parsed.collector:
+	action: change
+	sequence: 2
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+	timestamp: 2017-09-18 16:03:09.930112
+
+
+openbmp.parsed.collector:
+	timestamp: 2017-09-18 16:05:09.110124
+	action: started
+	sequence: 0
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers:
+	router_count: 0
+
+
+openbmp.parsed.collector:
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55
+	router_count: 1
+	timestamp: 2017-09-18 16:05:17.705063
+	action: change
+	sequence: 1
+	admin_id: v0-vm0
+
+
+openbmp.parsed.collector:
+	timestamp: 2017-09-18 16:05:18.946457
+	action: change
+	sequence: 2
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+
+
+openbmp.parsed.collector:
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+	timestamp: 2017-09-18 16:10:18.006751
+	action: heartbeat
+	sequence: 3
+	admin_id: v0-vm0
+
+
+openbmp.parsed.collector:
+	timestamp: 2017-09-18 16:15:18.009144
+	action: heartbeat
+	sequence: 4
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+
+
+openbmp.parsed.collector:
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+	timestamp: 2017-09-18 16:20:18.008817
+	action: heartbeat
+	sequence: 5
+	admin_id: v0-vm0
+
+
+openbmp.parsed.collector:
+	timestamp: 2017-09-18 16:25:18.007346
+	action: heartbeat
+	sequence: 6
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+
+
+openbmp.parsed.collector:
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+	timestamp: 2017-09-18 16:30:18.009634
+	action: heartbeat
+	sequence: 7
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+
+
+openbmp.parsed.collector:
+	action: heartbeat
+	sequence: 8
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+	timestamp: 2017-09-18 16:35:18.006362
+
+
+openbmp.parsed.collector:
+	timestamp: 2017-09-18 16:40:18.009908
+	action: heartbeat
+	sequence: 9
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+
+
+openbmp.parsed.collector:
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+	timestamp: 2017-09-18 16:45:18.006646
+	action: heartbeat
+	sequence: 10
+	admin_id: v0-vm0
+
+
+openbmp.parsed.collector:
+	timestamp: 2017-09-18 16:50:18.006109
+	action: heartbeat
+	sequence: 11
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+
+
+openbmp.parsed.collector:
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+	timestamp: 2017-09-18 16:55:18.006742
+	action: heartbeat
+	sequence: 12
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+
+
+openbmp.parsed.collector:
+	action: heartbeat
+	sequence: 13
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+	timestamp: 2017-09-18 17:00:18.005073
+
+
+openbmp.parsed.collector:
+	action: heartbeat
+	sequence: 14
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+	timestamp: 2017-09-18 17:05:18.016662
+
+
+openbmp.parsed.collector:
+	action: heartbeat
+	sequence: 15
+	admin_id: v0-vm0
+	hash: 93e1d1f47bb0693e4d8aea398b5c4ebe
+	routers: 10.20.0.55, 10.20.0.58
+	router_count: 2
+	timestamp: 2017-09-18 17:10:18.014100
+
+
+openbmp.parsed.peer:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	is_ipv: 1
+	bgp_error_code:
+	table_name:
+	action: up
+	router_ip: 10.20.0.58
+	peer_rd: 0:0
+	local_ip: 10.1.1.2
+	local_port: 29243
+	adv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, MPBGP (1) : afi=16388 safi=71 : BGP-LS BGP-LS, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	is_locrib: 0
+	sequence: 0
+	timestamp: 2017-09-18 16:03:08.592832
+	remote_ip: 10.1.1.1
+	bmp_reason:
+	is_l: 0
+	adv_holddown: 180
+	is_locrib_filtered: 0
+	recv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, MPBGP (1) : afi=16388 safi=71 : BGP-LS BGP-LS, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	remote_holddown: 180
+	error_text:
+	hash: fda2f2664714e3803eb046eb1706dbe9
+	remote_asn: 100000
+	remote_port: 179
+	local_asn: 100000
+	local_bgp_id: 10.1.1.2
+	isprepolicy: 1
+	info_data:
+	name: v0-l1.voltron.lab
+	remote_bgp_id: 10.1.1.1
+	bgp_error_sub_code:
+
+
+openbmp.parsed.peer:
+	hash: 4a2bccfc5b1f678d6e8b51b6bb0190d5
+	peer_rd: 0:0
+	is_l: 0
+	isprepolicy: 1
+	local_port: 179
+	bmp_reason:
+	bgp_error_code:
+	is_ipv: 1
+	is_locrib: 0
+	action: up
+	remote_bgp_id: 10.1.1.0
+	timestamp: 2017-09-18 16:03:08.592843
+	remote_port: 39500
+	router_ip: 10.20.0.58
+	remote_ip: 2.2.2.4
+	sequence: 1
+	name: v0-t0-ge0-0-0-2.voltron.lab
+	remote_asn: 65000
+	local_asn: 100000
+	local_bgp_id: 10.1.1.2
+	info_data:
+	bgp_error_sub_code:
+	local_ip: 2.2.2.5
+	adv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	recv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	adv_holddown: 180
+	error_text:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	remote_holddown: 180
+	is_locrib_filtered: 0
+	table_name:
+
+
+openbmp.parsed.peer:
+	adv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	local_bgp_id: 10.1.1.1
+	info_data:
+	bmp_reason:
+	error_text:
+	local_asn: 100000
+	remote_bgp_id: 10.1.1.0
+	remote_asn: 65000
+	isprepolicy: 1
+	hash: a3a456d2560ca2bdfa9380d025360130
+	timestamp: 2017-09-18 16:03:06.826330
+	adv_holddown: 180
+	is_locrib_filtered: 0
+	router_hash: 9c9cb9bd6a19aab53b7753396977fcbe
+	peer_rd: 0:0
+	remote_port: 179
+	local_ip: 2.2.2.3
+	bgp_error_sub_code:
+	is_l: 0
+	is_locrib: 0
+	name: v0-t0-ge0-0-0-1.voltron.lab
+	remote_ip: 2.2.2.2
+	table_name:
+	action: up
+	recv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	remote_holddown: 180
+	bgp_error_code:
+	local_port: 53295
+	router_ip: 10.20.0.55
+	is_ipv: 1
+	sequence: 0
+
+
+openbmp.parsed.peer:
+	error_text:
+	is_l: 0
+	local_asn: 100000
+	bgp_error_code:
+	is_locrib_filtered: 0
+	timestamp: 2017-09-18 16:05:15.827767
+	remote_asn: 65000
+	local_port: 53295
+	recv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	table_name:
+	action: up
+	remote_port: 179
+	bmp_reason:
+	bgp_error_sub_code:
+	hash: a3a456d2560ca2bdfa9380d025360130
+	router_hash: 9c9cb9bd6a19aab53b7753396977fcbe
+	remote_ip: 2.2.2.2
+	peer_rd: 0:0
+	local_ip: 2.2.2.3
+	local_bgp_id: 10.1.1.1
+	router_ip: 10.20.0.55
+	remote_holddown: 180
+	isprepolicy: 1
+	is_ipv: 1
+	is_locrib: 0
+	sequence: 0
+	name: v0-t0-ge0-0-0-1.voltron.lab
+	remote_bgp_id: 10.1.1.0
+	info_data:
+	adv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	adv_holddown: 180
+
+
+openbmp.parsed.peer:
+	action: up
+	local_bgp_id: 10.1.1.2
+	info_data:
+	adv_holddown: 180
+	is_locrib: 0
+	adv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, MPBGP (1) : afi=16388 safi=71 : BGP-LS BGP-LS, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	bgp_error_sub_code:
+	hash: fda2f2664714e3803eb046eb1706dbe9
+	remote_bgp_id: 10.1.1.1
+	recv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, MPBGP (1) : afi=16388 safi=71 : BGP-LS BGP-LS, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	table_name:
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:05:17.600674
+	remote_asn: 100000
+	remote_ip: 10.1.1.1
+	local_ip: 10.1.1.2
+	error_text:
+	is_l: 0
+	isprepolicy: 1
+	is_locrib_filtered: 0
+	name: v0-l1.voltron.lab
+	remote_port: 179
+	bmp_reason:
+	local_port: 29243
+	bgp_error_code:
+	sequence: 0
+	peer_rd: 0:0
+	local_asn: 100000
+	remote_holddown: 180
+	is_ipv: 1
+
+
+openbmp.parsed.peer:
+	peer_rd: 0:0
+	adv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	adv_holddown: 180
+	bmp_reason:
+	is_l: 0
+	action: up
+	timestamp: 2017-09-18 16:05:17.600695
+	local_asn: 100000
+	remote_holddown: 180
+	router_ip: 10.20.0.58
+	local_port: 179
+	is_ipv: 1
+	local_ip: 2.2.2.5
+	is_locrib: 0
+	isprepolicy: 1
+	name: v0-t0-ge0-0-0-2.voltron.lab
+	remote_port: 39500
+	local_bgp_id: 10.1.1.2
+	bgp_error_code:
+	recv_cap: MPBGP (1) : afi=1 safi=4 : Labeled Unicast IPv4, MPBGP (1) : afi=2 safi=1 : Unicast IPv6, Route Refresh Old (128), Route Refresh (2), 4 Octet ASN (65), 5
+	error_text:
+	is_locrib_filtered: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	remote_bgp_id: 10.1.1.0
+	remote_ip: 2.2.2.4
+	info_data:
+	sequence: 1
+	hash: 4a2bccfc5b1f678d6e8b51b6bb0190d5
+	remote_asn: 65000
+	bgp_error_sub_code:
+	table_name:
+
+
+openbmp.parsed.ls_prefix:
+	sequence: 0
+	ls_id: 0
+	prefix: 10.1.1.4
+	prefix_len: 32
+	ls_prefix_sid: N SPF 4
+	isis_area_id:
+	med: 0
+	igp_metric: 0
+	isprepolicy: 1
+	ext_route_tag: 0
+	is_adj_rib_in: 1
+	action: add
+	router_ip: 10.20.0.58
+	routing_id: 0
+	ospf_area_id:
+	igp_flags:
+	hash: 8ed72fe7626d0dbca76581305abe7726
+	peer_ip: 10.1.1.1
+	local_pref: 100
+	mt_id: 0
+	router_id: 0.0.0.0
+	nexthop: 10.1.1.1
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	as_path:
+	route_tag: 0
+	ospf_fwd_addr: 0.0.0.0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	timestamp: 2017-09-18 16:03:41.683757
+	protocol: IS-IS_L2
+	local_node_hash: f1a834524e1871d6d0aedfdd3a90f66b
+	igp_router_id: 0000.0000.0004.0000
+	ospf_route_type:
+
+
+openbmp.parsed.ls_prefix:
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	nexthop: 10.1.1.1
+	ext_route_tag: 0
+	route_tag: 0
+	prefix_len: 32
+	is_adj_rib_in: 1
+	igp_router_id: 0000.0000.0003.0000
+	router_id: 0.0.0.0
+	ls_id: 0
+	as_path:
+	igp_flags:
+	prefix: 10.1.1.3
+	ls_prefix_sid: N SPF 3
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	router_ip: 10.20.0.58
+	peer_asn: 100000
+	ospf_area_id:
+	med: 0
+	hash: e8398da20a87ff6ebd3e20f001196a59
+	routing_id: 0
+	isis_area_id:
+	protocol: IS-IS_L2
+	local_pref: 100
+	sequence: 1
+	peer_ip: 10.1.1.1
+	igp_metric: 0
+	timestamp: 2017-09-18 16:03:41.696380
+	ospf_fwd_addr: 0.0.0.0
+	isprepolicy: 1
+	action: add
+	local_node_hash: 95dc3a2aded2100e90d485b75ad7df60
+	mt_id: 0
+	ospf_route_type:
+
+
+openbmp.parsed.ls_prefix:
+	timestamp: 2017-09-18 16:03:41.696395
+	as_path:
+	local_pref: 100
+	igp_metric: 0
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	prefix: 10.1.1.2
+	isis_area_id:
+	route_tag: 0
+	prefix_len: 32
+	isprepolicy: 1
+	ospf_area_id:
+	sequence: 5
+	ls_id: 0
+	med: 0
+	mt_id: 0
+	ospf_route_type:
+	action: add
+	routing_id: 0
+	nexthop: 10.1.1.1
+	local_node_hash: c2679dc1c0d5615c23b3ec45f59f6b15
+	ospf_fwd_addr: 0.0.0.0
+	peer_ip: 10.1.1.1
+	igp_flags:
+	ext_route_tag: 0
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_asn: 100000
+	router_ip: 10.20.0.58
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	igp_router_id: 0000.0000.0002.0000
+	router_id: 0.0.0.0
+	protocol: IS-IS_L2
+	is_adj_rib_in: 1
+	ls_prefix_sid: N SPF 2
+	hash: 1db4906f4f95f1d15cfba09ba5d1845e
+
+
+openbmp.parsed.ls_prefix:
+	protocol: IS-IS_L2
+	as_path:
+	nexthop: 10.1.1.1
+	igp_flags:
+	ext_route_tag: 0
+	prefix_len: 128
+	igp_router_id: 0000.0000.0001.0000
+	ls_id: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	ospf_route_type:
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	timestamp: 2017-09-18 16:03:41.696400
+	isis_area_id:
+	local_node_hash: 9b20947913e9b23f4d5ccf4174e9eba4
+	igp_metric: 0
+	action: add
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	mt_id: 0
+	is_adj_rib_in: 1
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	ls_prefix_sid: N SPF 10001
+	local_pref: 100
+	ospf_fwd_addr: ::
+	isprepolicy: 1
+	hash: a4dec2372e7650afdf4d027398809f5f
+	router_id: ::
+	med: 0
+	route_tag: 0
+	sequence: 6
+	router_ip: 10.20.0.58
+	prefix: 10:1:1::1
+	routing_id: 0
+	ospf_area_id:
+
+
+openbmp.parsed.ls_prefix:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	med: 0
+	ospf_route_type:
+	sequence: 7
+	ls_id: 0
+	mt_id: 0
+	action: add
+	router_ip: 10.20.0.58
+	timestamp: 2017-09-18 16:03:41.696401
+	protocol: IS-IS_L2
+	local_pref: 100
+	local_node_hash: 9b20947913e9b23f4d5ccf4174e9eba4
+	ext_route_tag: 0
+	prefix: 10.1.1.1
+	peer_asn: 100000
+	igp_router_id: 0000.0000.0001.0000
+	hash: 4a2414b6bc81a439309fec7276612225
+	routing_id: 0
+	ospf_area_id:
+	route_tag: 0
+	ospf_fwd_addr: 0.0.0.0
+	igp_metric: 0
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	isis_area_id:
+	prefix_len: 32
+	isprepolicy: 1
+	is_adj_rib_in: 1
+	nexthop: 10.1.1.1
+	igp_flags:
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_ip: 10.1.1.1
+	router_id: 0.0.0.0
+	as_path:
+	ls_prefix_sid: N SPF 1
+
+
+openbmp.parsed.ls_prefix:
+	ls_prefix_sid: N SPF 4
+	router_id: 0.0.0.0
+	local_node_hash: f1a834524e1871d6d0aedfdd3a90f66b
+	mt_id: 0
+	ospf_route_type:
+	peer_asn: 100000
+	igp_flags:
+	ext_route_tag: 0
+	ospf_fwd_addr: 0.0.0.0
+	prefix: 10.1.1.4
+	hash: 8ed72fe7626d0dbca76581305abe7726
+	peer_ip: 10.1.1.1
+	routing_id: 0
+	protocol: IS-IS_L2
+	as_path:
+	local_pref: 100
+	nexthop: 10.1.1.1
+	isprepolicy: 1
+	prefix_len: 32
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	ospf_area_id:
+	igp_metric: 0
+	is_adj_rib_in: 1
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	timestamp: 2017-09-18 16:05:50.624542
+	ls_id: 0
+	isis_area_id:
+	med: 0
+	action: add
+	sequence: 0
+	router_ip: 10.20.0.58
+	igp_router_id: 0000.0000.0004.0000
+	route_tag: 0
+
+
+openbmp.parsed.ls_prefix:
+	hash: e8398da20a87ff6ebd3e20f001196a59
+	protocol: IS-IS_L2
+	isprepolicy: 1
+	action: add
+	ls_id: 0
+	ext_route_tag: 0
+	igp_metric: 0
+	prefix: 10.1.1.3
+	prefix_len: 32
+	peer_ip: 10.1.1.1
+	peer_asn: 100000
+	ospf_area_id:
+	isis_area_id:
+	igp_flags:
+	is_adj_rib_in: 1
+	timestamp: 2017-09-18 16:05:50.633403
+	as_path:
+	local_pref: 100
+	med: 0
+	mt_id: 0
+	router_ip: 10.20.0.58
+	igp_router_id: 0000.0000.0003.0000
+	router_id: 0.0.0.0
+	routing_id: 0
+	nexthop: 10.1.1.1
+	route_tag: 0
+	ls_prefix_sid: N SPF 3
+	sequence: 1
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	ospf_fwd_addr: 0.0.0.0
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	local_node_hash: 95dc3a2aded2100e90d485b75ad7df60
+	ospf_route_type:
+
+
+openbmp.parsed.ls_prefix:
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	timestamp: 2017-09-18 16:05:50.633446
+	nexthop: 10.1.1.1
+	igp_metric: 0
+	ls_prefix_sid: N SPF 2
+	hash: 1db4906f4f95f1d15cfba09ba5d1845e
+	peer_ip: 10.1.1.1
+	local_node_hash: c2679dc1c0d5615c23b3ec45f59f6b15
+	mt_id: 0
+	route_tag: 0
+	ext_route_tag: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	peer_asn: 100000
+	isis_area_id:
+	as_path:
+	ospf_route_type:
+	is_adj_rib_in: 1
+	action: add
+	router_id: 0.0.0.0
+	ls_id: 0
+	isprepolicy: 1
+	ospf_area_id:
+	protocol: IS-IS_L2
+	igp_flags:
+	router_ip: 10.20.0.58
+	med: 0
+	prefix: 10.1.1.2
+	sequence: 5
+	igp_router_id: 0000.0000.0002.0000
+	routing_id: 0
+	local_pref: 100
+	ospf_fwd_addr: 0.0.0.0
+	prefix_len: 32
+
+
+openbmp.parsed.ls_prefix:
+	ospf_area_id:
+	ext_route_tag: 0
+	ospf_fwd_addr: ::
+	action: add
+	router_id: ::
+	routing_id: 0
+	ls_id: 0
+	route_tag: 0
+	peer_ip: 10.1.1.1
+	igp_router_id: 0000.0000.0001.0000
+	as_path:
+	local_pref: 100
+	mt_id: 0
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	protocol: IS-IS_L2
+	igp_flags:
+	is_adj_rib_in: 1
+	ls_prefix_sid: N SPF 10001
+	med: 0
+	local_node_hash: 9b20947913e9b23f4d5ccf4174e9eba4
+	prefix: 10:1:1::1
+	prefix_len: 128
+	router_ip: 10.20.0.58
+	nexthop: 10.1.1.1
+	ospf_route_type:
+	igp_metric: 0
+	sequence: 6
+	hash: a4dec2372e7650afdf4d027398809f5f
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	timestamp: 2017-09-18 16:05:50.633449
+	isprepolicy: 1
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	peer_asn: 100000
+	isis_area_id:
+
+
+openbmp.parsed.ls_prefix:
+	router_hash: 92f9871845135c3f4666d8125e7371be
+	peer_hash: fda2f2664714e3803eb046eb1706dbe9
+	ls_id: 0
+	as_path:
+	routing_id: 0
+	ospf_route_type:
+	isprepolicy: 1
+	is_adj_rib_in: 1
+	sequence: 7
+	hash: 4a2414b6bc81a439309fec7276612225
+	router_ip: 10.20.0.58
+	isis_area_id:
+	igp_flags:
+	route_tag: 0
+	local_pref: 100
+	med: 0
+	local_node_hash: 9b20947913e9b23f4d5ccf4174e9eba4
+	prefix_len: 32
+	protocol: IS-IS_L2
+	ext_route_tag: 0
+	igp_metric: 0
+	base_attr_hash: d731f508d53b302fdf44b7133ce13d2e
+	timestamp: 2017-09-18 16:05:50.633450
+	mt_id: 0
+	ospf_fwd_addr: 0.0.0.0
+	ls_prefix_sid: N SPF 1
+	action: add
+	peer_ip: 10.1.1.1
+	igp_router_id: 0000.0000.0001.0000
+	router_id: 0.0.0.0
+	ospf_area_id:
+	prefix: 10.1.1.1
+	peer_asn: 100000
+	nexthop: 10.1.1.1
