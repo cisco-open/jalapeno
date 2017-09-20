@@ -10,6 +10,8 @@ import (
 	log "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
 )
 
+graphName  = "topology"
+
 type ArangoConfig struct {
 	URL      string `desc:"Arangodb server URL"`
 	User     string `desc:"Arangodb server username"`
@@ -178,8 +180,9 @@ func ensureEdgeCollection(g driver.Graph, name string, from []string, to []strin
 	return col, nil
 }
 
-func (a *ArangoConn) Add(i interface{}) error {
-	col, err := a.findCollection(i)
+// Interfaces must set their own key if they want to manage their own keys
+func (a *ArangoConn) Add(i DBObject) error {
+	col, err := a.findCollection(i.GetType())
 	if err != nil {
 		return err
 	}
@@ -188,40 +191,40 @@ func (a *ArangoConn) Add(i interface{}) error {
 	return err
 }
 
-func (a *ArangoConn) Update(key string, i interface{}) error {
-	col, err := a.findCollection(i)
+func (a *ArangoConn) Update(i DBObject) error {
+	col, err := a.findCollection(i.GetType())
 	if err != nil {
 		return err
 	}
 
-	_, err = col.UpdateDocument(context.Background(), key, i)
+	_, err = col.UpdateDocument(context.Background(), i.GetKey(), i)
 	return err
 }
 
-func (a *ArangoConn) Read(key string, i interface{}) (interface{}, error) {
-	col, err := a.findCollection(i)
-	if err != nil {
-		return nil, err
-	}
-	obj, err := a.findObj(i)
-	if err != nil {
-		return nil, err
-	}
-	_, err = col.ReadDocument(context.Background(), key, &obj)
-	return obj, err
-}
-
-func (a *ArangoConn) Delete(key string, i interface{}) error {
-	col, err := a.findCollection(i)
+func (a *ArangoConn) Read(i DBObject) error {
+	col, err := a.findCollection(i.GetType())
 	if err != nil {
 		return err
 	}
 
-	_, err = col.RemoveDocument(context.Background(), key)
+	_, err = col.ReadDocument(context.Background(), i.GetKey(), i)
+	if err != nil {
+		return err
+	}
 	return err
 }
 
-func (a *ArangoConn) Query(q string) ([]interface{}, error) {
+func (a *ArangoConn) Delete(i DBObject) error {
+	col, err := a.findCollection(i.GetType())
+	if err != nil {
+		return err
+	}
+
+	_, err = col.RemoveDocument(context.Background(), i.GetKey())
+	return err
+}
+
+func (a *ArangoConn) Query(q string, obj interface{}) ([]interface{}, error) {
 	err := a.db.ValidateQuery(context.Background(), q)
 	if err != nil {
 		return nil, err
@@ -233,13 +236,23 @@ func (a *ArangoConn) Query(q string) ([]interface{}, error) {
 	}
 
 	i := make([]interface{}, 0)
-	obj, err := a.findObj(i)
-	if err != nil {
-		return nil, err
-	}
 
 	defer cursor.Close()
+	t := reflect.TypeOf(obj)
+	if t == nil {
+		t = reflect.TypeOf(map[string]interface{}{})
+	}
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+
 	for {
+		var obj interface{}
+		if t.Kind() != reflect.Struct {
+			obj = reflect.New(t).Elem().Interface()
+		} else {
+			obj = reflect.New(t).Interface()
+		}
 		_, err := cursor.ReadDocument(context.Background(), &obj)
 		if driver.IsNoMoreDocuments(err) {
 			break
@@ -252,38 +265,13 @@ func (a *ArangoConn) Query(q string) ([]interface{}, error) {
 	return i, nil
 }
 
-func (a *ArangoConn) findCollection(i interface{}) (driver.Collection, error) {
-	n := ""
-	switch r := reflect.TypeOf(i).Name(); r {
-	case prefixName:
-		n = prefixName
-	case routerName:
-		n = routerName
-	case asName:
-		n = asName
-	case linkName:
-		n = linkName
+func (a *ArangoConn) findCollection(n string) (driver.Collection, error) {
+	if n == "" {
+		return nil, fmt.Errorf("Collection name must be defined")
 	}
-
 	val, ok := a.cols[n]
 	if !ok {
 		return val, fmt.Errorf("Could not find collection: %q", n)
 	}
 	return val, nil
-}
-
-func (a *ArangoConn) findObj(i interface{}) (interface{}, error) {
-	var n interface{}
-	switch r := reflect.TypeOf(i).Name(); r {
-	case prefixName:
-		n = Prefix{}
-	case routerName:
-		n = Router{}
-	case asName:
-		n = ASEdge{}
-	case linkName:
-		n = LinkEdge{}
-	}
-
-	return n, nil
 }
