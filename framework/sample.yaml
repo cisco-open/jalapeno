@@ -1,0 +1,21 @@
+---
+Arango:
+  URL:      http://127.0.0.1:8529
+  User:     root
+  Password: vojltorb
+  Database: test
+Kafka:
+  Brokers:
+    - 10.86.204.8:9092
+  Topics: # If this is excluded, all topics are used.
+    - openbmp.parsed.collector
+    - openbmp.parsed.router
+    - openbmp.parsed.peer
+    - openbmp.parsed.bmp_stat
+    - openbmp.parsed.base_attribute
+    - openbmp.parsed.unicast_prefix
+    - openbmp.parsed.ls_node
+    - openbmp.parsed.ls_link
+    - openbmp.parsed.ls_prefix
+    - openbmp.parsed.l3vpn
+    - openbmp.parsed.evpn

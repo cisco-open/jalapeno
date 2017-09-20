@@ -1,6 +1,7 @@
 package kafka
 
 import (
+	"errors"
 	"log"
 
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/kafka/handler"
@@ -11,7 +12,7 @@ import (
 )
 
 type Consumer struct {
-	Config    *Config
+	Config    *cluster.Config
 	Topics    []string
 	Brokers   []string
 	GroupName string
@@ -21,13 +22,13 @@ type Consumer struct {
 }
 
 type Config struct {
-	*cluster.Config
+	Brokers       []string `json:"brokers" desc:"List of Kafka Brokers"`
+	Topics        []string `json:"topics" desc:"Optional subset of openbmp topics."`
+	ConsumerGroup string   `desc:"Optional Consumer Group"`
 }
 
-func NewConfig() *Config {
-	return &Config{
-		cluster.NewConfig(),
-	}
+func NewConfig() Config {
+	return Config{}
 }
 
 func DefaultTopics() []string {
@@ -37,17 +38,23 @@ func DefaultTopics() []string {
 		"openbmp.parsed.ls_link", "openbmp.parsed.ls_prefix"}
 }
 
-func New(brokers []string, groupName string, topics ...string) *Consumer {
-	c := &Consumer{Config: NewConfig(), Topics: topics, GroupName: groupName, Brokers: brokers}
-	if len(topics) == 0 {
+func New(cfg Config) (*Consumer, error) {
+	c := &Consumer{Config: cluster.NewConfig(), Topics: cfg.Topics, GroupName: cfg.ConsumerGroup, Brokers: cfg.Brokers}
+	if len(c.Topics) == 0 {
 		c.Topics = DefaultTopics()
+	}
+	if len(c.GroupName) == 0 {
+		c.GroupName = "OpenBMPConsumerGroup"
+	}
+	if len(c.Brokers) == 0 {
+		return nil, errors.New("A list of kafka brokers is required")
 	}
 	c.Config.Consumer.Return.Errors = true
 	c.Config.Group.Return.Notifications = true
 	c.Config.Group.PartitionStrategy = cluster.StrategyRoundRobin
 	c.Config.Config.Consumer.Offsets.Initial = sarama.OffsetOldest
 	c.Handler = handler.NewDefaultHandler()
-	return c
+	return c, nil
 }
 
 func (c *Consumer) SetHandler(h handler.Handler) {
@@ -55,7 +62,7 @@ func (c *Consumer) SetHandler(h handler.Handler) {
 }
 
 func (c *Consumer) Start() error {
-	consumer, err := cluster.NewConsumer(c.Brokers, c.GroupName, c.Topics, c.Config.Config)
+	consumer, err := cluster.NewConsumer(c.Brokers, c.GroupName, c.Topics, c.Config)
 	if err != nil {
 		return err
 	}

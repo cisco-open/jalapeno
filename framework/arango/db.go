@@ -17,13 +17,17 @@ type ArangoConfig struct {
 	Database string `desc:"Arangodb database name"`
 }
 
+func NewConfig() ArangoConfig {
+	return ArangoConfig{}
+}
+
 type ArangoConn struct {
 	db   driver.Database
 	g    driver.Graph
 	cols map[string]driver.Collection
 }
 
-func NewArango(cfg ArangoConfig) (ArangoConn, error) {
+func New(cfg ArangoConfig) (ArangoConn, error) {
 	// Connect to DB
 
 	conn, err := http.NewConnection(http.ConnectionConfig{

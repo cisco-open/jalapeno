@@ -13,7 +13,7 @@ func Test(t *testing.T) {
 		Password: "vojltorb",
 		Database: "test",
 	}
-	ac, err := NewArango(cfg)
+	ac, err := New(cfg)
 	if err != nil {
 		t.Fatalf("Failed to NewArango: %v", err)
 	}
