@@ -1,26 +1,38 @@
 package arango
 
+import (
+	"fmt"
+	"strings"
+)
+
 const linkName = "LinkEdges"
 
 type LinkEdge struct {
-	From string `json:"_from,omitempty"`
-	To   string `json:"_to,omitempty"`
-	Key  string `json:"_key,omitempty"`
+	From   string `json:"_from,omitempty"`
+	To     string `json:"_to,omitempty"`
+	Key    string `json:"_key,omitempty"`
+	FromIP string `json:"FromIP"`
+	ToIP   string `json:"ToIP"`
 }
 
-func (l *LinkEdge) GetKey() string {
+func (l LinkEdge) GetKey() string {
 	return l.Key
 }
 
-func (l *LinkEdge) GetType() string {
+func (l *LinkEdge) SetKey() error {
+	ret := ErrKeyInvalid
+	if l.From != "" && l.To != "" && l.FromIP != "" && l.ToIP != "" {
+		l.Key = fmt.Sprintf("%s_%s_%s_%s", strings.Replace(l.From, "/", "", -1), strings.Replace(l.To, "/", "", -1), l.FromIP, l.ToIP) // tmp
+		ret = nil
+	}
+	return ret
+}
+
+func (l LinkEdge) GetType() string {
 	return linkName
 }
 
-func (l *LinkEdge) SetEdge(to string, from string) {
-	l.To = to
-	l.From = from
-}
-
-func (l *LinkEdge) GetEdge() (string, string) {
-	return l.To, l.From
+func (l *LinkEdge) SetEdge(to DBObject, from DBObject) {
+	l.To = to.GetKey()
+	l.From = from.GetKey()
 }

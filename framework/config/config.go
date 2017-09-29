@@ -10,45 +10,58 @@ import (
 
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/arango"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/kafka"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
+var (
+	ErrConfigFileNotFound = errors.New("Global Config file not found or specified.")
+)
+
 type GlobalConfig struct {
+	Log log.Config
+}
+
+type FrameworkConfig struct {
 	Kafka  kafka.Config
 	Arango arango.ArangoConfig
 	Debug  bool
 }
 
-var (
-	ErrConfigFileNotFound = errors.New("Global Config file not found or specified.")
-)
+func InitGlobalCfg() *GlobalConfig {
+	return &GlobalConfig{
+		Log: log.NewLogrConfig(),
+	}
+}
+
+func InitFrameworkCfg() *FrameworkConfig {
+	return &FrameworkConfig{
+		Kafka:  kafka.NewConfig(),
+		Arango: arango.NewConfig(),
+	}
+}
 
 // InitFlags: sets up all command flags
-func InitFlags(voltronCmd *cobra.Command) error {
-	gCfg := initCfg()
+func InitGlobalFlags(ccmd *cobra.Command, cfg interface{}) error {
 	// Add non-struct flags here
-	voltronCmd.PersistentFlags().String("config", "", "The configuration file")
-	viper.BindPFlag("config", voltronCmd.PersistentFlags().Lookup("config"))
+	ccmd.PersistentFlags().String("config", "", "The configuration file")
+	viper.BindPFlag("config", ccmd.PersistentFlags().Lookup("config"))
 
-	return setupEnvAndFlags(voltronCmd, &gCfg)
+	return setupEnvAndFlags(ccmd, cfg)
+}
+
+func InitFlags(ccmd *cobra.Command, cfg interface{}) error {
+	return setupEnvAndFlags(ccmd, cfg)
 }
 
 func Reset() {
 	viper.Reset()
 }
 
-func initCfg() GlobalConfig {
-	return GlobalConfig{
-		Kafka:  kafka.NewConfig(),
-		Arango: arango.NewConfig(),
-	}
-}
-
 // Getconfig loads the config file
-func GetConfig() (GlobalConfig, error) {
-	gCfg := initCfg()
+func GetConfig(cfg interface{}) (interface{}, error) {
 
 	//override with viper config file
 	configFile := viper.GetString("config")
@@ -57,18 +70,17 @@ func GetConfig() (GlobalConfig, error) {
 			viper.SetConfigFile(configFile) // name of config file
 			err := viper.ReadInConfig()     // Find and read the config file
 			if err != nil {                 // Handle errors reading the config file
-				return GlobalConfig{}, err
+				return cfg, err
 			}
-			err = viper.Unmarshal(&gCfg)
+			err = viper.Unmarshal(cfg)
 			if err != nil { // Handle errors reading the config file
-				return GlobalConfig{}, err
+				return cfg, err
 			}
 		}
 	}
 
-	err := getCfg(&gCfg)
-
-	return gCfg, err
+	err := getCfg(cfg)
+	return cfg, err
 }
 
 /* NOTE: Due to a bug in Viper, all boolean flags MUST DEFAULT TO FALSE.
@@ -76,8 +88,8 @@ func GetConfig() (GlobalConfig, error) {
 	 --use-db vs --dont-use-db.
 */
 
-func getCfg(gCfg *GlobalConfig) error {
-	return eachSubField(gCfg, func(parent reflect.Value, subFieldName string, crumbs []string) error {
+func getCfg(cfg interface{}) error {
+	return eachSubField(cfg, func(parent reflect.Value, subFieldName string, crumbs []string) error {
 		p := strings.Join(crumbs, "")
 		envStr := envString(p, subFieldName)
 		flagStr := flagString(p, subFieldName)
@@ -136,13 +148,13 @@ func getCfg(gCfg *GlobalConfig) error {
 }
 
 // Process env var overrides for all values
-func setupEnvAndFlags(voltronCmd *cobra.Command, gCfg interface{}) error {
+func setupEnvAndFlags(voltronCmd *cobra.Command, cfg interface{}) error {
 	// Supports fetching value from env for all config of type: int, float64, bool, and string
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.SetEnvPrefix("voltron")
 
-	return eachSubField(gCfg, func(parent reflect.Value, subFieldName string, crumbs []string) error {
+	return eachSubField(cfg, func(parent reflect.Value, subFieldName string, crumbs []string) error {
 		p := strings.Join(crumbs, "")
 		envStr := envString(p, subFieldName)
 		flagStr := flagString(p, subFieldName)

@@ -2,9 +2,10 @@ package kafka
 
 import (
 	"errors"
+	"fmt"
 	"log"
 
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/kafka/handler"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/handler"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/openbmp"
 
 	"github.com/Shopify/sarama"
@@ -38,13 +39,13 @@ func DefaultTopics() []string {
 		"openbmp.parsed.ls_link", "openbmp.parsed.ls_prefix"}
 }
 
-func New(cfg Config) (*Consumer, error) {
+func New(cfg Config, hndlr handler.Handler) (*Consumer, error) {
 	c := &Consumer{Config: cluster.NewConfig(), Topics: cfg.Topics, GroupName: cfg.ConsumerGroup, Brokers: cfg.Brokers}
 	if len(c.Topics) == 0 {
 		c.Topics = DefaultTopics()
 	}
 	if len(c.GroupName) == 0 {
-		c.GroupName = "OpenBMPConsumerGroup"
+		c.GroupName = "OpenBMPConsumerGroup1347g5"
 	}
 	if len(c.Brokers) == 0 {
 		return nil, errors.New("A list of kafka brokers is required")
@@ -52,8 +53,10 @@ func New(cfg Config) (*Consumer, error) {
 	c.Config.Consumer.Return.Errors = true
 	c.Config.Group.Return.Notifications = true
 	c.Config.Group.PartitionStrategy = cluster.StrategyRoundRobin
+	fmt.Printf("%+v\n", c.Config.Net)
+	//c.Config.Group.Session.Timeout = 10 * time.Second
 	c.Config.Config.Consumer.Offsets.Initial = sarama.OffsetOldest
-	c.Handler = handler.NewDefaultHandler()
+	c.Handler = hndlr
 	return c, nil
 }
 
@@ -92,7 +95,9 @@ func (c *Consumer) Start() error {
 				log.Printf("Rebalanced: %+v\n", ntf)
 			}
 		case <-c.stop:
+			log.Println("Closing Consumer...")
 			err := c.Consumer.Close()
+			log.Println("Consumer Closed...")
 			return err
 		}
 	}

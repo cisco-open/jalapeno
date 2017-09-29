@@ -2,15 +2,15 @@ package arango
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
 	log "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
 )
-
-graphName  = "topology"
 
 type ArangoConfig struct {
 	URL      string `desc:"Arangodb server URL"`
@@ -29,9 +29,12 @@ type ArangoConn struct {
 	cols map[string]driver.Collection
 }
 
+var (
+	ErrCollectionNotFound = fmt.Errorf("Could not find collection")
+)
+
 func New(cfg ArangoConfig) (ArangoConn, error) {
 	// Connect to DB
-
 	conn, err := http.NewConnection(http.ConnectionConfig{
 		Endpoints: []string{cfg.URL},
 	})
@@ -72,21 +75,25 @@ func New(cfg ArangoConfig) (ArangoConn, error) {
 	cols[prefixName], err = ensureVertexCollection(g, prefixName)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to connect to collection %q", prefixName)
+		return ArangoConn{}, err
 	}
 
 	cols[routerName], err = ensureVertexCollection(g, routerName)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to connect to collection %q", routerName)
+		return ArangoConn{}, err
 	}
 
-	cols[asName], err = ensureEdgeCollection(g, asName, []string{prefixName}, []string{prefixName})
+	cols[asName], err = ensureEdgeCollection(g, asName, []string{routerName}, []string{prefixName})
 	if err != nil {
 		log.WithError(err).Errorf("Failed to connect to collection %q", asName)
+		return ArangoConn{}, err
 	}
 
 	cols[linkName], err = ensureEdgeCollection(g, linkName, []string{routerName}, []string{routerName})
 	if err != nil {
 		log.WithError(err).Errorf("Failed to connect to collection %q", linkName)
+		return ArangoConn{}, err
 	}
 
 	return ArangoConn{db: db, g: g, cols: cols}, nil
@@ -181,7 +188,16 @@ func ensureEdgeCollection(g driver.Graph, name string, from []string, to []strin
 }
 
 // Interfaces must set their own key if they want to manage their own keys
-func (a *ArangoConn) Add(i DBObject) error {
+func (a *ArangoConn) Insert(i DBObject) error {
+	prevKey := i.GetKey()
+	err := i.SetKey()
+	if err != nil {
+		return err
+	}
+	if prevKey != "" && prevKey != i.GetKey() {
+		return ErrKeyChange
+	}
+
 	col, err := a.findCollection(i.GetType())
 	if err != nil {
 		return err
@@ -192,6 +208,15 @@ func (a *ArangoConn) Add(i DBObject) error {
 }
 
 func (a *ArangoConn) Update(i DBObject) error {
+	prevKey := i.GetKey()
+	err := i.SetKey()
+	if err != nil {
+		return err
+	}
+	if prevKey != "" && prevKey != i.GetKey() {
+		return ErrKeyChange
+	}
+
 	col, err := a.findCollection(i.GetType())
 	if err != nil {
 		return err
@@ -201,13 +226,43 @@ func (a *ArangoConn) Update(i DBObject) error {
 	return err
 }
 
-func (a *ArangoConn) Read(i DBObject) error {
+func (a *ArangoConn) Upsert(i DBObject) error {
+	prevKey := i.GetKey()
+	err := i.SetKey()
+	if err != nil {
+		return err
+	}
+	if prevKey != "" && prevKey != i.GetKey() {
+		return ErrKeyChange
+	}
+
 	col, err := a.findCollection(i.GetType())
 	if err != nil {
 		return err
 	}
 
-	_, err = col.ReadDocument(context.Background(), i.GetKey(), i)
+	// Assume update
+	_, err = col.UpdateDocument(context.Background(), i.GetKey(), i)
+	// If not found, lets add
+	if driver.IsNotFound(err) {
+		_, err = col.CreateDocument(context.Background(), i)
+	}
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (a *ArangoConn) Read(i DBObject) error {
+	k := i.GetKey()
+	if k == "" {
+		return ErrKeyInvalid
+	}
+	col, err := a.findCollection(i.GetType())
+	if err != nil {
+		return err
+	}
+
+	_, err = col.ReadDocument(context.Background(), k, i)
 	if err != nil {
 		return err
 	}
@@ -215,22 +270,26 @@ func (a *ArangoConn) Read(i DBObject) error {
 }
 
 func (a *ArangoConn) Delete(i DBObject) error {
+	k := i.GetKey()
+	if k == "" {
+		return ErrKeyInvalid
+	}
 	col, err := a.findCollection(i.GetType())
 	if err != nil {
 		return err
 	}
 
-	_, err = col.RemoveDocument(context.Background(), i.GetKey())
+	_, err = col.RemoveDocument(context.Background(), k)
 	return err
 }
 
-func (a *ArangoConn) Query(q string, obj interface{}) ([]interface{}, error) {
+func (a *ArangoConn) Query(q string, bind map[string]interface{}, obj interface{}) ([]interface{}, error) {
 	err := a.db.ValidateQuery(context.Background(), q)
 	if err != nil {
 		return nil, err
 	}
 
-	cursor, err := a.db.Query(context.Background(), q, nil)
+	cursor, err := a.db.Query(context.Background(), q, bind)
 	if err != nil {
 		return nil, err
 	}
@@ -265,13 +324,65 @@ func (a *ArangoConn) Query(q string, obj interface{}) ([]interface{}, error) {
 	return i, nil
 }
 
-func (a *ArangoConn) findCollection(n string) (driver.Collection, error) {
-	if n == "" {
-		return nil, fmt.Errorf("Collection name must be defined")
+// This function does not support compelx types, []string does not work. Router.Interface specifically
+func (a *ArangoConn) QueryOnObject(obj DBObject, ret interface{}, operators map[string]string) ([]interface{}, error) {
+	query := fmt.Sprintf("FOR i in %s RETURN i", obj.GetType())
+
+	filter, binds, err := genFilter(obj, operators)
+	if err != nil {
+		return nil, err
 	}
+	// Add filter stuff if we have parameters
+	if len(binds) != 0 {
+		query = fmt.Sprintf("FOR i in %s FILTER %s RETURN i", obj.GetType(), filter)
+	}
+
+	log.Debugf("Query: %q. Binds: %+v", query, binds)
+	return a.Query(query, binds, obj)
+}
+
+func genFilter(obj DBObject, operators map[string]string) (string, map[string]interface{}, error) {
+	q := make([]string, 0)
+	bind := make(map[string]interface{})
+	typ := reflect.TypeOf(obj).Elem()
+	if typ.Kind() != reflect.Struct {
+		return "", nil, errors.New("expected struct type.")
+	}
+	val := reflect.ValueOf(obj).Elem()
+	for i := 0; i < typ.NumField(); i++ {
+		typField := typ.Field(i)
+		valField := val.Field(i)
+		t := typField.Tag.Get("json")
+		t = strings.Split(t, ",")[0]
+		// Only add the fields that have values and json tags defined
+		if !reflect.DeepEqual(valField.Interface(), reflect.Zero(typField.Type).Interface()) {
+			//Attempting to limit queries on unsupported types
+			if valField.Kind() == reflect.Slice || valField.Kind() == reflect.Map || valField.Kind() == reflect.Ptr {
+				return "", nil, fmt.Errorf("Unsupported type: %s", valField.Kind())
+			}
+
+			//Ensure json tag exists
+			if t == "" {
+				return "", nil, fmt.Errorf("Failed to fetch json field for key: %v", typField.Name)
+			}
+
+			op, ok := operators[typField.Name]
+			if !ok {
+				op = "=="
+			}
+			q = append(q, fmt.Sprintf("i.%s %s @%s", t, op, typField.Name))
+			bind[typField.Name] = valField.Interface()
+
+		}
+	}
+
+	return strings.Join(q, " && "), bind, nil
+}
+
+func (a *ArangoConn) findCollection(n string) (driver.Collection, error) {
 	val, ok := a.cols[n]
-	if !ok {
-		return val, fmt.Errorf("Could not find collection: %q", n)
+	if !ok || n == "" {
+		return val, ErrCollectionNotFound
 	}
 	return val, nil
 }

@@ -4,6 +4,121 @@ Framework for reading OpenBMP messages off a Kafka queue and creating the topolo
 
 Sample OpenBMP generated data is available [Here](./openbmp_parsed_data.txt). This data is generated from [this virtual topology](https://wwwin-github.cisco.com/raw/paulduda/voltron-network0/master/doc/voltron-network0.png) in the BXB lab.
 
+# Getting Started
+Arango
+
+```
+git clone https://wwwin-github.cisco.com/spa-ie/voltron-redux.git
+cd framework
+make
+sh arango/deploy.sh
+bin/framework --config sample.yaml
+```
+
+Alternatively, framework can be run in debug mode to print current messages/stats. Assuming a kafka broker exists at 10.86.204.8:9092:
+```
+bin/framework --debug --kafka-brokers 10.86.204.8:9092
+```
+
+# Graph Data Model
+
+## Nodes
+Two types of nodes:
+```
+Router {
+  BGPID String
+  ASN Int
+  RouterIP String (like an id, BMP uses the loopback addr or highest IP)
+  IsLocal Bool
+}
+```
+
+```
+Prefix {
+  Prefix String
+  Length Int
+}
+```
+
+## Edges Between Routers
+```
+LinkEdge {
+  Label
+  Latency
+  Utilization
+  From (RouterKey)
+  To (RouterKey)
+  FromIP
+  ToIP
+  Netmask
+}
+```
+
+## Edges Between Router & Prefix
+```
+PrefixEdge {
+  InterfaceIP
+  Label String
+  NextHop
+  ASPath []string
+  BGPPolicy ???
+  Latency ??? (do we want this here... or is it sufficient on other edges?)
+}
+```
+
+## [Accessing Arango via HTTP](https://docs.arangodb.com/3.2/HTTP/SimpleQuery/)
+This can be done without modification to the arango db or working with the [Foxx](https://docs.arangodb.com/3.2/HTTP/Foxx/) services. In the future once we have specific queries that are common we can expose a Foxx service that would be a conveneince for vServices. Foxx could also support more advanced business logic once we know that that looks like, but for alpha I'd recommend we don't write these javascript services until we know what queries are common / business logic we require.
+
+### Basic HTTP Things
+To get a specific document the query looks like:
+```
+curl http://<user>:<pass>@<arango-end-point>:<arango-port>/_db/<db_name>/_api/<collection_name>/<document_key>
+```
+
+In this example we are running arango locally from the [voltron-redux/framework/database/deploy.sh](https://wwwin-github.cisco.com/spa-ie/voltron-redux/blob/master/framework/arango/deploy.sh). We’ve parsed BMP messages from Kafka and the result is:
+```
+http://root:voltron@127.0.0.1:8529/_db/test/_api/document/Routers/10.1.1.4_100000
+```
+
+Where:
+- `db-name="test"`
+- `collection-name="Routers"`
+- `document-key="10.1.1.4_100000"`
+
+
+The API also supports queries, you can do simple queries where you write out the AQL:
+```
+curl -X POST --data-binary @body.json --dump - http://root:vojltorb@127.0.0.1:8529/_db/test/_api/explain
+```
+
+**body.json**
+```
+{
+  "query" : "FOR p IN Routers RETURN p"
+}
+```
+
+This example query will return all routers in arango.
+
+You can also query that limits by fields
+```
+curl -X PUT --data-binary @body.json --dump - http://root:vojltorb@localhost:8529/_db/test/_api/simple/by-example
+```
+
+**body.json**
+```
+{
+  "collection" : "Routers",
+  "example" : {
+    "ASN" : 8000
+  }
+}
+```
+
+CRUD operations are available. To see those examples go to https://docs.arangodb.com/3.2/HTTP/SimpleQuery/
+
+
+# Directory Structure
 ## openbmp/
 The OpenBMP directory contains our OpenBMP message bus library. It should probably be submitted to OpenBMP maintainers to open source it. It parses messages according [to this spec](https://github.com/OpenBMP/openbmp/blob/master/docs/MESSAGE_BUS_API.md).
 
@@ -15,16 +130,3 @@ Handlers do _something_ with OpenBMP messages. This contains the interface for h
 
 ## arango/
 Contains our arango implementation and arangodb handler. **arango/handler.go** does most of the hard work of translating the openBMP messages --> arangodb.
-
-# Getting Started
-```
-git clone https://wwwin-github.cisco.com/spa-ie/voltron-redux.git
-cd framework
-make
-bin/framework --config sample.yaml
-```
-
-Alternatively, framework can be run in debug mode to print current messages/stats. Assuming a kafka broker exists at 10.86.204.8:9092:
-```
-bin/framework --debug --kafka-brokers 10.86.204.8:9092
-```

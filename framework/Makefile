@@ -1,7 +1,7 @@
 .PHONY: vendor
 
-EXECUTABLE ?= volt
-IMAGE ?= bin/$(EXECUTABLE)
+EXECUTABLE ?= voltron
+BINARY ?= bin/$(EXECUTABLE)
 PACKAGES = $(shell go list ./... | grep -E -v '/bin|/vendor|/docs|/cmd|/log')
 REPO=dockerhub.cisco.com/gspie-dev-docker
 IMAGE=framework
@@ -14,7 +14,7 @@ test:
 	go test -ldflags -s -race -cover $(PACKAGES)
 
 build:
-	CGO_ENABLED=0 go build --ldflags '${EXTLDFLAGS}' -o ${IMAGE} wwwin-github.cisco.com/spa-ie/voltron-redux/framework
+	CGO_ENABLED=0 go build --ldflags '${EXTLDFLAGS}' -o ${BINARY} wwwin-github.cisco.com/spa-ie/voltron-redux/framework
 
 linux:
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./bin/mu wwwin-github.cisco.com/spa-ie/voltron-redux/framework

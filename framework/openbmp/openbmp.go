@@ -10,7 +10,7 @@ import (
 	"bytes"
 	"fmt"
 	"net"
-	"reflect"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -50,7 +50,10 @@ var topics = []string{
 
 const (
 	ActionAdd       = "add"
-	ActionDel       = "delete"
+	ActionUp        = "up"
+	ActionDown      = "down"
+	ActionDel       = "del"
+	ActionDelete    = "delete"
 	ActionStarted   = "started"
 	ActionChange    = "change"
 	ActionHeartbeat = "heartbeat"
@@ -160,6 +163,18 @@ func (m Message) Get(field string) (interface{}, bool) {
 	return v, true
 }
 
+func (m Message) GetStr(field string) string {
+	v, ok := m.Get(field)
+	if ok {
+		s, ok := v.(string)
+		if s == "" || !ok {
+			return ""
+		}
+		return s
+	}
+	return ""
+}
+
 func (m Message) GetString(field string) (string, bool) {
 	v, ok := m.Get(field)
 	if ok {
@@ -180,51 +195,33 @@ func (m Message) GetIP(field string) (net.IP, bool) {
 	return net.IP{}, false
 }
 
-func (m Message) GetInt(field string) (int64, bool) {
-	v, ok := m.Get(field)
+func (m Message) GetInt(field string) (int, bool) {
+	v, ok := m.GetString(field)
 	if !ok {
 		return 0, false
 	}
-	rv := reflect.ValueOf(v)
-	if rv.Kind() < reflect.Int && rv.Kind() > reflect.Float64 {
-		return 0, false
-	}
-	rv = rv.Convert(reflect.TypeOf(int64(0)))
-	if !rv.CanInterface() {
-		return 0, false
-	}
-	return rv.Interface().(int64), true
+	i, err := strconv.Atoi(v)
+
+	return i, (err == nil)
 }
 
 func (m Message) GetFloat(field string) (float64, bool) {
-	v, ok := m.Get(field)
+	v, ok := m.GetString(field)
 	if !ok {
 		return 0.0, false
 	}
-	rv := reflect.ValueOf(v)
-	if rv.Kind() < reflect.Int && rv.Kind() > reflect.Float64 {
-		return 0.0, false
-	}
-	rv = rv.Convert(reflect.TypeOf(float64(0.0)))
-	if !rv.CanInterface() {
-		return 0, false
-	}
-	return rv.Interface().(float64), true
+	i, err := strconv.ParseFloat(v, 64)
+	return i, (err == nil)
+
 }
 
 func (m Message) GetBool(field string) (bool, bool) {
-	v, ok := m.Get(field)
+	v, ok := m.GetString(field)
 	if !ok {
 		return false, false
 	}
-	if b, ok := v.(bool); ok {
-		return b, true
-	}
-
-	if i, ok := m.GetInt(field); ok {
-		return i == 1, true
-	}
-	return false, false
+	i, err := strconv.ParseBool(v)
+	return i, (err == nil)
 }
 
 func (m Message) GetTimestamp() (time.Time, bool) {
@@ -239,7 +236,7 @@ func (m Message) GetTimestamp() (time.Time, bool) {
 	return time.Time{}, false
 }
 
-func (m Message) GetSequence() (int64, bool) {
+func (m Message) GetSequence() (int, bool) {
 	return m.GetInt("sequence")
 }
 

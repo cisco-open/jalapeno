@@ -12,6 +12,8 @@ import (
 
 type HandlerFunc func(*openbmp.Message)
 
+var index, seqN int
+
 type Handler interface {
 	Handle(*openbmp.Message)
 	Register(topic openbmp.Topic, f HandlerFunc)
@@ -26,7 +28,7 @@ type DefaultHandler struct {
 	errthing map[string]map[string][]*openbmp.Message
 }
 
-func NewDefaultHandler() *DefaultHandler {
+func NewDefault() *DefaultHandler {
 	return &DefaultHandler{
 		fmap:     make(map[openbmp.Topic]HandlerFunc),
 		def:      nil,
@@ -35,6 +37,9 @@ func NewDefaultHandler() *DefaultHandler {
 }
 
 func (h *DefaultHandler) Handle(m *openbmp.Message) {
+	index++
+	seqN, _ = m.GetSequence()
+
 	if f, ok := h.fmap[m.Topic]; ok {
 		f(m)
 		return
@@ -55,7 +60,9 @@ func (h *DefaultHandler) RegisterDefault(f HandlerFunc) {
 }
 
 func (h *DefaultHandler) Debug() {
-	h.TestPrint()
+	//h.TestPrint()
+	fmt.Printf("Index: %v, SeqN: %v\n", index, seqN)
+
 }
 
 func (h *DefaultHandler) TestPrint() {
