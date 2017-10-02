@@ -8,11 +8,15 @@ import (
 const linkName = "LinkEdges"
 
 type LinkEdge struct {
-	From   string `json:"_from,omitempty"`
-	To     string `json:"_to,omitempty"`
-	Key    string `json:"_key,omitempty"`
-	FromIP string `json:"FromIP"`
-	ToIP   string `json:"ToIP"`
+	From        string  `json:"_from,omitempty"`
+	To          string  `json:"_to,omitempty"`
+	Key         string  `json:"_key,omitempty"`
+	FromIP      string  `json:"FromIP"`
+	ToIP        string  `json:"ToIP"`
+	Netmask     string  `json:"Netmask"`
+	Label       string  `json:"Label"`
+	Latency     int     `json:"Latency"`
+	Utilization float32 `json:"Utilization"`
 }
 
 func (l LinkEdge) GetKey() string {

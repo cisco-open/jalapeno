@@ -117,6 +117,16 @@ curl -X PUT --data-binary @body.json --dump - http://root:vojltorb@localhost:852
 
 CRUD operations are available. To see those examples go to https://docs.arangodb.com/3.2/HTTP/SimpleQuery/
 
+## Query Microservice
+Arango allows hosted javascript microservices to be mounted as a sub URL.
+You can write common queries in the arango/queries/index.js file. This microservice can be added to arango and queried directly. To try this out yourself:
+- go to [the services tab](http://127.0.0.1:8529/_db/voltron/_admin/aardvark/index.html#services) of arango
+- click "Add Service"
+- Enter /queries in the "Mount" field
+- click the "zip" tab and select `arango/queries.zip`
+- Go to http://127.0.0.1:8529/_db/voltron/queries/10.1.1.3_100000/interfaces and you should see all the ip address of the interfaces on the router with `_key=10.1.1.3_100000`
+
+
 
 # Directory Structure
 ## openbmp/

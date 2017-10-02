@@ -110,9 +110,7 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 	}
 	p.SetKey()
 	if m.Action() == openbmp.ActionDel {
-		if err := a.db.Delete(p); err != nil {
-			fmt.Println("Error Deleting Prefix: ", err)
-		}
+		a.db.Delete(p)
 		return
 	} else if m.Action() != openbmp.ActionAdd {
 		fmt.Println("Not Delete or Add... ", m.Action())
@@ -144,7 +142,6 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 func (a *ArangoHandler) HandleLSNode(m *openbmp.Message) {
 	fmt.Println("lsNode", m)
 	return
-	fmt.Println(m)
 
 }
 

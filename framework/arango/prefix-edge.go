@@ -8,11 +8,15 @@ import (
 const asName = "PrefixEdges"
 
 type PrefixEdge struct {
-	From    string   `json:"_from,omitempty"`
-	To      string   `json:"_to,omitempty"`
-	Key     string   `json:"_key,omitempty"`
-	NextHop string   `json:"NextHop,omitempty"`
-	ASPath  []string `json:"ASPath"`
+	From        string   `json:"_from,omitempty"`
+	To          string   `json:"_to,omitempty"`
+	Key         string   `json:"_key,omitempty"`
+	NextHop     string   `json:"NextHop,omitempty"`
+	InterfaceIP string   `json:"InterfaceIP,omitempty"`
+	ASPath      []string `json:"ASPath,omitempty"`
+	Label       string   `json:"Label,omitempty"`
+	BGPPolicy   string   `json:"BGPPolicy,omitempty"`
+	Latency     int      `json:"Latency,omitempty"`
 }
 
 func (a PrefixEdge) GetKey() string {

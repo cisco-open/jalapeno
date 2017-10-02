@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/rand"
+	"time"
 
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/handler"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/openbmp"
@@ -11,6 +13,10 @@ import (
 	"github.com/Shopify/sarama"
 	cluster "github.com/bsm/sarama-cluster"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 type Consumer struct {
 	Config    *cluster.Config
@@ -44,8 +50,8 @@ func New(cfg Config, hndlr handler.Handler) (*Consumer, error) {
 	if len(c.Topics) == 0 {
 		c.Topics = DefaultTopics()
 	}
-	if len(c.GroupName) == 0 {
-		c.GroupName = "OpenBMPConsumerGroup1347g5"
+	if len(c.GroupName) == 0 { //TODO: REMOVE IN PROD
+		c.GroupName = "OpenBMPConsumerGroup" + randStringBytesMask(8)
 	}
 	if len(c.Brokers) == 0 {
 		return nil, errors.New("A list of kafka brokers is required")
@@ -69,9 +75,12 @@ func (c *Consumer) Start() error {
 	if err != nil {
 		return err
 	}
+
 	c.Consumer = consumer
 	c.stop = make(chan bool)
 
+	// TODO: strategy: We want to process Peers first...
+	// Refactor to allow out of order processing
 	for {
 		select {
 		case msg, more := <-consumer.Messages():
@@ -105,4 +114,29 @@ func (c *Consumer) Start() error {
 
 func (c *Consumer) Stop() {
 	c.stop <- true
+}
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const (
+	letterIdxBits = 6                    // 6 bits to represent a letter index
+	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+)
+
+func randStringBytesMask(n int) string {
+	b := make([]byte, n)
+	// A rand.Int63() generates 63 random bits, enough for letterIdxMax letters!
+	for i, cache, remain := n-1, rand.Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = rand.Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			b[i] = letterBytes[idx]
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return string(b)
 }
