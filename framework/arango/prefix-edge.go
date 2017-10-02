@@ -14,7 +14,7 @@ type PrefixEdge struct {
 	NextHop     string   `json:"NextHop,omitempty"`
 	InterfaceIP string   `json:"InterfaceIP,omitempty"`
 	ASPath      []string `json:"ASPath,omitempty"`
-	Label       string   `json:"Label,omitempty"`
+	Labels      []int    `json:"Labels,omitempty"`
 	BGPPolicy   string   `json:"BGPPolicy,omitempty"`
 	Latency     int      `json:"Latency,omitempty"`
 }

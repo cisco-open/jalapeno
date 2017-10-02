@@ -74,7 +74,7 @@ func frameworkRun(cmd *cobra.Command, args []string) {
 	serviceGroup.Start()
 
 	if cfg.Debug { // THIS IS FOR DEV ONLY.
-		time.Sleep(4 * time.Second)
+		time.Sleep(20 * time.Second)
 		consumer.Handler.Debug()
 		go func() {
 			time.Sleep(100 * time.Millisecond)

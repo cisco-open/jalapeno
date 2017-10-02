@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/arango"
@@ -125,11 +126,19 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 		return
 	}
 	r.SetKey()
+	var labels []int
+	for _, l := range strings.Split(m.GetStr("labels"), ",") {
+		if v, err := strconv.Atoi(l); err == nil && v != 0 {
+			labels = append(labels, v)
+		}
+	}
+
 	ed := &arango.PrefixEdge{
 		NextHop: m.GetStr("nexthop"),
 		ASPath:  strings.Split(m.GetStr("as_path"), " "),
 		To:      fmt.Sprintf("%s/%s", p.GetType(), p.GetKey()),
 		From:    fmt.Sprintf("%s/%s", r.GetType(), r.GetKey()),
+		Labels:  labels,
 	}
 
 	ed.SetKey()

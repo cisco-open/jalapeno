@@ -14,7 +14,7 @@ type LinkEdge struct {
 	FromIP      string  `json:"FromIP"`
 	ToIP        string  `json:"ToIP"`
 	Netmask     string  `json:"Netmask"`
-	Label       string  `json:"Label"`
+	Labels      []int   `json:"Labels"`
 	Latency     int     `json:"Latency"`
 	Utilization float32 `json:"Utilization"`
 }

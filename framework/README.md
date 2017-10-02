@@ -43,7 +43,7 @@ Prefix {
 ## Edges Between Routers
 ```
 LinkEdge {
-  Label
+  Labels []int
   Latency
   Utilization
   From (RouterKey)
@@ -58,7 +58,7 @@ LinkEdge {
 ```
 PrefixEdge {
   InterfaceIP
-  Label String
+  Labels []int
   NextHop
   ASPath []string
   BGPPolicy ???
@@ -124,9 +124,18 @@ You can write common queries in the arango/queries/index.js file. This microserv
 - click "Add Service"
 - Enter /queries in the "Mount" field
 - click the "zip" tab and select `arango/queries.zip`
-- Go to http://127.0.0.1:8529/_db/voltron/queries/10.1.1.3_100000/interfaces and you should see all the ip address of the interfaces on the router with `_key=10.1.1.3_100000`
+- [example]: Go to http://127.0.0.1:8529/_db/voltron/queries/edges/10.1.1.3_100000/ips and you should see all the ip address of the interfaces on the router with `_key=10.1.1.3_100000`
 
+## Latency Query
+I added an endpoint to our Arango in the BXB lab for editing latency. You can add it yourself by following the instructions above.
 
+The endpoint is `/latency/:from/:to/:latency` where :from = FromIP, :to=ToIP, :latency=latency in ms
+To add/update the latency (to 20ms) between 10.1.1.1 and 10.1.1.2, hit the following url (will update the values on the lab arango):
+
+`http://10.86.204.8:8529/_db/voltron/queries/latency/10.1.1.1/10.1.1.2/20`
+
+(Note this most likely change to a PUT request in the future.)
+You can check the latency by going to `http://10.86.204.8:8529/_db/voltron/queries/latency/10.1.1.1/10.1.1.2` (will return 0 if not set).
 
 # Directory Structure
 ## openbmp/

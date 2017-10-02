@@ -17,5 +17,5 @@ Kafka:
     - openbmp.parsed.ls_node
     - openbmp.parsed.ls_link
     - openbmp.parsed.ls_prefix
-    #- openbmp.parsed.l3vpn
-    #- openbmp.parsed.evpn
+    - openbmp.parsed.l3vpn
+    - openbmp.parsed.evpn

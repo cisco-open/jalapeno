@@ -37,9 +37,10 @@ func NewDefault() *DefaultHandler {
 }
 
 func (h *DefaultHandler) Handle(m *openbmp.Message) {
+	fmt.Println(m)
 	index++
 	seqN, _ = m.GetSequence()
-
+	return
 	if f, ok := h.fmap[m.Topic]; ok {
 		f(m)
 		return
