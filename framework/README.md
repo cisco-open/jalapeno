@@ -20,6 +20,11 @@ Alternatively, framework can be run in debug mode to print current messages/stat
 bin/framework --debug --kafka-brokers 10.86.204.8:9092
 ```
 
+# Running tests
+1. Deploy the database `./framework/arango/deploy.sh` (give it ~10 seconds to start up)
+2. `make test`
+3. Stop the database `./framework/arango/stop.sh`
+
 # Graph Data Model
 
 ## Nodes

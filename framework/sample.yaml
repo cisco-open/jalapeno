@@ -4,6 +4,8 @@ Arango:
   User:     root
   Password: voltron
   Database: voltron
+Log:
+  Level: info
 Kafka:
   Brokers:
     - 10.86.204.8:9092
@@ -14,8 +16,8 @@ Kafka:
     #- openbmp.parsed.bmp_stat
     #- openbmp.parsed.base_attribute
     - openbmp.parsed.unicast_prefix
-    - openbmp.parsed.ls_node
+    # - openbmp.parsed.ls_node
     - openbmp.parsed.ls_link
     - openbmp.parsed.ls_prefix
-    - openbmp.parsed.l3vpn
-    - openbmp.parsed.evpn
+      #- openbmp.parsed.l3vpn
+      #- openbmp.parsed.evpn

@@ -97,6 +97,7 @@ func NewMessage(topic string, value []byte) *Message {
 	if typ == TopicInvalid {
 		return nil
 	}
+
 	bs := bytes.Split(value, []byte("\n\n"))
 	if len(bs) != 2 {
 		return nil
@@ -175,6 +176,15 @@ func (m Message) GetStr(field string) string {
 	return ""
 }
 
+func (m Message) GetOneOf(fields ...string) string {
+	for _, f := range fields {
+		if fie := m.GetStr(f); fie != "" {
+			return fie
+		}
+	}
+	return ""
+}
+
 func (m Message) GetString(field string) (string, bool) {
 	v, ok := m.Get(field)
 	if ok {
@@ -234,10 +244,6 @@ func (m Message) GetTimestamp() (time.Time, bool) {
 		return t, true
 	}
 	return time.Time{}, false
-}
-
-func (m Message) GetSequence() (int, bool) {
-	return m.GetInt("sequence")
 }
 
 func (m Message) GetUnsafe(field string) interface{} {

@@ -11,7 +11,7 @@ var (
 	goodCfg = ArangoConfig{
 		URL:      "http://127.0.0.1:8529",
 		User:     "root",
-		Password: "vojltorb",
+		Password: "voltron",
 		Database: "testDB",
 	}
 	collections = []string{prefixName, routerName, asName, linkName}
@@ -34,7 +34,7 @@ func TestNew(t *testing.T) {
 		//empty
 		{
 			NewConfig(),
-			"no servers available",
+			"ArangoDB Config has an empty field",
 			true,
 		},
 		// Bad user
@@ -75,7 +75,7 @@ func TestNew(t *testing.T) {
 			ArangoConfig{
 				URL:      "http://127.0.0.1:8529",
 				User:     "root",
-				Password: "vojltorb",
+				Password: "voltron",
 				Database: "test",
 			},
 			"",
@@ -86,7 +86,7 @@ func TestNew(t *testing.T) {
 			ArangoConfig{
 				URL:      "http://127.0.0.1:8529",
 				User:     "root",
-				Password: "vojltorb",
+				Password: "voltron",
 				Database: "test",
 			},
 			"",
@@ -198,7 +198,7 @@ func TestInsert(t *testing.T) {
 				BGPID: "test",
 				ASN:   "1",
 			},
-			"unique constraint violated",
+			"unique constraint violated - in index 0 of type primary over [\"_key\"]",
 		},
 		// Key changed
 		{
@@ -631,7 +631,7 @@ func TestQuery(t *testing.T) {
 		expectedAsn = append(expectedAsn, i.ASN)
 	}
 
-	asns, err := conn.Query("FOR r in Routers RETURN r._asn", nil, asnString)
+	asns, err := conn.Query("FOR r in Routers RETURN r.ASN", nil, asnString)
 	if err != nil {
 		t.Fatalf("Error fetching router._asn: %v", err)
 	}
@@ -645,9 +645,9 @@ func TestQuery(t *testing.T) {
 	expectedAsn2 := make([]string, 0)
 	expectedAsn2 = append(expectedAsn2, "2")
 
-	asns2, err := conn.Query("FOR r in Routers FILTER r._asn == @asn RETURN r._asn", map[string]interface{}{"asn": "2"}, asnString2)
+	asns2, err := conn.Query("FOR r in Routers FILTER r.ASN == @asn RETURN r.ASN", map[string]interface{}{"asn": "2"}, asnString2)
 	if err != nil {
-		t.Fatalf("Error fetching router._asn == 2: %v", err)
+		t.Fatalf("Error fetching router.ASN == 2: %v", err)
 	}
 
 	if !exactMatch(expectedAsn2, asns2) {
@@ -681,7 +681,7 @@ func TestQuery(t *testing.T) {
 
 	// Empty Query return
 	emptyString := new(string)
-	empty, err := conn.Query("FOR r in Routers FILTER r._asm == \"banana\" RETURN r._asn", nil, emptyString)
+	empty, err := conn.Query("FOR r in Routers FILTER r.ASN == \"banana\" RETURN r.ASN", nil, emptyString)
 	if err != nil {
 		t.Fatalf("Error fetching steve: %v", err)
 	}
@@ -705,9 +705,9 @@ func TestQueryOnObject(t *testing.T) {
 	}
 
 	rs := []*Router{
-		&Router{BGPID: "test", ASN: "1", IP: "127.0.0.1"},
-		&Router{BGPID: "test", ASN: "2", IP: "127.0.0.2"},
-		&Router{BGPID: "test", ASN: "3", IP: "127.0.0.3"},
+		&Router{BGPID: "test", ASN: "1", RouterIP: "127.0.0.1"},
+		&Router{BGPID: "test", ASN: "2", RouterIP: "127.0.0.2"},
+		&Router{BGPID: "test", ASN: "3", RouterIP: "127.0.0.3"},
 	}
 
 	for _, r := range rs {
@@ -761,21 +761,8 @@ func TestQueryOnObject(t *testing.T) {
 	// Bad operator
 	operators["ASN"] = "??"
 	_, err = conn.QueryOnObject(queryRouter2, r3, operators)
-	if err.Error() != "syntax error, unexpected ? near '? @ASN RETURN i' at position 1:33" {
+	if err.Error() != "syntax error, unexpected ? near '? @ASN RETURN i' at position 1:32" {
 		t.Errorf("Test QueryOnObj with bad operator. Expected syntax error: Received: %q", err.Error())
-	}
-
-	// Test with a router on []string
-	queryRouter3 := &Router{Interfaces: []string{"eth0", "eth1"}}
-	r4 := &Router{}
-	expectedRouters3 := []*Router{}
-
-	routerList3, err := conn.QueryOnObject(queryRouter3, r4, map[string]string{})
-	if err.Error() != "Unsupported type: slice" {
-		t.Errorf("Expected error on QueryOnObject")
-	}
-	if !exactMatch(expectedRouters3, routerList3) {
-		t.Errorf("Test QueryOnObj Router failed. Expected: %v. Recieved: %v", expectedRouters3, routerList3)
 	}
 
 	//Test with a link that returns 2 links

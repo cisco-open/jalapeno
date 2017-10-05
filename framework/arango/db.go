@@ -12,6 +12,10 @@ import (
 	log "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
 )
 
+var (
+	ErrEmptyConfig = errors.New("ArangoDB Config has an empty field")
+)
+
 type ArangoConfig struct {
 	URL      string `desc:"Arangodb server URL"`
 	User     string `desc:"Arangodb server username"`
@@ -35,6 +39,9 @@ var (
 
 func New(cfg ArangoConfig) (ArangoConn, error) {
 	// Connect to DB
+	if cfg.URL == "" || cfg.User == "" || cfg.Password == "" || cfg.Database == "" {
+		return ArangoConn{}, ErrEmptyConfig
+	}
 	conn, err := http.NewConnection(http.ConnectionConfig{
 		Endpoints: []string{cfg.URL},
 	})
@@ -194,6 +201,7 @@ func (a *ArangoConn) Insert(i DBObject) error {
 	if err != nil {
 		return err
 	}
+
 	if prevKey != "" && prevKey != i.GetKey() {
 		return ErrKeyChange
 	}

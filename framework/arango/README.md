@@ -1,3 +1,6 @@
+# Arango Version
+[arangodb/arangodb:3.2.2](https://hub.docker.com/r/arangodb/arangodb/tags/)
+
 # Arango Tutorial
 
 [Example Datasets](https://www.arangodb.com/graphcourse_demodata_arangodb-1/)

@@ -2,16 +2,14 @@ package kafka
 
 import (
 	"errors"
-	"fmt"
-	"log"
 	"math/rand"
 	"time"
 
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/handler"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/openbmp"
-
 	"github.com/Shopify/sarama"
 	cluster "github.com/bsm/sarama-cluster"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/handler"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/openbmp"
 )
 
 func init() {
@@ -59,8 +57,6 @@ func New(cfg Config, hndlr handler.Handler) (*Consumer, error) {
 	c.Config.Consumer.Return.Errors = true
 	c.Config.Group.Return.Notifications = true
 	c.Config.Group.PartitionStrategy = cluster.StrategyRoundRobin
-	fmt.Printf("%+v\n", c.Config.Net)
-	//c.Config.Group.Session.Timeout = 10 * time.Second
 	c.Config.Config.Consumer.Offsets.Initial = sarama.OffsetOldest
 	c.Handler = hndlr
 	return c, nil
@@ -97,16 +93,15 @@ func (c *Consumer) Start() error {
 		case err, more := <-consumer.Errors():
 			// TODO: add error/notification channel.
 			if more {
-				log.Printf("Error: %s\n", err.Error())
+				log.Errorf("Error: %s\n", err.Error())
 			}
 		case ntf, more := <-consumer.Notifications():
 			if more {
-				log.Printf("Rebalanced: %+v\n", ntf)
+				log.Infof("Rebalanced: %+v\n", ntf)
 			}
 		case <-c.stop:
-			log.Println("Closing Consumer...")
 			err := c.Consumer.Close()
-			log.Println("Consumer Closed...")
+			log.Infof("Consumer Closed...")
 			return err
 		}
 	}

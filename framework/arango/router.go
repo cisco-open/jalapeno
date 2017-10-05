@@ -14,13 +14,17 @@ type Router struct {
 }
 
 func (r Router) GetKey() string {
-	return r.Key
+	return fmt.Sprintf("%s_%s", r.BGPID, r.ASN)
+}
+
+func (r Router) GetID() string {
+	return fmt.Sprintf("%s/%s", r.GetType(), r.GetKey())
 }
 
 func (r *Router) SetKey() error {
 	ret := ErrKeyInvalid
 	if r.BGPID != "" && r.ASN != "" {
-		r.Key = fmt.Sprintf("%s_%s", r.BGPID, r.ASN)
+		r.Key = r.GetKey()
 		ret = nil
 	}
 	return ret

@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/openbmp"
 )
 
@@ -18,13 +19,11 @@ type Handler interface {
 	Handle(*openbmp.Message)
 	Register(topic openbmp.Topic, f HandlerFunc)
 	RegisterDefault(f HandlerFunc)
-	Debug() // TODO: Will Remove
 }
 
 type DefaultHandler struct {
-	fmap map[openbmp.Topic]HandlerFunc
-	def  HandlerFunc
-
+	fmap     map[openbmp.Topic]HandlerFunc
+	def      HandlerFunc
 	errthing map[string]map[string][]*openbmp.Message
 }
 
@@ -37,19 +36,9 @@ func NewDefault() *DefaultHandler {
 }
 
 func (h *DefaultHandler) Handle(m *openbmp.Message) {
-	fmt.Println(m)
+	log.WithField("Mess", m).Debug("Handle")
 	index++
-	seqN, _ = m.GetSequence()
-	return
-	if f, ok := h.fmap[m.Topic]; ok {
-		f(m)
-		return
-	}
-	if h.def != nil {
-		h.def(m)
-		return
-	}
-	h.Def(m)
+	seqN, _ = m.GetInt("sequence")
 }
 
 func (h *DefaultHandler) Register(topic openbmp.Topic, f HandlerFunc) {
@@ -61,9 +50,7 @@ func (h *DefaultHandler) RegisterDefault(f HandlerFunc) {
 }
 
 func (h *DefaultHandler) Debug() {
-	//h.TestPrint()
-	fmt.Printf("Index: %v, SeqN: %v\n", index, seqN)
-
+	log.Debugf("Index: %v, SeqN: %v\n", index, seqN)
 }
 
 func (h *DefaultHandler) TestPrint() {
@@ -100,7 +87,7 @@ func (h *DefaultHandler) TestPrint() {
 }
 
 func (h *DefaultHandler) Def(m *openbmp.Message) {
-	fmt.Println(m)
+	log.WithField("Message", m).Debug()
 	for k, v := range m.Fields {
 		if _, ok := h.errthing[k]; !ok {
 			h.errthing[k] = map[string][]*openbmp.Message{}

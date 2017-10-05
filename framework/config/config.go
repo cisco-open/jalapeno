@@ -27,7 +27,6 @@ type GlobalConfig struct {
 type FrameworkConfig struct {
 	Kafka  kafka.Config
 	Arango arango.ArangoConfig
-	Debug  bool
 }
 
 func InitGlobalCfg() *GlobalConfig {

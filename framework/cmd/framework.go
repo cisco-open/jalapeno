@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/stephenrlouie/service"
@@ -36,15 +35,22 @@ func FrameworkExit(err error) {
 }
 
 func frameworkRun(cmd *cobra.Command, args []string) {
+	var globalErr error
+	defer func() {
+		FrameworkExit(globalErr)
+	}()
+
 	icfg, err := config.GetConfig(config.InitFrameworkCfg())
 	if err != nil {
-		FrameworkExit(err)
+		globalErr = err
+		return
 	}
 	cfg := icfg.(*config.FrameworkConfig)
 
 	jcfg, err := config.GetConfig(config.InitGlobalCfg())
 	if err != nil {
-		FrameworkExit(err)
+		globalErr = err
+		return
 	}
 	gcfg := jcfg.(*config.GlobalConfig)
 	log.NewLogr(gcfg.Log)
@@ -52,34 +58,21 @@ func frameworkRun(cmd *cobra.Command, args []string) {
 	serviceGroup := service.New()
 	serviceGroup.HandleSigint(nil)
 	var hndlr handler.Handler = handler.NewDefault()
-	if len(cfg.Arango.URL) != 0 && len(cfg.Arango.Database) != 0 {
-		arangoDB, err := arango.New(cfg.Arango)
-		if err != nil && !cfg.Debug {
-			FrameworkExit(err)
-		} else if !cfg.Debug {
-			hndlr = handler.NewArango(arangoDB)
-		}
+	arangoDB, err := arango.New(cfg.Arango)
+	if err != nil {
+		globalErr = err
+		return
 	}
-
-	if cfg.Debug && len(cfg.Kafka.Brokers) == 0 {
-		cfg.Kafka.Brokers = []string{"10.86.204.8:9092"}
-	}
+	hndlr = handler.NewArango(arangoDB)
 
 	consumer, err := kafka.New(cfg.Kafka, hndlr)
 	if err != nil {
-		FrameworkExit(err)
+		globalErr = err
+		return
 	}
+
 	consumer.SetHandler(hndlr)
 	serviceGroup.Add(consumer)
 	serviceGroup.Start()
-
-	if cfg.Debug { // THIS IS FOR DEV ONLY.
-		time.Sleep(20 * time.Second)
-		consumer.Handler.Debug()
-		go func() {
-			time.Sleep(100 * time.Millisecond)
-			serviceGroup.Kill()
-		}()
-	}
 	serviceGroup.Wait()
 }

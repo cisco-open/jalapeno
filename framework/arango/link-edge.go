@@ -1,32 +1,30 @@
 package arango
 
-import (
-	"fmt"
-	"strings"
-)
+import "fmt"
 
 const linkName = "LinkEdges"
 
 type LinkEdge struct {
-	From        string  `json:"_from,omitempty"`
-	To          string  `json:"_to,omitempty"`
-	Key         string  `json:"_key,omitempty"`
-	FromIP      string  `json:"FromIP"`
-	ToIP        string  `json:"ToIP"`
-	Netmask     string  `json:"Netmask"`
-	Labels      []int   `json:"Labels"`
-	Latency     int     `json:"Latency"`
-	Utilization float32 `json:"Utilization"`
+	From    string `json:"_from,omitempty"`
+	To      string `json:"_to,omitempty"`
+	Key     string `json:"_key,omitempty"`
+	FromIP  string `json:"FromIP,omitempty"`
+	ToIP    string `json:"ToIP,omitempty"`
+	Netmask string `json:"Netmask,omitempty"`
+	Label   string `json:"Label,omitempty"`
+	Latency int    `json:"Latency,omitempty"`
+	// ASPath ???
+	Utilization float32 `json:"Utilization,omitempty"`
 }
 
 func (l LinkEdge) GetKey() string {
-	return l.Key
+	return fmt.Sprintf("%s_%s", l.FromIP, l.ToIP) // tmp
 }
 
 func (l *LinkEdge) SetKey() error {
 	ret := ErrKeyInvalid
 	if l.From != "" && l.To != "" && l.FromIP != "" && l.ToIP != "" {
-		l.Key = fmt.Sprintf("%s_%s_%s_%s", strings.Replace(l.From, "/", "", -1), strings.Replace(l.To, "/", "", -1), l.FromIP, l.ToIP) // tmp
+		l.Key = l.GetKey()
 		ret = nil
 	}
 	return ret
@@ -34,6 +32,10 @@ func (l *LinkEdge) SetKey() error {
 
 func (l LinkEdge) GetType() string {
 	return linkName
+}
+
+func (l LinkEdge) GetID() string {
+	return fmt.Sprintf("%s/%s", l.GetType(), l.GetKey())
 }
 
 func (l *LinkEdge) SetEdge(to DBObject, from DBObject) {

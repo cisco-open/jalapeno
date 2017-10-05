@@ -14,22 +14,28 @@ type PrefixEdge struct {
 	NextHop     string   `json:"NextHop,omitempty"`
 	InterfaceIP string   `json:"InterfaceIP,omitempty"`
 	ASPath      []string `json:"ASPath,omitempty"`
-	Labels      []int    `json:"Labels,omitempty"`
+	Labels      []string `json:"Labels,omitempty"`
 	BGPPolicy   string   `json:"BGPPolicy,omitempty"`
 	Latency     int      `json:"Latency,omitempty"`
+	Utilization float32  `json:"Utilization"`
 }
 
 func (a PrefixEdge) GetKey() string {
-	return a.Key
+	return fmt.Sprintf("%s_%s", strings.Replace(a.From, "/", "_", -1), strings.Replace(a.To, "/", "_", -1))
 }
 
 func (a *PrefixEdge) SetKey() error {
 	ret := ErrKeyInvalid
 	if a.From != "" && a.To != "" {
-		a.Key = fmt.Sprintf("%s_%s", strings.Replace(a.From, "/", "_", -1), strings.Replace(a.To, "/", "_", -1)) // tmp
+		a.Key = a.GetKey()
 		ret = nil
 	}
 	return ret
+}
+
+func (a PrefixEdge) GetID() string {
+	return fmt.Sprintf("%s/%s", a.GetType(), a.GetKey())
+
 }
 
 func (a PrefixEdge) GetType() string {
