@@ -581,6 +581,149 @@ func TestUpsert(t *testing.T) {
 	}
 }
 
+func TestUpsertSafe(t *testing.T) {
+	conn, err := New(goodCfg)
+	defer cleanUp(conn)
+	if err != nil {
+		t.Fatalf("Failed to NewArango: %v", err)
+	}
+	tests := []struct {
+		obj         DBObject
+		upsertObj   DBObject
+		expectedObj DBObject
+		fetchKey    string
+		fetch2Key   string
+		err         string
+	}{
+		// Valid keeping an old field
+		{
+			&Router{
+				BGPID: "test",
+				ASN:   "1",
+				Name:  "original",
+			},
+			&Router{
+				BGPID:    "test",
+				ASN:      "1",
+				RouterIP: "haha",
+			},
+			&Router{
+				BGPID:    "test",
+				ASN:      "1",
+				RouterIP: "haha",
+				Name:     "original",
+			},
+			"test_1",
+			"test_1",
+			"",
+		},
+		// Valid keeping an old field
+		{
+			&Router{
+				BGPID: "test",
+				ASN:   "11",
+				Name:  "original",
+			},
+			&Router{
+				BGPID: "test",
+				ASN:   "11",
+				Name:  "updated",
+			},
+			&Router{
+				BGPID: "test",
+				ASN:   "11",
+				Name:  "updated",
+			},
+			"test_11",
+			"test_11",
+			"",
+		},
+		//No Key to update
+		{
+			&Router{
+				BGPID: "test",
+				ASN:   "2",
+			},
+			&Router{},
+			&Router{},
+			"test_2",
+			"test_2",
+			ErrKeyInvalid.Error(),
+		},
+		//New document on update
+		{
+			&Router{
+				BGPID: "test",
+				ASN:   "3",
+			},
+			&Router{
+				BGPID: "test",
+				ASN:   "4",
+			},
+			&Router{
+				BGPID: "test",
+				ASN:   "4",
+			},
+			"test_3",
+			"test_4",
+			"",
+		},
+		// Key change
+		{
+			&Router{
+				BGPID: "test",
+				ASN:   "5",
+			},
+			&Router{
+				Key:   "change",
+				BGPID: "test",
+				ASN:   "6",
+			},
+			&Router{},
+			"test_5",
+			"test_6",
+			ErrKeyChange.Error(),
+		},
+	}
+
+	for i, test := range tests {
+		err := conn.Insert(test.obj)
+		if err != nil {
+			t.Fatalf("UpsertSafe Test %d: Failed on insert: %v", i, err)
+		}
+
+		retObj := &Router{Key: test.fetchKey}
+		err = conn.Read(retObj)
+		if err != nil {
+			t.Errorf("UpsertSafe Test %d: Failed to fetch original object %v", i, err)
+		}
+		if !reflect.DeepEqual(retObj, test.obj.(*Router)) {
+			t.Errorf("UpsertSafe Test %d: Failed on match. \nOriginal: %+v\nReturned: %+v\n", i, test.obj, retObj)
+		}
+
+		err = conn.UpsertSafe(test.upsertObj)
+		if err != nil {
+			if err.Error() != test.err {
+				t.Errorf("UpsertSafe Test %d: Failed, Expected: %q Received: %q", i, test.err, err.Error())
+			}
+		} else {
+			// equivalent of nil for now
+			if test.err != "" {
+				t.Errorf("UpsertSafe Test %d: Failed, Expected %q, but we saw success", i, test.err)
+			}
+
+			ret2Obj := &Router{Key: test.fetch2Key}
+			err = conn.Read(ret2Obj)
+			if err != nil {
+				t.Errorf("UpsertSafe Test %d: Failed to fetch updated object %v", i, err)
+			}
+			if !reflect.DeepEqual(ret2Obj, test.upsertObj.(*Router)) {
+				t.Errorf("UpsertSafe Test %d: Failed on updated match. \nOriginal: %+v\nReturned: %+v\n", i, test.upsertObj, ret2Obj)
+			}
+		}
+	}
+}
+
 func TestQuery(t *testing.T) {
 	conn, err := New(goodCfg)
 	defer cleanUp(conn)

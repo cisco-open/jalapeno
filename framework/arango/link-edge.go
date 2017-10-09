@@ -17,28 +17,45 @@ type LinkEdge struct {
 	Utilization float32 `json:"Utilization,omitempty"`
 }
 
-func (l LinkEdge) GetKey() string {
-	return fmt.Sprintf("%s_%s", l.FromIP, l.ToIP) // tmp
+func (l LinkEdge) GetKey() (string, error) {
+	if l.Key == "" {
+		return l.makeKey()
+	}
+	return l.Key, nil
 }
 
 func (l *LinkEdge) SetKey() error {
-	ret := ErrKeyInvalid
-	if l.From != "" && l.To != "" && l.FromIP != "" && l.ToIP != "" {
-		l.Key = l.GetKey()
-		ret = nil
+	k, err := l.makeKey()
+	if err != nil {
+		return err
 	}
-	return ret
+	l.Key = k
+	return nil
+}
+
+func (l *LinkEdge) makeKey() (string, error) {
+	err := ErrKeyInvalid
+	ret := ""
+	if l.FromIP != "" && l.ToIP != "" {
+		ret = fmt.Sprintf("%s_%s", l.FromIP, l.ToIP) // tmp
+		err = nil
+	}
+	return ret, err
 }
 
 func (l LinkEdge) GetType() string {
 	return linkName
 }
 
-func (l LinkEdge) GetID() string {
-	return fmt.Sprintf("%s/%s", l.GetType(), l.GetKey())
-}
-
-func (l *LinkEdge) SetEdge(to DBObject, from DBObject) {
-	l.To = to.GetKey()
-	l.From = from.GetKey()
+func (l *LinkEdge) SetEdge(to DBObject, from DBObject) error {
+	var err error
+	l.To, err = GetID(to)
+	if err != nil {
+		return err
+	}
+	l.From, err = GetID(from)
+	if err != nil {
+		return err
+	}
+	return nil
 }

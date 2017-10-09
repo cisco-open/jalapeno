@@ -20,29 +20,45 @@ type PrefixEdge struct {
 	Utilization float32  `json:"Utilization"`
 }
 
-func (a PrefixEdge) GetKey() string {
-	return fmt.Sprintf("%s_%s", strings.Replace(a.From, "/", "_", -1), strings.Replace(a.To, "/", "_", -1))
+func (a PrefixEdge) GetKey() (string, error) {
+	if a.Key == "" {
+		return a.makeKey()
+	}
+	return a.Key, nil
 }
 
 func (a *PrefixEdge) SetKey() error {
-	ret := ErrKeyInvalid
-	if a.From != "" && a.To != "" {
-		a.Key = a.GetKey()
-		ret = nil
+	k, err := a.makeKey()
+	if err != nil {
+		return err
 	}
-	return ret
+	a.Key = k
+	return nil
 }
 
-func (a PrefixEdge) GetID() string {
-	return fmt.Sprintf("%s/%s", a.GetType(), a.GetKey())
-
+func (a *PrefixEdge) makeKey() (string, error) {
+	err := ErrKeyInvalid
+	ret := ""
+	if a.From != "" && a.To != "" {
+		ret = fmt.Sprintf("%s_%s", strings.Replace(a.From, "/", "_", -1), strings.Replace(a.To, "/", "_", -1))
+		err = nil
+	}
+	return ret, err
 }
 
 func (a PrefixEdge) GetType() string {
 	return asName
 }
 
-func (a *PrefixEdge) SetEdge(to DBObject, from DBObject) {
-	a.To = fmt.Sprintf("%s/%s", to.GetType(), to.GetKey())
-	a.From = fmt.Sprintf("%s/%s", from.GetType(), from.GetKey())
+func (a *PrefixEdge) SetEdge(to DBObject, from DBObject) error {
+	var err error
+	a.To, err = GetID(to)
+	if err != nil {
+		return err
+	}
+	a.From, err = GetID(from)
+	if err != nil {
+		return err
+	}
+	return nil
 }

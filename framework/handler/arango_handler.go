@@ -71,30 +71,55 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 
 	if err := a.db.Upsert(l); err != nil {
 		log.WithError(err).Error("Error on upserting router")
+	} else {
+		key, _ := l.GetKey()
+		log.Info("Upserted Router: %s", key)
 	}
+
 	if err := a.db.Insert(r); err != nil {
+		log.WithError(err).Error("Error on inserting router")
+	} else {
+		key, _ := r.GetKey()
+		log.Info("Upserted remote Router: %s", key)
+	}
+
+	rID, err := arango.GetID(r)
+	if err != nil {
+		log.WithError(err).Error("Could not get To ID")
+		return
+	}
+	lID, err := arango.GetID(l)
+	if err != nil {
+		log.WithError(err).Error("Could not get From ID")
+		return
 	}
 
 	ed := &arango.LinkEdge{
-		To:     r.GetID(),
-		From:   l.GetID(),
+		To:     rID,
+		From:   lID,
 		FromIP: m.GetStr("local_ip"),
 		ToIP:   m.GetStr("remote_ip"),
 	}
 
 	if err := a.db.Insert(ed); err != nil {
+		log.WithError(err).Error("Error on inserting Link Edge")
+	} else {
+		key, _ := ed.GetKey()
+		log.Info("Insert Edge: %s", key)
 	}
 
 	ed = &arango.LinkEdge{
-		From:   r.GetID(),
-		To:     l.GetID(),
+		From:   rID,
+		To:     lID,
 		ToIP:   m.GetStr("local_ip"),
 		FromIP: m.GetStr("remote_ip"),
 	}
 	if err := a.db.Insert(ed); err != nil {
+		log.WithError(err).Error("Error on inserting Link Edge")
+	} else {
+		key, _ := ed.GetKey()
+		log.Info("Insert Edge: %s", key)
 	}
-
-	log.Infof("Added: \n\tRouter %v\n\tEdge %v\n\tRouter %v\n\n", l.GetKey(), ed.GetKey(), r.GetKey())
 }
 
 func (a *ArangoHandler) HandleCollector(m *openbmp.Message) {
@@ -132,18 +157,26 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 	// TODO... do we add router here???
 	if rKey == "" {
 		if rKey = a.db.GetRouterKeyFromInterfaceIP(m.GetStr("nexthop")); rKey == "" {
-			rKey = arango.Router{
+			var err error
+			rKey, err = arango.GetID(&arango.Router{
 				ASN:   m.GetStr("peer_asn"),
 				BGPID: m.GetStr("peer_ip"),
-			}.GetID()
+			})
+			if err != nil {
+				log.WithError(err).Error("Failed to insert Router")
+			}
 		}
 	}
 	labels := strings.Split(m.GetStr("labels"), ",")
 	if len(labels) == 1 && labels[0] == "" {
 		labels = nil
 	}
+	pID, err := arango.GetID(p)
+	if err != nil {
+		log.WithError(err).Error("Failed to create PrefixEdge ID")
+	}
 	ed := &arango.PrefixEdge{
-		To:   p.GetID(),
+		To:   pID,
 		From: rKey,
 	}
 
@@ -152,7 +185,7 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 			NextHop:     m.GetStr("nexthop"),
 			InterfaceIP: m.GetStr("peer_ip"),
 			ASPath:      strings.Split(m.GetStr("as_path"), " "),
-			To:          p.GetID(),
+			To:          pID,
 			From:        rKey,
 			Labels:      labels,
 		}

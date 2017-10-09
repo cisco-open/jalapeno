@@ -10,21 +10,30 @@ type Prefix struct {
 	Length int    `json:"Length,omitempty"`
 }
 
-func (p Prefix) GetKey() string {
-	return fmt.Sprintf("%s_%d", p.Prefix, p.Length)
+func (p Prefix) GetKey() (string, error) {
+	if p.Key == "" {
+		return p.makeKey()
+	}
+	return p.Key, nil
 }
 
 func (p *Prefix) SetKey() error {
-	ret := ErrKeyInvalid
-	if p.Prefix != "" && p.Length != 0 {
-		p.Key = p.GetKey()
-		ret = nil
+	k, err := p.makeKey()
+	if err != nil {
+		return err
 	}
-	return ret
+	p.Key = k
+	return nil
 }
 
-func (p Prefix) GetID() string {
-	return fmt.Sprintf("%s/%s", p.GetType(), p.GetKey())
+func (p *Prefix) makeKey() (string, error) {
+	err := ErrKeyInvalid
+	ret := ""
+	if p.Prefix != "" && p.Length != 0 {
+		ret = fmt.Sprintf("%s_%d", p.Prefix, p.Length)
+		err = nil
+	}
+	return ret, err
 }
 
 func (p Prefix) GetType() string {

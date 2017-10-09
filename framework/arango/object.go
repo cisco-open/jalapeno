@@ -1,6 +1,9 @@
 package arango
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 const (
 	graphName = "topology"
@@ -12,9 +15,18 @@ var (
 )
 
 type DBObject interface {
-	GetKey() string
+	GetKey() (string, error)
 	SetKey() error
+	makeKey() (string, error)
 	GetType() string
+}
+
+func GetID(i DBObject) (string, error) {
+	k, err := i.GetKey()
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%s/%s", i.GetType(), k), nil
 }
 
 type EdgeObject interface {

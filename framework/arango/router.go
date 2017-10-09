@@ -13,21 +13,30 @@ type Router struct {
 	ASN      string `json:"ASN,omitempty"`
 }
 
-func (r Router) GetKey() string {
-	return fmt.Sprintf("%s_%s", r.BGPID, r.ASN)
-}
-
-func (r Router) GetID() string {
-	return fmt.Sprintf("%s/%s", r.GetType(), r.GetKey())
+func (r Router) GetKey() (string, error) {
+	if r.Key == "" {
+		return r.makeKey()
+	}
+	return r.Key, nil
 }
 
 func (r *Router) SetKey() error {
-	ret := ErrKeyInvalid
-	if r.BGPID != "" && r.ASN != "" {
-		r.Key = r.GetKey()
-		ret = nil
+	k, err := r.makeKey()
+	if err != nil {
+		return err
 	}
-	return ret
+	r.Key = k
+	return nil
+}
+
+func (r *Router) makeKey() (string, error) {
+	err := ErrKeyInvalid
+	ret := ""
+	if r.BGPID != "" && r.ASN != "" {
+		ret = fmt.Sprintf("%s_%s", r.BGPID, r.ASN)
+		err = nil
+	}
+	return ret, err
 }
 
 func (r Router) GetType() string {

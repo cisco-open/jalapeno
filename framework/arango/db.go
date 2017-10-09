@@ -14,6 +14,8 @@ import (
 
 var (
 	ErrEmptyConfig = errors.New("ArangoDB Config has an empty field")
+	ErrUpSafe      = errors.New("Failed to UpdateSafe. Requires *DBObjects")
+	ErrNilObject   = errors.New("Failed to operate on NIL object")
 )
 
 type ArangoConfig struct {
@@ -196,14 +198,13 @@ func ensureEdgeCollection(g driver.Graph, name string, from []string, to []strin
 
 // Interfaces must set their own key if they want to manage their own keys
 func (a *ArangoConn) Insert(i DBObject) error {
-	prevKey := i.GetKey()
-	err := i.SetKey()
-	if err != nil {
-		return err
+	if i == nil {
+		return ErrNilObject
 	}
 
-	if prevKey != "" && prevKey != i.GetKey() {
-		return ErrKeyChange
+	_, err := getAndSetKey(i)
+	if err != nil {
+		return err
 	}
 
 	col, err := a.findCollection(i.GetType())
@@ -216,13 +217,13 @@ func (a *ArangoConn) Insert(i DBObject) error {
 }
 
 func (a *ArangoConn) Update(i DBObject) error {
-	prevKey := i.GetKey()
-	err := i.SetKey()
+	if i == nil {
+		return ErrNilObject
+	}
+
+	key, err := getAndSetKey(i)
 	if err != nil {
 		return err
-	}
-	if prevKey != "" && prevKey != i.GetKey() {
-		return ErrKeyChange
 	}
 
 	col, err := a.findCollection(i.GetType())
@@ -230,41 +231,92 @@ func (a *ArangoConn) Update(i DBObject) error {
 		return err
 	}
 
-	_, err = col.UpdateDocument(context.Background(), i.GetKey(), i)
+	_, err = col.UpdateDocument(context.Background(), key, i)
 	return err
 }
 
 func (a *ArangoConn) Upsert(i DBObject) error {
-	prevKey := i.GetKey()
-	err := i.SetKey()
-	if err != nil {
-		return err
+	if i == nil {
+		return ErrNilObject
 	}
-	if prevKey != "" && prevKey != i.GetKey() {
-		return ErrKeyChange
-	}
-
-	col, err := a.findCollection(i.GetType())
-	if err != nil {
-		return err
-	}
-
 	// Assume update
-	_, err = col.UpdateDocument(context.Background(), i.GetKey(), i)
+	err := a.Update(i)
 	// If not found, lets add
 	if driver.IsNotFound(err) {
-		_, err = col.CreateDocument(context.Background(), i)
+		return a.Insert(i)
+	}
+	return err
+}
+
+func (a *ArangoConn) UpsertSafe(i DBObject) error {
+	if i == nil {
+		return ErrNilObject
+	}
+
+	var get DBObject
+	key, err := i.GetKey()
+	if err != nil {
+		return err
+	}
+	switch i.GetType() {
+	case routerName:
+		get = &Router{
+			Key: key,
+		}
+	case prefixName:
+		get = &Prefix{
+			Key: key,
+		}
+	case linkName:
+		get = &LinkEdge{
+			Key: key,
+		}
+	case asName:
+		get = &PrefixEdge{
+			Key: key,
+		}
+	}
+
+	err = a.Read(get)
+	if driver.IsNotFound(err) {
+		return a.Insert(i)
 	}
 	if err != nil {
 		return err
+	}
+	err = safeMerge(get, i)
+	if err != nil {
+		return err
+	}
+	return a.Upsert(i)
+}
+
+func safeMerge(original DBObject, updater DBObject) error {
+	if reflect.ValueOf(updater).Kind() != reflect.Ptr || reflect.ValueOf(original).Kind() != reflect.Ptr {
+		return ErrUpSafe
+	}
+	up := reflect.ValueOf(updater).Elem()
+	ori := reflect.ValueOf(original).Elem()
+
+	for i := 0; i < up.NumField(); i++ {
+		val := up.Field(i).Interface()
+		if val == reflect.Zero(reflect.TypeOf(val)).Interface() {
+			up.Field(i).Set(ori.Field(i))
+		}
 	}
 	return nil
 }
+
 func (a *ArangoConn) Read(i DBObject) error {
-	k := i.GetKey()
-	if k == "" {
-		return ErrKeyInvalid
+	if i == nil {
+		return ErrNilObject
 	}
+
+	k, err := i.GetKey()
+	if err != nil {
+		return err
+	}
+
 	col, err := a.findCollection(i.GetType())
 	if err != nil {
 		return err
@@ -278,10 +330,15 @@ func (a *ArangoConn) Read(i DBObject) error {
 }
 
 func (a *ArangoConn) Delete(i DBObject) error {
-	k := i.GetKey()
-	if k == "" {
-		return ErrKeyInvalid
+	if i == nil {
+		return ErrNilObject
 	}
+
+	k, err := i.GetKey()
+	if err != nil {
+		return err
+	}
+
 	col, err := a.findCollection(i.GetType())
 	if err != nil {
 		return err
@@ -292,6 +349,9 @@ func (a *ArangoConn) Delete(i DBObject) error {
 }
 
 func (a *ArangoConn) Query(q string, bind map[string]interface{}, obj interface{}) ([]interface{}, error) {
+	if obj == nil {
+		return nil, ErrNilObject
+	}
 	err := a.db.ValidateQuery(context.Background(), q)
 	if err != nil {
 		return nil, err
@@ -334,6 +394,9 @@ func (a *ArangoConn) Query(q string, bind map[string]interface{}, obj interface{
 
 // This function does not support compelx types, []string does not work. Router.Interface specifically
 func (a *ArangoConn) QueryOnObject(obj DBObject, ret interface{}, operators map[string]string) ([]interface{}, error) {
+	if obj == nil {
+		return nil, ErrNilObject
+	}
 	query := fmt.Sprintf("FOR i in %s RETURN i", obj.GetType())
 
 	filter, binds, err := genFilter(obj, operators)
@@ -393,4 +456,24 @@ func (a *ArangoConn) findCollection(n string) (driver.Collection, error) {
 		return val, ErrCollectionNotFound
 	}
 	return val, nil
+}
+
+func getAndSetKey(i DBObject) (string, error) {
+	prevKey, err := i.GetKey()
+	if err != nil {
+		return "", err
+	}
+	err = i.SetKey()
+	if err != nil {
+		return "", err
+	}
+	key, err := i.GetKey()
+	if err != nil {
+		return "", err
+	}
+
+	if prevKey != key {
+		return "", ErrKeyChange
+	}
+	return key, nil
 }
