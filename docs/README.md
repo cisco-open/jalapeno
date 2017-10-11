@@ -3,6 +3,7 @@
 - [Use Cases](https://cisco.box.com/s/lrx2ch1lw6uea3ju8adxzf6ylljw9zb0)
 - [CI Plan](https://cisco.box.com/s/9ux8j18zl1fg9p4t97kpij6hwzsqe9uk)
 - [Architecture](https://cisco.box.com/s/vkjtjamvssxhnsejgesffrxcx3df0grj)
+- [Deployment Architecture](https://cisco.box.com/s/ar4pvin76lsy1l9obhaobv5ovngpy5ln)
 - [Goals](https://cisco.box.com/s/x9q40igydif1qsocbqqmkj4a5lruab0v)
 
 # Repository details
