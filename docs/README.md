@@ -5,6 +5,7 @@
 - [Architecture](https://cisco.box.com/s/vkjtjamvssxhnsejgesffrxcx3df0grj)
 - [Deployment Architecture](https://cisco.box.com/s/ar4pvin76lsy1l9obhaobv5ovngpy5ln)
 - [Goals](https://cisco.box.com/s/x9q40igydif1qsocbqqmkj4a5lruab0v)
+- [MVP1 Demo Script](https://cisco.box.com/s/iv33mfhkz3sdmce6o4gu9wd1rzef8ayp)
 
 # Repository details
 
