@@ -129,18 +129,23 @@ You can write common queries in the arango/queries/index.js file. This microserv
 - click "Add Service"
 - Enter /queries in the "Mount" field
 - click the "zip" tab and select `arango/queries.zip`
-- [example]: Go to http://127.0.0.1:8529/_db/voltron/queries/edges/10.1.1.3_100000/ips and you should see all the ip address of the interfaces on the router with `_key=10.1.1.3_100000`
+- [example]: Go to http://127.0.0.1:8529/_db/voltron/latency/edges/10.1.1.3_100000/ips and you should see all the ip address of the interfaces on the router with `_key=10.1.1.3_100000`
 
-## Latency Query
+## Latency (LinkEdge) Query
 I added an endpoint to our Arango in the BXB lab for editing latency. You can add it yourself by following the instructions above.
 
-The endpoint is `/latency/:from/:to/:latency` where :from = FromIP, :to=ToIP, :latency=latency in ms
+The endpoint is `/queries/linkedges/:from/:to/:latency` where :from = FromIP, :to=ToIP, :latency=latency in ms
 To add/update the latency (to 20ms) between 10.1.1.1 and 10.1.1.2, hit the following url (will update the values on the lab arango):
 
-`http://10.86.204.8:8529/_db/voltron/queries/latency/10.1.1.1/10.1.1.2/20`
+`http://10.86.204.8:8529/_db/voltron/queries/linkedges/10.1.1.1/10.1.1.2/20`
 
 (Note this most likely change to a PUT request in the future.)
-You can check the latency by going to `http://10.86.204.8:8529/_db/voltron/queries/latency/10.1.1.1/10.1.1.2` (will return 0 if not set).
+You can check the latency by going to `http://10.86.204.8:8529/_db/voltron/queries/linkedges/10.1.1.1/10.1.1.2` (will return 0 if not set).
+
+## Latency (PrefixEdge) Query
+The French Press demo will add latency on PrefixEdges. The end point is similarly `/queries/prefixedges/:interfaceIP/:prefix/:latency`
+If router p3 knows of a prefix `10.10.10.0/24` that is available through it's peer `2.2.2.3` with a latency of 20ms, the following request is used:
+`http://10.86.204.8:8529/_db/voltron/queries/prefixedges/2.2.2.3/10.10.10.0_24/20`. 
 
 # Directory Structure
 ## openbmp/
