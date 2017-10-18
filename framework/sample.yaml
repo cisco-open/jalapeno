@@ -1,11 +1,12 @@
 ---
+ASN: 100000
 Arango:
   URL:      http://127.0.0.1:8529
   User:     root
   Password: voltron
   Database: voltron
 Log:
-  Level: info
+  Level: debug
 Kafka:
   Brokers:
     - 10.86.204.8:9092
@@ -16,8 +17,6 @@ Kafka:
     #- openbmp.parsed.bmp_stat
     #- openbmp.parsed.base_attribute
     - openbmp.parsed.unicast_prefix
-    # - openbmp.parsed.ls_node
+    #- openbmp.parsed.ls_node
     - openbmp.parsed.ls_link
-    - openbmp.parsed.ls_prefix
-      #- openbmp.parsed.l3vpn
-      #- openbmp.parsed.evpn
+    #- openbmp.parsed.ls_prefix

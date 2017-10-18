@@ -7,7 +7,7 @@ func (a *ArangoConn) GetRouterByIP(ip string) *Router {
 	q := fmt.Sprintf("FOR r in Routers FILTER r.RouterIP == %q RETURN r", ip)
 	results, _ := a.Query(q, nil, r)
 	if len(results) > 0 {
-		return results[0].(*Router)
+		return results[len(results)-1].(*Router)
 	}
 	return nil
 }
@@ -17,10 +17,11 @@ func (a *ArangoConn) GetRouterKeyFromInterfaceIP(ip string) string {
 		return ""
 	}
 	var r string
-	q := fmt.Sprintf("FOR e in LinkEdges Filter e.FromIP == %q RETURN DISTINCT e._from", ip)
+	key := "Routers/" + ip + "%"
+	q := fmt.Sprintf("FOR e in LinkEdges Filter e.ToIP == %q OR e._to LIKE %q  RETURN DISTINCT e._to", ip, key)
 	results, _ := a.Query(q, nil, r)
-	if len(results) == 1 {
-		return results[0].(string)
+	if len(results) > 0 {
+		return results[len(results)-1].(string)
 	}
 	return ""
 

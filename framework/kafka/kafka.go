@@ -57,7 +57,7 @@ func New(cfg Config, hndlr handler.Handler) (*Consumer, error) {
 	c.Config.Consumer.Return.Errors = true
 	c.Config.Group.Return.Notifications = true
 	c.Config.Group.PartitionStrategy = cluster.StrategyRoundRobin
-	c.Config.Config.Consumer.Offsets.Initial = sarama.OffsetOldest
+	c.Config.Consumer.Offsets.Initial = sarama.OffsetOldest
 	c.Handler = hndlr
 	return c, nil
 }
@@ -84,10 +84,15 @@ func (c *Consumer) Start() error {
 			if more {
 				omsg := openbmp.NewMessage(msg.Topic, msg.Value)
 				if omsg == nil { // error
-					//	consumer.MarkOffset(msg, "") // mark message as processed
+					//consumer.MarkOffset(msg, "") // mark message as processed
 					continue
 				}
-				//consumer.MarkOffset(msg, "") // mark message as processed
+				ts, ok := omsg.GetTimestamp()
+				t := time.Date(2017, 10, 9, 20, 0, 0, 0, time.UTC)
+				if !ok || ts.Before(t) {
+					//consumer.MarkOffset(msg, "") // mark message as processed
+				}
+
 				c.Handler.Handle(omsg)
 			}
 		case err, more := <-consumer.Errors():

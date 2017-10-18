@@ -144,8 +144,8 @@ You can check the latency by going to `http://10.86.204.8:8529/_db/voltron/queri
 
 ## Latency (PrefixEdge) Query
 The French Press demo will add latency on PrefixEdges. The end point is similarly `/queries/prefixedges/:interfaceIP/:prefix/:latency`
-If router p3 knows of a prefix `10.10.10.0/24` that is available through it's peer `2.2.2.3` with a latency of 20ms, the following request is used:
-`http://10.86.204.8:8529/_db/voltron/queries/prefixedges/2.2.2.3/10.10.10.0_24/20`. 
+If router p3 knows of a prefix `10.11.170.0/23` that is available through it's peer `2.2.2.15` with a latency of 20ms, the following request is used:
+`http://10.86.204.8:8529/_db/voltron/queries/prefixedges/2.2.2.15/10.11.170.0_23/20`.
 
 # Directory Structure
 ## openbmp/

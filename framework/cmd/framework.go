@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -18,6 +19,10 @@ func init() {
 		FrameworkExit(err)
 	}
 }
+
+var (
+	ErrLocalASNRequired = errors.New("A Valid Local ASN is required")
+)
 
 var FrameworkCmd = &cobra.Command{
 	Use:   "framework",
@@ -46,6 +51,10 @@ func frameworkRun(cmd *cobra.Command, args []string) {
 		return
 	}
 	cfg := icfg.(*config.FrameworkConfig)
+	if cfg.ASN == "" {
+		globalErr = ErrLocalASNRequired
+		return
+	}
 
 	jcfg, err := config.GetConfig(config.InitGlobalCfg())
 	if err != nil {
@@ -63,7 +72,7 @@ func frameworkRun(cmd *cobra.Command, args []string) {
 		globalErr = err
 		return
 	}
-	hndlr = handler.NewArango(arangoDB)
+	hndlr = handler.NewArango(arangoDB, cfg.ASN)
 
 	consumer, err := kafka.New(cfg.Kafka, hndlr)
 	if err != nil {

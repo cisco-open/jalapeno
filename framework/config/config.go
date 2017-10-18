@@ -27,6 +27,7 @@ type GlobalConfig struct {
 type FrameworkConfig struct {
 	Kafka  kafka.Config
 	Arango arango.ArangoConfig
+	ASN    string
 }
 
 func InitGlobalCfg() *GlobalConfig {
@@ -46,7 +47,9 @@ func InitFrameworkCfg() *FrameworkConfig {
 func InitGlobalFlags(ccmd *cobra.Command, cfg interface{}) error {
 	// Add non-struct flags here
 	ccmd.PersistentFlags().String("config", "", "The configuration file")
+	ccmd.PersistentFlags().String("asn", "", "Local ASN")
 	viper.BindPFlag("config", ccmd.PersistentFlags().Lookup("config"))
+	viper.BindPFlag("asn", ccmd.PersistentFlags().Lookup("asn"))
 
 	return setupEnvAndFlags(ccmd, cfg)
 }

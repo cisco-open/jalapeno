@@ -9,7 +9,7 @@ type Router struct {
 	Name     string `json:"_name,omitempty"`
 	RouterIP string `json:"RouterIP,omitempty"`
 	BGPID    string `json:"BGPID,omitempty"`
-	IsLocal  bool   `json:"IsLocal,omitempty"`
+	IsLocal  bool   `json:"IsLocal"`
 	ASN      string `json:"ASN,omitempty"`
 }
 

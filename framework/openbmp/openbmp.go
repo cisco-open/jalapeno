@@ -185,6 +185,15 @@ func (m Message) GetOneOf(fields ...string) string {
 	return ""
 }
 
+func (m Message) GetOneOfIP(fields ...string) string {
+	for _, f := range fields {
+		if fie := m.GetStr(f); fie != "" && fie != "0.0.0.0" && fie != "::" {
+			return fie
+		}
+	}
+	return ""
+}
+
 func (m Message) GetString(field string) (string, bool) {
 	v, ok := m.Get(field)
 	if ok {
@@ -253,9 +262,10 @@ func (m Message) GetUnsafe(field string) interface{} {
 
 func (m Message) String() string {
 	var buffer bytes.Buffer
-	fmt.Fprintf(&buffer, "%s: \n", m.Topic.String())
-	for k, v := range m.Fields {
-		fmt.Fprintf(&buffer, "\t%s: %v\n", k, v)
+	heads := headers[m.Topic.String()]
+	fmt.Fprintf(&buffer, "%s:\n", m.Topic.String())
+	for i := 0; i < len(heads); i++ {
+		fmt.Fprintf(&buffer, "%d: (%s): %v\n", i+1, heads[i], m.Fields[heads[i]])
 	}
 	fmt.Fprintln(&buffer)
 	return buffer.String()

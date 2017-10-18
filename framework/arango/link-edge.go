@@ -37,7 +37,8 @@ func (l *LinkEdge) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if l.FromIP != "" && l.ToIP != "" {
-		ret = fmt.Sprintf("%s_%s", l.FromIP, l.ToIP) // tmp
+		//ret = fmt.Sprintf("%s_%s_%s_%s", strings.TrimPrefix(l.From, "Routers/"), l.FromIP, l.ToIP, strings.TrimPrefix(l.To, "Routers/")) // tmp
+		ret = fmt.Sprintf("%s_%s", l.FromIP, l.ToIP)
 		err = nil
 	}
 	return ret, err
