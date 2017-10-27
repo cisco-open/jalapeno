@@ -17,7 +17,7 @@ build:
 	CGO_ENABLED=0 go build --ldflags '${EXTLDFLAGS}' -o ${BINARY} wwwin-github.cisco.com/spa-ie/voltron-redux/framework
 
 linux:
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./bin/mu wwwin-github.cisco.com/spa-ie/voltron-redux/framework
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./bin/framework wwwin-github.cisco.com/spa-ie/voltron-redux/framework
 
 fast:
 	mkdir -p bin

@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"errors"
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -67,6 +68,7 @@ func (c *Consumer) SetHandler(h handler.Handler) {
 }
 
 func (c *Consumer) Start() error {
+	fmt.Println("Starting...")
 	consumer, err := cluster.NewConsumer(c.Brokers, c.GroupName, c.Topics, c.Config)
 	if err != nil {
 		return err
@@ -84,15 +86,10 @@ func (c *Consumer) Start() error {
 			if more {
 				omsg := openbmp.NewMessage(msg.Topic, msg.Value)
 				if omsg == nil { // error
-					//consumer.MarkOffset(msg, "") // mark message as processed
+					consumer.MarkOffset(msg, "") // mark message as processed
 					continue
 				}
-				ts, ok := omsg.GetTimestamp()
-				t := time.Date(2017, 10, 9, 20, 0, 0, 0, time.UTC)
-				if !ok || ts.Before(t) {
-					//consumer.MarkOffset(msg, "") // mark message as processed
-				}
-
+				consumer.MarkOffset(msg, "") // mark message as processed
 				c.Handler.Handle(omsg)
 			}
 		case err, more := <-consumer.Errors():

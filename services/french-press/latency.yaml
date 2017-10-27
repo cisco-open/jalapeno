@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1 
+kind: Deployment
+metadata:
+  name: voltron-latency-svc
+  labels:
+    app: voltron-latency
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voltron-latency-svc
+  template:
+    metadata:
+      labels:
+        app: voltron-latency-svc
+    spec:
+      containers:
+      - name: latency
+        image: dockerhub.cisco.com/gspie-dev-docker/latency:latest
+        args:
+          - --arangodbEndpoint
+          - http://arangodb.default.svc.cluster.local:8529
+          - --kafkaEndpoint
+          - 10.86.204.8:9092

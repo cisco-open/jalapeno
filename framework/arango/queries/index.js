@@ -113,6 +113,36 @@ router.get("/prefixedges/:fromIP/:toPrefix", function(req, res) {
   res.send(keys);
 }).description("Get latency of prefixedge");
 
+const host2PrefixMap = {"10.11.0.1": "10.11.0.0_24", "10.12.0.1": "10.12.0.0_24", "10.13.0.1": "10.13.0.0_24"};
+// Add Custom Queries here. path segments preficed by ':' are vars
+// available in the req.pathParams object.
+router.get('/labels/:router/:host', function (req, res) {
+  var router = req.pathParams.router;
+  var host = req.pathParams.host;
+  if (host in host2PrefixMap) {
+    host = host2PrefixMap[host];
+  }
+  if (host.indexOf("_24") === -1) {
+    host = host + "_24";
+  }
+  const keys = db._query(`
+    FOR v,e
+    IN OUTBOUND SHORTEST_PATH
+    @router TO @host
+GRAPH 'topology'
+OPTIONS {weightAttribute: "Latency", defaultWeight: 1000}
+return e.Label
+`, {'router': "Routers/" + router, 'host': "Prefixes/" + host });
+  var labels = [];
+  const docs = keys["_documents"];
+  for (var k in docs) {
+    if (!(docs[k] == null || docs[k] == "null" || docs[k] == undefined || docs[k] == "")){
+      labels.push(docs[k]);
+    }
+  }
+  res.send(labels);
+}).description('Gets label stack for router->host.');
+
 
 // Add Custom Queries here. path segments preficed by ':' are vars
 // available in the req.pathParams object.

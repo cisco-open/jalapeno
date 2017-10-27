@@ -1,7 +1,7 @@
 ---
 ASN: 100000
 Arango:
-  URL:      http://127.0.0.1:8529
+  URL:      http://10.86.204.8:30852
   User:     root
   Password: voltron
   Database: voltron

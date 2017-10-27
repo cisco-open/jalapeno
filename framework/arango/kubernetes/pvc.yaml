@@ -1,0 +1,21 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: arangodb-db-data-pvc
+spec:
+   accessModes: ["ReadWriteOnce"]
+   resources:
+      requests:
+         storage: 10Gi
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: arangodb-db-apps-pvc
+spec:
+   accessModes: ["ReadWriteOnce"]
+   resources:
+      requests:
+         storage: 10Gi

@@ -33,7 +33,7 @@ func (r *Router) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if r.BGPID != "" && r.ASN != "" {
-		ret = fmt.Sprintf("%s_%s", r.BGPID, r.ASN)
+		ret = fmt.Sprintf("%s", r.BGPID)
 		err = nil
 	}
 	return ret, err

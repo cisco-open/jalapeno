@@ -36,7 +36,7 @@ func NewArango(db arango.ArangoConn, localASN string) *ArangoHandler {
 
 func (a *ArangoHandler) Handle(m *openbmp.Message) {
 	ts, ok := m.GetTimestamp()
-	t := time.Date(2017, 10, 14, 1, 0, 0, 0, time.UTC)
+	t := time.Date(2017, 10, 1, 1, 0, 0, 0, time.UTC)
 	if !ok || ts.Before(t) {
 		return
 	}
@@ -59,7 +59,6 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 	if m.Action() != openbmp.ActionUp {
 		return
 	}
-	fmt.Println(m)
 
 	l := &arango.Router{
 		BGPID:    m.GetStr("local_bgp_id"),
@@ -111,7 +110,7 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 		ToIP:   m.GetStr("remote_ip"),
 	}
 
-	if ed.FromIP == l.BGPID && ed.ToIP == r.BGPID {
+	if (ed.FromIP == l.BGPID && ed.ToIP == r.BGPID) || (strings.Contains(ed.ToIP, ":") || strings.Contains(ed.FromIP, ":")) {
 		log.Warningf("Not sure if I should add this link: %+v", ed)
 		return
 	}
@@ -166,15 +165,18 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 	rKey := a.db.GetRouterKeyFromInterfaceIP(m.GetStr("peer_ip"))
 	// TODO... do we add router here???
 	if rKey == "" {
-		log.Warningln("Could not find router key for ", m.GetStr("peer_ip"), m.GetStr("prefix"))
+		//log.Warningln("Could not find router key for ", m.GetStr("peer_ip"), m.GetStr("prefix"))
 		return
 	}
 
-	if m.GetStr("peer_asn") == a.asn || m.GetStr("peer_asn") == "6500" {
-		log.Debugf("Got Prefix %s/%d from local node %s/%s... not adding", p.Prefix, p.Length, m.GetStr("peer_ip"), m.GetStr("peer_asn"))
+	if m.GetStr("peer_asn") == "6500" && labels != nil {
+		// Add label????
 		return
 	}
-	a.db.Insert(p)
+	if m.GetStr("peer_asn") == a.asn || m.GetStr("peer_asn") == "6500" {
+		log.Debugf("Got Prefix %s/%d from local node %s/%s... not adding (LABELS: %v)", p.Prefix, p.Length, m.GetStr("peer_ip"), m.GetStr("peer_asn"), labels)
+		return
+	}
 	pID, err := arango.GetID(p)
 	if err != nil {
 		return
@@ -249,11 +251,14 @@ func (a *ArangoHandler) HandleLSLink(m *openbmp.Message) {
 		ASN:   m.GetStr("remote_node_asn"),
 	}
 	t.SetKey()
-
 	l := &arango.LinkEdge{
 		ToIP:   m.GetOneOfIP("nei_ip", "peer_ip"),
 		FromIP: m.GetOneOfIP("intf_ip", "router_ip"),
 		Label:  lbl,
+	}
+	if l.Label == "" && (strings.Contains(l.ToIP, ":") || strings.Contains(l.FromIP, ":")) {
+		// TODO: IF ipv6 with no label... don't add. Is this what we want??
+		return
 	}
 	l.SetEdge(t, f)
 	l.SetKey()

@@ -44,6 +44,9 @@ func New(cfg ArangoConfig) (ArangoConn, error) {
 	if cfg.URL == "" || cfg.User == "" || cfg.Password == "" || cfg.Database == "" {
 		return ArangoConn{}, ErrEmptyConfig
 	}
+	if !strings.Contains(cfg.URL, "http") {
+		cfg.URL = "http://" + cfg.URL
+	}
 	conn, err := http.NewConnection(http.ConnectionConfig{
 		Endpoints: []string{cfg.URL},
 	})

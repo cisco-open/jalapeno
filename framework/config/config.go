@@ -47,9 +47,7 @@ func InitFrameworkCfg() *FrameworkConfig {
 func InitGlobalFlags(ccmd *cobra.Command, cfg interface{}) error {
 	// Add non-struct flags here
 	ccmd.PersistentFlags().String("config", "", "The configuration file")
-	ccmd.PersistentFlags().String("asn", "", "Local ASN")
 	viper.BindPFlag("config", ccmd.PersistentFlags().Lookup("config"))
-	viper.BindPFlag("asn", ccmd.PersistentFlags().Lookup("asn"))
 
 	return setupEnvAndFlags(ccmd, cfg)
 }
@@ -80,7 +78,6 @@ func GetConfig(cfg interface{}) (interface{}, error) {
 			}
 		}
 	}
-
 	err := getCfg(cfg)
 	return cfg, err
 }
