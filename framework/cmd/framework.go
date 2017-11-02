@@ -1,16 +1,14 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/stephenrlouie/service"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/arango"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/api/v1/server"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/config"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/handler"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/kafka"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
 )
 
@@ -20,14 +18,10 @@ func init() {
 	}
 }
 
-var (
-	ErrLocalASNRequired = errors.New("A Valid Local ASN is required")
-)
-
 var FrameworkCmd = &cobra.Command{
 	Use:   "framework",
-	Short: "Run Voltron Framework",
-	Long:  "Voltron Usage: TBD",
+	Short: "Framework to track vServices",
+	Long:  "Voltron framework to enable RvServices to know about CvServices",
 	Run:   frameworkRun,
 }
 
@@ -50,11 +44,8 @@ func frameworkRun(cmd *cobra.Command, args []string) {
 		globalErr = err
 		return
 	}
+
 	cfg := icfg.(*config.FrameworkConfig)
-	if cfg.ASN == "" {
-		globalErr = ErrLocalASNRequired
-		return
-	}
 
 	jcfg, err := config.GetConfig(config.InitGlobalCfg())
 	if err != nil {
@@ -66,22 +57,20 @@ func frameworkRun(cmd *cobra.Command, args []string) {
 
 	serviceGroup := service.New()
 	serviceGroup.HandleSigint(nil)
-	var hndlr handler.Handler = handler.NewDefault()
-	arangoDB, err := arango.New(cfg.Arango)
-	if err != nil {
-		globalErr = err
-		return
-	}
-	hndlr = handler.NewArango(arangoDB, cfg.ASN)
 
-	consumer, err := kafka.New(cfg.Kafka, hndlr)
+	arangoDB, err := database.NewArango(gcfg.Arango)
 	if err != nil {
 		globalErr = err
 		return
 	}
 
-	consumer.SetHandler(hndlr)
-	serviceGroup.Add(consumer)
+	api, err := server.New(cfg.API, &arangoDB)
+	if err != nil {
+		globalErr = err
+		return
+	}
+
+	serviceGroup.Add(api)
 	serviceGroup.Start()
 	serviceGroup.Wait()
 }

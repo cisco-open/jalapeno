@@ -22,5 +22,6 @@ func init() {
 
 func main() {
 	voltronCmd.AddCommand(cmd.FrameworkCmd)
+	voltronCmd.AddCommand(cmd.TopologyCmd)
 	voltronCmd.Execute()
 }

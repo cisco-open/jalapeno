@@ -8,7 +8,8 @@ import (
 	"reflect"
 	"strings"
 
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/arango"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/api/v1/server"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/kafka"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
 
@@ -21,25 +22,35 @@ var (
 )
 
 type GlobalConfig struct {
-	Log log.Config
+	Log    log.Config
+	Arango database.ArangoConfig
 }
 
 type FrameworkConfig struct {
-	Kafka  kafka.Config
-	Arango arango.ArangoConfig
-	ASN    string
+	API server.Config
+}
+
+type TopologyConfig struct {
+	Kafka kafka.Config
+	ASN   string
 }
 
 func InitGlobalCfg() *GlobalConfig {
 	return &GlobalConfig{
-		Log: log.NewLogrConfig(),
+		Log:    log.NewLogrConfig(),
+		Arango: database.NewConfig(),
 	}
 }
 
 func InitFrameworkCfg() *FrameworkConfig {
 	return &FrameworkConfig{
-		Kafka:  kafka.NewConfig(),
-		Arango: arango.NewConfig(),
+		API: server.NewConfig(),
+	}
+}
+
+func InitTopologyCfg() *TopologyConfig {
+	return &TopologyConfig{
+		Kafka: kafka.NewConfig(),
 	}
 }
 

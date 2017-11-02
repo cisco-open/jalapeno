@@ -12,13 +12,20 @@ git clone https://wwwin-github.cisco.com/spa-ie/voltron-redux.git
 cd framework
 make
 sh arango/deploy.sh
-bin/framework --config sample.yaml
 ```
 
-Alternatively, framework can be run in debug mode to print current messages/stats. Assuming a kafka broker exists at 10.86.204.8:9092:
-```
-bin/framework --debug --kafka-brokers 10.86.204.8:9092
-```
+We support two run modes for this binary, the first is to populate arango with a topology. This mode will read from kafka and parse BMP messages into a network topology. Running this you would run. (this example also includes a configuration)
+
+`./bin/voltron topology --config sample.yaml`
+
+
+The other run mode is to simply run the framework. This provides an API that lets CvServices register and enables CRUD operations on those objects being stored in the arangoDB.
+
+`./bin/voltron framework --config sample.yaml`
+
+Need help?
+`./bin/voltron -h` OR `./bin/voltron topology -h` OR `./bin/voltron framework -h`
+
 
 # Running tests
 1. Deploy the database `./framework/arango/deploy.sh` (give it ~10 seconds to start up)

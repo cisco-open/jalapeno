@@ -5,18 +5,18 @@ import (
 	"strings"
 	"time"
 
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/arango"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/openbmp"
 )
 
 type ArangoHandler struct {
 	fmap map[string]HandlerFunc
-	db   arango.ArangoConn
+	db   database.ArangoConn
 	asn  string
 }
 
-func NewArango(db arango.ArangoConn, localASN string) *ArangoHandler {
+func NewArango(db database.ArangoConn, localASN string) *ArangoHandler {
 	a := &ArangoHandler{
 		fmap: make(map[string]HandlerFunc),
 		db:   db,
@@ -60,7 +60,7 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 		return
 	}
 
-	l := &arango.Router{
+	l := &database.Router{
 		BGPID:    m.GetStr("local_bgp_id"),
 		ASN:      m.GetStr("local_asn"),
 		RouterIP: m.GetStr("router_ip"),
@@ -70,7 +70,7 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 		l.IsLocal = true
 	}
 
-	r := &arango.Router{
+	r := &database.Router{
 		//IP:       m.GetStr("remote_ip"),
 		BGPID:   m.GetStr("remote_bgp_id"),
 		ASN:     m.GetStr("remote_asn"),
@@ -92,18 +92,18 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 		//log.WithError(err).Error("Error on inserting router")
 	}
 
-	rID, err := arango.GetID(r)
+	rID, err := database.GetID(r)
 	if err != nil {
 		log.WithError(err).Error("Could not get To ID")
 		return
 	}
-	lID, err := arango.GetID(l)
+	lID, err := database.GetID(l)
 	if err != nil {
 		log.WithError(err).Error("Could not get From ID")
 		return
 	}
 
-	ed := &arango.LinkEdge{
+	ed := &database.LinkEdge{
 		To:     rID,
 		From:   lID,
 		FromIP: m.GetStr("local_ip"),
@@ -117,7 +117,7 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 
 	if err := a.db.Insert(ed); err != nil {
 	}
-	ed = &arango.LinkEdge{
+	ed = &database.LinkEdge{
 		From:   rID,
 		To:     lID,
 		ToIP:   m.GetStr("local_ip"),
@@ -146,7 +146,7 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 		leng = 0
 	}
 
-	p := &arango.Prefix{
+	p := &database.Prefix{
 		Prefix: m.GetStr("prefix"),
 		Length: leng,
 	}
@@ -177,18 +177,19 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 		log.Debugf("Got Prefix %s/%d from local node %s/%s... not adding (LABELS: %v)", p.Prefix, p.Length, m.GetStr("peer_ip"), m.GetStr("peer_asn"), labels)
 		return
 	}
-	pID, err := arango.GetID(p)
+	a.db.Insert(p)
+	pID, err := database.GetID(p)
 	if err != nil {
 		return
 	}
 
-	ed := &arango.PrefixEdge{
+	ed := &database.PrefixEdge{
 		To:   pID,
 		From: rKey,
 	}
 
 	if a.db.Read(ed) != nil {
-		ed = &arango.PrefixEdge{
+		ed = &database.PrefixEdge{
 			NextHop:     m.GetStr("nexthop"),
 			InterfaceIP: m.GetStr("peer_ip"),
 			ASPath:      strings.Split(m.GetStr("as_path"), " "),
@@ -226,7 +227,7 @@ func (a *ArangoHandler) HandleLSLink(m *openbmp.Message) {
 	lbls := strings.Split(lbl, " ")
 	lbl = lbls[len(lbls)-1]
 	inserted := false
-	f := &arango.Router{
+	f := &database.Router{
 		BGPID:    m.GetOneOfIP("router_id", "peer_ip"),
 		ASN:      m.GetOneOf("peer_asn", "local_node_asn"),
 		RouterIP: m.GetStr("router_ip"),
@@ -246,12 +247,13 @@ func (a *ArangoHandler) HandleLSLink(m *openbmp.Message) {
 	}
 
 	// TODO: Do I try to add this guy too?
-	t := &arango.Router{
+	t := &database.Router{
 		BGPID: m.GetOneOfIP("remote_router_id"),
 		ASN:   m.GetStr("remote_node_asn"),
 	}
 	t.SetKey()
-	l := &arango.LinkEdge{
+
+	l := &database.LinkEdge{
 		ToIP:   m.GetOneOfIP("nei_ip", "peer_ip"),
 		FromIP: m.GetOneOfIP("intf_ip", "router_ip"),
 		Label:  lbl,
