@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **Status** | **string** |  | [optional] [default to null]
 **EdgeType** | **string** |  | [optional] [default to null]
 **FieldName** | **string** |  | [optional] [default to null]
-**FieldType** | **string** |  | [optional] [default to null]
 **Timeout** | **string** |  | [optional] [default to null]
 **LastHeartbeat** | **string** |  | [optional] [default to null]
 

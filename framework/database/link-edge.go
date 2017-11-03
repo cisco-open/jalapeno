@@ -12,9 +12,6 @@ type LinkEdge struct {
 	ToIP    string `json:"ToIP,omitempty"`
 	Netmask string `json:"Netmask,omitempty"`
 	Label   string `json:"Label,omitempty"`
-	Latency int    `json:"Latency,omitempty"`
-	// ASPath ???
-	Utilization float32 `json:"Utilization,omitempty"`
 }
 
 func (l LinkEdge) GetKey() (string, error) {

@@ -80,12 +80,16 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**get_liveness**](docs/DefaultApi.md#get_liveness) | **GET** /liveness | 
 *DefaultApi* | [**get_metrics**](docs/DefaultApi.md#get_metrics) | **GET** /metrics | 
 *DefaultApi* | [**heartbeat_collector**](docs/DefaultApi.md#heartbeat_collector) | **GET** /collectors/{collector-name}/heartbeat | 
+*DefaultApi* | [**remove_all_fields**](docs/DefaultApi.md#remove_all_fields) | **DELETE** /edges/{edge-type}/names/{field-name} | 
+*DefaultApi* | [**remove_field**](docs/DefaultApi.md#remove_field) | **DELETE** /edges/{edge-type}/key/{edge-key}/names/{field-name} | 
 *DefaultApi* | [**update_collector**](docs/DefaultApi.md#update_collector) | **POST** /collectors/{collector-name} | 
+*DefaultApi* | [**upsert_field**](docs/DefaultApi.md#upsert_field) | **POST** /edges/{edge-type}/names/{field-name} | 
 
 
 ## Documentation For Models
 
  - [Collector](docs/Collector.md)
+ - [EdgeScore](docs/EdgeScore.md)
 
 
 ## Documentation For Authorization

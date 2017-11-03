@@ -40,6 +40,21 @@ parameters:
     in: path
     type: string
     required: true
+  edge-type:
+    name: edge-type
+    in: path
+    type: string
+    required: true
+  edge-key:
+    name: edge-key
+    in: path
+    type: string
+    required: true
+  field-name:
+    name: field-name
+    in: path
+    type: string
+    required: true
 
 # Describe your paths here
 paths:
@@ -151,7 +166,44 @@ paths:
       responses:
         200:
           description: Good metrics
+  /edges/{edge-type}/names/{field-name}:
+    post:
+      description: endpoint for collectors to add services
+      operationId: upsertField
+      parameters:
+      - $ref: '#/parameters/edge-type'
+      - $ref: '#/parameters/field-name'
+      - in: body
+        name: body
+        description: Value object
+        required: true
+        schema:
+          title: addValueToEdge
+          $ref: "#/definitions/EdgeScore"
+      responses:
+        200:
+          description: Adding a field from a collector to an edge
+    delete:
+      description: endpoint to remove all fieldNames from all edges
+      operationId: removeAllFields
+      parameters:
+      - $ref: '#/parameters/edge-type'
+      - $ref: '#/parameters/field-name'
+      responses:
+        200:
+          description: Removed the field from the all edges
 
+  /edges/{edge-type}/key/{edge-key}/names/{field-name}:
+    delete:
+      description: endpoint to remove a value from an edge
+      operationId: removeField
+      parameters:
+      - $ref: '#/parameters/edge-type'
+      - $ref: '#/parameters/edge-key'
+      - $ref: '#/parameters/field-name'
+      responses:
+        200:
+          description: Removed the field from the edge
 
 definitions:
   Collector:
@@ -170,9 +222,14 @@ definitions:
         type: string
       fieldName:
         type: string
-      fieldType:
-        type: string
       timeout:
         type: string
       LastHeartbeat:
         type: string
+  EdgeScore:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: number

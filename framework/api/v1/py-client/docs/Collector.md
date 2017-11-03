@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **status** | **str** |  | [optional] 
 **edge_type** | **str** |  | [optional] 
 **field_name** | **str** |  | [optional] 
-**field_type** | **str** |  | [optional] 
 **timeout** | **str** |  | [optional] 
 **last_heartbeat** | **str** |  | [optional] 
 

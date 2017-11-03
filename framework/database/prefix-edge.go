@@ -16,8 +16,6 @@ type PrefixEdge struct {
 	ASPath      []string `json:"ASPath,omitempty"`
 	Labels      []string `json:"Labels,omitempty"`
 	BGPPolicy   string   `json:"BGPPolicy,omitempty"`
-	Latency     int      `json:"Latency,omitempty"`
-	Utilization float32  `json:"Utilization"`
 }
 
 func (a PrefixEdge) GetKey() (string, error) {

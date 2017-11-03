@@ -97,10 +97,34 @@ func (r *Router) InitRoutes(s *Server) {
 		},
 
 		Route{
+			Name:       "RemoveAllFields",
+			Method:     "DELETE",
+			Pattern:    "/v1/edges/{edge-type}/names/{field-name}",
+			Handler:    s.RemoveAllFields,
+			Middleware: []Middleware{},
+		},
+
+		Route{
+			Name:       "RemoveField",
+			Method:     "DELETE",
+			Pattern:    "/v1/edges/{edge-type}/key/{edge-key}/names/{field-name}",
+			Handler:    s.RemoveField,
+			Middleware: []Middleware{},
+		},
+
+		Route{
 			Name:       "UpdateCollector",
 			Method:     "POST",
 			Pattern:    "/v1/collectors/{collector-name}",
 			Handler:    s.UpdateCollector,
+			Middleware: []Middleware{},
+		},
+
+		Route{
+			Name:       "UpsertField",
+			Method:     "POST",
+			Pattern:    "/v1/edges/{edge-type}/names/{field-name}",
+			Handler:    s.UpsertField,
 			Middleware: []Middleware{},
 		},
 	}

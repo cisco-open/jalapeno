@@ -12,7 +12,10 @@ Method | HTTP request | Description
 [**get_liveness**](DefaultApi.md#get_liveness) | **GET** /liveness | 
 [**get_metrics**](DefaultApi.md#get_metrics) | **GET** /metrics | 
 [**heartbeat_collector**](DefaultApi.md#heartbeat_collector) | **GET** /collectors/{collector-name}/heartbeat | 
+[**remove_all_fields**](DefaultApi.md#remove_all_fields) | **DELETE** /edges/{edge-type}/names/{field-name} | 
+[**remove_field**](DefaultApi.md#remove_field) | **DELETE** /edges/{edge-type}/key/{edge-key}/names/{field-name} | 
 [**update_collector**](DefaultApi.md#update_collector) | **POST** /collectors/{collector-name} | 
+[**upsert_field**](DefaultApi.md#upsert_field) | **POST** /edges/{edge-type}/names/{field-name} | 
 
 
 # **add_collector**
@@ -410,6 +413,114 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **remove_all_fields**
+> remove_all_fields(edge_type, field_name)
+
+
+
+endpoint to remove all fieldNames from all edges
+
+### Example 
+```python
+from __future__ import print_statement
+import time
+import client
+from client.rest import ApiException
+from pprint import pprint
+
+# Configure API key authorization: Bearer
+client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
+# create an instance of the API class
+api_instance = client.DefaultApi()
+edge_type = 'edge_type_example' # str | 
+field_name = 'field_name_example' # str | 
+
+try: 
+    api_instance.remove_all_fields(edge_type, field_name)
+except ApiException as e:
+    print("Exception when calling DefaultApi->remove_all_fields: %s\n" % e)
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **edge_type** | **str**|  | 
+ **field_name** | **str**|  | 
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **remove_field**
+> remove_field(edge_type, edge_key, field_name)
+
+
+
+endpoint to remove a value from an edge
+
+### Example 
+```python
+from __future__ import print_statement
+import time
+import client
+from client.rest import ApiException
+from pprint import pprint
+
+# Configure API key authorization: Bearer
+client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
+# create an instance of the API class
+api_instance = client.DefaultApi()
+edge_type = 'edge_type_example' # str | 
+edge_key = 'edge_key_example' # str | 
+field_name = 'field_name_example' # str | 
+
+try: 
+    api_instance.remove_field(edge_type, edge_key, field_name)
+except ApiException as e:
+    print("Exception when calling DefaultApi->remove_field: %s\n" % e)
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **edge_type** | **str**|  | 
+ **edge_key** | **str**|  | 
+ **field_name** | **str**|  | 
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **update_collector**
 > update_collector(collector_name, body)
 
@@ -447,6 +558,61 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **collector_name** | **str**|  | 
  **body** | [**Collector**](Collector.md)| Collector object | 
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **upsert_field**
+> upsert_field(edge_type, field_name, body)
+
+
+
+endpoint for collectors to add services
+
+### Example 
+```python
+from __future__ import print_statement
+import time
+import client
+from client.rest import ApiException
+from pprint import pprint
+
+# Configure API key authorization: Bearer
+client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
+# create an instance of the API class
+api_instance = client.DefaultApi()
+edge_type = 'edge_type_example' # str | 
+field_name = 'field_name_example' # str | 
+body = client.EdgeScore() # EdgeScore | Value object
+
+try: 
+    api_instance.upsert_field(edge_type, field_name, body)
+except ApiException as e:
+    print("Exception when calling DefaultApi->upsert_field: %s\n" % e)
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **edge_type** | **str**|  | 
+ **field_name** | **str**|  | 
+ **body** | [**EdgeScore**](EdgeScore.md)| Value object | 
 
 ### Return type
 

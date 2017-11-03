@@ -22,12 +22,12 @@ func ApiReq2DbCol(request *http.Request) (database.Collector, error) {
 
 func ApiCol2DbCol(apiCol client.Collector) (dbCol database.Collector) {
 	return database.Collector{
+		Key:           apiCol.Name,
 		Name:          apiCol.Name,
 		Description:   apiCol.Description,
 		Status:        apiCol.Status,
 		EdgeType:      apiCol.EdgeType,
 		FieldName:     apiCol.FieldName,
-		FieldType:     apiCol.FieldType,
 		Timeout:       apiCol.Timeout,
 		LastHeartbeat: apiCol.LastHeartbeat,
 	}
@@ -52,7 +52,6 @@ func DbCol2ApiCol(dbCol database.Collector) (apiCol client.Collector) {
 		Status:        dbCol.Status,
 		EdgeType:      dbCol.EdgeType,
 		FieldName:     dbCol.FieldName,
-		FieldType:     dbCol.FieldType,
 		Timeout:       dbCol.Timeout,
 		LastHeartbeat: dbCol.LastHeartbeat,
 	}

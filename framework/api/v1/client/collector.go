@@ -21,8 +21,6 @@ type Collector struct {
 
 	FieldName string `json:"fieldName,omitempty"`
 
-	FieldType string `json:"fieldType,omitempty"`
-
 	Timeout string `json:"timeout,omitempty"`
 
 	LastHeartbeat string `json:"LastHeartbeat,omitempty"`

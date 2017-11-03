@@ -9,6 +9,8 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"reflect"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -130,6 +132,7 @@ func (s *Server) AddCollector(w http.ResponseWriter, r *http.Request) {
 		returnErr(w, "parsing collector", err, http.StatusBadRequest)
 		return
 	}
+	defer log.Infof("AddCollector: %+v", collector)
 
 	// validate collector edges and types and things exist
 	// Fieldname is not overlapping
@@ -139,15 +142,29 @@ func (s *Server) AddCollector(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	collector.LastHeartbeat = time.Now().Format(time.RFC3339)
+	readDB := database.Collector{Name: collector.Name}
+	s.db.Read(&readDB)
+
+	now := time.Now().Format(time.RFC3339)
+	collector.LastHeartbeat = now
+	readDB.LastHeartbeat = now
+
+	if reflect.DeepEqual(readDB, collector) {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusAlreadyReported)
+		return
+	}
+
 	err = s.db.Insert(&collector)
 	if err != nil {
+		if strings.Contains(err.Error(), "_key") {
+			err = errors.New("collector name already exists")
+		}
 		returnErr(w, "inserting collector", err, http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
-	log.Infof("AddCollector: %+v", collector)
 }
 
 // DeleteCollector IDs collectors by name in the path and removes that collector if it exists
@@ -159,7 +176,20 @@ func (s *Server) DeleteCollector(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dbObj := database.Collector{Name: name}
-	err := s.db.Delete(&dbObj)
+	err := s.db.Read(&dbObj)
+	if err != nil {
+		returnErr(w, "getting collector", err, http.StatusInternalServerError)
+		return
+	}
+	defer log.Infof("DeleteCollector: %+v", convert.DbCol2ApiCol(dbObj))
+
+	err, code := s.removeAllFields(dbObj.EdgeType, dbObj.FieldName)
+	if err != nil {
+		returnErr(w, "failed to remove fields", err, code)
+		return
+	}
+
+	err = s.db.Delete(&dbObj)
 	if err != nil {
 		returnErr(w, "deleting document", err, http.StatusInternalServerError)
 		return
@@ -167,7 +197,6 @@ func (s *Server) DeleteCollector(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	log.Infof("DeleteCollector: %+v", convert.DbCol2ApiCol(dbObj))
 }
 
 // GetCollector takes in the name and updates a collector based on the body provided
@@ -184,18 +213,16 @@ func (s *Server) GetCollector(w http.ResponseWriter, r *http.Request) {
 		returnErr(w, "reading document", err, http.StatusInternalServerError)
 		return
 	}
+	defer log.Infof("GetCollector: %+v", convert.DbCol2ApiCol(dbObj))
 
-	status := http.StatusOK
 	if err = json.NewEncoder(w).Encode(convert.DbCol2ApiCol(dbObj)); err != nil {
 		log.Errorf("Unable to Encode Sites: %v", err)
-		status = http.StatusInternalServerError
 	}
-	w.WriteHeader(status)
-	log.Infof("GetCollector: %+v", convert.DbCol2ApiCol(dbObj))
 }
 
 // GetCollectors returns all known collectors
 func (s *Server) GetCollectors(w http.ResponseWriter, r *http.Request) {
+	defer log.Infof("GetCollectors")
 	var col database.Collector
 	dbCols, err := s.db.Query("FOR c in Collectors RETURN c", nil, col)
 	if err != nil {
@@ -208,13 +235,12 @@ func (s *Server) GetCollectors(w http.ResponseWriter, r *http.Request) {
 		apiCols = append(apiCols, convert.DbCol2ApiCol(*c.(*database.Collector)))
 	}
 
-	status := http.StatusOK
+	if len(apiCols) == 0 {
+		apiCols = make([]client.Collector, 0)
+	}
 	if err = json.NewEncoder(w).Encode(apiCols); err != nil {
 		log.Errorf("Unable to Encode Sites: %v", err)
-		status = http.StatusInternalServerError
 	}
-	w.WriteHeader(status)
-	log.Infof("GetCollectors")
 }
 
 // GetHealthz is the health endpoint to be used for kubernetes
@@ -247,8 +273,7 @@ func (s *Server) HeartbeatCollector(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var dbCol database.Collector
-	dbCol.Name = name
+	dbCol := database.Collector{Name: name}
 	err := s.db.Read(&dbCol)
 	if err != nil {
 		returnErr(w, "finding collector", err, http.StatusInternalServerError)
@@ -261,7 +286,95 @@ func (s *Server) HeartbeatCollector(w http.ResponseWriter, r *http.Request) {
 		returnErr(w, "updating heartbeat", err, http.StatusInternalServerError)
 		return
 	}
-	log.Infof("Heartbeat collector: %+v", dbCol)
+	defer log.Infof("Heartbeat collector: %+v", dbCol)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
+
+func (s *Server) RemoveAllFields(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	edgeType, ok := vars["edge-type"]
+	if !ok || edgeType == "" {
+		returnErr(w, "parsing edge-type from path", nil, http.StatusBadRequest)
+		return
+	}
+
+	fieldName, ok := vars["field-name"]
+	if !ok || fieldName == "" {
+		returnErr(w, "parsing field-name from path", nil, http.StatusBadRequest)
+		return
+	}
+	defer log.Infof("RemoveAllFields: %v:%v", edgeType, fieldName)
+
+	if err, code := s.removeAllFields(edgeType, fieldName); err != nil {
+		returnErr(w, "Failed to remove fields", err, code)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
+
+func (s *Server) removeAllFields(edgeType string, fieldName string) (error, int) {
+	obj, err := getCollection(edgeType)
+	if err != nil {
+		return err, http.StatusBadRequest
+	}
+
+	q := fmt.Sprintf("FOR e IN %s UPDATE e WITH {@field: null} IN %s OPTIONS { keepNull: false }",
+		edgeType, edgeType)
+	fields := map[string]interface{}{
+		"field": fieldName,
+	}
+
+	_, err = s.db.Query(q, fields, obj)
+	if err != nil {
+		return err, http.StatusInternalServerError
+	}
+	return nil, http.StatusOK
+}
+
+func (s *Server) RemoveField(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	edgeType, ok := vars["edge-type"]
+	if !ok || edgeType == "" {
+		returnErr(w, "parsing edge-type from path", nil, http.StatusBadRequest)
+		return
+	}
+
+	edgeKey, ok := vars["edge-key"]
+	if !ok || edgeKey == "" {
+		returnErr(w, "parsing edge-key from path", nil, http.StatusBadRequest)
+		return
+	}
+
+	fieldName, ok := vars["field-name"]
+	if !ok || fieldName == "" {
+		returnErr(w, "parsing field-name from path", nil, http.StatusBadRequest)
+		return
+	}
+
+	defer log.Infof("RemoveField: %v:%v on key: %v", edgeType, fieldName, edgeKey)
+
+	obj, err := getCollection(edgeType)
+	if err != nil {
+		returnErr(w, "Invalid edgeType", err, http.StatusBadRequest)
+		return
+	}
+
+	q := fmt.Sprintf("FOR e IN %s FILTER e._key == @key UPDATE e WITH {@field: null} IN %s OPTIONS { keepNull: false }",
+		edgeType, edgeType)
+	fields := map[string]interface{}{
+		"field": fieldName,
+		"key":   edgeKey,
+	}
+
+	_, err = s.db.Query(q, fields, obj)
+	if err != nil {
+		returnErr(w, "failed to remove field from edges", err, http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
@@ -298,7 +411,65 @@ func (s *Server) UpdateCollector(w http.ResponseWriter, r *http.Request) {
 		returnErr(w, "updating document", err, http.StatusInternalServerError)
 		return
 	}
-	log.Infof("Updated collector: %+v", collector)
+	defer log.Infof("Updated collector: %+v", collector)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
+
+func (s *Server) UpsertField(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	edgeType, ok := vars["edge-type"]
+	if !ok || edgeType == "" {
+		returnErr(w, "parsing edge-type from path", nil, http.StatusBadRequest)
+		return
+	}
+
+	fieldName, ok := vars["field-name"]
+	if !ok || fieldName == "" {
+		returnErr(w, "parsing field-name from path", nil, http.StatusBadRequest)
+		return
+	}
+
+	if !s.validateUpsert(fieldName, edgeType) {
+		returnErr(w, "field-name not registered", nil, http.StatusBadRequest)
+		return
+	}
+
+	var eScore client.EdgeScore
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+	if err := decoder.Decode(&eScore); err != nil {
+		returnErr(w, "decoding json error", err, http.StatusBadRequest)
+		return
+	}
+
+	if eScore.Key == "" {
+		returnErr(w, "empty key value", nil, http.StatusBadRequest)
+		return
+	}
+	defer log.Infof("UpsertField to %v:%v on key: %v to %v", edgeType, fieldName, eScore.Key, eScore.Value)
+
+	obj, err := getCollection(edgeType)
+	if err != nil {
+		returnErr(w, "Invalid edgeType", err, http.StatusBadRequest)
+		return
+	}
+
+	q := fmt.Sprintf("FOR e IN %s FILTER e._key == @key UPDATE e WITH { @field: @val } IN %s",
+		edgeType, edgeType)
+	fields := map[string]interface{}{
+		"key":   eScore.Key,
+		"val":   eScore.Value,
+		"field": fieldName,
+	}
+
+	_, err = s.db.Query(q, fields, obj)
+	if err != nil {
+		returnErr(w, "failed to update edge", err, http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
@@ -317,11 +488,6 @@ func (s *Server) validateCollector(dbCol database.Collector) error {
 	lEdge := database.LinkEdge{}
 	if dbCol.EdgeType != pEdge.GetType() && dbCol.EdgeType != lEdge.GetType() && dbCol.EdgeType != "" {
 		return fmt.Errorf("Invalid Edge Type. Recieved: %q. Must be %q or %q", dbCol.EdgeType, pEdge.GetType(), lEdge.GetType())
-	}
-
-	// need to document types
-	if dbCol.FieldType != "integer" && dbCol.FieldType != "float" && dbCol.FieldType != "" {
-		return fmt.Errorf("Invalid FieldType. Received: %q. Must be %q or %q", dbCol.FieldType, "integer", "float")
 	}
 
 	if dbCol.FieldName == "" {
@@ -350,4 +516,32 @@ func (s *Server) fieldExists(dbCol database.Collector) error {
 	}
 
 	return nil
+}
+
+func (s *Server) validateUpsert(fieldName string, edgeType string) bool {
+	var col database.Collector
+	dbCols, err := s.db.Query("FOR c in Collectors FILTER c.FieldName == @name AND c.EdgeType == @edgeType RETURN c",
+		map[string]interface{}{"name": fieldName, "edgeType": edgeType}, col)
+	if err != nil {
+		return false
+	}
+	// If the field name is someone else not my own update
+	if len(dbCols) == 1 {
+		return true
+	}
+	return false
+}
+
+func getCollection(col string) (interface{}, error) {
+	pEdge := database.PrefixEdge{}
+	lEdge := database.LinkEdge{}
+	var obj interface{}
+	if col == pEdge.GetType() {
+		obj = database.PrefixEdge{}
+	} else if col == lEdge.GetType() {
+		obj = database.LinkEdge{}
+	} else {
+		return obj, errors.New("Invalid EdgeType")
+	}
+	return obj, nil
 }

@@ -12,7 +12,10 @@ Method | HTTP request | Description
 [**GetLiveness**](DefaultApi.md#GetLiveness) | **Get** /liveness | 
 [**GetMetrics**](DefaultApi.md#GetMetrics) | **Get** /metrics | 
 [**HeartbeatCollector**](DefaultApi.md#HeartbeatCollector) | **Get** /collectors/{collector-name}/heartbeat | 
+[**RemoveAllFields**](DefaultApi.md#RemoveAllFields) | **Delete** /edges/{edge-type}/names/{field-name} | 
+[**RemoveField**](DefaultApi.md#RemoveField) | **Delete** /edges/{edge-type}/key/{edge-key}/names/{field-name} | 
 [**UpdateCollector**](DefaultApi.md#UpdateCollector) | **Post** /collectors/{collector-name} | 
+[**UpsertField**](DefaultApi.md#UpsertField) | **Post** /edges/{edge-type}/names/{field-name} | 
 
 
 # **AddCollector**
@@ -235,6 +238,67 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **RemoveAllFields**
+> RemoveAllFields($edgeType, $fieldName)
+
+
+
+endpoint to remove all fieldNames from all edges
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **edgeType** | **string**|  | 
+ **fieldName** | **string**|  | 
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **RemoveField**
+> RemoveField($edgeType, $edgeKey, $fieldName)
+
+
+
+endpoint to remove a value from an edge
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **edgeType** | **string**|  | 
+ **edgeKey** | **string**|  | 
+ **fieldName** | **string**|  | 
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **UpdateCollector**
 > UpdateCollector($collectorName, $body)
 
@@ -249,6 +313,37 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **collectorName** | **string**|  | 
  **body** | [**Collector**](Collector.md)| Collector object | 
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **UpsertField**
+> UpsertField($edgeType, $fieldName, $body)
+
+
+
+endpoint for collectors to add services
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **edgeType** | **string**|  | 
+ **fieldName** | **string**|  | 
+ **body** | [**EdgeScore**](EdgeScore.md)| Value object | 
 
 ### Return type
 

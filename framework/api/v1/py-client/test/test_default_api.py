@@ -95,9 +95,33 @@ class TestDefaultApi(unittest.TestCase):
         """
         pass
 
+    def test_remove_all_fields(self):
+        """
+        Test case for remove_all_fields
+
+        
+        """
+        pass
+
+    def test_remove_field(self):
+        """
+        Test case for remove_field
+
+        
+        """
+        pass
+
     def test_update_collector(self):
         """
         Test case for update_collector
+
+        
+        """
+        pass
+
+    def test_upsert_field(self):
+        """
+        Test case for upsert_field
 
         
         """

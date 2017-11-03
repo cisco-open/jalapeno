@@ -848,6 +848,237 @@ class DefaultApi(object):
                                         _request_timeout=params.get('_request_timeout'),
                                         collection_formats=collection_formats)
 
+    def remove_all_fields(self, edge_type, field_name, **kwargs):
+        """
+        endpoint to remove all fieldNames from all edges
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please define a `callback` function
+        to be invoked when receiving the response.
+        >>> def callback_function(response):
+        >>>     pprint(response)
+        >>>
+        >>> thread = api.remove_all_fields(edge_type, field_name, callback=callback_function)
+
+        :param callback function: The callback function
+            for asynchronous request. (optional)
+        :param str edge_type: (required)
+        :param str field_name: (required)
+        :return: None
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('callback'):
+            return self.remove_all_fields_with_http_info(edge_type, field_name, **kwargs)
+        else:
+            (data) = self.remove_all_fields_with_http_info(edge_type, field_name, **kwargs)
+            return data
+
+    def remove_all_fields_with_http_info(self, edge_type, field_name, **kwargs):
+        """
+        endpoint to remove all fieldNames from all edges
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please define a `callback` function
+        to be invoked when receiving the response.
+        >>> def callback_function(response):
+        >>>     pprint(response)
+        >>>
+        >>> thread = api.remove_all_fields_with_http_info(edge_type, field_name, callback=callback_function)
+
+        :param callback function: The callback function
+            for asynchronous request. (optional)
+        :param str edge_type: (required)
+        :param str field_name: (required)
+        :return: None
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['edge_type', 'field_name']
+        all_params.append('callback')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method remove_all_fields" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'edge_type' is set
+        if ('edge_type' not in params) or (params['edge_type'] is None):
+            raise ValueError("Missing the required parameter `edge_type` when calling `remove_all_fields`")
+        # verify the required parameter 'field_name' is set
+        if ('field_name' not in params) or (params['field_name'] is None):
+            raise ValueError("Missing the required parameter `field_name` when calling `remove_all_fields`")
+
+
+        collection_formats = {}
+
+        resource_path = '/edges/{edge-type}/names/{field-name}'.replace('{format}', 'json')
+        path_params = {}
+        if 'edge_type' in params:
+            path_params['edge-type'] = params['edge_type']
+        if 'field_name' in params:
+            path_params['field-name'] = params['field_name']
+
+        query_params = {}
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.\
+            select_header_accept(['application/json'])
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.\
+            select_header_content_type(['application/json'])
+
+        # Authentication setting
+        auth_settings = ['Bearer']
+
+        return self.api_client.call_api(resource_path, 'DELETE',
+                                        path_params,
+                                        query_params,
+                                        header_params,
+                                        body=body_params,
+                                        post_params=form_params,
+                                        files=local_var_files,
+                                        response_type=None,
+                                        auth_settings=auth_settings,
+                                        callback=params.get('callback'),
+                                        _return_http_data_only=params.get('_return_http_data_only'),
+                                        _preload_content=params.get('_preload_content', True),
+                                        _request_timeout=params.get('_request_timeout'),
+                                        collection_formats=collection_formats)
+
+    def remove_field(self, edge_type, edge_key, field_name, **kwargs):
+        """
+        endpoint to remove a value from an edge
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please define a `callback` function
+        to be invoked when receiving the response.
+        >>> def callback_function(response):
+        >>>     pprint(response)
+        >>>
+        >>> thread = api.remove_field(edge_type, edge_key, field_name, callback=callback_function)
+
+        :param callback function: The callback function
+            for asynchronous request. (optional)
+        :param str edge_type: (required)
+        :param str edge_key: (required)
+        :param str field_name: (required)
+        :return: None
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('callback'):
+            return self.remove_field_with_http_info(edge_type, edge_key, field_name, **kwargs)
+        else:
+            (data) = self.remove_field_with_http_info(edge_type, edge_key, field_name, **kwargs)
+            return data
+
+    def remove_field_with_http_info(self, edge_type, edge_key, field_name, **kwargs):
+        """
+        endpoint to remove a value from an edge
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please define a `callback` function
+        to be invoked when receiving the response.
+        >>> def callback_function(response):
+        >>>     pprint(response)
+        >>>
+        >>> thread = api.remove_field_with_http_info(edge_type, edge_key, field_name, callback=callback_function)
+
+        :param callback function: The callback function
+            for asynchronous request. (optional)
+        :param str edge_type: (required)
+        :param str edge_key: (required)
+        :param str field_name: (required)
+        :return: None
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['edge_type', 'edge_key', 'field_name']
+        all_params.append('callback')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method remove_field" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'edge_type' is set
+        if ('edge_type' not in params) or (params['edge_type'] is None):
+            raise ValueError("Missing the required parameter `edge_type` when calling `remove_field`")
+        # verify the required parameter 'edge_key' is set
+        if ('edge_key' not in params) or (params['edge_key'] is None):
+            raise ValueError("Missing the required parameter `edge_key` when calling `remove_field`")
+        # verify the required parameter 'field_name' is set
+        if ('field_name' not in params) or (params['field_name'] is None):
+            raise ValueError("Missing the required parameter `field_name` when calling `remove_field`")
+
+
+        collection_formats = {}
+
+        resource_path = '/edges/{edge-type}/key/{edge-key}/names/{field-name}'.replace('{format}', 'json')
+        path_params = {}
+        if 'edge_type' in params:
+            path_params['edge-type'] = params['edge_type']
+        if 'edge_key' in params:
+            path_params['edge-key'] = params['edge_key']
+        if 'field_name' in params:
+            path_params['field-name'] = params['field_name']
+
+        query_params = {}
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.\
+            select_header_accept(['application/json'])
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.\
+            select_header_content_type(['application/json'])
+
+        # Authentication setting
+        auth_settings = ['Bearer']
+
+        return self.api_client.call_api(resource_path, 'DELETE',
+                                        path_params,
+                                        query_params,
+                                        header_params,
+                                        body=body_params,
+                                        post_params=form_params,
+                                        files=local_var_files,
+                                        response_type=None,
+                                        auth_settings=auth_settings,
+                                        callback=params.get('callback'),
+                                        _return_http_data_only=params.get('_return_http_data_only'),
+                                        _preload_content=params.get('_preload_content', True),
+                                        _request_timeout=params.get('_request_timeout'),
+                                        collection_formats=collection_formats)
+
     def update_collector(self, collector_name, body, **kwargs):
         """
         updates collector
@@ -923,6 +1154,125 @@ class DefaultApi(object):
         path_params = {}
         if 'collector_name' in params:
             path_params['collector-name'] = params['collector_name']
+
+        query_params = {}
+
+        header_params = {}
+
+        form_params = []
+        local_var_files = {}
+
+        body_params = None
+        if 'body' in params:
+            body_params = params['body']
+        # HTTP header `Accept`
+        header_params['Accept'] = self.api_client.\
+            select_header_accept(['application/json'])
+
+        # HTTP header `Content-Type`
+        header_params['Content-Type'] = self.api_client.\
+            select_header_content_type(['application/json'])
+
+        # Authentication setting
+        auth_settings = ['Bearer']
+
+        return self.api_client.call_api(resource_path, 'POST',
+                                        path_params,
+                                        query_params,
+                                        header_params,
+                                        body=body_params,
+                                        post_params=form_params,
+                                        files=local_var_files,
+                                        response_type=None,
+                                        auth_settings=auth_settings,
+                                        callback=params.get('callback'),
+                                        _return_http_data_only=params.get('_return_http_data_only'),
+                                        _preload_content=params.get('_preload_content', True),
+                                        _request_timeout=params.get('_request_timeout'),
+                                        collection_formats=collection_formats)
+
+    def upsert_field(self, edge_type, field_name, body, **kwargs):
+        """
+        endpoint for collectors to add services
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please define a `callback` function
+        to be invoked when receiving the response.
+        >>> def callback_function(response):
+        >>>     pprint(response)
+        >>>
+        >>> thread = api.upsert_field(edge_type, field_name, body, callback=callback_function)
+
+        :param callback function: The callback function
+            for asynchronous request. (optional)
+        :param str edge_type: (required)
+        :param str field_name: (required)
+        :param EdgeScore body: Value object (required)
+        :return: None
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+        kwargs['_return_http_data_only'] = True
+        if kwargs.get('callback'):
+            return self.upsert_field_with_http_info(edge_type, field_name, body, **kwargs)
+        else:
+            (data) = self.upsert_field_with_http_info(edge_type, field_name, body, **kwargs)
+            return data
+
+    def upsert_field_with_http_info(self, edge_type, field_name, body, **kwargs):
+        """
+        endpoint for collectors to add services
+        This method makes a synchronous HTTP request by default. To make an
+        asynchronous HTTP request, please define a `callback` function
+        to be invoked when receiving the response.
+        >>> def callback_function(response):
+        >>>     pprint(response)
+        >>>
+        >>> thread = api.upsert_field_with_http_info(edge_type, field_name, body, callback=callback_function)
+
+        :param callback function: The callback function
+            for asynchronous request. (optional)
+        :param str edge_type: (required)
+        :param str field_name: (required)
+        :param EdgeScore body: Value object (required)
+        :return: None
+                 If the method is called asynchronously,
+                 returns the request thread.
+        """
+
+        all_params = ['edge_type', 'field_name', 'body']
+        all_params.append('callback')
+        all_params.append('_return_http_data_only')
+        all_params.append('_preload_content')
+        all_params.append('_request_timeout')
+
+        params = locals()
+        for key, val in iteritems(params['kwargs']):
+            if key not in all_params:
+                raise TypeError(
+                    "Got an unexpected keyword argument '%s'"
+                    " to method upsert_field" % key
+                )
+            params[key] = val
+        del params['kwargs']
+        # verify the required parameter 'edge_type' is set
+        if ('edge_type' not in params) or (params['edge_type'] is None):
+            raise ValueError("Missing the required parameter `edge_type` when calling `upsert_field`")
+        # verify the required parameter 'field_name' is set
+        if ('field_name' not in params) or (params['field_name'] is None):
+            raise ValueError("Missing the required parameter `field_name` when calling `upsert_field`")
+        # verify the required parameter 'body' is set
+        if ('body' not in params) or (params['body'] is None):
+            raise ValueError("Missing the required parameter `body` when calling `upsert_field`")
+
+
+        collection_formats = {}
+
+        resource_path = '/edges/{edge-type}/names/{field-name}'.replace('{format}', 'json')
+        path_params = {}
+        if 'edge_type' in params:
+            path_params['edge-type'] = params['edge_type']
+        if 'field_name' in params:
+            path_params['field-name'] = params['field_name']
 
         query_params = {}
 

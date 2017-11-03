@@ -431,7 +431,6 @@ func (a *ArangoConn) QueryOnObject(obj DBObject, ret interface{}, operators map[
 		query = fmt.Sprintf("FOR i in %s FILTER %s RETURN i", obj.GetType(), filter)
 	}
 
-	log.Debugf("Query: %q. Binds: %+v", query, binds)
 	return a.Query(query, binds, obj)
 }
 
