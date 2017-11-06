@@ -11,7 +11,7 @@ Log:
   Level: debug
 Kafka:
   Brokers:
-    - 10.86.204.8:9092
+    - 10.86.204.8:30909
   Topics: # If this is excluded, all topics are used.
     #- openbmp.parsed.collector
     #- openbmp.parsed.router

@@ -36,7 +36,7 @@ func NewArango(db database.ArangoConn, localASN string) *ArangoHandler {
 
 func (a *ArangoHandler) Handle(m *openbmp.Message) {
 	ts, ok := m.GetTimestamp()
-	t := time.Date(2017, 10, 1, 1, 0, 0, 0, time.UTC)
+	t := time.Date(2017, 10, 10, 1, 0, 0, 0, time.UTC)
 	if !ok || ts.Before(t) {
 		return
 	}
@@ -125,7 +125,6 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 	}
 	if err := a.db.Insert(ed); err != nil {
 	}
-
 	log.Infof("Router %v/%v (%v) --> (%v) Peer %v/%v ", l.BGPID, l.ASN, ed.FromIP, ed.ToIP, r.BGPID, r.ASN)
 }
 
@@ -273,7 +272,7 @@ func (a *ArangoHandler) HandleLSLink(m *openbmp.Message) {
 }
 
 func (a *ArangoHandler) HandleBMPStat(m *openbmp.Message) {
-	log.Debugln(m.String())
+	fmt.Println(m)
 }
 
 func (a *ArangoHandler) HandleLSPrefix(m *openbmp.Message) {

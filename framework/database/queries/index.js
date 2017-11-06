@@ -50,15 +50,16 @@ router.get("/latency/:fromIP/:toPrefix/:latency", function(req, res) {
 
 router.get("/latency/:fromIP/:toPrefix", function(req, res) {
   const fip = req.pathParams.fromIP;
-  const tprefix = "Prefixes/" + req.pathParams.toPrefix;
+  const tprefix = "_Prefixes_" + req.pathParams.toPrefix.replace(/\//g, '_');
   const keys = db._query(`
     let k = (
       For e in LinkEdges
         Filter e.FromIP == @fip
-        Return e.ToIP
+        let key = CONCAT(SUBSTITUTE(e._to, "/", "_"), @tprefix)
+        Return key
     )
     For e in PrefixEdges
-      Filter e.InterfaceIP == k[0] AND e._to == @tprefix
+      Filter e._key == k[0]
       Return e.Latency
     `,{"fip": fip, "tprefix": tprefix});
   res.send(keys);
