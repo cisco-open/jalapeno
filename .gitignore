@@ -1,4 +1,5 @@
 .DS_Store
 .vagrant
 .vagrant/
+venv/
 */bin
