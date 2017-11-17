@@ -587,7 +587,7 @@ func TestUpsertField(t *testing.T) {
 	tests := []struct {
 		edgeType           string
 		fieldName          string
-		fieldVal           int32
+		fieldVal           float32
 		key                string
 		retCols            []interface{}
 		dbErr              error
@@ -732,7 +732,7 @@ func TestUpsertField(t *testing.T) {
 	}
 }
 
-func setUpsert(edgeType string, edgeKey string, fieldVal int32, fieldName string, err error, dbMock *mock_database.MockDatabase) {
+func setUpsert(edgeType string, edgeKey string, fieldVal float32, fieldName string, err error, dbMock *mock_database.MockDatabase) {
 	q := fmt.Sprintf("FOR e IN %s FILTER e._key == @key UPDATE e WITH { @field: @val } IN %s",
 		edgeType, edgeType)
 	bind := map[string]interface{}{

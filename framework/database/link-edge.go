@@ -1,8 +1,12 @@
 package database
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-const linkName = "LinkEdges"
+const linkEdgeNamev4 = "LinkEdgesV4"
+const linkEdgeNamev6 = "LinkEdgesV6"
 
 type LinkEdge struct {
 	From    string `json:"_from,omitempty"`
@@ -12,6 +16,7 @@ type LinkEdge struct {
 	ToIP    string `json:"ToIP,omitempty"`
 	Netmask string `json:"Netmask,omitempty"`
 	Label   string `json:"Label,omitempty"`
+	V6      bool   `json:"-"`
 }
 
 func (l LinkEdge) GetKey() (string, error) {
@@ -42,7 +47,11 @@ func (l *LinkEdge) makeKey() (string, error) {
 }
 
 func (l LinkEdge) GetType() string {
-	return linkName
+	if l.V6 || strings.Contains(l.FromIP, ":") || strings.Contains(l.ToIP, ":") {
+		l.V6 = true
+		return linkEdgeNamev6
+	}
+	return linkEdgeNamev4
 }
 
 func (l *LinkEdge) SetEdge(to DBObject, from DBObject) error {
@@ -56,4 +65,8 @@ func (l *LinkEdge) SetEdge(to DBObject, from DBObject) error {
 		return err
 	}
 	return nil
+}
+
+func (l *LinkEdge) IsV6() bool {
+	return l.V6 || strings.Contains(l.FromIP, ":") || strings.Contains(l.ToIP, ":")
 }

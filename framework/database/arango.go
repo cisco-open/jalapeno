@@ -103,9 +103,15 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
 		return ArangoConn{}, err
 	}
 
-	cols[linkName], err = ensureEdgeCollection(g, linkName, []string{routerName}, []string{routerName})
+	cols[linkEdgeNamev4], err = ensureEdgeCollection(g, linkEdgeNamev4, []string{routerName}, []string{routerName})
 	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", linkName)
+		log.WithError(err).Errorf("Failed to connect to collection %q", linkEdgeNamev4)
+		return ArangoConn{}, err
+	}
+
+	cols[linkEdgeNamev6], err = ensureEdgeCollection(g, linkEdgeNamev6, []string{routerName}, []string{routerName})
+	if err != nil {
+		log.WithError(err).Errorf("Failed to connect to collection %q", linkEdgeNamev6)
 		return ArangoConn{}, err
 	}
 
@@ -280,9 +286,14 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		get = &Prefix{
 			Key: key,
 		}
-	case linkName:
+	case linkEdgeNamev4:
 		get = &LinkEdge{
 			Key: key,
+		}
+	case linkEdgeNamev6:
+		get = &LinkEdge{
+			Key: key,
+			V6:  true,
 		}
 	case asName:
 		get = &PrefixEdge{

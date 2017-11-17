@@ -76,6 +76,7 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**delete_collector**](docs/DefaultApi.md#delete_collector) | **DELETE** /collectors/{collector-name} | 
 *DefaultApi* | [**get_collector**](docs/DefaultApi.md#get_collector) | **GET** /collectors/{collector-name} | 
 *DefaultApi* | [**get_collectors**](docs/DefaultApi.md#get_collectors) | **GET** /collectors | 
+*DefaultApi* | [**get_edge**](docs/DefaultApi.md#get_edge) | **GET** /edges/{edge-type}/filter/{field-name}/{field-value} | 
 *DefaultApi* | [**get_healthz**](docs/DefaultApi.md#get_healthz) | **GET** /healthz | 
 *DefaultApi* | [**get_liveness**](docs/DefaultApi.md#get_liveness) | **GET** /liveness | 
 *DefaultApi* | [**get_metrics**](docs/DefaultApi.md#get_metrics) | **GET** /metrics | 
@@ -83,7 +84,7 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**remove_all_fields**](docs/DefaultApi.md#remove_all_fields) | **DELETE** /edges/{edge-type}/names/{field-name} | 
 *DefaultApi* | [**remove_field**](docs/DefaultApi.md#remove_field) | **DELETE** /edges/{edge-type}/key/{edge-key}/names/{field-name} | 
 *DefaultApi* | [**update_collector**](docs/DefaultApi.md#update_collector) | **POST** /collectors/{collector-name} | 
-*DefaultApi* | [**upsert_field**](docs/DefaultApi.md#upsert_field) | **POST** /edges/{edge-type}/names/{field-name} | 
+*DefaultApi* | [**upsert_field**](docs/DefaultApi.md#upsert_field) | **PUT** /edges/{edge-type}/names/{field-name} | 
 
 
 ## Documentation For Models

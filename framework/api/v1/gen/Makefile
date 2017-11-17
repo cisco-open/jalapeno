@@ -1,4 +1,4 @@
-.PHONY: .git out client server
+.PHONY: .git python out client server
 
 THISDIR = $(shell pwd)
 

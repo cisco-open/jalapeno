@@ -13,5 +13,9 @@ package client
 type EdgeScore struct {
 	Key string `json:"key,omitempty"`
 
+	From string `json:"from,omitempty"`
+
+	To string `json:"to,omitempty"`
+
 	Value float32 `json:"value,omitempty"`
 }

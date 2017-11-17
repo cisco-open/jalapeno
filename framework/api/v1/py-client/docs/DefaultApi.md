@@ -8,6 +8,7 @@ Method | HTTP request | Description
 [**delete_collector**](DefaultApi.md#delete_collector) | **DELETE** /collectors/{collector-name} | 
 [**get_collector**](DefaultApi.md#get_collector) | **GET** /collectors/{collector-name} | 
 [**get_collectors**](DefaultApi.md#get_collectors) | **GET** /collectors | 
+[**get_edge**](DefaultApi.md#get_edge) | **GET** /edges/{edge-type}/filter/{field-name}/{field-value} | 
 [**get_healthz**](DefaultApi.md#get_healthz) | **GET** /healthz | 
 [**get_liveness**](DefaultApi.md#get_liveness) | **GET** /liveness | 
 [**get_metrics**](DefaultApi.md#get_metrics) | **GET** /metrics | 
@@ -15,7 +16,7 @@ Method | HTTP request | Description
 [**remove_all_fields**](DefaultApi.md#remove_all_fields) | **DELETE** /edges/{edge-type}/names/{field-name} | 
 [**remove_field**](DefaultApi.md#remove_field) | **DELETE** /edges/{edge-type}/key/{edge-key}/names/{field-name} | 
 [**update_collector**](DefaultApi.md#update_collector) | **POST** /collectors/{collector-name} | 
-[**upsert_field**](DefaultApi.md#upsert_field) | **POST** /edges/{edge-type}/names/{field-name} | 
+[**upsert_field**](DefaultApi.md#upsert_field) | **PUT** /edges/{edge-type}/names/{field-name} | 
 
 
 # **add_collector**
@@ -208,6 +209,62 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**list[Collector]**](Collector.md)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **get_edge**
+> object get_edge(edge_type, field_name, field_value)
+
+
+
+get edge with field name/value
+
+### Example 
+```python
+from __future__ import print_statement
+import time
+import client
+from client.rest import ApiException
+from pprint import pprint
+
+# Configure API key authorization: Bearer
+client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
+# create an instance of the API class
+api_instance = client.DefaultApi()
+edge_type = 'edge_type_example' # str | 
+field_name = 'field_name_example' # str | 
+field_value = 3.4 # float | 
+
+try: 
+    api_response = api_instance.get_edge(edge_type, field_name, field_value)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling DefaultApi->get_edge: %s\n" % e)
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **edge_type** | **str**|  | 
+ **field_name** | **str**|  | 
+ **field_value** | **float**|  | 
+
+### Return type
+
+**object**
 
 ### Authorization
 

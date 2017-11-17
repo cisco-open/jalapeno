@@ -55,6 +55,11 @@ parameters:
     in: path
     type: string
     required: true
+  field-value:
+    name: field-value
+    in: path
+    type: string
+    required: true
 
 # Describe your paths here
 paths:
@@ -166,8 +171,26 @@ paths:
       responses:
         200:
           description: Good metrics
+  /edges/{edge-type}/filter/{field-name}/{field-value}:
+    get:
+      description: get edge with field name/value
+      operationId: getEdge
+      parameters:
+      - $ref: '#/parameters/edge-type'
+      - $ref: '#/parameters/field-name'
+      - $ref: '#/parameters/field-value'
+      responses:
+       200:
+         description: the fetched edge
+         schema:
+          title: getCollectorRequest
+          type: object
+       404:
+         description: the requested edge was not found
+
+
   /edges/{edge-type}/names/{field-name}:
-    post:
+    put:
       description: endpoint for collectors to add services
       operationId: upsertField
       parameters:
@@ -230,6 +253,10 @@ definitions:
     type: object
     properties:
       key:
+        type: string
+      from:
+        type: string
+      to:
         type: string
       value:
         type: number

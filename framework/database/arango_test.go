@@ -14,7 +14,7 @@ var (
 		Password: "voltron",
 		Database: "testDB",
 	}
-	collections = []string{prefixName, routerName, asName, linkName}
+	collections = []string{prefixName, routerName, asName, linkEdgeNamev4, linkEdgeNamev6}
 )
 
 func TestNewConfig(t *testing.T) {
@@ -152,7 +152,11 @@ func TestFindCollection(t *testing.T) {
 			nil,
 		},
 		{
-			linkName,
+			linkEdgeNamev4,
+			nil,
+		},
+		{
+			linkEdgeNamev6,
 			nil,
 		},
 		{

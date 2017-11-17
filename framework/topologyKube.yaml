@@ -1,24 +1,24 @@
 apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
 kind: Deployment
 metadata:
-  name: voltron-framework
+  name: voltron-topology
   labels:
-    app: voltron
+    app: voltron-topology
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: voltron-framework
+      app: voltron-topology
   template:
     metadata:
       labels:
-        app: voltron-framework
+        app: voltron-topology
     spec:
       containers:
-      - name: framework
+      - name: topology
         image: dockerhub.cisco.com/gspie-dev-docker/framework:latest
         args:
-          - framework
+          - topology
           - --arango-url
           - http://arangodb.default.svc.cluster.local:8529
           - --arango-user

@@ -63,6 +63,14 @@ class TestDefaultApi(unittest.TestCase):
         """
         pass
 
+    def test_get_edge(self):
+        """
+        Test case for get_edge
+
+        
+        """
+        pass
+
     def test_get_healthz(self):
         """
         Test case for get_healthz

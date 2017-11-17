@@ -8,6 +8,7 @@ Method | HTTP request | Description
 [**DeleteCollector**](DefaultApi.md#DeleteCollector) | **Delete** /collectors/{collector-name} | 
 [**GetCollector**](DefaultApi.md#GetCollector) | **Get** /collectors/{collector-name} | 
 [**GetCollectors**](DefaultApi.md#GetCollectors) | **Get** /collectors | 
+[**GetEdge**](DefaultApi.md#GetEdge) | **Get** /edges/{edge-type}/filter/{field-name}/{field-value} | 
 [**GetHealthz**](DefaultApi.md#GetHealthz) | **Get** /healthz | 
 [**GetLiveness**](DefaultApi.md#GetLiveness) | **Get** /liveness | 
 [**GetMetrics**](DefaultApi.md#GetMetrics) | **Get** /metrics | 
@@ -15,7 +16,7 @@ Method | HTTP request | Description
 [**RemoveAllFields**](DefaultApi.md#RemoveAllFields) | **Delete** /edges/{edge-type}/names/{field-name} | 
 [**RemoveField**](DefaultApi.md#RemoveField) | **Delete** /edges/{edge-type}/key/{edge-key}/names/{field-name} | 
 [**UpdateCollector**](DefaultApi.md#UpdateCollector) | **Post** /collectors/{collector-name} | 
-[**UpsertField**](DefaultApi.md#UpsertField) | **Post** /edges/{edge-type}/names/{field-name} | 
+[**UpsertField**](DefaultApi.md#UpsertField) | **Put** /edges/{edge-type}/names/{field-name} | 
 
 
 # **AddCollector**
@@ -119,6 +120,37 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**[]Collector**](Collector.md)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **GetEdge**
+> interface{} GetEdge($edgeType, $fieldName, $fieldValue)
+
+
+
+get edge with field name/value
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **edgeType** | **string**|  | 
+ **fieldName** | **string**|  | 
+ **fieldValue** | **float32**|  | 
+
+### Return type
+
+[**interface{}**](interface{}.md)
 
 ### Authorization
 

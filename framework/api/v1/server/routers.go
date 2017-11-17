@@ -89,6 +89,14 @@ func (r *Router) InitRoutes(s *Server) {
 		},
 
 		Route{
+			Name:       "GetEdge",
+			Method:     "GET",
+			Pattern:    "/v1/edges/{edge-type}/filter/{field-name}/{field-value}",
+			Handler:    s.GetEdge,
+			Middleware: []Middleware{},
+		},
+
+		Route{
 			Name:       "HeartbeatCollector",
 			Method:     "GET",
 			Pattern:    "/v1/collectors/{collector-name}/heartbeat",
@@ -122,7 +130,7 @@ func (r *Router) InitRoutes(s *Server) {
 
 		Route{
 			Name:       "UpsertField",
-			Method:     "POST",
+			Method:     "PUT",
 			Pattern:    "/v1/edges/{edge-type}/names/{field-name}",
 			Handler:    s.UpsertField,
 			Middleware: []Middleware{},

@@ -36,10 +36,11 @@ func NewArango(db database.ArangoConn, localASN string) *ArangoHandler {
 
 func (a *ArangoHandler) Handle(m *openbmp.Message) {
 	ts, ok := m.GetTimestamp()
-	t := time.Date(2017, 10, 10, 1, 0, 0, 0, time.UTC)
+	t := time.Date(2017, 11, 16, 1, 0, 0, 0, time.UTC)
 	if !ok || ts.Before(t) {
 		return
 	}
+
 	if f, ok := a.fmap[m.Topic.String()]; ok {
 		f(m)
 	} else {
@@ -80,10 +81,6 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 		r.IsLocal = true
 	}
 
-	if l.BGPID == "::" || r.BGPID == "::" {
-		return
-	}
-
 	if err := a.db.Upsert(l); err != nil {
 		//log.WithError(err).Error("Error on upserting router")
 	}
@@ -110,7 +107,8 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 		ToIP:   m.GetStr("remote_ip"),
 	}
 
-	if (ed.FromIP == l.BGPID && ed.ToIP == r.BGPID) || (strings.Contains(ed.ToIP, ":") || strings.Contains(ed.FromIP, ":")) {
+	// Loopbacks ruin everything... do i want to add this???
+	if ed.FromIP == l.BGPID && ed.ToIP == r.BGPID {
 		log.Warningf("Not sure if I should add this link: %+v", ed)
 		return
 	}
@@ -123,6 +121,7 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 		ToIP:   m.GetStr("local_ip"),
 		FromIP: m.GetStr("remote_ip"),
 	}
+
 	if err := a.db.Insert(ed); err != nil {
 	}
 	log.Infof("Router %v/%v (%v) --> (%v) Peer %v/%v ", l.BGPID, l.ASN, ed.FromIP, ed.ToIP, r.BGPID, r.ASN)
@@ -136,7 +135,7 @@ func (a *ArangoHandler) HandleCollector(m *openbmp.Message) {
 }
 
 func (a *ArangoHandler) HandleBaseAttribute(m *openbmp.Message) {
-
+	fmt.Println(m)
 }
 
 func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
@@ -164,21 +163,22 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 	rKey := a.db.GetRouterKeyFromInterfaceIP(m.GetStr("peer_ip"))
 	// TODO... do we add router here???
 	if rKey == "" {
-		//log.Warningln("Could not find router key for ", m.GetStr("peer_ip"), m.GetStr("prefix"))
+		log.Warningln("Could not find router key for ", m.GetStr("peer_ip"), m.GetStr("prefix"))
 		return
 	}
 
 	if m.GetStr("peer_asn") == "6500" && labels != nil {
-		// Add label????
+		log.Infof("Got Prefix %s/%d from local node %s/%s... not adding (LABELS: %v)", p.Prefix, p.Length, m.GetStr("peer_ip"), m.GetStr("peer_asn"), labels)
 		return
 	}
 	if m.GetStr("peer_asn") == a.asn || m.GetStr("peer_asn") == "6500" {
-		log.Debugf("Got Prefix %s/%d from local node %s/%s... not adding (LABELS: %v)", p.Prefix, p.Length, m.GetStr("peer_ip"), m.GetStr("peer_asn"), labels)
+		log.Infof("Got Prefix %s/%d from local node %s/%s... not adding (LABELS: %v)", p.Prefix, p.Length, m.GetStr("peer_ip"), m.GetStr("peer_asn"), labels)
 		return
 	}
 	a.db.Insert(p)
 	pID, err := database.GetID(p)
 	if err != nil {
+		fmt.Println("Could not get id?", err)
 		return
 	}
 
@@ -196,23 +196,27 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 			From:        rKey,
 			Labels:      labels,
 		}
-		a.db.Insert(ed)
+		if err := a.db.Insert(ed); err != nil {
+			log.Errorln("Could not insert", err)
+		}
 		return
 	}
 	if len(labels) > 0 {
 		ed.Labels = labels
-		log.Debugf("Prefix %s --> %s Label: %s", rKey, ed.InterfaceIP, ed.Labels)
+		//log.Infof("Prefix %s --> %s Label: %s", rKey, ed.InterfaceIP, ed.Labels)
 	}
 	if as_path := strings.Split(m.GetStr("as_path"), " "); len(as_path) > 0 {
 		ed.ASPath = as_path
 	}
-	a.db.Upsert(ed)
-	log.Infof("Added Prefix %s/%d via %s [asn: %v]", m.GetStr("prefix"), leng, m.GetStr("peer_ip"), m.GetStr("peer_asn"))
+	if err := a.db.Upsert(ed); err != nil {
+		log.Errorln("Could not upsert", err)
+		return
+	}
+	log.Infof("Added Prefix %s/%d via %s [asn: %v] [lbl: %s]", m.GetStr("prefix"), leng, m.GetStr("peer_ip"), m.GetStr("peer_asn"), labels)
 }
 
 func (a *ArangoHandler) HandleLSNode(m *openbmp.Message) {
 	fmt.Println(m)
-	return
 }
 
 func (a *ArangoHandler) HandleLSLink(m *openbmp.Message) {
@@ -234,7 +238,7 @@ func (a *ArangoHandler) HandleLSLink(m *openbmp.Message) {
 	}
 	if strings.Contains(f.BGPID, ":") {
 		//TODO... why did we even get this?
-		return
+		//return
 	}
 	if f.ASN == a.asn {
 		f.IsLocal = true
@@ -259,7 +263,7 @@ func (a *ArangoHandler) HandleLSLink(m *openbmp.Message) {
 	}
 	if l.Label == "" && (strings.Contains(l.ToIP, ":") || strings.Contains(l.FromIP, ":")) {
 		// TODO: IF ipv6 with no label... don't add. Is this what we want??
-		return
+		//return
 	}
 	l.SetEdge(t, f)
 	l.SetKey()
@@ -280,5 +284,5 @@ func (a *ArangoHandler) HandleLSPrefix(m *openbmp.Message) {
 }
 
 func (a *ArangoHandler) HandleRouter(m *openbmp.Message) {
-	log.Debugln(m.String())
+	fmt.Println(m)
 }

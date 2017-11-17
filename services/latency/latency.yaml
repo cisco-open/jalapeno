@@ -18,7 +18,7 @@ spec:
       - name: latency
         image: dockerhub.cisco.com/gspie-dev-docker/latency:latest
         args:
-          - --arangodbEndpoint
-          - arangodb.default.svc.cluster.local:8529
+          - --frameworkEndpoint
+          - voltron-framework.default.svc.cluster.local:8876
           - --kafkaEndpoint
           - kafka-0.broker.default.svc.cluster.local:9092

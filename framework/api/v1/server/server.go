@@ -264,6 +264,49 @@ func (s *Server) GetMetrics(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func (s *Server) GetEdge(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	vars := mux.Vars(r)
+	edgeType, ok := vars["edge-type"]
+	if !ok || edgeType == "" {
+		returnErr(w, "parsing edgeType from path", nil, http.StatusBadRequest)
+		return
+	}
+	fieldName, ok := vars["field-name"]
+	if !ok || fieldName == "" {
+		returnErr(w, "parsing fieldName from path", nil, http.StatusBadRequest)
+		return
+	}
+	fieldValue, ok := vars["field-value"]
+	if !ok || fieldValue == "" {
+		returnErr(w, "parsing fieldValue from path", nil, http.StatusBadRequest)
+		return
+	}
+
+	obj, err := getCollection(edgeType)
+	if err != nil {
+		returnErr(w, "Invalid edgeType", err, http.StatusBadRequest)
+		return
+	}
+
+	q := fmt.Sprintf("FOR e IN %s FILTER e.@field == @val RETURN e", edgeType)
+	fields := map[string]interface{}{
+		"field": fieldName,
+		"val":   fieldValue,
+	}
+
+	res, err := s.db.Query(q, fields, obj)
+	if err != nil || len(res) == 0 {
+		returnErr(w, "failed to get edge", err, http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(res[0]); err != nil {
+		log.Warning(err, res)
+	}
+}
+
 // HeatbeatCollector is a heartbeat endpoint that all collectors periodically call, to notify us that they are alive
 func (s *Server) HeartbeatCollector(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -444,7 +487,7 @@ func (s *Server) UpsertField(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if eScore.Key == "" {
+	if eScore.Key == "" && (eScore.To == "" || eScore.From == "") {
 		returnErr(w, "empty key value", nil, http.StatusBadRequest)
 		return
 	}
@@ -455,13 +498,25 @@ func (s *Server) UpsertField(w http.ResponseWriter, r *http.Request) {
 		returnErr(w, "Invalid edgeType", err, http.StatusBadRequest)
 		return
 	}
-
-	q := fmt.Sprintf("FOR e IN %s FILTER e._key == @key UPDATE e WITH { @field: @val } IN %s",
-		edgeType, edgeType)
-	fields := map[string]interface{}{
-		"key":   eScore.Key,
-		"val":   eScore.Value,
-		"field": fieldName,
+	var q string
+	var fields map[string]interface{}
+	if eScore.Key != "" {
+		q = fmt.Sprintf("FOR e IN %s FILTER e._key == @key UPDATE e WITH { @field: @val } IN %s",
+			edgeType, edgeType)
+		fields = map[string]interface{}{
+			"key":   eScore.Key,
+			"val":   eScore.Value,
+			"field": fieldName,
+		}
+	} else {
+		q = fmt.Sprintf("FOR e IN %s FILTER e._to == @to AND e._from == @frm UPDATE e WITH { @field: @val } IN %s",
+			edgeType, edgeType)
+		fields = map[string]interface{}{
+			"to":    eScore.To,
+			"frm":   eScore.From,
+			"val":   eScore.Value,
+			"field": fieldName,
+		}
 	}
 
 	_, err = s.db.Query(q, fields, obj)

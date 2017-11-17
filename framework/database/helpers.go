@@ -1,6 +1,9 @@
 package database
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 func (a *ArangoConn) GetRouterByIP(ip string) *Router {
 	r := &Router{}
@@ -17,8 +20,12 @@ func (a *ArangoConn) GetRouterKeyFromInterfaceIP(ip string) string {
 		return ""
 	}
 	var r string
-	key := "Routers/" + ip + "%"
-	q := fmt.Sprintf("FOR e in LinkEdges Filter e.ToIP == %q OR e._to LIKE %q  RETURN DISTINCT e._to", ip, key)
+	key := "Routers/" + ip
+	col := linkEdgeNamev4
+	if strings.Contains(ip, ":") {
+		col = linkEdgeNamev6
+	}
+	q := fmt.Sprintf("FOR e in %s Filter e.ToIP == %q OR e._to == %q  RETURN DISTINCT e._to", col, ip, key)
 	results, _ := a.Query(q, nil, r)
 	if len(results) > 0 {
 		return results[len(results)-1].(string)

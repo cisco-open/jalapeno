@@ -290,6 +290,74 @@ func (a DefaultApi) GetCollectors() ([]Collector, *APIResponse, error) {
 
 /**
  *
+ * get edge with field name/value
+ *
+ * @param edgeType
+ * @param fieldName
+ * @param fieldValue
+ * @return *interface{}
+ */
+func (a DefaultApi) GetEdge(edgeType string, fieldName string, fieldValue string) (*interface{}, *APIResponse, error) {
+
+	var localVarHttpMethod = strings.ToUpper("Get")
+	// create path and map variables
+	localVarPath := a.Configuration.BasePath + "/edges/{edge-type}/filter/{field-name}/{field-value}"
+	localVarPath = strings.Replace(localVarPath, "{"+"edge-type"+"}", fmt.Sprintf("%v", edgeType), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"field-name"+"}", fmt.Sprintf("%v", fieldName), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"field-value"+"}", fmt.Sprintf("%v", fieldValue), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := make(map[string]string)
+	var localVarPostBody interface{}
+	var localVarFileName string
+	var localVarFileBytes []byte
+	// authentication '(Bearer)' required
+	// set key with prefix in header
+	localVarHeaderParams["Authorization"] = a.Configuration.GetAPIKeyWithPrefix("Authorization")
+	// add default headers if any
+	for key := range a.Configuration.DefaultHeader {
+		localVarHeaderParams[key] = a.Configuration.DefaultHeader[key]
+	}
+
+	// to determine the Content-Type header
+	localVarHttpContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHttpContentType := a.Configuration.APIClient.SelectHeaderContentType(localVarHttpContentTypes)
+	if localVarHttpContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHttpContentType
+	}
+	// to determine the Accept header
+	localVarHttpHeaderAccepts := []string{
+		"application/json",
+	}
+
+	// set Accept header
+	localVarHttpHeaderAccept := a.Configuration.APIClient.SelectHeaderAccept(localVarHttpHeaderAccepts)
+	if localVarHttpHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHttpHeaderAccept
+	}
+	var successPayload = new(interface{})
+	localVarHttpResponse, err := a.Configuration.APIClient.CallAPI(localVarPath, localVarHttpMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFileName, localVarFileBytes)
+
+	var localVarURL, _ = url.Parse(localVarPath)
+	localVarURL.RawQuery = localVarQueryParams.Encode()
+	var localVarAPIResponse = &APIResponse{Operation: "GetEdge", Method: localVarHttpMethod, RequestURL: localVarURL.String()}
+	if localVarHttpResponse != nil {
+		localVarAPIResponse.Response = localVarHttpResponse.RawResponse
+		localVarAPIResponse.Payload = localVarHttpResponse.Body()
+	}
+
+	if err != nil {
+		return successPayload, localVarAPIResponse, err
+	}
+	err = json.Unmarshal(localVarHttpResponse.Body(), &successPayload)
+	return successPayload, localVarAPIResponse, err
+}
+
+/**
+ *
  * get health of framework
  *
  * @return void
@@ -738,7 +806,7 @@ func (a DefaultApi) UpdateCollector(collectorName string, body Collector) (*APIR
  */
 func (a DefaultApi) UpsertField(edgeType string, fieldName string, body EdgeScore) (*APIResponse, error) {
 
-	var localVarHttpMethod = strings.ToUpper("Post")
+	var localVarHttpMethod = strings.ToUpper("Put")
 	// create path and map variables
 	localVarPath := a.Configuration.BasePath + "/edges/{edge-type}/names/{field-name}"
 	localVarPath = strings.Replace(localVarPath, "{"+"edge-type"+"}", fmt.Sprintf("%v", edgeType), -1)
