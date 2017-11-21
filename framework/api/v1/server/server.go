@@ -2,12 +2,14 @@
 package server
 
 import (
+	"bytes"
 	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"reflect"
 	"strings"
@@ -224,7 +226,8 @@ func (s *Server) GetCollector(w http.ResponseWriter, r *http.Request) {
 func (s *Server) GetCollectors(w http.ResponseWriter, r *http.Request) {
 	defer log.Infof("GetCollectors")
 	var col database.Collector
-	dbCols, err := s.db.Query("FOR c in Collectors RETURN c", nil, col)
+	q, bind := prepareQuery(r.URL.Query())
+	dbCols, err := s.db.Query(q, bind, col)
 	if err != nil {
 		returnErr(w, "fetching colectors", err, http.StatusInternalServerError)
 		return
@@ -241,6 +244,32 @@ func (s *Server) GetCollectors(w http.ResponseWriter, r *http.Request) {
 	if err = json.NewEncoder(w).Encode(apiCols); err != nil {
 		log.Errorf("Unable to Encode Sites: %v", err)
 	}
+}
+
+func prepareQuery(vals url.Values) (string, map[string]interface{}) {
+	baseQuery := "FOR c in Collectors %s RETURN c"
+	filterInsert := "FILTER %s"
+	var insert bytes.Buffer
+	bind := make(map[string]interface{})
+	var q string
+	count := 0
+	for k, v := range vals {
+		if len(v) == 1 && v[0] != "" {
+			if count == 0 {
+				insert.WriteString(fmt.Sprintf("c.%s == @%s", k, k))
+			} else {
+				insert.WriteString(fmt.Sprintf(" and c.%s == @%s", k, k))
+			}
+			bind[k] = v[0]
+			count++
+		}
+	}
+	if len(bind) != 0 {
+		q = fmt.Sprintf(baseQuery, fmt.Sprintf(filterInsert, insert.String()))
+	} else {
+		q = "FOR c in Collectors RETURN c"
+	}
+	return q, bind
 }
 
 // GetHealthz is the health endpoint to be used for kubernetes

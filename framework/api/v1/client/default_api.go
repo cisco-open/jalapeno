@@ -230,9 +230,16 @@ func (a DefaultApi) GetCollector(collectorName string) (*Collector, *APIResponse
  *
  * get all collector services
  *
+ * @param name
+ * @param description
+ * @param status
+ * @param edgeType
+ * @param fieldName
+ * @param timeout
+ * @param lastHeartbeat
  * @return []Collector
  */
-func (a DefaultApi) GetCollectors() ([]Collector, *APIResponse, error) {
+func (a DefaultApi) GetCollectors(name string, description string, status string, edgeType string, fieldName string, timeout string, lastHeartbeat string) ([]Collector, *APIResponse, error) {
 
 	var localVarHttpMethod = strings.ToUpper("Get")
 	// create path and map variables
@@ -251,6 +258,13 @@ func (a DefaultApi) GetCollectors() ([]Collector, *APIResponse, error) {
 	for key := range a.Configuration.DefaultHeader {
 		localVarHeaderParams[key] = a.Configuration.DefaultHeader[key]
 	}
+	localVarQueryParams.Add("Name", a.Configuration.APIClient.ParameterToString(name, ""))
+	localVarQueryParams.Add("Description", a.Configuration.APIClient.ParameterToString(description, ""))
+	localVarQueryParams.Add("Status", a.Configuration.APIClient.ParameterToString(status, ""))
+	localVarQueryParams.Add("EdgeType", a.Configuration.APIClient.ParameterToString(edgeType, ""))
+	localVarQueryParams.Add("FieldName", a.Configuration.APIClient.ParameterToString(fieldName, ""))
+	localVarQueryParams.Add("Timeout", a.Configuration.APIClient.ParameterToString(timeout, ""))
+	localVarQueryParams.Add("LastHeartbeat", a.Configuration.APIClient.ParameterToString(lastHeartbeat, ""))
 
 	// to determine the Content-Type header
 	localVarHttpContentTypes := []string{"application/json"}

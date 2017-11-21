@@ -55,6 +55,41 @@ parameters:
     in: path
     type: string
     required: true
+  Name:
+    name: Name
+    in: query
+    type: string
+    required: false
+  Description:
+    name: Description
+    in: query
+    type: string
+    required: false
+  Status:
+    name: Status
+    in: query
+    type: string
+    required: false
+  EdgeType:
+    name: EdgeType
+    in: query
+    type: string
+    required: false
+  FieldName:
+    name: FieldName
+    in: query
+    type: string
+    required: false
+  Timeout:
+    name: Timeout
+    in: query
+    type: string
+    required: false
+  LastHeartbeat:
+    name: LastHeartbeat
+    in: query
+    type: string
+    required: false
   field-value:
     name: field-value
     in: path
@@ -67,6 +102,14 @@ paths:
     get:
       description: get all collector services
       operationId: getCollectors
+      parameters:
+        - $ref: '#/parameters/Name'
+        - $ref: '#/parameters/Description'
+        - $ref: '#/parameters/Status'
+        - $ref: '#/parameters/EdgeType'
+        - $ref: '#/parameters/FieldName'
+        - $ref: '#/parameters/Timeout'
+        - $ref: '#/parameters/LastHeartbeat'
       responses:
         200:
           description: the fetched collectors
@@ -232,20 +275,20 @@ definitions:
   Collector:
     type: object
     properties:
-      name:
+      Name:
         type: string
-      description:
+      Description:
         type: string
-      status:
+      Status:
         type: string
         enum:
           - "Running"
           - "Down"
-      edgeType:
+      EdgeType:
         type: string
-      fieldName:
+      FieldName:
         type: string
-      timeout:
+      Timeout:
         type: string
       LastHeartbeat:
         type: string

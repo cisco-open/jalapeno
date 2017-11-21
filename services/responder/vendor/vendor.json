@@ -1,0 +1,122 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "9cl7+wv0GvxpQV+HOtV93F9pbmE=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/github.com/Sirupsen/logrus",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "7m7A6E9fhK6xtGwfgx1bZfl03FI=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/github.com/arangodb/go-driver",
+			"path": "github.com/arangodb/go-driver",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "cwqw6K47c8rmnGE9gYvUStSFuN4=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/github.com/arangodb/go-driver/cluster",
+			"path": "github.com/arangodb/go-driver/cluster",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "XkGO6bpyB1neB9+zSn/syqbzyTY=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/github.com/arangodb/go-driver/http",
+			"path": "github.com/arangodb/go-driver/http",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "MngUWOGQS+VbeepJCpkJxuJsJ4g=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/github.com/arangodb/go-driver/util",
+			"path": "github.com/arangodb/go-driver/util",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "piyyxxLl0rqBn3WAKF3G+pmagEc=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/github.com/arangodb/go-velocypack",
+			"path": "github.com/arangodb/go-velocypack",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "dSfjDDNCE0cDNz73LzE/xtVKfGw=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/github.com/go-resty/resty",
+			"path": "github.com/go-resty/resty",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/vendor/github.com/gorilla/context",
+			"path": "github.com/gorilla/context",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "3HFUqdhX43kNPJe18WJWCVkthKI=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/vendor/github.com/gorilla/mux",
+			"path": "github.com/gorilla/mux",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "nqWNlnMmVpt628zzvyo6Yv2CX5Q=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/golang.org/x/crypto/ssh/terminal",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "nt4o3cMOyP9prgVeAZgRf82/Et0=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/golang.org/x/net/publicsuffix",
+			"path": "golang.org/x/net/publicsuffix",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "ZWgtYdxJbBEFnRbrdVOi7QrQVdc=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/golang.org/x/sys/unix",
+			"path": "golang.org/x/sys/unix",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "pBPFzDGt3AVSRffB7ffiUnruFUk=",
+			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/golang.org/x/sys/windows",
+			"path": "golang.org/x/sys/windows",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "QRYVHJyWqBl7aLOi5o4gXB2nhMs=",
+			"path": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/api/v1/client",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "J7ds/h0H+Yg2QpMxAmyZh/hyHBE=",
+			"path": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "SUUm/sufJxUuuScEF5j9sL3UI9s=",
+			"path": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		},
+		{
+			"checksumSHA1": "hPbuIWJWK1UkdVfpsdoCoodsJ5U=",
+			"path": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/manager",
+			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
+			"revisionTime": "2017-11-20T19:15:49Z"
+		}
+	],
+	"rootPath": "wwwin-github.cisco.com/spa-ie/voltron-redux/services/responder"
+}

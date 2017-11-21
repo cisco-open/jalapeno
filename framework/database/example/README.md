@@ -355,3 +355,24 @@ conditionals. If we had an isSecureBool we could also query to make sure all Pat
 The second `LET` is looking through the Weight value, in this example it is Latency. It could be any numeric value
 in an edge. If a latency score is not set it will evaluate it as 0. The same is true for the filters, it will be assumed
 to be 0 if not populated.
+
+
+
+### Random query Things
+```
+FOR v,e,p IN 4
+OUTBOUND 'Routers/10.1.1.0'
+GRAPH "topology"
+OPTIONS {bfs: False, uniqueEdges: "path", uniqueVertices: "path"}
+FILTER p.vertices[-1]._id == "Prefixes/10.11.0.0_24"
+RETURN p.edges[* FILTER CURRENT.Label != null].Label
+```
+
+```
+FOR v,e,p IN 4
+OUTBOUND 'Routers/10.1.1.0'
+LinkEdgesV4, PrefixEdges
+OPTIONS {bfs: False, uniqueEdges: "path", uniqueVertices: "path"}
+FILTER p.vertices[-1]._id == "Prefixes/10.11.0.0_24"
+RETURN p.edges[* FILTER CURRENT.Label != null].Label
+```

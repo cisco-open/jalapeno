@@ -107,7 +107,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **GetCollectors**
-> []Collector GetCollectors()
+> []Collector GetCollectors($name, $description, $status, $edgeType, $fieldName, $timeout, $lastHeartbeat)
 
 
 
@@ -115,7 +115,16 @@ get all collector services
 
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **name** | **string**|  | [optional] 
+ **description** | **string**|  | [optional] 
+ **status** | **string**|  | [optional] 
+ **edgeType** | **string**|  | [optional] 
+ **fieldName** | **string**|  | [optional] 
+ **timeout** | **string**|  | [optional] 
+ **lastHeartbeat** | **string**|  | [optional] 
 
 ### Return type
 
