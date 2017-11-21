@@ -12,6 +12,7 @@ import (
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/kafka"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/manager"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -27,7 +28,8 @@ type GlobalConfig struct {
 }
 
 type FrameworkConfig struct {
-	API server.Config
+	API     server.Config
+	Manager manager.Config
 }
 
 type TopologyConfig struct {
@@ -44,7 +46,8 @@ func InitGlobalCfg() *GlobalConfig {
 
 func InitFrameworkCfg() *FrameworkConfig {
 	return &FrameworkConfig{
-		API: server.NewConfig(),
+		API:     server.NewConfig(),
+		Manager: manager.NewConfig(),
 	}
 }
 

@@ -7,6 +7,8 @@ Arango:
   User:     root
   Password: voltron
   Database: voltron
+Manager:
+  Interval: 10s
 Log:
   Level: debug
 Kafka:

@@ -10,6 +10,7 @@ import (
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/config"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
 	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
+	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/manager"
 )
 
 func init() {
@@ -70,6 +71,13 @@ func frameworkRun(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	mgr, err := manager.NewManager(cfg.Manager, &arangoDB)
+	if err != nil {
+		globalErr = err
+		return
+	}
+
+	serviceGroup.Add(mgr)
 	serviceGroup.Add(api)
 	serviceGroup.Start()
 	serviceGroup.Wait()
