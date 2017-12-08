@@ -1,0 +1,43 @@
+grpc
+ port 57400
+ !
+!
+telemetry model-driven
+ sensor-group fib
+  sensor-path Cisco-IOS-XR-fib-common-oper:fib-statistics/nodes/node/drops
+  sensor-path Cisco-IOS-XR-fib-common-oper:fib/nodes/node/protocols/protocol/vrfs/vrf/ip-prefix-details/ip-prefix-detail
+ !
+ sensor-group bgp-rib
+  sensor-path Cisco-IOS-XR-ip-rib-ipv4-oper:rib/vrfs/vrf/afs/af/safs/saf/ip-rib-route-table-names/ip-rib-route-table-name/protocol/bgp/as/information
+  sensor-path Cisco-IOS-XR-ip-rib-ipv4-oper:rib/vrfs/vrf/afs/af/safs/saf/ip-rib-route-table-names/ip-rib-route-table-name/protocol/connected/non-as/information
+ !
+ sensor-group cpu-mem
+  sensor-path Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization
+  sensor-path Cisco-IOS-XR-nto-misc-oper:memory-summary/nodes/node/summary
+ !
+ sensor-group interfaces
+  sensor-path Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-briefs/interface-brief
+ !
+ sensor-group link-stats
+  sensor-path Cisco-IOS-XR-ethernet-lldp-oper:lldp/nodes/node/statistics
+  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/data-rate
+  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters
+  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/protocols/protocol
+ !
+ sensor-group isis-routes
+  sensor-path Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/topologies/topology/ipv4-routes/ipv4-route
+  sensor-path Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/topologies/topology/ipv6-routes/ipv6-route
+ !
+ sensor-group link-oper-stats
+  sensor-path Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface
+ !
+ subscription base_metrics
+  sensor-group-id fib sample-interval 300000
+  sensor-group-id bgp-rib sample-interval 300000
+  sensor-group-id cpu-mem sample-interval 5000
+  sensor-group-id interfaces sample-interval 300000
+  sensor-group-id link-stats sample-interval 5000
+  sensor-group-id isis-routes sample-interval 300000
+  sensor-group-id link-oper-stats sample-interval 5000
+ !
+!
