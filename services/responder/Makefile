@@ -2,9 +2,9 @@
 
 EXECUTABLE ?= responder
 BINARY ?= bin/$(EXECUTABLE)
-BASE ?= dockerhub.cisco.com/gspie-docker
+BASE ?= dockerhub.cisco.com/gspie-dev-docker
 IMAGE ?= responder
-TAG ?= latest
+TAG ?= 1.0
 all: build
 
 build:
@@ -19,4 +19,4 @@ fast:
 
 container:
 	docker run -t -w /go/src/wwwin-github.cisco.com/spa-ie/voltron-redux/services/responder -v `pwd`:/go/src/wwwin-github.cisco.com/spa-ie/voltron-redux/services/responder golang:1.7.1-wheezy make
-	docker build -t $(BASE):$(TAG) .
+	docker build -t $(BASE)/$(IMAGE):$(TAG) .

@@ -2,7 +2,7 @@ package database
 
 import "fmt"
 
-const routerName = "Routers"
+const RouterName = "Routers"
 
 type Router struct {
 	Key      string `json:"_key,omitempty"`
@@ -40,5 +40,5 @@ func (r *Router) makeKey() (string, error) {
 }
 
 func (r Router) GetType() string {
-	return routerName
+	return RouterName
 }

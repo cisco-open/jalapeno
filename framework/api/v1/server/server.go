@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -183,7 +184,7 @@ func (s *Server) DeleteCollector(w http.ResponseWriter, r *http.Request) {
 		returnErr(w, "getting collector", err, http.StatusInternalServerError)
 		return
 	}
-	defer log.Infof("DeleteCollector: %+v", convert.DbCol2ApiCol(dbObj))
+	defer log.Infof("DeleteCollector: %+v", name)
 
 	err, code := s.removeAllFields(dbObj.EdgeType, dbObj.FieldName)
 	if err != nil {
@@ -215,9 +216,9 @@ func (s *Server) GetCollector(w http.ResponseWriter, r *http.Request) {
 		returnErr(w, "reading document", err, http.StatusInternalServerError)
 		return
 	}
-	defer log.Infof("GetCollector: %+v", convert.DbCol2ApiCol(dbObj))
+	defer log.Infof("GetCollector: %+v", name)
 
-	if err = json.NewEncoder(w).Encode(convert.DbCol2ApiCol(dbObj)); err != nil {
+	if err = json.NewEncoder(w).Encode(convert.DbCol2ApiCol(&dbObj)); err != nil {
 		log.Errorf("Unable to Encode Sites: %v", err)
 	}
 }
@@ -226,7 +227,7 @@ func (s *Server) GetCollector(w http.ResponseWriter, r *http.Request) {
 func (s *Server) GetCollectors(w http.ResponseWriter, r *http.Request) {
 	defer log.Infof("GetCollectors")
 	var col database.Collector
-	q, bind := prepareQuery(r.URL.Query())
+	q, bind := prepareQuery(database.CollectorName, r.URL.Query())
 	dbCols, err := s.db.Query(q, bind, col)
 	if err != nil {
 		returnErr(w, "fetching colectors", err, http.StatusInternalServerError)
@@ -235,41 +236,123 @@ func (s *Server) GetCollectors(w http.ResponseWriter, r *http.Request) {
 
 	var apiCols []client.Collector
 	for _, c := range dbCols {
-		apiCols = append(apiCols, convert.DbCol2ApiCol(*c.(*database.Collector)))
+		if c.(*database.Collector) != nil {
+			apiCols = append(apiCols, convert.DbCol2ApiCol(c.(*database.Collector)).(client.Collector))
+		}
 	}
 
 	if len(apiCols) == 0 {
 		apiCols = make([]client.Collector, 0)
 	}
+
 	if err = json.NewEncoder(w).Encode(apiCols); err != nil {
 		log.Errorf("Unable to Encode Sites: %v", err)
 	}
 }
 
-func prepareQuery(vals url.Values) (string, map[string]interface{}) {
-	baseQuery := "FOR c in Collectors %s RETURN c"
+// Support filters?
+func prepareQuery(col string, vals url.Values) (string, map[string]interface{}) {
+	baseQuery := fmt.Sprintf("FOR z in %s %s", col, "%s RETURN z")
 	filterInsert := "FILTER %s"
 	var insert bytes.Buffer
 	bind := make(map[string]interface{})
 	var q string
 	count := 0
+	// TODO: this is a primitive test for
 	for k, v := range vals {
-		if len(v) == 1 && v[0] != "" {
-			if count == 0 {
-				insert.WriteString(fmt.Sprintf("c.%s == @%s", k, k))
-			} else {
-				insert.WriteString(fmt.Sprintf(" and c.%s == @%s", k, k))
+		if len(v) > 1 && v[0] != "" {
+			// have a slice of values
+			var stringBuff bytes.Buffer
+			var intBuff bytes.Buffer
+			var floatBuff bytes.Buffer
+			usedInt := false
+			usedFloat := false
+			if count != 0 {
+				insert.WriteString(" AND ")
 			}
-			bind[k] = v[0]
-			count++
+			for index, vItem := range v {
+				if index == 0 {
+					writeToAll("[ ", &stringBuff, &intBuff, &floatBuff)
+				} else if index != 0 {
+					writeToAll(", ", &stringBuff, &intBuff, &floatBuff)
+				}
+
+				// takes in key, buff and map
+
+				sliceKey := fmt.Sprintf("%s%d", k, count)
+				stringBuff.WriteString(fmt.Sprintf("@%s", sliceKey))
+				bind[sliceKey] = vItem
+				count++
+
+				// if value can be converted to an int, we might not know the base type
+				num, err := strconv.Atoi(vItem)
+				if err == nil {
+					usedInt = true
+					sliceKey = fmt.Sprintf("%sint", sliceKey)
+					intBuff.WriteString(fmt.Sprintf("@%s", sliceKey))
+					bind[sliceKey] = int32(num)
+				}
+
+				// if value can be converted to an float, we might not know the base type
+				floa, err := strconv.ParseFloat(vItem, 32)
+				if err == nil {
+					usedFloat = true
+					sliceKey = fmt.Sprintf("%sfloat", sliceKey)
+					floatBuff.WriteString(fmt.Sprintf("@%s", sliceKey))
+					bind[sliceKey] = float32(floa)
+				}
+			}
+
+			writeToAll(" ]", &stringBuff, &intBuff, &floatBuff)
+
+			insert.WriteString(fmt.Sprintf("%s ALL IN z.%s", stringBuff.String(), k))
+			if usedInt {
+				insert.WriteString(fmt.Sprintf(" OR %s ALL IN z.%s", intBuff.String(), k))
+			}
+			if usedFloat {
+				insert.WriteString(fmt.Sprintf(" OR %s ALL IN z.%s", floatBuff.String(), k))
+			}
+
+		} else if v[0] != "" {
+			if count != 0 {
+				insert.WriteString(" AND ")
+			}
+			if len(v) == 1 && v[0] != "" {
+				insert.WriteString(fmt.Sprintf("z.%s == @%s", k, k))
+				bind[k] = v[0]
+				count++
+
+				// if value can be converted to an int, we might not know the base type
+				num, err := strconv.Atoi(v[0])
+				if err == nil {
+					key := fmt.Sprintf("%sint", k)
+					insert.WriteString(fmt.Sprintf(" OR z.%s == @%s", k, key))
+					bind[key] = int32(num)
+				}
+
+				// if value can be converted to an float, we might not know the base type
+				floa, err := strconv.ParseFloat(v[0], 32)
+				if err == nil {
+					key := fmt.Sprintf("%sfloat", k)
+					insert.WriteString(fmt.Sprintf(" OR z.%s == @%s", k, key))
+					bind[key] = float32(floa)
+				}
+			}
 		}
 	}
 	if len(bind) != 0 {
 		q = fmt.Sprintf(baseQuery, fmt.Sprintf(filterInsert, insert.String()))
 	} else {
-		q = "FOR c in Collectors RETURN c"
+		q = fmt.Sprintf("FOR z in %s RETURN z", col)
 	}
+
 	return q, bind
+}
+
+func writeToAll(s string, buffs ...*bytes.Buffer) {
+	for _, b := range buffs {
+		b.WriteString(s)
+	}
 }
 
 // GetHealthz is the health endpoint to be used for kubernetes
@@ -358,9 +441,65 @@ func (s *Server) HeartbeatCollector(w http.ResponseWriter, r *http.Request) {
 		returnErr(w, "updating heartbeat", err, http.StatusInternalServerError)
 		return
 	}
-	defer log.Infof("Heartbeat collector: %+v", dbCol)
+	defer log.Debugf("Heartbeat collector: %+v", dbCol)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
+}
+
+func (s *Server) QueryArango(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	vars := mux.Vars(r)
+	collection, ok := vars["Collection"]
+	if !ok || collection == "" {
+		returnErr(w, "parsing Collection from path", nil, http.StatusBadRequest)
+		return
+	}
+	log.Infof("Query collection : %v. Params: %+v. Len: %v", collection, params, len(params))
+
+	var intf interface{}
+	var convertFunc convert.ConvertFunc
+	switch collection {
+	case database.CollectorName:
+		intf = database.Collector{}
+		convertFunc = convert.DbCol2ApiCol
+	case database.PrefixName:
+		intf = database.Prefix{}
+		convertFunc = convert.DBPrefix2ApiPrefix
+	case database.PrefixEdgeName:
+		intf = database.PrefixEdge{}
+		convertFunc = convert.DBPrefixE2ApiPrefixE
+	case database.LinkEdgeNamev4:
+		fallthrough
+	case database.LinkEdgeNamev6:
+		intf = database.LinkEdge{}
+		convertFunc = convert.DBLinkE2ApiLinkE
+	case database.RouterName:
+		intf = database.Router{}
+		convertFunc = convert.DbRouter2ApiRouter
+	default:
+		returnErr(w, fmt.Sprintf("Unknown collection %v", collection), nil, http.StatusBadRequest)
+		return
+	}
+
+	// need to handle slice
+	q, bind := prepareQuery(collection, params)
+	dbResults, err := s.db.Query(q, bind, intf)
+	if err != nil {
+		returnErr(w, "fetching query results", err, http.StatusInternalServerError)
+		return
+	}
+
+	// Convert to appropriate API Object
+	ret := make([]interface{}, len(dbResults))
+
+	for i, res := range dbResults {
+		ret[i] = convertFunc(res)
+	}
+
+	// need to filter on each item and check it
+	if err = json.NewEncoder(w).Encode(ret); err != nil {
+		log.Errorf("Unable to Encode Sites: %v", err)
+	}
 }
 
 func (s *Server) RemoveAllFields(w http.ResponseWriter, r *http.Request) {
@@ -520,7 +659,7 @@ func (s *Server) UpsertField(w http.ResponseWriter, r *http.Request) {
 		returnErr(w, "empty key value", nil, http.StatusBadRequest)
 		return
 	}
-	defer log.Infof("UpsertField to %v:%v on key: %v to %v", edgeType, fieldName, eScore.Key, eScore.Value)
+	defer log.Debugf("UpsertField to %v:%v on key: %v to %v", edgeType, fieldName, eScore.Key, eScore.Value)
 
 	obj, err := getCollection(edgeType)
 	if err != nil {

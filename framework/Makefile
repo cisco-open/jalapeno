@@ -3,9 +3,9 @@
 EXECUTABLE ?= voltron
 BINARY ?= bin/$(EXECUTABLE)
 PACKAGES = $(shell go list ./... | grep -E -v '/bin|/vendor|/docs|/cmd|/log|/api/v1/client|/api/v1/gen|/arango/example')
-REPO=dockerhub.cisco.com/gspie-docker
+REPO=dockerhub.cisco.com/gspie-dev-docker
 IMAGE=framework
-TAG=latest
+TAG=1.3
 
 
 all: build

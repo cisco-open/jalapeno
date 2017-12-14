@@ -1,16 +1,11 @@
-# Collector
+# Prefix
 
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **key** | **str** |  | [optional] 
-**name** | **str** |  | [optional] 
-**description** | **str** |  | [optional] 
-**status** | **str** |  | [optional] 
-**edge_type** | **str** |  | [optional] 
-**field_name** | **str** |  | [optional] 
-**timeout** | **str** |  | [optional] 
-**last_heartbeat** | **str** |  | [optional] 
+**prefix** | **str** |  | [optional] 
+**length** | **int** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

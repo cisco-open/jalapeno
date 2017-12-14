@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-const asName = "PrefixEdges"
+const PrefixEdgeName = "PrefixEdges"
 
 type PrefixEdge struct {
 	From        string   `json:"_from,omitempty"`
@@ -45,7 +45,7 @@ func (a *PrefixEdge) makeKey() (string, error) {
 }
 
 func (a PrefixEdge) GetType() string {
-	return asName
+	return PrefixEdgeName
 }
 
 func (a *PrefixEdge) SetEdge(to DBObject, from DBObject) error {

@@ -13,6 +13,7 @@ Method | HTTP request | Description
 [**get_liveness**](DefaultApi.md#get_liveness) | **GET** /liveness | 
 [**get_metrics**](DefaultApi.md#get_metrics) | **GET** /metrics | 
 [**heartbeat_collector**](DefaultApi.md#heartbeat_collector) | **GET** /collectors/{collector-name}/heartbeat | 
+[**query_arango**](DefaultApi.md#query_arango) | **GET** /query/{Collection} | 
 [**remove_all_fields**](DefaultApi.md#remove_all_fields) | **DELETE** /edges/{edge-type}/names/{field-name} | 
 [**remove_field**](DefaultApi.md#remove_field) | **DELETE** /edges/{edge-type}/key/{edge-key}/names/{field-name} | 
 [**update_collector**](DefaultApi.md#update_collector) | **POST** /collectors/{collector-name} | 
@@ -174,7 +175,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_collectors**
-> list[Collector] get_collectors()
+> list[Collector] get_collectors(name=name, description=description, status=status, edge_type=edge_type, field_name=field_name, timeout=timeout, last_heartbeat=last_heartbeat)
 
 
 
@@ -195,16 +196,32 @@ client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
 
 # create an instance of the API class
 api_instance = client.DefaultApi()
+name = 'name_example' # str |  (optional)
+description = 'description_example' # str |  (optional)
+status = 'status_example' # str |  (optional)
+edge_type = 'edge_type_example' # str |  (optional)
+field_name = 'field_name_example' # str |  (optional)
+timeout = 'timeout_example' # str |  (optional)
+last_heartbeat = 'last_heartbeat_example' # str |  (optional)
 
 try: 
-    api_response = api_instance.get_collectors()
+    api_response = api_instance.get_collectors(name=name, description=description, status=status, edge_type=edge_type, field_name=field_name, timeout=timeout, last_heartbeat=last_heartbeat)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling DefaultApi->get_collectors: %s\n" % e)
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **name** | **str**|  | [optional] 
+ **description** | **str**|  | [optional] 
+ **status** | **str**|  | [optional] 
+ **edge_type** | **str**|  | [optional] 
+ **field_name** | **str**|  | [optional] 
+ **timeout** | **str**|  | [optional] 
+ **last_heartbeat** | **str**|  | [optional] 
 
 ### Return type
 
@@ -245,7 +262,7 @@ client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
 api_instance = client.DefaultApi()
 edge_type = 'edge_type_example' # str | 
 field_name = 'field_name_example' # str | 
-field_value = 3.4 # float | 
+field_value = 'field_value_example' # str | 
 
 try: 
     api_response = api_instance.get_edge(edge_type, field_name, field_value)
@@ -260,7 +277,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **edge_type** | **str**|  | 
  **field_name** | **str**|  | 
- **field_value** | **float**|  | 
+ **field_value** | **str**|  | 
 
 ### Return type
 
@@ -458,6 +475,58 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**Collector**](Collector.md)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **query_arango**
+> object query_arango(collection)
+
+
+
+query arango for edges and nodes
+
+### Example 
+```python
+from __future__ import print_statement
+import time
+import client
+from client.rest import ApiException
+from pprint import pprint
+
+# Configure API key authorization: Bearer
+client.configuration.api_key['Authorization'] = 'YOUR_API_KEY'
+# Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+# client.configuration.api_key_prefix['Authorization'] = 'Bearer'
+
+# create an instance of the API class
+api_instance = client.DefaultApi()
+collection = 'collection_example' # str | 
+
+try: 
+    api_response = api_instance.query_arango(collection)
+    pprint(api_response)
+except ApiException as e:
+    print("Exception when calling DefaultApi->query_arango: %s\n" % e)
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **collection** | **str**|  | 
+
+### Return type
+
+**object**
 
 ### Authorization
 

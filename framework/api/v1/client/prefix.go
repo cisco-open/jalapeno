@@ -10,12 +10,10 @@
 
 package client
 
-type EdgeScore struct {
-	Key string `json:"key,omitempty"`
+type Prefix struct {
+	Key string `json:"_key,omitempty"`
 
-	From string `json:"from,omitempty"`
+	Prefix string `json:"Prefix,omitempty"`
 
-	To string `json:"to,omitempty"`
-
-	Value float32 `json:"value,omitempty"`
+	Length int32 `json:"Length,omitempty"`
 }

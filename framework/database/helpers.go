@@ -21,9 +21,9 @@ func (a *ArangoConn) GetRouterKeyFromInterfaceIP(ip string) string {
 	}
 	var r string
 	key := "Routers/" + ip
-	col := linkEdgeNamev4
+	col := LinkEdgeNamev4
 	if strings.Contains(ip, ":") {
-		col = linkEdgeNamev6
+		col = LinkEdgeNamev6
 	}
 	q := fmt.Sprintf("FOR e in %s Filter e.ToIP == %q OR e._to == %q  RETURN DISTINCT e._to", col, ip, key)
 	results, _ := a.Query(q, nil, r)

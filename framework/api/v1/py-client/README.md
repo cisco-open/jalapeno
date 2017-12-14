@@ -81,6 +81,7 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**get_liveness**](docs/DefaultApi.md#get_liveness) | **GET** /liveness | 
 *DefaultApi* | [**get_metrics**](docs/DefaultApi.md#get_metrics) | **GET** /metrics | 
 *DefaultApi* | [**heartbeat_collector**](docs/DefaultApi.md#heartbeat_collector) | **GET** /collectors/{collector-name}/heartbeat | 
+*DefaultApi* | [**query_arango**](docs/DefaultApi.md#query_arango) | **GET** /query/{Collection} | 
 *DefaultApi* | [**remove_all_fields**](docs/DefaultApi.md#remove_all_fields) | **DELETE** /edges/{edge-type}/names/{field-name} | 
 *DefaultApi* | [**remove_field**](docs/DefaultApi.md#remove_field) | **DELETE** /edges/{edge-type}/key/{edge-key}/names/{field-name} | 
 *DefaultApi* | [**update_collector**](docs/DefaultApi.md#update_collector) | **POST** /collectors/{collector-name} | 
@@ -91,6 +92,10 @@ Class | Method | HTTP request | Description
 
  - [Collector](docs/Collector.md)
  - [EdgeScore](docs/EdgeScore.md)
+ - [LinkEdge](docs/LinkEdge.md)
+ - [Prefix](docs/Prefix.md)
+ - [PrefixEdge](docs/PrefixEdge.md)
+ - [Router](docs/Router.md)
 
 
 ## Documentation For Authorization

@@ -166,3 +166,7 @@ Handlers do _something_ with OpenBMP messages. This contains the interface for h
 
 ## arango/
 Contains our arango implementation and arangodb handler. **arango/handler.go** does most of the hard work of translating the openBMP messages --> arangodb.
+
+## Misc
+
+When deploying on `oc` I was receiving a 500 Internal Server error. Running `oc import-image <IMAGE>` helped me grab the new image

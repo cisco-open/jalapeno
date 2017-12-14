@@ -1,6 +1,6 @@
 package database
 
-const collectorName = "Collectors"
+const CollectorName = "Collectors"
 
 type Collector struct {
 	Key           string `json:"_key,omitempty"`
@@ -9,7 +9,6 @@ type Collector struct {
 	Status        string `json:"Status,omitempty"`
 	EdgeType      string `json:"EdgeType,omitempty"`
 	FieldName     string `json:"FieldName,omitempty"`
-	FieldType     string `json:"FieldType,omitempty"`
 	Timeout       string `json:"Timeout, omitempty"`
 	LastHeartbeat string `json:"LastHeartbeat, omitempty"`
 }
@@ -39,5 +38,5 @@ func (p *Collector) makeKey() (string, error) {
 }
 
 func (p Collector) GetType() string {
-	return collectorName
+	return CollectorName
 }

@@ -17,7 +17,7 @@ func main() {
 		URL:      "http://127.0.0.1:8529",
 		User:     "root",
 		Password: "voltron",
-		Database: "graphTest",
+		Database: "voltron",
 	}
 	db, err := database.NewArango(cfg)
 	if err != nil {

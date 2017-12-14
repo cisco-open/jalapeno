@@ -103,6 +103,14 @@ class TestDefaultApi(unittest.TestCase):
         """
         pass
 
+    def test_query_arango(self):
+        """
+        Test case for query_arango
+
+        
+        """
+        pass
+
     def test_remove_all_fields(self):
         """
         Test case for remove_all_fields

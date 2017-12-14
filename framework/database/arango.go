@@ -85,39 +85,39 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
 
 	// Create / Connect  collections
 	cols := make(map[string]driver.Collection)
-	cols[prefixName], err = ensureVertexCollection(g, prefixName)
+	cols[PrefixName], err = ensureVertexCollection(g, PrefixName)
 	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", prefixName)
+		log.WithError(err).Errorf("Failed to connect to collection %q", PrefixName)
 		return ArangoConn{}, err
 	}
 
-	cols[routerName], err = ensureVertexCollection(g, routerName)
+	cols[RouterName], err = ensureVertexCollection(g, RouterName)
 	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", routerName)
+		log.WithError(err).Errorf("Failed to connect to collection %q", RouterName)
 		return ArangoConn{}, err
 	}
 
-	cols[asName], err = ensureEdgeCollection(g, asName, []string{routerName}, []string{prefixName})
+	cols[PrefixEdgeName], err = ensureEdgeCollection(g, PrefixEdgeName, []string{RouterName}, []string{PrefixName})
 	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", asName)
+		log.WithError(err).Errorf("Failed to connect to collection %q", PrefixEdgeName)
 		return ArangoConn{}, err
 	}
 
-	cols[linkEdgeNamev4], err = ensureEdgeCollection(g, linkEdgeNamev4, []string{routerName}, []string{routerName})
+	cols[LinkEdgeNamev4], err = ensureEdgeCollection(g, LinkEdgeNamev4, []string{RouterName}, []string{RouterName})
 	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", linkEdgeNamev4)
+		log.WithError(err).Errorf("Failed to connect to collection %q", LinkEdgeNamev4)
 		return ArangoConn{}, err
 	}
 
-	cols[linkEdgeNamev6], err = ensureEdgeCollection(g, linkEdgeNamev6, []string{routerName}, []string{routerName})
+	cols[LinkEdgeNamev6], err = ensureEdgeCollection(g, LinkEdgeNamev6, []string{RouterName}, []string{RouterName})
 	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", linkEdgeNamev6)
+		log.WithError(err).Errorf("Failed to connect to collection %q", LinkEdgeNamev6)
 		return ArangoConn{}, err
 	}
 
-	cols[collectorName], err = ensureVertexCollection(g, collectorName)
+	cols[CollectorName], err = ensureVertexCollection(g, CollectorName)
 	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", collectorName)
+		log.WithError(err).Errorf("Failed to connect to collection %q", CollectorName)
 		return ArangoConn{}, err
 	}
 
@@ -278,28 +278,28 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		return err
 	}
 	switch i.GetType() {
-	case routerName:
+	case RouterName:
 		get = &Router{
 			Key: key,
 		}
-	case prefixName:
+	case PrefixName:
 		get = &Prefix{
 			Key: key,
 		}
-	case linkEdgeNamev4:
+	case LinkEdgeNamev4:
 		get = &LinkEdge{
 			Key: key,
 		}
-	case linkEdgeNamev6:
+	case LinkEdgeNamev6:
 		get = &LinkEdge{
 			Key: key,
 			V6:  true,
 		}
-	case asName:
+	case PrefixEdgeName:
 		get = &PrefixEdge{
 			Key: key,
 		}
-	case collectorName:
+	case CollectorName:
 		get = &Collector{
 			Key: key,
 		}

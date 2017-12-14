@@ -95,6 +95,11 @@ parameters:
     in: path
     type: string
     required: true
+  Collection:
+    name: Collection
+    in: path
+    type: string
+    required: true
 
 # Describe your paths here
 paths:
@@ -270,11 +275,23 @@ paths:
       responses:
         200:
           description: Removed the field from the edge
-
+  /query/{Collection}:
+    get:
+      description: query arango for edges and nodes
+      operationId: QueryArango
+      parameters:
+        - $ref: '#/parameters/Collection'
+      responses:
+        200:
+          description: Queried Objects
+          schema:
+            type: object
 definitions:
   Collector:
     type: object
     properties:
+      _key:
+        type: string
       Name:
         type: string
       Description:
@@ -291,6 +308,72 @@ definitions:
       Timeout:
         type: string
       LastHeartbeat:
+        type: string
+  LinkEdge:
+    type: object
+    properties:
+      _key:
+        type: string
+      _from:
+        type: string
+      _to:
+        type: string
+      FromIP:
+        type: string
+      ToIP:
+        type: string
+      Netmask:
+        type: string
+      Label:
+        type: string
+      V6:
+        type: boolean
+  PrefixEdge:
+    type: object
+    properties:
+      _key:
+        type: string
+      _from:
+        type: string
+      _to:
+        type: string
+      NextHop:
+        type: string
+      InterfaceIP:
+        type: string
+      ASPath:
+        type: array
+        items:
+          type: string
+      Labels:
+        type: array
+        items:
+          type: string
+      BGPPolicy:
+        type: string
+  Prefix:
+    type: object
+    properties:
+      _key:
+        type: string
+      Prefix:
+        type: string
+      Length:
+        type: integer
+  Router:
+    type: object
+    properties:
+      _key:
+        type: string
+      _name:
+        type: string
+      RouterIP:
+        type: string
+      BGPID:
+        type: string
+      IsLocal:
+        type: boolean
+      ASN:
         type: string
   EdgeScore:
     type: object

@@ -42,10 +42,13 @@ func DbReq2ApiCol(request *http.Request) (client.Collector, error) {
 	}
 
 	apiCol := DbCol2ApiCol(dbCol)
-	return apiCol, nil
+	return apiCol.(client.Collector), nil
 }
 
-func DbCol2ApiCol(dbCol database.Collector) (apiCol client.Collector) {
+type ConvertFunc func(interface{}) interface{}
+
+func DbCol2ApiCol(i interface{}) interface{} {
+	dbCol := i.(*database.Collector)
 	return client.Collector{
 		Name:          dbCol.Name,
 		Description:   dbCol.Description,
@@ -54,5 +57,54 @@ func DbCol2ApiCol(dbCol database.Collector) (apiCol client.Collector) {
 		FieldName:     dbCol.FieldName,
 		Timeout:       dbCol.Timeout,
 		LastHeartbeat: dbCol.LastHeartbeat,
+	}
+}
+
+func DBLinkE2ApiLinkE(i interface{}) interface{} {
+	dbLinkE := i.(*database.LinkEdge)
+	return client.LinkEdge{
+		Key:     dbLinkE.Key,
+		To:      dbLinkE.To,
+		From:    dbLinkE.From,
+		ToIP:    dbLinkE.ToIP,
+		FromIP:  dbLinkE.FromIP,
+		Netmask: dbLinkE.Netmask,
+		Label:   dbLinkE.Label,
+		V6:      dbLinkE.V6,
+	}
+}
+
+func DBPrefixE2ApiPrefixE(i interface{}) interface{} {
+	dbPrefixE := i.(*database.PrefixEdge)
+	return client.PrefixEdge{
+		Key:         dbPrefixE.Key,
+		To:          dbPrefixE.To,
+		From:        dbPrefixE.From,
+		NextHop:     dbPrefixE.NextHop,
+		InterfaceIP: dbPrefixE.InterfaceIP,
+		ASPath:      dbPrefixE.ASPath,
+		Labels:      dbPrefixE.Labels,
+		BGPPolicy:   dbPrefixE.BGPPolicy,
+	}
+}
+
+func DBPrefix2ApiPrefix(i interface{}) interface{} {
+	dbPrefix := i.(*database.Prefix)
+	return client.Prefix{
+		Key:    dbPrefix.Key,
+		Prefix: dbPrefix.Prefix,
+		Length: int32(dbPrefix.Length),
+	}
+}
+
+func DbRouter2ApiRouter(i interface{}) interface{} {
+	dbRouter := i.(*database.Router)
+	return client.Router{
+		Key:      dbRouter.Key,
+		Name:     dbRouter.Name,
+		RouterIP: dbRouter.RouterIP,
+		BGPID:    dbRouter.BGPID,
+		IsLocal:  dbRouter.IsLocal,
+		ASN:      dbRouter.ASN,
 	}
 }

@@ -16,3 +16,7 @@ from __future__ import absolute_import
 # import models into model package
 from .collector import Collector
 from .edge_score import EdgeScore
+from .link_edge import LinkEdge
+from .prefix import Prefix
+from .prefix_edge import PrefixEdge
+from .router import Router

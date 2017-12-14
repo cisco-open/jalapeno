@@ -38,6 +38,8 @@ items:
             - voltron
             - --arango-database
             - voltron
+            - --api-url
+            - 0.0.0.0:8876
     test: false
     triggers:
     - type: ConfigChange

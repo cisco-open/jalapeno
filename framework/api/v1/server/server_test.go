@@ -29,64 +29,8 @@ func setUp(t *testing.T) (*mock_database.MockDatabase, *client.DefaultApi) {
 	return dbMock, client
 }
 
-func TestGetCollectors(t *testing.T) {
-	tests := []struct {
-		collectors         []interface{}
-		dbErr              error
-		expectedStatusCode int
-	}{
-		// empty collectors returned
-		{
-			collectors:         []interface{}{&database.Collector{}},
-			dbErr:              nil,
-			expectedStatusCode: http.StatusOK,
-		},
-		// collectors returned
-		{
-			collectors: []interface{}{
-				&database.Collector{
-					Name: "Test1",
-				},
-				&database.Collector{
-					Name: "Test2",
-				},
-			},
-			dbErr:              nil,
-			expectedStatusCode: http.StatusOK,
-		},
-		// db error returned
-		{
-			collectors: []interface{}{
-				&database.Collector{
-					Name: "Test1",
-				},
-				&database.Collector{
-					Name: "Test2",
-				},
-			},
-			dbErr:              errors.New("error"),
-			expectedStatusCode: http.StatusInternalServerError,
-		},
-	}
-
-	for index, test := range tests {
-		dbMock, client := setUp(t)
-		setGetCollector(test.collectors, test.dbErr, dbMock)
-		//TODO stop ignoring the error
-		cols, resp, _ := client.GetCollectors()
-		if resp != nil && resp.StatusCode != test.expectedStatusCode {
-			t.Errorf("Test %d: \n\tExpected: %v \n\tReceived: %v", index, test.expectedStatusCode, resp.StatusCode)
-		}
-		for i, c := range cols {
-			if !reflect.DeepEqual(c, convert.DbCol2ApiCol(*test.collectors[i].(*database.Collector))) {
-				t.Errorf("Test %d: Returned objects :%d do not match expected.", index, i)
-			}
-		}
-	}
-}
-
 func setGetCollector(cols []interface{}, err error, dbMock *mock_database.MockDatabase) {
-	q := "FOR c in Collectors RETURN c"
+	q := "FOR z in Collectors RETURN z"
 	dbMock.EXPECT().Query(q, nil, database.Collector{}).Return(cols, err)
 }
 

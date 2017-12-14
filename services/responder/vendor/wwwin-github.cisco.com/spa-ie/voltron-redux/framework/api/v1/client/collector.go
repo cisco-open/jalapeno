@@ -11,6 +11,8 @@
 package client
 
 type Collector struct {
+	Key string `json:"_key,omitempty"`
+
 	Name string `json:"Name,omitempty"`
 
 	Description string `json:"Description,omitempty"`

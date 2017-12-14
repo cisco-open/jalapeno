@@ -13,6 +13,7 @@ Method | HTTP request | Description
 [**GetLiveness**](DefaultApi.md#GetLiveness) | **Get** /liveness | 
 [**GetMetrics**](DefaultApi.md#GetMetrics) | **Get** /metrics | 
 [**HeartbeatCollector**](DefaultApi.md#HeartbeatCollector) | **Get** /collectors/{collector-name}/heartbeat | 
+[**QueryArango**](DefaultApi.md#QueryArango) | **Get** /query/{Collection} | 
 [**RemoveAllFields**](DefaultApi.md#RemoveAllFields) | **Delete** /edges/{edge-type}/names/{field-name} | 
 [**RemoveField**](DefaultApi.md#RemoveField) | **Delete** /edges/{edge-type}/key/{edge-key}/names/{field-name} | 
 [**UpdateCollector**](DefaultApi.md#UpdateCollector) | **Post** /collectors/{collector-name} | 
@@ -155,7 +156,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **edgeType** | **string**|  | 
  **fieldName** | **string**|  | 
- **fieldValue** | **float32**|  | 
+ **fieldValue** | **string**|  | 
 
 ### Return type
 
@@ -267,6 +268,35 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**Collector**](Collector.md)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **QueryArango**
+> interface{} QueryArango($collection)
+
+
+
+query arango for edges and nodes
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **collection** | **string**|  | 
+
+### Return type
+
+[**interface{}**](interface{}.md)
 
 ### Authorization
 

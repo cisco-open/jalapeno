@@ -65,7 +65,6 @@ func GetScores(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("/scores called")
 	cols, _, err := api.GetCollectors("", "", manager.StatusRunning, "", "", "", "")
 	if err != nil {
-		fmt.Printf("ERR: %v", err)
 		http.Error(w, "Failed to fetch collectors", http.StatusInternalServerError)
 		return
 	}

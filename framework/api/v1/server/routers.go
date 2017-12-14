@@ -105,6 +105,14 @@ func (r *Router) InitRoutes(s *Server) {
 		},
 
 		Route{
+			Name:       "QueryArango",
+			Method:     "GET",
+			Pattern:    "/v1/query/{Collection}",
+			Handler:    s.QueryArango,
+			Middleware: []Middleware{},
+		},
+
+		Route{
 			Name:       "RemoveAllFields",
 			Method:     "DELETE",
 			Pattern:    "/v1/edges/{edge-type}/names/{field-name}",

@@ -48,8 +48,8 @@
 			"checksumSHA1": "dSfjDDNCE0cDNz73LzE/xtVKfGw=",
 			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/github.com/go-resty/resty",
 			"path": "github.com/go-resty/resty",
-			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
-			"revisionTime": "2017-11-20T19:15:49Z"
+			"revision": "d9ceff43b4442d0fe185fcbfa7dadeb2bb3b413b",
+			"revisionTime": "2017-12-13T21:41:10Z"
 		},
 		{
 			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
@@ -76,8 +76,8 @@
 			"checksumSHA1": "nt4o3cMOyP9prgVeAZgRf82/Et0=",
 			"origin": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/vendor/golang.org/x/net/publicsuffix",
 			"path": "golang.org/x/net/publicsuffix",
-			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
-			"revisionTime": "2017-11-20T19:15:49Z"
+			"revision": "d9ceff43b4442d0fe185fcbfa7dadeb2bb3b413b",
+			"revisionTime": "2017-12-13T21:41:10Z"
 		},
 		{
 			"checksumSHA1": "ZWgtYdxJbBEFnRbrdVOi7QrQVdc=",
@@ -94,10 +94,10 @@
 			"revisionTime": "2017-11-20T19:15:49Z"
 		},
 		{
-			"checksumSHA1": "QRYVHJyWqBl7aLOi5o4gXB2nhMs=",
+			"checksumSHA1": "OEUigZXxdGbbfNRZNlQ75iEIjWo=",
 			"path": "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/api/v1/client",
-			"revision": "384136aab2e13f6edbb7ebe7ba9508e0b0fd99e0",
-			"revisionTime": "2017-11-20T19:15:49Z"
+			"revision": "d9ceff43b4442d0fe185fcbfa7dadeb2bb3b413b",
+			"revisionTime": "2017-12-13T21:41:10Z"
 		},
 		{
 			"checksumSHA1": "J7ds/h0H+Yg2QpMxAmyZh/hyHBE=",

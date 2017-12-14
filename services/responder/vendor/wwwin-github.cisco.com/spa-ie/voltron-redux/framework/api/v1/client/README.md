@@ -25,20 +25,26 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**DeleteCollector**](docs/DefaultApi.md#deletecollector) | **Delete** /collectors/{collector-name} | 
 *DefaultApi* | [**GetCollector**](docs/DefaultApi.md#getcollector) | **Get** /collectors/{collector-name} | 
 *DefaultApi* | [**GetCollectors**](docs/DefaultApi.md#getcollectors) | **Get** /collectors | 
+*DefaultApi* | [**GetEdge**](docs/DefaultApi.md#getedge) | **Get** /edges/{edge-type}/filter/{field-name}/{field-value} | 
 *DefaultApi* | [**GetHealthz**](docs/DefaultApi.md#gethealthz) | **Get** /healthz | 
 *DefaultApi* | [**GetLiveness**](docs/DefaultApi.md#getliveness) | **Get** /liveness | 
 *DefaultApi* | [**GetMetrics**](docs/DefaultApi.md#getmetrics) | **Get** /metrics | 
 *DefaultApi* | [**HeartbeatCollector**](docs/DefaultApi.md#heartbeatcollector) | **Get** /collectors/{collector-name}/heartbeat | 
+*DefaultApi* | [**QueryArango**](docs/DefaultApi.md#queryarango) | **Get** /query/{Collection} | 
 *DefaultApi* | [**RemoveAllFields**](docs/DefaultApi.md#removeallfields) | **Delete** /edges/{edge-type}/names/{field-name} | 
 *DefaultApi* | [**RemoveField**](docs/DefaultApi.md#removefield) | **Delete** /edges/{edge-type}/key/{edge-key}/names/{field-name} | 
 *DefaultApi* | [**UpdateCollector**](docs/DefaultApi.md#updatecollector) | **Post** /collectors/{collector-name} | 
-*DefaultApi* | [**UpsertField**](docs/DefaultApi.md#upsertfield) | **Post** /edges/{edge-type}/names/{field-name} | 
+*DefaultApi* | [**UpsertField**](docs/DefaultApi.md#upsertfield) | **Put** /edges/{edge-type}/names/{field-name} | 
 
 
 ## Documentation For Models
 
  - [Collector](docs/Collector.md)
  - [EdgeScore](docs/EdgeScore.md)
+ - [LinkEdge](docs/LinkEdge.md)
+ - [Prefix](docs/Prefix.md)
+ - [PrefixEdge](docs/PrefixEdge.md)
+ - [Router](docs/Router.md)
 
 
 ## Documentation For Authorization

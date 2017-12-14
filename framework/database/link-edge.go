@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-const linkEdgeNamev4 = "LinkEdgesV4"
-const linkEdgeNamev6 = "LinkEdgesV6"
+const LinkEdgeNamev4 = "LinkEdgesV4"
+const LinkEdgeNamev6 = "LinkEdgesV6"
 
 type LinkEdge struct {
 	From    string `json:"_from,omitempty"`
@@ -49,9 +49,9 @@ func (l *LinkEdge) makeKey() (string, error) {
 func (l LinkEdge) GetType() string {
 	if l.V6 || strings.Contains(l.FromIP, ":") || strings.Contains(l.ToIP, ":") {
 		l.V6 = true
-		return linkEdgeNamev6
+		return LinkEdgeNamev6
 	}
-	return linkEdgeNamev4
+	return LinkEdgeNamev4
 }
 
 func (l *LinkEdge) SetEdge(to DBObject, from DBObject) error {

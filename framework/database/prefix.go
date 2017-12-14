@@ -2,7 +2,7 @@ package database
 
 import "fmt"
 
-const prefixName = "Prefixes"
+const PrefixName = "Prefixes"
 
 type Prefix struct {
 	Key    string `json:"_key,omitempty"`
@@ -37,5 +37,5 @@ func (p *Prefix) makeKey() (string, error) {
 }
 
 func (p Prefix) GetType() string {
-	return prefixName
+	return PrefixName
 }

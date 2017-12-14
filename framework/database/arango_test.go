@@ -14,7 +14,7 @@ var (
 		Password: "voltron",
 		Database: "testDB",
 	}
-	collections = []string{prefixName, routerName, asName, linkEdgeNamev4, linkEdgeNamev6}
+	collections = []string{PrefixName, RouterName, PrefixEdgeName, LinkEdgeNamev4, LinkEdgeNamev6}
 )
 
 func TestNewConfig(t *testing.T) {
@@ -144,23 +144,23 @@ func TestFindCollection(t *testing.T) {
 			ErrCollectionNotFound,
 		},
 		{
-			prefixName,
+			PrefixName,
 			nil,
 		},
 		{
-			routerName,
+			RouterName,
 			nil,
 		},
 		{
-			linkEdgeNamev4,
+			LinkEdgeNamev4,
 			nil,
 		},
 		{
-			linkEdgeNamev6,
+			LinkEdgeNamev6,
 			nil,
 		},
 		{
-			asName,
+			PrefixEdgeName,
 			nil,
 		},
 	}
@@ -777,7 +777,7 @@ func TestQuery(t *testing.T) {
 	mixed := Mixed{}
 	expectedRouters := []*Router{rs[1], rs[2]}
 	expectedLinks := []*LinkEdge{ls[0], ls[1]}
-	mixedOutput, err := conn.Query("FOR router, edge in outbound 'Routers/test1' LinkEdges return {router, edge}", nil, mixed)
+	mixedOutput, err := conn.Query("FOR router, edge in outbound 'Routers/test1' LinkEdgesV4 return {router, edge}", nil, mixed)
 	if err != nil {
 		t.Fatalf("Error querying: %v", err)
 	}
