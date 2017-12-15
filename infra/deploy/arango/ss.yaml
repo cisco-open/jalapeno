@@ -1,0 +1,50 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: arangodb
+  namespace: voltron
+spec:
+  serviceName: "arangodb"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: arangodb
+        storage: persistent
+      annotations:
+        openshift.io/scc: privileged
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - env:
+        - name: ARANGO_ROOT_PASSWORD
+          value: voltron
+        image: arangodb:latest
+        name: arangodb
+        ports:
+        - containerPort: 8529
+          protocol: TCP
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        resources: {}
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/arangodb3
+        - name: appdata
+          mountPath: /var/lib/arangodb3-apps
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 50Gi
+  - metadata:
+      name: appdata
+    spec:
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 10Gi
