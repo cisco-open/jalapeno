@@ -12,7 +12,7 @@
 ### Docker Repository
 We have created two Docker V2 Artifactory repositories for you. You can find the details below.  
 
-Repo name : **gspie-docker** & **gspie-dev-docker**  
+Repo name : **gspie-docker-local** & **gspie-dev-docker-local**  
 
 nsa-registry-dev-docker is a development snapshot repo which you can use to store your development artifacts. This dev repo will have regular clean up every 3 months as per our purge policy. Any unused artifact older than 3 months will be deleted and nsa-registry is a release repo where you will be storing all your releases.  
 

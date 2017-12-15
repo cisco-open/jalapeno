@@ -1,45 +1,62 @@
 # Voltron Framework
 
-Framework for reading OpenBMP messages off a Kafka queue and creating the topology in the GraphDB.
+The framework provides a consistent method for Services to add scores, nodes and
+edges to the graph database. The framework is made up of 2 components, the first
+is the Framework API. You can find the swagger yaml of the API in
+`framework/api/v1/gen/v1.yaml`. This API supports reads and writes to the database.
+Long term goals are to have this API provided authorization for different services
+so each can have minimum amount of permissions when accessing the database. The
+second component of the framework is the topology generator. This reads OpenBMP
+messages from a Kafka instance and translates those messages into a high level
+network topology. It provides the base graph that Collector Services can build
+upon.
 
-Sample OpenBMP generated data is available [Here](./openbmp_parsed_data.txt). This data is generated from [this virtual topology](https://wwwin-github.cisco.com/raw/paulduda/voltron-network0/master/doc/voltron-network0.png) in the BXB lab.
+## Architecture Diagram
 
-# Getting Started
-Arango
+!["Framework Architecture"](../docs/Framework.png "Framework Architecture")
 
-```
-git clone https://wwwin-github.cisco.com/spa-ie/voltron-redux.git
-cd framework
-make
-sh arango/deploy.sh
-```
+## Services
 
-We support two run modes for this binary, the first is to populate arango with a topology. This mode will read from kafka and parse BMP messages into a network topology. Running this you would run. (this example also includes a configuration)
-
-`./bin/voltron topology --config sample.yaml`
-
-
-The other run mode is to simply run the framework. This provides an API that lets CvServices register and enables CRUD operations on those objects being stored in the arangoDB.
-
-`./bin/voltron framework --config sample.yaml`
-
-Need help?
-`./bin/voltron -h` OR `./bin/voltron topology -h` OR `./bin/voltron framework -h`
+#### Collector Services
+Collectors modify the database by providing `Scores` to edges in the graph. This
+will let one discover "shortest paths" through the graph, based on that score.
+The french press service was a simple ping based latency calculator. The scores
+put on edges should a value where lower numbers are preferred over larger values.
 
 
-# Running tests
-1. Deploy the database `./framework/arango/deploy.sh` (give it ~10 seconds to start up)
-2. `make test`
-3. Stop the database `./framework/arango/stop.sh`
+Collectors must register with the framework and heartbeat with the framework. This
+lets Responders know what `Scores` are available to query against. If a responder
+does not heartbeat, the framework will consider it "Down" and it will not return
+labels based on that `Score`.
+
+#### Responder Services
+Responders implement business logic around returning SR label stacks. At minimum
+a responder must receive a source and a destination and it can return a label stack.
+It is possible to write a corresponding responder for every collector, or one
+generic responder for all collectors known and active in the framework. The responders
+should be optimized and built for future use cases.
+
+
+Sample OpenBMP generated data is available [Here](./openbmp_parsed_data.txt).
+This data is generated from
+[this virtual topology](https://wwwin-github.cisco.com/raw/paulduda/voltron-network0/master/doc/voltron-network0.png)
+in the BXB lab.
 
 # Graph Data Model
+The nodes and edges below describe the French Press data model. More nodes and
+edges are in development. These edges/nodes will be added by Collectors, not by the
+topology engine. Also make note that Scores do not appear in the data model. Collectors
+will add them, but we will not be changing the data model each time a new Score is computed.
+Those fields will be added at the top level of the object dynamically by the
+framework.
 
 ## Nodes
-Two types of nodes:
 ```
 Router {
+  Key String
+  Name String
   BGPID String
-  ASN Int
+  ASN String
   RouterIP String (like an id, BMP uses the loopback addr or highest IP)
   IsLocal Bool
 }
@@ -47,6 +64,7 @@ Router {
 
 ```
 Prefix {
+  Key String
   Prefix String
   Length Int
 }
@@ -54,119 +72,30 @@ Prefix {
 
 ## Edges Between Routers
 ```
-LinkEdge {
-  Labels []int
-  Latency
-  Utilization
-  From (RouterKey)
-  To (RouterKey)
-  FromIP
-  ToIP
-  Netmask
+LinkEdgeV4 {
+  Ket String
+  Label String
+  From (RouterKey) String
+  To (RouterKey) String
+  FromIP String
+  ToIP String
+  Netmask String
+  V6 Bool
 }
 ```
 
 ## Edges Between Router & Prefix
 ```
 PrefixEdge {
-  InterfaceIP
-  Labels []int
-  NextHop
+  Key String
+  From (Prefix/Router Key)
+  To (Prefix/Router Key) String
+  InterfaceIP String
+  Labels []String
+  NextHop String
   ASPath []string
-  BGPPolicy ???
-  Latency ??? (do we want this here... or is it sufficient on other edges?)
+  BGPPolicy String
 }
 ```
 
-## [Accessing Arango via HTTP](https://docs.arangodb.com/3.2/HTTP/SimpleQuery/)
-This can be done without modification to the arango db or working with the [Foxx](https://docs.arangodb.com/3.2/HTTP/Foxx/) services. In the future once we have specific queries that are common we can expose a Foxx service that would be a conveneince for vServices. Foxx could also support more advanced business logic once we know that that looks like, but for alpha I'd recommend we don't write these javascript services until we know what queries are common / business logic we require.
-
-### Basic HTTP Things
-To get a specific document the query looks like:
-```
-curl http://<user>:<pass>@<arango-end-point>:<arango-port>/_db/<db_name>/_api/<collection_name>/<document_key>
-```
-
-In this example we are running arango locally from the [voltron-redux/framework/database/deploy.sh](https://wwwin-github.cisco.com/spa-ie/voltron-redux/blob/master/framework/arango/deploy.sh). We’ve parsed BMP messages from Kafka and the result is:
-```
-http://root:voltron@127.0.0.1:8529/_db/test/_api/document/Routers/10.1.1.4_100000
-```
-
-Where:
-- `db-name="test"`
-- `collection-name="Routers"`
-- `document-key="10.1.1.4_100000"`
-
-
-The API also supports queries, you can do simple queries where you write out the AQL:
-```
-curl -X POST --data-binary @body.json --dump - http://root:vojltorb@127.0.0.1:8529/_db/test/_api/explain
-```
-
-**body.json**
-```
-{
-  "query" : "FOR p IN Routers RETURN p"
-}
-```
-
-This example query will return all routers in arango.
-
-You can also query that limits by fields
-```
-curl -X PUT --data-binary @body.json --dump - http://root:vojltorb@localhost:8529/_db/test/_api/simple/by-example
-```
-
-**body.json**
-```
-{
-  "collection" : "Routers",
-  "example" : {
-    "ASN" : 8000
-  }
-}
-```
-
-CRUD operations are available. To see those examples go to https://docs.arangodb.com/3.2/HTTP/SimpleQuery/
-
-## Query Microservice
-Arango allows hosted javascript microservices to be mounted as a sub URL.
-You can write common queries in the arango/queries/index.js file. This microservice can be added to arango and queried directly. To try this out yourself:
-- go to [the services tab](http://127.0.0.1:8529/_db/voltron/_admin/aardvark/index.html#services) of arango
-- click "Add Service"
-- Enter /queries in the "Mount" field
-- click the "zip" tab and select `arango/queries.zip`
-- [example]: Go to http://127.0.0.1:8529/_db/voltron/latency/edges/10.1.1.3_100000/ips and you should see all the ip address of the interfaces on the router with `_key=10.1.1.3_100000`
-
-## Latency (LinkEdge) Query
-I added an endpoint to our Arango in the BXB lab for editing latency. You can add it yourself by following the instructions above.
-
-The endpoint is `/queries/linkedges/:from/:to/:latency` where :from = FromIP, :to=ToIP, :latency=latency in ms
-To add/update the latency (to 20ms) between 10.1.1.1 and 10.1.1.2, hit the following url (will update the values on the lab arango):
-
-`http://10.86.204.8:8529/_db/voltron/queries/linkedges/10.1.1.1/10.1.1.2/20`
-
-(Note this most likely change to a PUT request in the future.)
-You can check the latency by going to `http://10.86.204.8:8529/_db/voltron/queries/linkedges/10.1.1.1/10.1.1.2` (will return 0 if not set).
-
-## Latency (PrefixEdge) Query
-The French Press demo will add latency on PrefixEdges. The end point is similarly `/queries/prefixedges/:interfaceIP/:prefix/:latency`
-If router p3 knows of a prefix `10.11.170.0/23` that is available through it's peer `2.2.2.15` with a latency of 20ms, the following request is used:
-`http://10.86.204.8:8529/_db/voltron/queries/prefixedges/2.2.2.15/10.11.170.0_23/20`.
-
-# Directory Structure
-## openbmp/
-The OpenBMP directory contains our OpenBMP message bus library. It should probably be submitted to OpenBMP maintainers to open source it. It parses messages according [to this spec](https://github.com/OpenBMP/openbmp/blob/master/docs/MESSAGE_BUS_API.md).
-
-## kafka/
-Kafka Consumer implementation. Reads off the message bus and hands off to a handler.
-
-## kafka/handler
-Handlers do _something_ with OpenBMP messages. This contains the interface for handlers (as well as a default handler implementation for debugging.)
-
-## arango/
-Contains our arango implementation and arangodb handler. **arango/handler.go** does most of the hard work of translating the openBMP messages --> arangodb.
-
-## Misc
-
-When deploying on `oc` I was receiving a 500 Internal Server error. Running `oc import-image <IMAGE>` helped me grab the new image
+##### See the Developer Guide at [framework/DEVELOPER.md](../DEVELOPER.md)

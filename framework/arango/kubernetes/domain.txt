@@ -1,2 +1,0 @@
-arangodb.default.svc.cluster.local
-port 8529
