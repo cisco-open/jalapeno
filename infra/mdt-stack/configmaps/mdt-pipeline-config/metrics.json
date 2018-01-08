@@ -1,0 +1,1901 @@
+[
+    {
+        "basepath": "Cisco-IOS-XR-ip-rib-ipv4-oper:rib/vrfs/vrf/afs/af/safs/saf/ip-rib-route-table-names/ip-rib-route-table-name/protocol/bgp/as/information",
+        "spec": {
+            "fields": [
+                {
+                    "name": "vrf-name",
+                    "tag": true
+                },
+                {
+                    "name": "af-name",
+                    "tag": true
+                },
+                {
+                    "name": "saf-name",
+                    "tag": true
+                },
+                {
+                    "name": "route-table-name",
+                    "tag": true
+                },
+                {
+                    "name": "as",
+                    "tag": true
+                },
+                {
+                    "name": "routes-counts"
+                },
+                {
+                    "name": "active-routes-count"
+                },
+                {
+                    "name": "deleted-routes-count"
+                },
+                {
+                    "name": "paths-count"
+                },
+                {
+                    "name": "protocol-route-memory"
+                },
+                {
+                    "name": "backup-routes-count"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-briefs/interface-brief",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "actual-line-state"
+                },
+                {
+                    "name": "actual-state"
+                },
+                {
+                    "name": "bandwidth"
+                },
+                {
+                    "name": "encapsulation"
+                },
+                {
+                    "name": "encapsulation-type-string"
+                },
+                {
+                    "name": "interface"
+                },
+                {
+                    "name": "l2-transport"
+                },
+                {
+                    "name": "line-state"
+                },
+                {
+                    "name": "mtu"
+                },
+                {
+                    "name": "parent-interface"
+                },
+                {
+                    "name": "state"
+                },
+                {
+                    "name": "sub-interface-mtu-overhead"
+                },
+                {
+                    "name": "type"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "openconfig-interfaces:interfaces/interface/subinterfaces/subinterface/state",
+        "spec": {
+            "fields": [
+                {
+                    "name": "name",
+                    "tag": true
+                },
+                {
+                    "name": "counters",
+                    "fields": [
+                        {
+                            "name": "in-broadcast-pkts"
+                        },
+                        {
+                            "name": "in-discards"
+                        },
+                        {
+                            "name": "in-errors"
+                        },
+                        {
+                            "name": "in-multicast-pkts"
+                        },
+                        {
+                            "name": "in-octets"
+                        },
+                        {
+                            "name": "in-unicast-pkts"
+                        },
+                        {
+                            "name": "in-unknown-protos"
+                        },
+                        {
+                            "name": "out-broadcast-pkts"
+                        },
+                        {
+                            "name": "out-discards"
+                        },
+                        {
+                            "name": "out-errors"
+                        },
+                        {
+                            "name": "out-multicast-pkts"
+                        },
+                        {
+                            "name": "out-octets"
+                        },
+                        {
+                            "name": "out-unicast-pkts"
+                        }
+                    ]
+                },
+                {
+                    "name": "description"
+                },
+                {
+                    "name": "mtu"
+                },
+                {
+                    "name": "type"
+                },
+                {
+                    "name": "admin-status"
+                },
+                {
+                    "name": "oper-status"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-ipv4-bgp-oper:bgp/instances/instance/instance-active/default-vrf/process-info",
+        "spec": {
+            "fields": [
+                {
+                    "name": "instance-name",
+                    "tag": true
+                },
+                {
+                    "name": "vrf-name",
+                    "tag": true
+                },
+                {
+                    "name": "global",
+                    "fields": [
+                        {
+                            "name": "restart-count"
+                        },
+                        {
+                            "name": "nexthop-count"
+                        },
+                        {
+                            "name": "neighbors-count-total"
+                        },
+                        {
+                            "name": "established-neighbors-count-total"
+                        }
+                    ]
+                },
+                {
+                    "name": "vrf",
+                    "fields": [
+                        {
+                            "name": "neighbors-count"
+                        },
+                        {
+                            "name": "update-messages-received"
+                        },
+                        {
+                            "name": "path-count"
+                        },
+                        {
+                            "name": "network-count"
+                        }
+                    ]
+                },
+                {
+                    "name": "performance-statistics",
+                    "fields": [
+                        {
+                            "name": "global",
+                            "fields": [
+                                {
+                                    "name": "configuration-items-processed"
+                                },
+                                {
+                                    "name": "ipv4rib-server",
+                                    "fields": [
+                                        {
+                                            "name": "rib-connection-up-count"
+                                        },
+                                        {
+                                            "name": "is-rib-connection-up"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "vrf",
+                            "fields": [
+                                {
+                                    "name": "inbound-update-messages"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "packets-received"
+                },
+                {
+                    "name": "bytes-received"
+                },
+                {
+                    "name": "packets-sent",
+                    "track": true
+                },
+                {
+                    "name": "bytes-sent"
+                },
+                {
+                    "name": "output-drops"
+                },
+                {
+                    "name": "output-queue-drops"
+                },
+                {
+                    "name": "input-drops"
+                },
+                {
+                    "name": "input-queue-drops"
+                },
+                {
+                    "name": "input-errors"
+                },
+                {
+                    "name": "crc-errors"
+                },
+                {
+                    "name": "input-ignored-packets"
+                },
+                {
+                    "name": "output-errors"
+                },
+                {
+                    "name": "output-buffer-failures"
+                },
+                {
+                    "name": "carrier-transitions"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/data-rate",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "input-data-rate"
+                },
+                {
+                    "name": "input-packet-rate"
+                },
+                {
+                    "name": "output-data-rate",
+                    "track": true
+                },
+                {
+                    "name": "output-packet-rate"
+                },
+                {
+                    "name": "peak-input-data-rate"
+                },
+                {
+                    "name": "peak-input-packet-rate"
+                },
+                {
+                    "name": "peak-output-data-rate"
+                },
+                {
+                    "name": "peak-output-packet-rate"
+                },
+                {
+                    "name": "bandwidth"
+                },
+                {
+                    "name": "load-interval"
+                },
+                {
+                    "name": "output-load"
+                },
+                {
+                    "name": "input-load"
+                },
+                {
+                    "name": "reliability"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-mpls-te-oper:mpls-te/tunnels/tunnel-auto-bandwidths/tunnel-auto-bandwidth",
+        "spec": {
+            "fields": [
+                {
+                    "name": "tunnel-name",
+                    "tag": true
+                },
+                {
+                    "name": "highest-bandwidth"
+                },
+                {
+                    "name": "last-sample-bandwidth"
+                },
+                {
+                    "name": "samples-collected"
+                },
+                {
+                    "name": "tunnel-requested-bandwidth"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-qos-ma-oper:qos/interface-table/interface/output/statistics",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "policy-name",
+                    "tag": true
+                },
+                {
+                    "name": "class-stats",
+                    "fields": [
+                        {
+                            "name": "class-name",
+                            "tag": true
+                        },
+                        {
+                            "name": "general-stats",
+                            "fields": [
+                                {
+                                    "name": "transmit-packets"
+                                },
+                                {
+                                    "name": "transmit-bytes"
+                                },
+                                {
+                                    "name": "total-drop-packets"
+                                },
+                                {
+                                    "name": "total-drop-bytes"
+                                },
+                                {
+                                    "name": "total-drop-rate"
+                                },
+                                {
+                                    "name": "total-transmit-rate"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "queue-stats-array",
+                            "fields": [
+                                {
+                                    "name": "queue-id",
+                                    "tag": true
+                                },
+                                {
+                                    "name": "tail-drop-packets"
+                                },
+                                {
+                                    "name": "tail-drop-bytes"
+                                },
+                                {
+                                    "name": "queue-average-length",
+                                    "fields": [
+                                        {
+                                            "name": "value"
+                                        },
+                                        {
+                                            "name": "unit",
+                                            "tag": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "random-drop-packets"
+                                },
+                                {
+                                    "name": "random-drop-bytes"
+                                },
+                                {
+                                    "name": "conform-packets"
+                                },
+                                {
+                                    "name": "conform-bytes"
+                                },
+                                {
+                                    "name": "exceed-packets"
+                                },
+                                {
+                                    "name": "exceed-bytes"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-procmem-oper:processes-memory/nodes/node/process-ids/process-id",
+        "spec": {
+            "fields": [
+                {
+                    "name": "node-name",
+                    "tag": true
+                },
+                {
+                    "name": "name",
+                    "tag": true
+                },
+                {
+                    "name": "text-seg-size"
+                },
+                {
+                    "name": "data-seg-size"
+                },
+                {
+                    "name": "stack-seg-size"
+                },
+                {
+                    "name": "malloc-size"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-nto-misc-oper:memory-summary/nodes/node/summary",
+        "spec": {
+            "fields": [
+                {
+                    "name": "node-name",
+                    "tag": true
+                },
+                {
+                    "name": "ram-memory"
+                },
+                {
+                    "name": "free-physical-memory"
+                },
+                {
+                    "name": "system-ram-memory"
+                },
+                {
+                    "name": "free-application-memory"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization",
+        "spec": {
+            "fields": [
+                {
+                    "name": "node-name",
+                    "tag": true
+                },
+                {
+                    "name": "total-cpu-one-minute"
+                },
+                {
+                    "name": "total-cpu-five-minute"
+                },
+                {
+                    "name": "total-cpu-fifteen-minute"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-fib-common-oper:fib-statistics/nodes/node/drops",
+        "spec": {
+            "fields": [
+                {
+                    "name": "node-name",
+                    "tag": true
+                },
+                {
+                    "name": "no-route-packets"
+                },
+                {
+                    "name": "punt-unreachable-packets"
+                },
+                {
+                    "name": "df-unreachable-packets"
+                },
+                {
+                    "name": "encapsulation-failure-packets"
+                },
+                {
+                    "name": "incomplete-adjacency-packets"
+                },
+                {
+                    "name": "unresolved-prefix-packets"
+                },
+                {
+                    "name": "unsupported-feature-packets"
+                },
+                {
+                    "name": "discard-packets"
+                },
+                {
+                    "name": "checksum-error-packets"
+                },
+                {
+                    "name": "fragmenation-consumed-packets"
+                },
+                {
+                    "name": "fragmenation-failure-packets"
+                },
+                {
+                    "name": "null-packets"
+                },
+                {
+                    "name": "rpf-check-failure-packets"
+                },
+                {
+                    "name": "acl-in-rpf-packets"
+                },
+                {
+                    "name": "rp-destination-drop-packets"
+                },
+                {
+                    "name": "total-number-of-drop-packets"
+                },
+                {
+                    "name": "mpls-disabled-interface"
+                },
+                {
+                    "name": "gre-lookup-failed-drop"
+                },
+                {
+                    "name": "gre-error-drop"
+                },
+                {
+                    "name": "lisp-punt-drops"
+                },
+                {
+                    "name": "lisp-encap-error-drops"
+                },
+                {
+                    "name": "lisp-decap-error-drops"
+                },
+                {
+                    "name": "multi-label-drops"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-mpls-te-oper:mpls-te/tunnels/tunnel-auto-bandwidths/tunnel-auto-bandwidth",
+        "spec": {
+            "fields": [
+                {
+                    "name": "tunnel-name",
+                    "tag": true
+                },
+                {
+                    "name": "highest-bandwidth"
+                },
+                {
+                    "name": "last-sample-bandwidth"
+                },
+                {
+                    "name": "samples-collected"
+                },
+                {
+                    "name": "tunnel-requested-bandwidth"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-qos-ma-oper:qos/interface-table/interface/member-interfaces/member-interface/output/statistics",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "policy-name",
+                    "tag": true
+                },
+                {
+                    "name": "class-stats",
+                    "fields": [
+                        {
+                            "name": "class-name",
+                            "tag": true
+                        },
+                        {
+                            "name": "general-stats",
+                            "fields": [
+                                {
+                                    "name": "transmit-packets"
+                                },
+                                {
+                                    "name": "transmit-bytes"
+                                },
+                                {
+                                    "name": "total-drop-packets"
+                                },
+                                {
+                                    "name": "total-drop-bytes"
+                                },
+                                {
+                                    "name": "total-drop-rate"
+                                },
+                                {
+                                    "name": "total-transmit-rate"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "queue-stats-array",
+                            "fields": [
+                                {
+                                    "name": "queue-id",
+                                    "tag": true
+                                },
+                                {
+                                    "name": "tail-drop-packets"
+                                },
+                                {
+                                    "name": "tail-drop-bytes"
+                                },
+                                {
+                                    "name": "queue-average-length",
+                                    "fields": [
+                                        {
+                                            "name": "value"
+                                        },
+                                        {
+                                            "name": "unit",
+                                            "tag": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "random-drop-packets"
+                                },
+                                {
+                                    "name": "random-drop-bytes"
+                                },
+                                {
+                                    "name": "conform-packets"
+                                },
+                                {
+                                    "name": "conform-bytes"
+                                },
+                                {
+                                    "name": "exceed-packets"
+                                },
+                                {
+                                    "name": "exceed-bytes"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-qos-ma-oper:qos/nodes/node/policy-map/interface-table/interface/output/statistics",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "node-name",
+                    "tag": true
+                },
+                {
+                    "name": "class-stats",
+                    "fields": [
+                        {
+                            "name": "child-policy",
+                            "fields": [
+                                {
+                                    "name": "content",
+                                    "fields": [
+                                        {
+                                            "name": "class-stats",
+                                            "fields": [
+                                                {
+                                                    "name": "class-name",
+                                                    "tag": true
+                                                },
+                                                {
+                                                    "name": "general-stats",
+                                                    "fields": [
+                                                        {
+                                                            "name": "transmit-packets"
+                                                        },
+                                                        {
+                                                            "name": "transmit-bytes"
+                                                        },
+                                                        {
+                                                            "name": "total-drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "total-drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "total-drop-rate"
+                                                        },
+                                                        {
+                                                            "name": "total-transmit-rate"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "name": "queue-stats-array",
+                                                    "fields": [
+                                                        {
+                                                            "name": "queue-id",
+                                                            "tag": true
+                                                        },
+                                                        {
+                                                            "name": "tail-drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "tail-drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "queue-average-length",
+                                                            "fields": [
+                                                                {
+                                                                    "name": "value"
+                                                                },
+                                                                {
+                                                                    "name": "unit",
+                                                                    "tag": true
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "name": "random-drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "random-drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "conform-packets"
+                                                        },
+                                                        {
+                                                            "name": "conform-bytes"
+                                                        },
+                                                        {
+                                                            "name": "exceed-packets"
+                                                        },
+                                                        {
+                                                            "name": "exceed-bytes"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "name": "police-stats-array",
+                                                    "fields": [
+                                                        {
+                                                            "name": "random-drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "random-drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "conform-packets"
+                                                        },
+                                                        {
+                                                            "name": "conform-bytes"
+                                                        },
+                                                        {
+                                                            "name": "drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "parent-drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "parent-drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "exceed-packets"
+                                                        },
+                                                        {
+                                                            "name": "exceed-bytes"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-qos-ma-oper:qos/interface-table/interface/output/statistics",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "policy-name",
+                    "tag": true
+                },
+                {
+                    "name": "class-stats",
+                    "fields": [
+                        {
+                            "name": "class-name",
+                            "tag": true
+                        },
+                        {
+                            "name": "general-stats",
+                            "fields": [
+                                {
+                                    "name": "transmit-packets"
+                                },
+                                {
+                                    "name": "transmit-bytes"
+                                },
+                                {
+                                    "name": "total-drop-packets"
+                                },
+                                {
+                                    "name": "total-drop-bytes"
+                                },
+                                {
+                                    "name": "total-drop-rate"
+                                },
+                                {
+                                    "name": "total-transmit-rate"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "queue-stats-array",
+                            "fields": [
+                                {
+                                    "name": "queue-id",
+                                    "tag": true
+                                },
+                                {
+                                    "name": "tail-drop-packets"
+                                },
+                                {
+                                    "name": "tail-drop-bytes"
+                                },
+                                {
+                                    "name": "queue-average-length",
+                                    "fields": [
+                                        {
+                                            "name": "value"
+                                        },
+                                        {
+                                            "name": "unit",
+                                            "tag": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "random-drop-packets"
+                                },
+                                {
+                                    "name": "random-drop-bytes"
+                                },
+                                {
+                                    "name": "conform-packets"
+                                },
+                                {
+                                    "name": "conform-bytes"
+                                },
+                                {
+                                    "name": "exceed-packets"
+                                },
+                                {
+                                    "name": "exceed-bytes"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-qos-ma-oper:qos/interface-table/interface/member-interfaces/member-interface/input/statistics",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "policy-name",
+                    "tag": true
+                },
+                {
+                    "name": "class-stats",
+                    "fields": [
+                        {
+                            "name": "class-name",
+                            "tag": true
+                        },
+                        {
+                            "name": "general-stats",
+                            "fields": [
+                                {
+                                    "name": "transmit-packets"
+                                },
+                                {
+                                    "name": "transmit-bytes"
+                                },
+                                {
+                                    "name": "total-drop-packets"
+                                },
+                                {
+                                    "name": "total-drop-bytes"
+                                },
+                                {
+                                    "name": "total-drop-rate"
+                                },
+                                {
+                                    "name": "total-transmit-rate"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "queue-stats-array",
+                            "fields": [
+                                {
+                                    "name": "queue-id",
+                                    "tag": true
+                                },
+                                {
+                                    "name": "tail-drop-packets"
+                                },
+                                {
+                                    "name": "tail-drop-bytes"
+                                },
+                                {
+                                    "name": "queue-average-length",
+                                    "fields": [
+                                        {
+                                            "name": "value"
+                                        },
+                                        {
+                                            "name": "unit",
+                                            "tag": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "random-drop-packets"
+                                },
+                                {
+                                    "name": "random-drop-bytes"
+                                },
+                                {
+                                    "name": "conform-packets"
+                                },
+                                {
+                                    "name": "conform-bytes"
+                                },
+                                {
+                                    "name": "exceed-packets"
+                                },
+                                {
+                                    "name": "exceed-bytes"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-qos-ma-oper:qos/nodes/node/policy-map/interface-table/interface/input/statistics",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "node-name",
+                    "tag": true
+                },
+                {
+                    "name": "class-stats",
+                    "fields": [
+                        {
+                            "name": "child-policy",
+                            "fields": [
+                                {
+                                    "name": "content",
+                                    "fields": [
+                                        {
+                                            "name": "class-stats",
+                                            "fields": [
+                                                {
+                                                    "name": "class-name",
+                                                    "tag": true
+                                                },
+                                                {
+                                                    "name": "general-stats",
+                                                    "fields": [
+                                                        {
+                                                            "name": "transmit-packets"
+                                                        },
+                                                        {
+                                                            "name": "transmit-bytes"
+                                                        },
+                                                        {
+                                                            "name": "total-drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "total-drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "total-drop-rate"
+                                                        },
+                                                        {
+                                                            "name": "total-transmit-rate"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "name": "queue-stats-array",
+                                                    "fields": [
+                                                        {
+                                                            "name": "queue-id",
+                                                            "tag": true
+                                                        },
+                                                        {
+                                                            "name": "tail-drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "tail-drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "queue-average-length",
+                                                            "fields": [
+                                                                {
+                                                                    "name": "value"
+                                                                },
+                                                                {
+                                                                    "name": "unit",
+                                                                    "tag": true
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "name": "random-drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "random-drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "conform-packets"
+                                                        },
+                                                        {
+                                                            "name": "conform-bytes"
+                                                        },
+                                                        {
+                                                            "name": "exceed-packets"
+                                                        },
+                                                        {
+                                                            "name": "exceed-bytes"
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "name": "police-stats-array",
+                                                    "fields": [
+                                                        {
+                                                            "name": "random-drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "random-drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "conform-packets"
+                                                        },
+                                                        {
+                                                            "name": "conform-bytes"
+                                                        },
+                                                        {
+                                                            "name": "drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "parent-drop-packets"
+                                                        },
+                                                        {
+                                                            "name": "parent-drop-bytes"
+                                                        },
+                                                        {
+                                                            "name": "exceed-packets"
+                                                        },
+                                                        {
+                                                            "name": "exceed-bytes"
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-qos-ma-oper:qos/interface-table/interface/input/statistics",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "policy-name",
+                    "tag": true
+                },
+                {
+                    "name": "class-stats",
+                    "fields": [
+                        {
+                            "name": "class-name",
+                            "tag": true
+                        },
+                        {
+                            "name": "general-stats",
+                            "fields": [
+                                {
+                                    "name": "transmit-packets"
+                                },
+                                {
+                                    "name": "transmit-bytes"
+                                },
+                                {
+                                    "name": "total-drop-packets"
+                                },
+                                {
+                                    "name": "total-drop-bytes"
+                                },
+                                {
+                                    "name": "total-drop-rate"
+                                },
+                                {
+                                    "name": "total-transmit-rate"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "queue-stats-array",
+                            "fields": [
+                                {
+                                    "name": "queue-id",
+                                    "tag": true
+                                },
+                                {
+                                    "name": "tail-drop-packets"
+                                },
+                                {
+                                    "name": "tail-drop-bytes"
+                                },
+                                {
+                                    "name": "queue-average-length",
+                                    "fields": [
+                                        {
+                                            "name": "value"
+                                        },
+                                        {
+                                            "name": "unit",
+                                            "tag": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "random-drop-packets"
+                                },
+                                {
+                                    "name": "random-drop-bytes"
+                                },
+                                {
+                                    "name": "conform-packets"
+                                },
+                                {
+                                    "name": "conform-bytes"
+                                },
+                                {
+                                    "name": "exceed-packets"
+                                },
+                                {
+                                    "name": "exceed-bytes"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-telemetry-model-driven-oper:telemetry-model-driven/subscriptions/subscription",
+        "spec": {
+            "fields": [
+                {
+                    "fields": [
+                        {
+                            "fields": [
+                                {
+                                    "name": "ipv6-address"
+                                },
+                                {
+                                    "name": "ipv4-address"
+                                },
+                                {
+                                    "name": "interface-name"
+                                },
+                                {
+                                    "name": "vrf-id"
+                                },
+                                {
+                                    "name": "state"
+                                }
+                            ],
+                            "name": "source-interface"
+                        },
+                        {
+                            "name": "state"
+                        },
+                        {
+                            "name": "id"
+                        },
+                        {
+                            "fields": [
+                                {
+                                    "name": "heartbeat-interval"
+                                },
+                                {
+                                    "name": "suppress-redundant"
+                                },
+                                {
+                                    "fields": [
+                                        {
+                                            "name": "configured"
+                                        },
+                                        {
+                                            "name": "id"
+                                        }
+                                    ],
+                                    "name": "sensor-group"
+                                },
+                                {
+                                    "name": "sample-interval"
+                                }
+                            ],
+                            "name": "sensor-profiles"
+                        }
+                    ],
+                    "name": "subscription"
+                },
+                {
+                    "tag": true,
+                    "name": "subscription-id"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-telemetry-model-driven-oper:telemetry-model-driven/subscriptions/subscription",
+        "spec": {
+            "fields": [
+                {
+                    "name": "collection-groups_PIPELINE_EDIT"
+                },
+                {
+                    "fields": [
+                        {
+                            "fields": [
+                                {
+                                    "name": "configured"
+                                },
+                                {
+                                    "name": "id"
+                                },
+                                {
+                                    "fields": [
+                                        {
+                                            "name": "tls"
+                                        },
+                                        {
+                                            "name": "vrf-id"
+                                        },
+                                        {
+                                            "fields": [
+                                                {
+                                                    "name": "ipv4-address"
+                                                },
+                                                {
+                                                    "name": "ip-type"
+                                                }
+                                            ],
+                                            "name": "dest-ip-address"
+                                        },
+                                        {
+                                            "name": "encoding"
+                                        },
+                                        {
+                                            "name": "total-num-of-bytes-sent"
+                                        },
+                                        {
+                                            "name": "tls-host"
+                                        },
+                                        {
+                                            "name": "dscp"
+                                        },
+                                        {
+                                            "name": "udp-mtu"
+                                        },
+                                        {
+                                            "name": "state"
+                                        },
+                                        {
+                                            "name": "dest-port"
+                                        },
+                                        {
+                                            "name": "total-num-of-packets-sent"
+                                        },
+                                        {
+                                            "name": "sub-id-str"
+                                        },
+                                        {
+                                            "name": "last-collection-time"
+                                        },
+                                        {
+                                            "name": "id"
+                                        },
+                                        {
+                                            "name": "transport"
+                                        },
+                                        {
+                                            "name": "vrf"
+                                        }
+                                    ],
+                                    "name": "destinations"
+                                }
+                            ],
+                            "name": "destination-grps"
+                        },
+                        {
+                            "name": "state"
+                        },
+                        {
+                            "name": "sensor-profiles_PIPELINE_EDIT"
+                        },
+                        {
+                            "name": "id"
+                        },
+                        {
+                            "fields": [
+                                {
+                                    "name": "ipv6-address"
+                                },
+                                {
+                                    "name": "ipv4-address"
+                                },
+                                {
+                                    "name": "interface-name"
+                                },
+                                {
+                                    "name": "vrf-id"
+                                },
+                                {
+                                    "name": "state"
+                                }
+                            ],
+                            "name": "source-interface"
+                        }
+                    ],
+                    "name": "subscription"
+                },
+                {
+                    "tag": true,
+                    "name": "subscription-id"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-telemetry-model-driven-oper:telemetry-model-driven/subscriptions/subscription",
+        "spec": {
+            "fields": [
+                {
+                    "fields": [
+                        {
+                            "name": "max-total-time"
+                        },
+                        {
+                            "name": "min-collection-time"
+                        },
+                        {
+                            "name": "total-collections"
+                        },
+                        {
+                            "name": "total-on-data-instances"
+                        },
+                        {
+                            "name": "encoding"
+                        },
+                        {
+                            "name": "total-send-drops"
+                        },
+                        {
+                            "name": "last-collection-start-time"
+                        },
+                        {
+                            "name": "min-total-time"
+                        },
+                        {
+                            "name": "max-collection-time"
+                        },
+                        {
+                            "name": "total-not-ready"
+                        },
+                        {
+                            "name": "total-send-errors"
+                        },
+                        {
+                            "name": "avg-total-time"
+                        },
+                        {
+                            "fields": [
+                                {
+                                    "name": "path"
+                                },
+                                {
+                                    "name": "state"
+                                },
+                                {
+                                    "name": "status-str"
+                                }
+                            ],
+                            "name": "collection-paths"
+                        },
+                        {
+                            "name": "last-collection-end-time"
+                        },
+                        {
+                            "fields": [
+                                {
+                                    "name": "total-get-count"
+                                },
+                                {
+                                    "name": "total-send-drops"
+                                },
+                                {
+                                    "name": "max-collection-time"
+                                },
+                                {
+                                    "name": "total-collections-missed"
+                                },
+                                {
+                                    "name": "total-get-bulk-errors"
+                                },
+                                {
+                                    "name": "collection-method"
+                                },
+                                {
+                                    "name": "total-send-bytes-dropped"
+                                },
+                                {
+                                    "name": "total-list-errors"
+                                },
+                                {
+                                    "name": "total-item-count"
+                                },
+                                {
+                                    "name": "cadence"
+                                },
+                                {
+                                    "name": "status"
+                                },
+                                {
+                                    "name": "total-collections"
+                                },
+                                {
+                                    "name": "total-list-count"
+                                },
+                                {
+                                    "name": "total-send-errors"
+                                },
+                                {
+                                    "name": "total-datalist-errors"
+                                },
+                                {
+                                    "name": "avg-collection-time"
+                                },
+                                {
+                                    "name": "total-finddata-errors"
+                                },
+                                {
+                                    "name": "total-finddata-count"
+                                },
+                                {
+                                    "name": "path"
+                                },
+                                {
+                                    "name": "total-send-packets"
+                                },
+                                {
+                                    "name": "total-get-bulk-count"
+                                },
+                                {
+                                    "name": "min-collection-time"
+                                },
+                                {
+                                    "name": "total-get-errors"
+                                },
+                                {
+                                    "name": "total-datalist-count"
+                                },
+                                {
+                                    "name": "total-sent-bytes"
+                                },
+                                {
+                                    "name": "total-encode-notready"
+                                },
+                                {
+                                    "name": "total-encode-errors"
+                                }
+                            ],
+                            "name": "internal-collection-group"
+                        },
+                        {
+                            "name": "id"
+                        },
+                        {
+                            "name": "cadence"
+                        },
+                        {
+                            "name": "total-other-errors"
+                        }
+                    ],
+                    "name": "collection-groups"
+                },
+                {
+                    "fields": [
+                        {
+                            "fields": [
+                                {
+                                    "name": "configured"
+                                },
+                                {
+                                    "name": "id"
+                                },
+                                {
+                                    "fields": [
+                                        {
+                                            "name": "tls"
+                                        },
+                                        {
+                                            "name": "vrf-id"
+                                        },
+                                        {
+                                            "fields": [
+                                                {
+                                                    "name": "ipv4-address"
+                                                },
+                                                {
+                                                    "name": "ip-type"
+                                                }
+                                            ],
+                                            "name": "dest-ip-address"
+                                        },
+                                        {
+                                            "name": "encoding"
+                                        },
+                                        {
+                                            "name": "total-num-of-bytes-sent"
+                                        },
+                                        {
+                                            "name": "tls-host"
+                                        },
+                                        {
+                                            "name": "dscp"
+                                        },
+                                        {
+                                            "name": "udp-mtu"
+                                        },
+                                        {
+                                            "name": "state"
+                                        },
+                                        {
+                                            "name": "dest-port"
+                                        },
+                                        {
+                                            "name": "total-num-of-packets-sent"
+                                        },
+                                        {
+                                            "name": "sub-id-str"
+                                        },
+                                        {
+                                            "name": "last-collection-time"
+                                        },
+                                        {
+                                            "name": "id"
+                                        },
+                                        {
+                                            "name": "transport"
+                                        },
+                                        {
+                                            "name": "vrf"
+                                        }
+                                    ],
+                                    "name": "destinations"
+                                }
+                            ],
+                            "name": "destination-grps"
+                        },
+                        {
+                            "name": "state"
+                        },
+                        {
+                            "name": "id"
+                        },
+                        {
+                            "fields": [
+                                {
+                                    "name": "heartbeat-interval"
+                                },
+                                {
+                                    "name": "suppress-redundant"
+                                },
+                                {
+                                    "fields": [
+                                        {
+                                            "name": "configured"
+                                        },
+                                        {
+                                            "name": "id"
+                                        },
+                                        {
+                                            "fields": [
+                                                {
+                                                    "name": "path"
+                                                },
+                                                {
+                                                    "name": "state"
+                                                },
+                                                {
+                                                    "name": "status-str"
+                                                }
+                                            ],
+                                            "name": "sensor-paths"
+                                        }
+                                    ],
+                                    "name": "sensor-group"
+                                },
+                                {
+                                    "name": "sample-interval"
+                                }
+                            ],
+                            "name": "sensor-profiles"
+                        },
+                        {
+                            "fields": [
+                                {
+                                    "name": "ipv6-address"
+                                },
+                                {
+                                    "name": "ipv4-address"
+                                },
+                                {
+                                    "name": "interface-name"
+                                },
+                                {
+                                    "name": "vrf-id"
+                                },
+                                {
+                                    "name": "state"
+                                }
+                            ],
+                            "name": "source-interface"
+                        }
+                    ],
+                    "name": "subscription"
+                },
+                {
+                    "tag": true,
+                    "name": "subscription-id"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-telemetry-model-driven-oper:telemetry-model-driven/subscriptions/subscription",
+        "spec": {
+            "fields": [
+                {
+                    "fields": [
+                        {
+                            "fields": [
+                                {
+                                    "name": "ipv6-address"
+                                },
+                                {
+                                    "name": "ipv4-address"
+                                },
+                                {
+                                    "name": "interface-name"
+                                },
+                                {
+                                    "name": "vrf-id"
+                                },
+                                {
+                                    "name": "state"
+                                }
+                            ],
+                            "name": "source-interface"
+                        },
+                        {
+                            "name": "state"
+                        },
+                        {
+                            "name": "sensor-profiles_PIPELINE_EDIT"
+                        },
+                        {
+                            "name": "id"
+                        }
+                    ],
+                    "name": "subscription"
+                },
+                {
+                    "tag": true,
+                    "name": "subscription-id"
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-telemetry-model-driven-oper:telemetry-model-driven/subscriptions/subscription",
+        "spec": {
+            "fields": [
+                {
+                    "fields": [
+                        {
+                            "fields": [
+                                {
+                                    "name": "ipv6-address"
+                                },
+                                {
+                                    "name": "ipv4-address"
+                                },
+                                {
+                                    "name": "interface-name"
+                                },
+                                {
+                                    "name": "vrf-id"
+                                },
+                                {
+                                    "name": "state"
+                                }
+                            ],
+                            "name": "source-interface"
+                        },
+                        {
+                            "name": "state"
+                        },
+                        {
+                            "name": "id"
+                        },
+                        {
+                            "fields": [
+                                {
+                                    "name": "heartbeat-interval"
+                                },
+                                {
+                                    "name": "suppress-redundant"
+                                },
+                                {
+                                    "fields": [
+                                        {
+                                            "name": "configured"
+                                        },
+                                        {
+                                            "name": "sensor-paths_PIPELINE_EDIT"
+                                        },
+                                        {
+                                            "name": "id"
+                                        }
+                                    ],
+                                    "name": "sensor-group"
+                                },
+                                {
+                                    "name": "sample-interval"
+                                }
+                            ],
+                            "name": "sensor-profiles"
+                        }
+                    ],
+                    "name": "subscription"
+                },
+                {
+                    "tag": true,
+                    "name": "subscription-id"
+                }
+            ]
+        }
+    }
+]
