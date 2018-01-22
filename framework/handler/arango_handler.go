@@ -139,6 +139,7 @@ func (a *ArangoHandler) HandleBaseAttribute(m *openbmp.Message) {
 }
 
 func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
+	fmt.Println(m)
 	leng, ok := m.GetInt("prefix_len")
 	if !ok {
 		leng = 0
