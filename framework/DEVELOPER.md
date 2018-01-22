@@ -5,7 +5,7 @@ Arango
 git clone https://wwwin-github.cisco.com/spa-ie/voltron-redux.git
 cd framework
 make
-sh arango/deploy.sh
+sh database/deploy.sh
 ```
 
 We support two run modes for this binary, the first is to populate arango with a
@@ -25,9 +25,9 @@ Need help?
 
 
 # Running tests
-1. Deploy the database `./framework/arango/deploy.sh` (give it ~10 seconds to start up)
+1. Deploy the database `./framework/database/deploy.sh` (give it ~10 seconds to start up)
 2. `make test`
-3. Stop the database `./framework/arango/stop.sh`
+3. Stop the database `./framework/database/stop.sh`
 
 
 ## [Accessing Arango via HTTP](https://docs.arangodb.com/3.2/HTTP/SimpleQuery/)
