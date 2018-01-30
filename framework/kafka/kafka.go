@@ -84,6 +84,7 @@ func (c *Consumer) Start() error {
 		case msg, more := <-consumer.Messages():
 			// TODO: uncomment markOffset (when not in DEV)
 			if more {
+				fmt.Println(msg.Value)
 				omsg := openbmp.NewMessage(msg.Topic, msg.Value)
 				if omsg == nil { // error
 					consumer.MarkOffset(msg, "") // mark message as processed
