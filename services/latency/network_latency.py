@@ -15,7 +15,7 @@ dst_MAC = os.popen('arp -a | grep '+ next_hop  + ' | grep ' + outgoing_interface
 dst_MAC = dst_MAC.split()[3]
 
 packet_obj = MPLSPacketGenerator()
-packet_obj.create_packet(src_MAC, dst_MAC, label_stack=[24003, 24001, 24004], src_IP='10.1.2.1', dst_IP='10.11.0.1')
+packet_obj.create_packet(src_MAC, dst_MAC, label_stack=[24006, 24001, 24011], src_IP='10.1.2.1', dst_IP='10.11.0.1')
 
 latency_obj = NetworkSniff()
 
