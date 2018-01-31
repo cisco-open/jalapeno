@@ -26,6 +26,14 @@ class MPLSPacketGenerator(object):
         self.p0 = ICMP()
 
     def create_packet(self, src_MAC, dst_MAC, label_stack, src_IP, dst_IP):
+        print("\n#######")
+	print("Given parameters:")
+	print("SRC_MAC: " + src_MAC)
+        print("DST_MAC: " + dst_MAC)
+        print(label_stack)
+        print("Source IP: " + src_IP)
+        print("Destination IP: " + dst_IP)
+	print("#######\n")
         bind_layers(Ether, MPLS, type = 0x8847)
         bind_layers(MPLS, MPLS, bottom_of_label_stack = 0)
         bind_layers(MPLS, IP)
@@ -37,5 +45,5 @@ class MPLSPacketGenerator(object):
         self.p0 = Ether(src = src_MAC, dst = dst_MAC) / pkts / IP(src = src_IP, dst = dst_IP) / ICMP()
 
     def send_ICMP_packet(self):
-         print('Send packet')
-         srp(self.p0, iface="ens4", retry=0, timeout=1.5)
+        print('Send packet')
+        srp(self.p0, iface="ens4", retry=0, timeout=1.5)
