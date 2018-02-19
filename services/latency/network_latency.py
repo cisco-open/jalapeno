@@ -1,36 +1,65 @@
-from MPLS_packet_generator import MPLSPacketGenerator
-from network_sniff import NetworkSniff
+! /usr/bin/env python
+"""This script calculates the latency for each path in the path set as
+calculated and returned by the label_generator script. For each path,
+a MPLSPacketManager creates the packet and sends it, while the NetworkSniffer
+uses scapy's sniffer tool to monitor request and reply times.
+"""
+
+import os, decimal, time
+from scapy.all import *
 from multiprocessing import Process
-import os
 
-arp_info = os.popen('ip route | grep default').read()
-print("ARP Info: " + arp_info)
-arp_info = arp_info.split()
-next_hop = arp_info[2]
-print("Next hop: " + next_hop)
-outgoing_interface = arp_info[-1]
-print("Outgoing interface: " + outgoing_interface)
+from util import get_mac_info
+from network_sniff import NetworkSniff
+from MPLS_packet_manager import MPLSPacketManager
+import label_generator
 
-src_MAC = os.popen('ifconfig ' + outgoing_interface  + ' | grep HWaddr').read()
-src_MAC = src_MAC.split()[-1]
-print("SRC_MAC of " + outgoing_interface + " is: " + src_MAC)
+def calculate_latency(path):
+    """Calculate the latency for a given path. Format the MPLS packet
+    to be constructed. Begin listening as you send out the MPLS packet.
+    """
+    mac_info = get_mac_info.get_mac_data()
+    src_MAC = mac_info["src_MAC"]
+    dst_MAC = mac_info["dst_MAC"]
+    key=path["Key"]
+    source=path["Source"]
+    destination=path["Destination"] # ie 10.11.0.0_24
 
-dst_MAC = os.popen('arp -a | grep '+ next_hop  + ' | grep ' + outgoing_interface).read()
-dst_MAC = dst_MAC.split()[3]
-print("DST_MAC is " + dst_MAC)
+    # question here :: why does the MPLS packet generation need to destination to be 10.11.0.1 instead of 10.11.0.0_24? bug?
+    if(destination == "10.11.0.0_24"):
+        packet_destination = '10.11.0.1'
+    elif(destination == "10.12.0.0_24"):
+        packet_destination = '10.12.0.1'
+    elif(destination == "10.13.0.0_24"):
+        packet_destination = '10.13.0.1'
+    else:
+	packet_destination = 0
 
-packet_obj = MPLSPacketGenerator()
-packet_obj.create_packet(src_MAC, dst_MAC, label_stack=[24004, 24006, 24005], src_IP='10.1.2.1', dst_IP='10.11.0.1')
+    labels = ' '.join(path["Label_Path"].split('_'))  # label stack formatting
+    labels = [int(x) for x in labels.split(' ')]
 
-latency_obj = NetworkSniff()
+    packet_manager = MPLSPacketManager()
+    packet_manager.create_packet(src_MAC, dst_MAC, label_stack=labels, src_IP=source, dst_IP=packet_destination)
 
-p1 = Process(target=latency_obj.calculate_latency)
-p1.start()
+    latency_obj = NetworkSniff()
+    # start listening and calculation process
+    p1 = Process(target=latency_obj.calculate_latency, args=(key,))
+    p1.start()
+    p1.join(timeout=1)
 
-p1.join(timeout=1)
+    # send packet
+    p2 = Process(target=packet_manager.send_ICMP_packet)
+    p2.start()
+    p2.join(timeout=2)
 
-p2 = Process(target=packet_obj.send_ICMP_packet)
-p2.start()
+def main():
+    all_label_stacks = label_generator.generate_labels()
+    for label_stack_set in all_label_stacks:
+        for path in label_stack_set:
+	    print path
+            calculate_latency(path)
+            time.sleep(0.5)
 
-p2.join(timeout=5)
-p1.join(timeout=5)
+if __name__ == '__main__':
+    main()
+    exit(0)

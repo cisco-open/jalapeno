@@ -1,6 +1,6 @@
 FROM python:2.7.14-alpine
-MAINTAINER Mike Napolitano <mnapolit@cisco.com>
+MAINTAINER Zia Syed <ziausyed@cisco.com>
 COPY . /services/latency
 WORKDIR /services/latency
 RUN pip install -r /services/latency/requirements.txt
-ENTRYPOINT ["python","xr-data-collector.py"]
+ENTRYPOINT ["python","network_latency.py"]
