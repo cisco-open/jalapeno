@@ -74,7 +74,7 @@ spec:
         - mountPath: /var/lib/grafana
           name: grafana-lib
       - name: pipeline
-        image: dockerhub.cisco.com/gspie-dev-docker/pipeline:v0.1.13
+        image: dockerhub.cisco.com/gspie-docker/pipeline:v0.1.13
         volumeMounts:
         - mountPath: /data
           name: pipeline-data
