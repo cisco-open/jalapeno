@@ -53,7 +53,7 @@ python enable_guestshell.py
 
 ## manage_pipeline.py
 
-Provides functionality to manage Pipeline instances on Linux hosts. Utilizes the [Pipeline configuration](../infra/telemetry/pipeline) under ```/infra/```.  
+Provides functionality to manage Pipeline instances on Linux hosts. Utilizes the [Pipeline configuration](../../infra/telemetry/pipeline) under ```/infra/```.  
 Uses the ```netmiko_linux``` configuration per device.
 
 * Provision
