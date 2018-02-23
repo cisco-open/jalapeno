@@ -1,5 +1,5 @@
 # Voltron
-#### giving applications the power to control their network treatment
+### Giving applications the power to control their network treatment
 
 Voltron is a collection of microservices that harness real-time network telemetry data and technologies such as segment routing. Voltron reveals new ways of maximizing business growth using the network.
 
