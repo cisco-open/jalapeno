@@ -3,7 +3,8 @@ Only supports Linux-based host at the moment, not router.
 Only Python is currently supported as a language library.
 
 ## Dependencies
-Mostly derived from Sam Russel's [MPLS testbed on Ubuntu Linux with kernel 4.3](http://www.samrussell.nz/2015/12/mpls-testbed-on-ubuntu-linux-with.html).
+Mostly derived from Sam Russell's [MPLS testbed on Ubuntu Linux with kernel 4.3](http://www.samrussell.nz/2015/12/mpls-testbed-on-ubuntu-linux-with.html).
+
 
 * MPLS support in Linux kernel.  
 Recommend Linux kernel 4.11+. Earlier kernel versions maxed at 2 MPLS labels, 4.11 bumped this number to 30. 
@@ -26,7 +27,12 @@ sudo sysctl -w net.mpls.conf.lo.input=1
 ```
 * Latest ```ip``` util installed.  
 ```bash
-git clone git://git.kernel.org/pub/scm/linux/kernel/git/shemminger/iproute2.git
+# Official releases
+wget -O iproute2.tar.gz https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-<version>.tar.gz
+tar -xzf iproute2.tar.gz
+# Or from source
+git clone git://git.kernel.org/pub/scm/network/iproute2/iproute2.git
+# Now install
 cd iproute2
 ./configure
 make
