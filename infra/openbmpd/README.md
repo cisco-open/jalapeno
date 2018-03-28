@@ -1,10 +1,11 @@
-## Installing OpenBMPd
+# OpenBMP
+## Installation
 On v0-vm0, install [bin/openbmpd](bin/openbmpd) to `/usr/bin` and install [bin/libdl.so](bin/libdl.so) and [bin/libdl.so.2](bin/libdl.so.2) to `/usr/local/lib`.
 
-## Configuring Routers
+## Router Configuration
 Each router should send OpenBMP data to v0-vm0's address at port 5000. Configure each device accordingly (see [openbmpd_config](openbmpd_config)). 
 
-## Starting OpenBMPd
+## Execution
 To start openbmpd collector, set up the **openbmpd systemctl service.** Place [openbmpd.service](openbmpd.service) in `/etc/systemd/system/` on v0-vm0. Then enable and start the service:
 
 ```
