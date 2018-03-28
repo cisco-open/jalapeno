@@ -17,12 +17,12 @@ deployment_type=origin
 #openshift_image_tag=v3.6.0
 openshift_release="1.5.0"
 enable_excluders=false
-openshift_http_proxy=http://64.102.249.6:80
-openshift_https_proxy=http://64.102.249.6:80
-openshift_no_proxy='localhost,10.86.204.8,127.0.0.1'
+openshift_http_proxy=http://proxy.esl.cisco.com:8080
+openshift_https_proxy=http://proxy.esl.cisco.com:8080
+openshift_no_proxy='localhost,10.200.99.44,127.0.0.1'
 openshift_generate_no_proxy_hosts=True
-openshift_master_cluster_hostname=10.86.204.8
-openshift_master_cluster_public_hostname=10.86.204.8
+openshift_master_cluster_hostname=snas1.gspie.lab
+openshift_master_cluster_public_hostname=ie-snas1.cisco.com
 
 # uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
 openshift_master_identity_providers=[{'name': 'allow_all', 'login': 'true', 'challenge': 'true', 'kind': 'AllowAllPasswordIdentityProvider'}]
@@ -31,8 +31,8 @@ containerized=true
 
 # host group for masters
 [masters]
-10.86.204.8
+snas1.gspie.lab
 
 # host group for nodes, includes region info
 [nodes]
-10.86.204.8 openshift_node_labels="{'region': 'infra', 'zone': 'default'}" openshift_schedulable=true openshift_ip=10.86.204.8 openshift_public_ip=10.86.204.8 openshift_hostname=10.86.204.8 openshift_public_hostname=10.86.204.8 ansible_user=root ansible_ssh_pass=bosco123
+snas1.gspie.lab openshift_node_labels="{'region': 'infra', 'zone': 'default'}" openshift_schedulable=true openshift_ip=10.200.99.44 openshift_public_ip=10.200.99.44 openshift_hostname=snas1.gspie.lab openshift_public_hostname=ie-snas1.cisco.com ansible_user=root
