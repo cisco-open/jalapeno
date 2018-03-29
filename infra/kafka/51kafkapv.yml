@@ -9,6 +9,6 @@ spec:
   accessModes:
        - ReadWriteMany
   nfs:
-    path: /data/openshift-nfs/pvkafka
-    server: 10.225.210.98
+    path: /export/pvkafka
+    server: 10.200.99.44
   persistentVolumeReclaimPolicy: Retain
