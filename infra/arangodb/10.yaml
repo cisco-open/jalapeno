@@ -9,8 +9,8 @@ spec:
   accessModes:
        - ReadWriteMany
   nfs:
-    path: /data/openshift-nfs/arangodb
-    server: 10.225.210.98
+    path: /export/arangodb
+    server: 10.200.99.44
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
@@ -23,6 +23,6 @@ spec:
   accessModes:
        - ReadWriteMany
   nfs:
-    path: /data/openshift-nfs/arangodb-apps
-    server: 10.225.210.98
+    path: /export/arangodb-apps
+    server: 10.200.99.44
   persistentVolumeReclaimPolicy: Retain
