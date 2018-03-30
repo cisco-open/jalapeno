@@ -9,7 +9,7 @@ from contextlib import closing
 from netmiko import ConnectHandler, SCPConn
 from util import get_hosts
 
-def provision_pipeline(netmiko_linux_dict, base_path='../../infra/telemetry/pipeline/'):
+def provision_pipeline(netmiko_linux_dict, base_path='../pipeline/'):
     """Provision Pipeline files to guestshell via SCP.
     Does not start Pipeline.
     """
