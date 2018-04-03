@@ -10,7 +10,7 @@ spec:
        - ReadWriteMany
   nfs:
     path: /export/arangodb
-    server: 10.200.99.44
+    server: {{ host_ip }}
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
@@ -24,5 +24,5 @@ spec:
        - ReadWriteMany
   nfs:
     path: /export/arangodb-apps
-    server: 10.200.99.44
+    server: {{ host_ip }}
   persistentVolumeReclaimPolicy: Retain

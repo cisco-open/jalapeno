@@ -1,4 +1,5 @@
-import sys, configparser
+import sys, configparser, os
+from jinja2 import *
 from colorama import init
 init(strip=not sys.stdout.isatty()) # strip colors if stdout is redirected
 from termcolor import cprint 
@@ -140,5 +141,51 @@ print("\n")
 ###########################################################################################################################
 
 
+###########################################################################################################################
 with open('voltron.ini', 'w') as configfile:
     config.write(configfile)
+###########################################################################################################################
+
+
+###########################################################################################################################
+### ArangoDB automation
+### Rendering Arango's infrastructure YAML file with host_IP
+templateLoader = FileSystemLoader(searchpath="./templates/arangodb/")
+templateEnv = Environment(loader=templateLoader)
+TEMPLATE_FILE = "10_template.yaml"
+template = templateEnv.get_template(TEMPLATE_FILE)
+context = {
+    'host_ip': host_ip,
+}
+outputText = template.render(context)
+dirname = os.path.dirname(os.path.abspath(__file__))
+arango_persistent_volume_yaml = os.path.join(dirname, 'infra', 'arangodb', '10.yaml')
+with open(arango_persistent_volume_yaml, "w") as file_handler:
+    file_handler.write(outputText)
+###########################################################################################################################
+
+###########################################################################################################################
+### Kafka automation
+### Rendering Kafka's/Zookeeper's infrastructure YAML files with host_IP
+context = {
+    'host_ip': host_ip,
+}
+templateLoader = FileSystemLoader(searchpath="./templates/kafka/")
+templateEnv = Environment(loader=templateLoader)
+dirname = os.path.dirname(os.path.abspath(__file__))
+
+TEMPLATE_FILE = "29pv_template.yaml"
+template = templateEnv.get_template(TEMPLATE_FILE)
+outputText = template.render(context)
+zookeeper_persistent_volume_yaml = os.path.join(dirname, 'infra', 'kafka', '29pv.yaml')
+with open(zookeeper_persistent_volume_yaml, "w") as file_handler:
+    file_handler.write(outputText)
+
+TEMPLATE_FILE = "51kafkapv_template.yaml"
+template = templateEnv.get_template(TEMPLATE_FILE)
+outputText = template.render(context)
+kafka_persistent_volume_yaml = os.path.join(dirname, 'infra', 'kafka', '51kafkapv.yaml')
+with open(kafka_persistent_volume_yaml, "w") as file_handler:
+    file_handler.write(outputText)
+
+###########################################################################################################################
