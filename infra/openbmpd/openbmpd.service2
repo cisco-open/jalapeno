@@ -14,7 +14,7 @@ Type=simple
 #    -p 5000 \
 #    -l /var/log/openbmpd.log \
 #    -pid /var/run/openbmpd.pid \
-#    -k 10.200.99.44:30902 \
+#    -k ie-snas1.cisco.com:30902 \
 #    -debugDebug -dbgp -dbmp -dmsgbus
 
 ExecStart=/usr/bin/openbmpd -f \
