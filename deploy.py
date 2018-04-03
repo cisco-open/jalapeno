@@ -245,5 +245,19 @@ with open(openbmpd_process_vars, "w") as file_handler:
 
 ###########################################################################################################################
 
-
-
+###########################################################################################################################
+### Telemetry automation
+### Rendering Pipeline infrastructure config file with kafka_endpoint
+templateLoader = FileSystemLoader(searchpath="./templates/telemetry/")
+templateEnv = Environment(loader=templateLoader)
+TEMPLATE_FILE = "pipeline_template.conf"
+template = templateEnv.get_template(TEMPLATE_FILE)
+context = {
+    'kafka_endpoint': kafka_endpoint,
+}
+outputText = template.render(context)
+dirname = os.path.dirname(os.path.abspath(__file__))
+pipeline_config = os.path.join(dirname, 'infra', 'telemetry', 'pipeline', 'pipeline.conf')
+with open(pipeline_config, "w") as file_handler:
+    file_handler.write(outputText)
+###########################################################################################################################
