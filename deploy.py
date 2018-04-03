@@ -49,15 +49,16 @@ print("\n")
 ### Do they have a Kafka cluster or do we create one?
 while True:
     kafka_exists = input("Do you have a Kafka cluster you would like to use (y/n): ")
-    if kafka_exists in ('y', 'yes'):
+    if kafka_exists in ('y', 'yes', 'Y'):
         kafka_endpoint = input("Please enter the Kafka endpoint (i.e. 10.200.99.44:30902): ")
         config['VOLTRON']['kafka_endpoint'] = kafka_endpoint
         ### VALIDATE INPUT HERE
         ### SET THEIR KAFKA ENDPOINT IN NECESSARY FILES HERE
         break
-    elif kafka_exists in ('n', 'no'):
+    elif kafka_exists in ('n', 'no', 'N'):
         print("No worries! We're setting up a Kafka cluster for you in OpenShift now.")
-        config['VOLTRON']['kafka_endpoint'] = host_ip + ":30902"
+        kafka_endpoint = host_ip + ":30902"
+        config['VOLTRON']['kafka_endpoint'] = kafka_endpoint
         ### SET UP KAFKA IN OPENSHIFT HERE
         break
     else:
@@ -73,15 +74,16 @@ print("\n")
 ### Do they have an Influx instance or do we create one?
 while True:
     influx_exists = input("Do you have a pre-existing InfluxDB instance you would like to use (y/n): ")
-    if influx_exists in ('y', 'yes'):
+    if influx_exists in ('y', 'yes', 'Y'):
         influx_endpoint = input("Please enter the InfluxDB endpoint (i.e. 10.200.99.44:30308): ")
         config['VOLTRON']['influx_endpoint'] = influx_endpoint
         ### VALIDATE INPUT HERE
         ### SET THEIR INFLUXDB ENDPOINT IN NECESSARY FILES HERE
         break
-    elif influx_exists in ('n', 'no'):
+    elif influx_exists in ('n', 'no', 'N'):
         print("No worries! We're setting up a InfluxDB instance for you in OpenShift now.")
-        config['VOLTRON']['influx_endpoint'] = host_ip + ":30308"
+        influx_endpoint = host_ip + ":30308"
+        config['VOLTRON']['influx_endpoint'] = influx_endpoint
         ### SET UP INFLUXDB IN OPENSHIFT HERE
         break
     else:
@@ -97,15 +99,16 @@ print("\n")
 ### Do they have a pre-existing OpenBMP setup?
 while True:
     openbmp_exists = input("Do you have a pre-existing OpenBMP setup you would like to use (y/n): ")
-    if openbmp_exists in ('y', 'yes'):
+    if openbmp_exists in ('y', 'yes', 'Y'):
         openbmp_endpoint = input("Please enter the openbmp endpoint (i.e. 10.20.0.51:5000): ")
         config['VOLTRON']['openbmp_endpoint'] = openbmp_endpoint
         ### VALIDATE INPUT HERE
         ### SET THEIR OPENBMP ENDPOINT IN NECESSARY FILES HERE
         break
-    elif openbmp_exists in ('n', 'no'):
+    elif openbmp_exists in ('n', 'no', 'N'):
         print("No worries! We'll configure your routers to send OpenBMP data, and we'll get that data into the Kafka cluster now.")
-        config['VOLTRON']['openbmp_endpoint'] = host_ip + ":5000"
+        openbmp_endpoint = host_ip + ":5000"
+        config['VOLTRON']['openbmp_endpoint'] = openbmp_endpoint
         ### SET UP OPENBMP HERE
         break
     else:
@@ -121,15 +124,16 @@ print("\n")
 ### Do they have an ArangoDB instance or do we create one?
 while True:
     arango_exists = input("Do you have a pre-existing instance of ArangoDB you would like to use (y/n): ")
-    if arango_exists in ('y', 'yes'):
+    if arango_exists in ('y', 'yes', 'Y'):
         arango_endpoint = input("Please enter the ArangoDB endpoint (i.e. 10.200.99.44:30852): ")
         config['VOLTRON']['arango_endpoint'] = arango_endpoint
         ### VALIDATE INPUT HERE
         ### SET THEIR ARANGO ENDPOINT IN NECESSARY FILES HERE
         break
-    elif arango_exists in ('n', 'no'):
+    elif arango_exists in ('n', 'no', 'N'):
         print("No worries! We're setting up an ArangoDB instance for you in OpenShift now.")
-        config['VOLTRON']['arango_endpoint'] = host_ip + ":30852"
+        arango_endpoint = host_ip + ":30852"
+        config['VOLTRON']['arango_endpoint'] = arango_endpoint
         ### SET UP ARANGO IN OPENSHIFT HERE
         break
     else:
@@ -177,15 +181,44 @@ dirname = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_FILE = "29pv_template.yaml"
 template = templateEnv.get_template(TEMPLATE_FILE)
 outputText = template.render(context)
-zookeeper_persistent_volume_yaml = os.path.join(dirname, 'infra', 'kafka', '29pv.yaml')
+zookeeper_persistent_volume_yaml = os.path.join(dirname, 'infra', 'kafka', '29pv.yml')
 with open(zookeeper_persistent_volume_yaml, "w") as file_handler:
     file_handler.write(outputText)
 
 TEMPLATE_FILE = "51kafkapv_template.yaml"
 template = templateEnv.get_template(TEMPLATE_FILE)
 outputText = template.render(context)
-kafka_persistent_volume_yaml = os.path.join(dirname, 'infra', 'kafka', '51kafkapv.yaml')
+kafka_persistent_volume_yaml = os.path.join(dirname, 'infra', 'kafka', '51kafkapv.yml')
 with open(kafka_persistent_volume_yaml, "w") as file_handler:
     file_handler.write(outputText)
 
 ###########################################################################################################################
+
+
+###########################################################################################################################
+### OpenBMP automation
+### Rendering OpenBMP's config and service files with v0-vm0 IP and Kafka endpoint
+context = {
+    'kafka_endpoint': kafka_endpoint,
+}
+templateLoader = FileSystemLoader(searchpath="./templates/openbmpd/")
+templateEnv = Environment(loader=templateLoader)
+dirname = os.path.dirname(os.path.abspath(__file__))
+
+TEMPLATE_FILE = "openbmpd_service_template"
+template = templateEnv.get_template(TEMPLATE_FILE)
+outputText = template.render(context)
+openbmpd_service_template = os.path.join(dirname, 'infra', 'openbmpd', 'openbmpd.service')
+with open(openbmpd_service_template, "w") as file_handler:
+    file_handler.write(outputText)
+
+TEMPLATE_FILE = "openbmpd_process_vars_template"
+template = templateEnv.get_template(TEMPLATE_FILE)
+outputText = template.render(context)
+openbmpd_process_vars = os.path.join(dirname, 'infra', 'openbmpd', 'openbmpd')
+with open(openbmpd_process_vars, "w") as file_handler:
+    file_handler.write(outputText)
+
+###########################################################################################################################
+
+
