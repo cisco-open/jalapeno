@@ -261,3 +261,12 @@ pipeline_config = os.path.join(dirname, 'infra', 'telemetry', 'pipeline', 'pipel
 with open(pipeline_config, "w") as file_handler:
     file_handler.write(outputText)
 ###########################################################################################################################
+
+
+
+
+####
+# call voltron/infra/deploy_infrastructure.py
+# call voltron/services/deploy_service.py
+# call voltron/client/deploy_client.py
+####

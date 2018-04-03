@@ -1,0 +1,3 @@
+#
+# script to deploy mdt
+#

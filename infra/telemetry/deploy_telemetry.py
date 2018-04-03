@@ -1,0 +1,3 @@
+#
+# Script to deploy telemetry
+#
