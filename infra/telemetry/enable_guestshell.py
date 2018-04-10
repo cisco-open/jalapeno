@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """Enable bash access on IOS-XR devices."""
 import logging
 import socket
@@ -69,7 +70,7 @@ def main():
             )
         else:
             logging.error(
-                'Guestshell credentials invalid for %s!', 
+                'Guestshell credentials invalid for %s!',
                 guestshell_host['ip']
             )
 

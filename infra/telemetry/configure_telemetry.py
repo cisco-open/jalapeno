@@ -1,9 +1,10 @@
+#!/usr/bin/python
 """Configure MDT on IOS-XR host devices."""
 import logging
 from netmiko import ConnectHandler
 from util import get_hosts
 
-def load_telemetry_config(filename='../config_xr'):
+def load_telemetry_config(filename='./config_xr'):
     """Load the config specified in the infra folder."""
     config_lines = None
     with open(filename, 'r') as config_fd:

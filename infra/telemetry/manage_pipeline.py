@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """Manage Pipeline on host network devices.
 Assumes that Pipeline will run in a "guestshell" which
 is configured in the hosts.json config file.
@@ -9,7 +10,7 @@ from contextlib import closing
 from netmiko import ConnectHandler, SCPConn
 from util import get_hosts
 
-def provision_pipeline(netmiko_linux_dict, base_path='../pipeline/'):
+def provision_pipeline(netmiko_linux_dict, base_path='./pipeline/'):
     """Provision Pipeline files to guestshell via SCP.
     Does not start Pipeline.
     """
@@ -61,10 +62,11 @@ def reset_pipeline(netmiko_linux_dict):
     remove_pipeline(netmiko_linux_dict)
     provision_pipeline(netmiko_linux_dict)
 
-def setup_args():
+def setup_args(args_from_deploy = None):
     """Formats the arguments expected to run the manager.
     Allows for certain commands and specification of specific hosts.
     """
+    deployment_args = args_from_deploy
     parser = argparse.ArgumentParser(
         description="Provision Pipeline to network devices."
     )
@@ -75,12 +77,16 @@ def setup_args():
         nargs='+',
         help='hostnames to operate against',
     )
-    return parser.parse_args()
+    if(deployment_args != None):
+        return parser.parse_args([deployment_args])
+    else:
+        return parser.parse_args()
 
-def main():
+
+def main(args_from_deploy = None):
     """Load the hosts and manage Pipeline."""
     logging.basicConfig(level=logging.INFO)
-    args = setup_args()
+    args = setup_args(args_from_deploy)
     action_map = {
         'provision': provision_pipeline,
         'remove': remove_pipeline,
