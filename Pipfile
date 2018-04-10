@@ -16,7 +16,7 @@ colorama = "*"
 configparser = "*"
 pyfiglet = "*"
 termcolor = "*"
-
+netmiko = "*"
 
 [requires]
 
