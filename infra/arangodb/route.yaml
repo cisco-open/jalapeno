@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Route
-metadata:
-  name: frontend
-spec:
-  host: www.example.com
-  to:
-    kind: Service
-    name: my-service
