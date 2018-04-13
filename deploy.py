@@ -180,14 +180,25 @@ with open('voltron.ini', 'w') as configfile:
 ### Rendering Arango's infrastructure YAML file with host_IP
 templateLoader = FileSystemLoader(searchpath="./templates/arangodb/")
 templateEnv = Environment(loader=templateLoader)
-TEMPLATE_FILE = "10_template.yaml"
+TEMPLATE_FILE = "arangodb_apps_pv_template.yaml"
 template = templateEnv.get_template(TEMPLATE_FILE)
 context = {
     'host_ip': host_ip,
 }
 outputText = template.render(context)
 dirname = os.path.dirname(os.path.abspath(__file__))
-arango_persistent_volume_yaml = os.path.join(dirname, 'infra', 'arangodb', '10.yaml')
+arango_apps_persistent_volume_yaml = os.path.join(dirname, 'infra', 'arangodb', 'arangodb_apps_pv.yaml')
+with open(arango_apps_persistent_volume_yaml, "w") as file_handler:
+    file_handler.write(outputText)
+
+TEMPLATE_FILE = "arangodb_pv_template.yaml"
+template = templateEnv.get_template(TEMPLATE_FILE)
+context = {
+    'host_ip': host_ip,
+}
+outputText = template.render(context)
+dirname = os.path.dirname(os.path.abspath(__file__))
+arango_persistent_volume_yaml = os.path.join(dirname, 'infra', 'arangodb', 'arangodb_pv.yaml')
 with open(arango_persistent_volume_yaml, "w") as file_handler:
     file_handler.write(outputText)
 ###########################################################################################################################
@@ -202,17 +213,17 @@ templateLoader = FileSystemLoader(searchpath="./templates/kafka/")
 templateEnv = Environment(loader=templateLoader)
 dirname = os.path.dirname(os.path.abspath(__file__))
 
-TEMPLATE_FILE = "29pv_template.yaml"
+TEMPLATE_FILE = "zookeeper_pv_template.yaml"
 template = templateEnv.get_template(TEMPLATE_FILE)
 outputText = template.render(context)
-zookeeper_persistent_volume_yaml = os.path.join(dirname, 'infra', 'kafka', '29pv.yml')
+zookeeper_persistent_volume_yaml = os.path.join(dirname, 'infra', 'kafka', 'zookeeper_pv.yaml')
 with open(zookeeper_persistent_volume_yaml, "w") as file_handler:
     file_handler.write(outputText)
 
-TEMPLATE_FILE = "51kafkapv_template.yaml"
+TEMPLATE_FILE = "kafka_pv_template.yaml"
 template = templateEnv.get_template(TEMPLATE_FILE)
 outputText = template.render(context)
-kafka_persistent_volume_yaml = os.path.join(dirname, 'infra', 'kafka', '51kafkapv.yml')
+kafka_persistent_volume_yaml = os.path.join(dirname, 'infra', 'kafka', 'kafka_pv.yaml')
 with open(kafka_persistent_volume_yaml, "w") as file_handler:
     file_handler.write(outputText)
 

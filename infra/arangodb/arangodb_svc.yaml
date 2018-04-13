@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: arangodb
+  namespace: voltron
+spec:
+  ports:
+  - port: 8529
+    name: arango
+  clusterIP: None
+  selector:
+    app: arangodb

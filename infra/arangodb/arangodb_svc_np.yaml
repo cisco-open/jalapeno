@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: arango-np
+  namespace: voltron
+spec:
+  ports:
+  - name: 8529-tcp
+    port: 8529
+    nodePort: 30852
+    targetPort: 8529
+  type: NodePort
+  selector:
+    app: arangodb
