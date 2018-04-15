@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: topology
-        image: dockerhub.cisco.com/gspie-docker-local/framework:1.3
+        image: dockerhub.cisco.com/gspie-docker-local/framework:1.5.23
         args:
           - topology
           - --arango-url
@@ -33,6 +33,6 @@ spec:
           - --kafka-topics
           - "openbmp.parsed.peer,openbmp.parsed.unicast_prefix,openbmp.parsed.ls_link"
           - --kafka-brokers
-          - ie-snas1.cisco.com:30902
+          - 10.200.99.44:30902
           - --asn
           - "100000"
