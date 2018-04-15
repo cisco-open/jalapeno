@@ -2,7 +2,7 @@ import sys, configparser, os
 from jinja2 import *
 from colorama import init
 init(strip=not sys.stdout.isatty()) # strip colors if stdout is redirected
-from termcolor import cprint 
+from termcolor import cprint
 from pyfiglet import figlet_format
 
 
@@ -269,6 +269,24 @@ context = {
 outputText = template.render(context)
 dirname = os.path.dirname(os.path.abspath(__file__))
 pipeline_config = os.path.join(dirname, 'infra', 'telemetry', 'pipeline', 'pipeline.conf')
+with open(pipeline_config, "w") as file_handler:
+    file_handler.write(outputText)
+###########################################################################################################################
+
+
+###########################################################################################################################
+### Topology automation
+### Rendering Topology Collector Service YAML file with host_IP and port
+templateLoader = FileSystemLoader(searchpath="./templates/services/collectors/topology/")
+templateEnv = Environment(loader=templateLoader)
+TEMPLATE_FILE = "topologyKube_template.yaml"
+template = templateEnv.get_template(TEMPLATE_FILE)
+context = {
+    'kafka_endpoint': kafka_endpoint,
+}
+outputText = template.render(context)
+dirname = os.path.dirname(os.path.abspath(__file__))
+pipeline_config = os.path.join(dirname, 'services', 'collectors', 'topology', 'topologyKube.yaml')
 with open(pipeline_config, "w") as file_handler:
     file_handler.write(outputText)
 ###########################################################################################################################
