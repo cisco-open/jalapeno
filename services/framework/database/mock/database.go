@@ -5,7 +5,7 @@ package mock_database
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/database"
 )
 
 // Mock of Database interface

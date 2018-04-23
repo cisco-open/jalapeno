@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/api/v1/client"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/api/v1/client"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/database"
 )
 
 func ApiReq2DbCol(request *http.Request) (database.Collector, error) {

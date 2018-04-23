@@ -6,11 +6,11 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/stephenrlouie/service"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/api/v1/server"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/config"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/manager"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/api/v1/server"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/config"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/database"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/log"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/manager"
 )
 
 func init() {

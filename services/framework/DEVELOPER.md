@@ -2,7 +2,7 @@
 Arango
 
 ```
-git clone https://wwwin-github.cisco.com/spa-ie/voltron-redux.git
+git clone https://wwwin-github.cisco.com/spa-ie/voltron.git
 cd framework
 make
 sh database/deploy.sh

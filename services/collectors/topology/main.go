@@ -5,12 +5,12 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/services/collectors/topology/cmd"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/services/collectors/topology/config"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/cmd"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/config"
 )
 
-var voltrontCmd = &cobra.Command{
-	Use: "voltront",
+var voltronCmd = &cobra.Command{
+	Use: "voltron",
 }
 
 func init() {
@@ -21,6 +21,6 @@ func init() {
 }
 
 func main() {
-	voltrontCmd.AddCommand(cmd.TopologyCmd)
-	voltrontCmd.Execute()
+	voltronCmd.AddCommand(cmd.TopologyCmd)
+	voltronCmd.Execute()
 }

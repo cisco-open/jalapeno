@@ -8,8 +8,8 @@ import(
   "time"
 
   "github.com/golang/mock/gomock"
-  "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
-  mock_database "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database/mock"
+  "wwwin-github.cisco.com/spa-ie/voltron/services/framework/database"
+  mock_database "wwwin-github.cisco.com/spa-ie/voltron/services/framework/database/mock"
 )
 
 func setUp(t *testing.T) (*mock_database.MockDatabase, *Manager) {

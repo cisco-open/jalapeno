@@ -9,7 +9,7 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
-	log "wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
+	log "wwwin-github.cisco.com/spa-ie/voltron/services/framework/log"
 )
 
 var (

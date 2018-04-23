@@ -8,7 +8,7 @@ RUN mkdir -p /voltron
 WORKDIR /voltron
 
 # add binary
-COPY bin/voltront /bin
+COPY bin/voltron /bin
 
 # set the entrypoint
-ENTRYPOINT ["/bin/voltront"]
+ENTRYPOINT ["/bin/voltron"]

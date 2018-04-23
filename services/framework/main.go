@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/cmd"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/config"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/cmd"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/config"
 )
 
 var voltronCmd = &cobra.Command{

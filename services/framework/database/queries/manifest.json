@@ -5,7 +5,7 @@
   "engines": {
     "arangodb": "^3.1.0"
   },
-  "author": "Mike Napolitano",
+  "author": "Zia Syed",
   "license": "Apache 2",
   "main": "index.js"
 }

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/database"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/log"
 )
 
 var (

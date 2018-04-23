@@ -1,8 +1,8 @@
 package main
 
 import (
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/services/collectors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/services/collectors/topology/log"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/database"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/log"
 )
 
 var (

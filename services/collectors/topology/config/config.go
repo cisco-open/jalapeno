@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"strings"
 
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/services/collectors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/services/collectors/topology/kafka"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/services/collectors/topology/log"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/database"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/kafka"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/log"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

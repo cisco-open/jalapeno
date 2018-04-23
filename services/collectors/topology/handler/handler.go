@@ -5,8 +5,8 @@ import (
 	"sort"
 	"strings"
 
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/services/collectors/topology/log"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/services/collectors/topology/openbmp"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/log"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/openbmp"
 )
 
 /* all the garbage in here will be removed soon. This is for testing. */

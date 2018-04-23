@@ -3,7 +3,7 @@ API:
   URL: 127.0.0.1:8876
 ASN: 100000
 Arango:
-  URL:      http://10.86.204.8:30852
+  URL:      http://10.200.99.44:30852
   User:     root
   Password: voltron
   Database: voltron
@@ -13,7 +13,7 @@ Log:
   Level: debug
 Kafka:
   Brokers:
-    - 10.86.204.8:30909
+    - 10.200.99.44:30909
   Topics: # If this is excluded, all topics are used.
     #- openbmp.parsed.collector
     #- openbmp.parsed.router

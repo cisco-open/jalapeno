@@ -18,10 +18,10 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/api/v1/client"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/api/v1/convert"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/database"
-	"wwwin-github.cisco.com/spa-ie/voltron-redux/framework/log"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/api/v1/client"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/api/v1/convert"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/database"
+	"wwwin-github.cisco.com/spa-ie/voltron/services/framework/log"
 )
 
 var (
