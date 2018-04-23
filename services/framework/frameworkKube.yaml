@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: framework
-        image: dockerhub.cisco.com/gspie-docker-local/framework:1.3
+        image: dockerhub.cisco.com/gspie-docker-local/framework:1.5.23
         args:
             - framework
             - --arango-url

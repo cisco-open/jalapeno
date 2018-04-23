@@ -15,18 +15,3 @@ spec:
     targetPort: 8876
   selector:
     app: framework
----
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: voltron
-  labels:
-    app: framework
-  name: framework
-spec:
-  ports:
-  - name: framework
-    port: 8876
-  clusterIP: None
-  selector:
-    app: framework

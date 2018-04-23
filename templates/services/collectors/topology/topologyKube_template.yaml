@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: topology
-        image: dockerhub.cisco.com/gspie-docker-local/framework:1.5.23
+        image: dockerhub.cisco.com/gspie-docker-local/topology:1.0
         args:
           - topology
           - --arango-url
