@@ -57,7 +57,7 @@ def deploy_persistent_volume_claim(persistent_volume_claim_api, yaml_file, opens
 
 def deploy_config_map(config_map_api, config_file, openshift_project):
     print("Deploying Config-Map for " + openshift_project)
-    yaml_data = load_yaml(yaml_file)
+    yaml_data = load_yaml(config_file)
     config_map_resp = config_map_api.create_namespaced_config_map(body=yaml_data, namespace=openshift_project)
     print(config_map_resp.metadata.self_link)
     print("Deployed Config-Map for " + openshift_project)
