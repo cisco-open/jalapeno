@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"time"
-
+        "strings"
 	"github.com/Shopify/sarama"
 	cluster "github.com/bsm/sarama-cluster"
 	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/handler"
@@ -84,7 +84,7 @@ func (c *Consumer) Start() error {
 		case msg, more := <-consumer.Messages():
 			// TODO: uncomment markOffset (when not in DEV)
                         if more {
-                                fmt.Println(msg.Topic)
+                                fmt.Println("Topic of record to be added", msg.Topic)
 
                                 openbmp_msg := strings.Split(string(msg.Value), "\n\n")
                                 if len(openbmp_msg) != 2 {
@@ -92,10 +92,10 @@ func (c *Consumer) Start() error {
                                     consumer.MarkOffset(msg, "") // mark message as processed
                                     continue
                                 } else {
-                                    fmt.Println("The headers of our OpenBMP message are:")
-                                    fmt.Println(openbmp_msg[0])
+                                    // fmt.Println("The headers of our OpenBMP message are:")
+                                    // fmt.Println(openbmp_msg[0])
+                                    // fmt.Println("The data of our OpenBMP message is:")
 
-                                    fmt.Println("The data of our OpenBMP message is:")
                                     openbmp_msg_data := strings.Split(string(openbmp_msg[1]), "\n")
                                     for _, element := range openbmp_msg_data {
                                         fmt.Println("The current individual record to be processed is:")
@@ -103,8 +103,8 @@ func (c *Consumer) Start() error {
                                         fmt.Println(current_openbmp_record)
 
                                         omsg := openbmp.NewMessage(msg.Topic, current_openbmp_record)
-                                        fmt.Println("The message created by openbmp.go is:")
-                                        fmt.Println(omsg)
+                                        // fmt.Println("The message created by openbmp.go is:")
+                                        // fmt.Println(omsg)
 
                                         if omsg == nil { // error
                                             fmt.Println("Something failed")

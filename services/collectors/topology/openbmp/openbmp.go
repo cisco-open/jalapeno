@@ -92,8 +92,8 @@ func parseTopic(topic string) Topic {
 
 // NewMessage creates a parsed BMP message of topic `topic` with
 // contents `value`
-func NewMessage(topic string, value []byte) *Message {
-        fmt.Println("Creating a new BMP message")
+func NewMessage(topic string, value []string) *Message {
+        fmt.Println("Creating a new BMP message for the current record.")
         typ := parseTopic(topic)
         if typ == TopicInvalid {
                fmt.Println("Failure: topic was invalid")
