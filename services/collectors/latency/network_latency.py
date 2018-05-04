@@ -1,4 +1,4 @@
-! /usr/bin/env python
+#! /usr/bin/env python
 """This script calculates the latency for each path in the path set as
 calculated and returned by the label_generator script. For each path,
 a MPLSPacketManager creates the packet and sends it, while the NetworkSniffer

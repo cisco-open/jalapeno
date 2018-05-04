@@ -3,3 +3,5 @@ logging
 requests==2.9.2
 kafka-python==1.3.4
 ./py-client
+scapy
+pyArango

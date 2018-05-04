@@ -17,7 +17,4 @@ spec:
     spec:
       containers:
       - name: latency
-        image: dockerhub.cisco.com/gspie-docker-local/latency-collector:1.0
-        args:
-          - --kafkaEndpoint
-          - 10.200.99.44:30902
+        image: dockerhub.cisco.com/gspie-docker-local/latency-collector:1.5@sha256:0cc42d4bbc6ee43a1e95f0b1f37c9ee3720a8dcc5da640ae71247c12f1f9656e
