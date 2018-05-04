@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: paths-collector
+  namespace: voltron
+  labels:
+    app: paths-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: paths-collector
+  template:
+    metadata:
+      labels:
+        app: paths-collector
+    spec:
+      containers:
+      - name: topology
+        image: dockerhub.cisco.com/gspie-docker-local/path:1.0@sha256:efbd42ab516a69968696941e9e1586398fbf20d97e14257e17b9967933eda4fd
