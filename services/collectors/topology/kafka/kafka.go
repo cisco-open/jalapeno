@@ -84,7 +84,8 @@ func (c *Consumer) Start() error {
 		case msg, more := <-consumer.Messages():
 			// TODO: uncomment markOffset (when not in DEV)
                         if more {
-                                fmt.Println("Topic of record to be added", msg.Topic)
+                                fmt.Println("Topic of record to be added:")
+                                fmt.Println(msg.Topic)
 
                                 openbmp_msg := strings.Split(string(msg.Value), "\n\n")
                                 if len(openbmp_msg) != 2 {
