@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
       - name: bandwidth-collector
-        image: dockerhub.cisco.com/gspie-docker-local/bandwidth-collector:1.0@
+        image: dockerhub.cisco.com/gspie-docker-local/bandwidth-collector:1.4@sha256:f4a7af2e2dd6ece8d7a6f23ef7618545d1ae6fc80a8828f1321ae4533c6cc82b

@@ -5,3 +5,4 @@ kafka-python==1.3.4
 ./py-client
 scapy
 pyArango
+influxdb

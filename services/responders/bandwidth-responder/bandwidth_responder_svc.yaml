@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: voltron
+  labels:
+    app: bandwidth-responder
+  name: bandwidth-responder
+spec:
+  ports:
+  - name: bandwidth-responder
+    port: 8080
+  clusterIP: None
+  selector:
+    app: bandwidth-responder

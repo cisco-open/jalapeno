@@ -7,6 +7,7 @@ import threading
 import subprocess
 import time
 import atexit
+import requests
 from . import log
 from .flow import Flow
 from .api import API
@@ -50,6 +51,7 @@ class Agent():
 
     def __get_flow_labels(self, flow):
         label_stack = self.api.query(
+            flow.src_ip,
             flow.src_gw_ip,
             flow.dest_ip,
             flow.parameters
