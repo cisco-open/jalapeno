@@ -93,31 +93,34 @@ func parseTopic(topic string) Topic {
 // NewMessage creates a parsed BMP message of topic `topic` with
 // contents `value`
 func NewMessage(topic string, value []byte) *Message {
-	typ := parseTopic(topic)
-	if typ == TopicInvalid {
-		return nil
-	}
+        fmt.Println("Creating a new BMP message")
+        typ := parseTopic(topic)
+        if typ == TopicInvalid {
+               fmt.Println("Failure: topic was invalid")
+                return nil
+        }
 
-	bs := bytes.Split(value, []byte("\n\n"))
-	if len(bs) != 2 {
-		return nil
-	}
+        fields := value
+        heads := headers[string(typ)]
+        if len(fields) != len(heads) {
+                fmt.Println("We got length fields")
+                fmt.Println(len(fields))
+                fmt.Println("But we got length heads")
+                fmt.Println(len(heads))
+                fmt.Println("Failure: something wrong with field lengths")
+                return nil
+        }
 
-	fields := strings.Split(string(bs[1]), "\t")
-	heads := headers[string(typ)]
-	if len(fields) != len(heads) {
-		return nil
-	}
-	message := &Message{
-		Topic:  typ,
-		Fields: map[string]interface{}{},
-	}
+        message := &Message{
+                Topic:  typ,
+                Fields: map[string]interface{}{},
+        }
 
-	// TODO: Distinguish between empty/nil values
-	for i, h := range heads {
-		message.Fields[h] = strings.TrimSpace(fields[i])
-	}
-	return message
+        // TODO: Distinguish between empty/nil values
+        for i, h := range heads {
+                message.Fields[h] = strings.TrimSpace(fields[i])
+        }
+        return message
 }
 
 func (m Message) Action() Action {

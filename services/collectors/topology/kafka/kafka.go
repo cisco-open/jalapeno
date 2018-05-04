@@ -83,31 +83,56 @@ func (c *Consumer) Start() error {
 		select {
 		case msg, more := <-consumer.Messages():
 			// TODO: uncomment markOffset (when not in DEV)
-			if more {
-				fmt.Println(msg.Value)
-				omsg := openbmp.NewMessage(msg.Topic, msg.Value)
-				if omsg == nil { // error
-					consumer.MarkOffset(msg, "") // mark message as processed
-					continue
-				}
-				consumer.MarkOffset(msg, "") // mark message as processed
-				c.Handler.Handle(omsg)
-			}
-		case err, more := <-consumer.Errors():
-			// TODO: add error/notification channel.
-			if more {
-				log.Errorf("Error: %s\n", err.Error())
-			}
-		case ntf, more := <-consumer.Notifications():
-			if more {
-				log.Infof("Rebalanced: %+v\n", ntf)
-			}
-		case <-c.stop:
-			err := c.Consumer.Close()
-			log.Infof("Consumer Closed...")
-			return err
-		}
-	}
+                        if more {
+                                fmt.Println(msg.Topic)
+
+                                openbmp_msg := strings.Split(string(msg.Value), "\n\n")
+                                if len(openbmp_msg) != 2 {
+                                    fmt.Println("Processing OpenBMP message from Kafka failed: something is wrong with header / data splitting.")
+                                    consumer.MarkOffset(msg, "") // mark message as processed
+                                    continue
+                                } else {
+                                    fmt.Println("The headers of our OpenBMP message are:")
+                                    fmt.Println(openbmp_msg[0])
+
+                                    fmt.Println("The data of our OpenBMP message is:")
+                                    openbmp_msg_data := strings.Split(string(openbmp_msg[1]), "\n")
+                                    for _, element := range openbmp_msg_data {
+                                        fmt.Println("The current individual record to be processed is:")
+                                        current_openbmp_record := strings.Split(element, "\t")
+                                        fmt.Println(current_openbmp_record)
+
+                                        omsg := openbmp.NewMessage(msg.Topic, current_openbmp_record)
+                                        fmt.Println("The message created by openbmp.go is:")
+                                        fmt.Println(omsg)
+
+                                        if omsg == nil { // error
+                                            fmt.Println("Something failed")
+                                            consumer.MarkOffset(msg, "") // mark message as processed
+                                            fmt.Println("=============================================================")
+                                            continue
+                                        }
+                                        c.Handler.Handle(omsg)
+                                        fmt.Println("=============================================================")
+                                    }
+                                }
+                                consumer.MarkOffset(msg, "") // mark message as processed
+                       }
+                case err, more := <-consumer.Errors():
+                        // TODO: add error/notification channel.
+                        if more {
+                                log.Errorf("Error: %s\n", err.Error())
+                        }
+                case ntf, more := <-consumer.Notifications():
+                        if more {
+                                log.Infof("Rebalanced: %+v\n", ntf)
+                        }
+                case <-c.stop:
+                        err := c.Consumer.Close()
+                        log.Infof("Consumer Closed...")
+                        return err
+                }
+        }
 }
 
 func (c *Consumer) Stop() {

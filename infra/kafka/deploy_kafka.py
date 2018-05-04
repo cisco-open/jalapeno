@@ -15,7 +15,7 @@ def main():
     config_map_api = kube_client.CoreV1Api()
     service_api = kube_client.CoreV1Api()
     persistent_volume_api = kube_client.CoreV1Api()
-    #stateful_set_api = openshift_client.CoreV1Beta1Api()
+    #stateful_set_api = openshift_client.AppsV1Api()
 
     openshift_project = "voltron"
     openshift_deployer.deploy_config_map(config_map_api, "zookeeper_cfg.yaml", openshift_project)

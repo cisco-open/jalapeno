@@ -128,23 +128,26 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 }
 
 func (a *ArangoHandler) HandleCollector(m *openbmp.Message) {
-	fmt.Println(m)
+        log.Infof("Handling HandleCollector")
+	// fmt.Println(m)
 	if m.Action() != openbmp.ActionHeartbeat {
 		log.Debugf("Got Collector %s [seq %v] action: %v.\n", m.GetUnsafe("admin_id"), m.GetUnsafe("sequence"), m.Action())
 	}
 }
 
 func (a *ArangoHandler) HandleBaseAttribute(m *openbmp.Message) {
-	fmt.Println(m)
+        log.Infof("Handling HandleBaseAttribute")
+	// fmt.Println(m)
 }
 
 func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
-	fmt.Println(m)
-        log.Infof("Testing framework manipulation")
+        log.Infof("Testing Topology 1.3")
 	leng, ok := m.GetInt("prefix_len")
 	if !ok {
 		leng = 0
 	}
+
+        log.Infof("Got to be inserted: Prefix %s/%d via %s [asn: %v]", m.GetStr("prefix"), leng, m.GetStr("peer_ip"), m.GetStr("peer_asn"))
 
 	p := &database.Prefix{
 		Prefix: m.GetStr("prefix"),
@@ -218,7 +221,8 @@ func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 }
 
 func (a *ArangoHandler) HandleLSNode(m *openbmp.Message) {
-	fmt.Println(m)
+        log.Infof("Handling HandleLSNode")
+        // fmt.Println(m)
 }
 
 func (a *ArangoHandler) HandleLSLink(m *openbmp.Message) {
@@ -278,13 +282,16 @@ func (a *ArangoHandler) HandleLSLink(m *openbmp.Message) {
 }
 
 func (a *ArangoHandler) HandleBMPStat(m *openbmp.Message) {
+        log.Infof("Handling HandleBMPStat")
 	fmt.Println(m)
 }
 
 func (a *ArangoHandler) HandleLSPrefix(m *openbmp.Message) {
+        log.Infof("Handling HandleLSPrefix")
 	fmt.Println(m)
 }
 
 func (a *ArangoHandler) HandleRouter(m *openbmp.Message) {
+        log.Infof("Handling HandleRouter")
 	fmt.Println(m)
 }

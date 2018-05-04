@@ -1,0 +1,50 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: influxdb
+  labels:
+    app: influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        app: influxdb
+    spec:
+      containers:
+      - name: influxdb
+        image: influxdb:1.3-alpine
+        ports:
+        - containerPort: 8086
+        volumeMounts:
+        - mountPath: /data
+          name: influxdb-storage
+        - mountPath: /var/log/influxdb
+          name: influxdb-log
+        - mountPath: /var/lib/influxdb
+          name: influxdb-lib
+        env:
+        - name: INFLUXDB_DB
+          value: "mdt_db"
+        - name: INFLUXDB_ADMIN_ENABLED
+          value: "true"
+        - name: INFLUXDB_ADMIN_USER
+          value: "admin"
+        - name: INFLUXDB_ADMIN_PASSWORD
+          value: "gsplab"
+        - name: INFLUXDB_USER
+          value: "voltron"
+        - name: INFLUXDB_USER_PASSWORD
+          value: "voltron"
+        command: ["/bin/sh"]
+        args: ["-c", "/init-influxdb.sh && /entrypoint.sh influxd"]
+      volumes:
+      - name: influxdb-storage
+        emptyDir: {}
+      - name: influxdb-log
+        emptyDir: {}
+      - name: influxdb-lib
+        emptyDir: {}
