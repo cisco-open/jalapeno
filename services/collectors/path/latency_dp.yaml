@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: latency-collector
+  namespace: voltron
+  labels:
+    app: latency-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency-collector
+  template:
+    metadata:
+      labels:
+        app: latency-collector
+    spec:
+      containers:
+      - name: topology
+        image: dockerhub.cisco.com/gspie-docker-local/latency:1.5@
+        args:
+          - --frameworkEndpoint
+          - framework.voltron.svc.cluster.local:8876
+          - --kafkaEndpoint
+          - 10.200.99.44:30902

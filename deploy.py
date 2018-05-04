@@ -178,7 +178,7 @@ with open('voltron.ini', 'w') as configfile:
 ###########################################################################################################################
 ### ArangoDB automation
 ### Rendering Arango's infrastructure YAML file with host_IP
-templateLoader = FileSystemLoader(searchpath="./templates/arangodb/")
+templateLoader = FileSystemLoader(searchpath="./templates/infra/arangodb/")
 templateEnv = Environment(loader=templateLoader)
 TEMPLATE_FILE = "arangodb_apps_pv_template.yaml"
 template = templateEnv.get_template(TEMPLATE_FILE)
@@ -209,7 +209,7 @@ with open(arango_persistent_volume_yaml, "w") as file_handler:
 context = {
     'host_ip': host_ip,
 }
-templateLoader = FileSystemLoader(searchpath="./templates/kafka/")
+templateLoader = FileSystemLoader(searchpath="./templates/infra/kafka/")
 templateEnv = Environment(loader=templateLoader)
 dirname = os.path.dirname(os.path.abspath(__file__))
 
@@ -236,7 +236,7 @@ with open(kafka_persistent_volume_yaml, "w") as file_handler:
 context = {
     'kafka_endpoint': kafka_endpoint,
 }
-templateLoader = FileSystemLoader(searchpath="./templates/openbmpd/")
+templateLoader = FileSystemLoader(searchpath="./templates/infra/openbmpd/")
 templateEnv = Environment(loader=templateLoader)
 dirname = os.path.dirname(os.path.abspath(__file__))
 
@@ -259,7 +259,7 @@ with open(openbmpd_process_vars, "w") as file_handler:
 ###########################################################################################################################
 ### Telemetry automation
 ### Rendering Pipeline infrastructure config file with kafka_endpoint
-templateLoader = FileSystemLoader(searchpath="./templates/telemetry/")
+templateLoader = FileSystemLoader(searchpath="./templates/infra/telemetry/")
 templateEnv = Environment(loader=templateLoader)
 TEMPLATE_FILE = "pipeline_template.conf"
 template = templateEnv.get_template(TEMPLATE_FILE)
@@ -279,14 +279,14 @@ with open(pipeline_config, "w") as file_handler:
 ### Rendering Topology Collector Service YAML file with host_IP and port
 templateLoader = FileSystemLoader(searchpath="./templates/services/collectors/topology/")
 templateEnv = Environment(loader=templateLoader)
-TEMPLATE_FILE = "topologyKube_template.yaml"
+TEMPLATE_FILE = "topology_dp_template.yaml"
 template = templateEnv.get_template(TEMPLATE_FILE)
 context = {
     'kafka_endpoint': kafka_endpoint,
 }
 outputText = template.render(context)
 dirname = os.path.dirname(os.path.abspath(__file__))
-pipeline_config = os.path.join(dirname, 'services', 'collectors', 'topology', 'topologyKube.yaml')
+pipeline_config = os.path.join(dirname, 'services', 'collectors', 'topology', 'topology_dp.yaml')
 with open(pipeline_config, "w") as file_handler:
     file_handler.write(outputText)
 ###########################################################################################################################

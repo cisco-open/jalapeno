@@ -15,8 +15,8 @@ def main():
     print("Stopping any pre-existing Pipeline instances on devices")
     manage_pipeline.main("stop")
 
-    print("Removing any pre-existing Pipeline files from devices")
-    manage_pipeline.main("remove")
+    #print("Removing any pre-existing Pipeline files from devices")
+    #manage_pipeline.main("remove")
 
     print("Provisioning Pipeline on devices")
     manage_pipeline.main("provision")

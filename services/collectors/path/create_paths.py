@@ -7,10 +7,9 @@ the "Paths" collection will be created or joined.
 Given configuration information set in queryconfig (query parameters), paths will then
 be calculated from Arango edge data, and inserted as records into the "Paths" collection.
 
-It would 100% make more sense to create these paths and the Path collection directly
-from OpenBMP data using the Framework (during the parsing from data in Kafka to data
-in Arango). However, until we can understand how the Framework parses OpenBMP data and
-manages that constant upsertion into Arango, we will run this script.
+In the future, it may make more sense to create these paths and the Path collection directly
+from OpenBMP data using the Topology collector service (during the parsing from data in Kafka
+to data in Arango).
 
 This script should be running constantly. However, it should not re-create any
 existing paths in the Path collection. It should only upsert.

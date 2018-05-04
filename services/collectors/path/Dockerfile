@@ -1,6 +1,5 @@
-FROM python:2.7.14-alpine
+FROM python:3
 MAINTAINER Zia Syed <ziausyed@cisco.com>
-COPY . /services/path
 WORKDIR /services/path
-RUN pip install -r /services/path/requirements.txt
-ENTRYPOINT ["python","create_paths.py"]
+COPY . /services/path
+CMD ["python","create_paths.py"]

@@ -1942,7 +1942,7 @@ data:
 
     type=metrics
 
-    influx=influxdb-0.influxdb.voltron.svc.cluster.local:8086
+    influx=http://influxdb-0.influxdb.voltron.svc.cluster.local:8086
 
     datachanneldepth=1000
 
@@ -1955,6 +1955,8 @@ data:
     output=influx
 
     username=voltron
+
+    password=tdiEfR8Kmuf9OAyrEkzu5u6nDPTtK0xpmk3+MfvrmF9tS3I9uSoPZPdYZDtGDV+6ltngJ4hIdGIdl55LQ4NLd6JZxZKE8w4rRzDExN/iKILf1X4LZMHci2COWn8k6zYs0c8NIGYqn3uL7GYWpnh65GghF50ohXNXyLkJGOaooCFFYfBZD9BeB+Fp6bUYi/zxb/JZj6UjB5kN95oiwUuDdAnYsU9niojANKvtdUF9EhBBf5jXqNjHvLKJJpAKLzPJkhg9V1MoP1Q1lGhF5tQcezm3CSP0p/klEThP5ZifqECuqTxo0rMHMhCqHV+rAUJMpqiuXkt0HKpFu9svabkU5ovwoqUwCKUXV7hAxJHITxt1vz/6K51I4bNiZcuknoclDkPYtOr22qfTwl9+KsGrQ084CETbpSDh47JLKz5jOpSX39VqDZ7IOWmc7NmP3aa48PaF6pk+66Adz0+eaMVZfVsQyLQy31HvfXjd7IQfGO8vSmT6+Yz0W9LgorT8gz4WW+xpeHCFkMHzUttd1xms2rtrZcV9fYTvxaI+39BJoSwt8EBW5e4MqiroKijeSwFVn+9fYH2yOqYky4e6UfcES/C8udPoVaLllMVAdyEQ3pdPThduboLU+HSmcg6e2DTDS5EpfjIbPSRg6Gy8P64BAlgFRa6+Ztt+IgFgy7Pt0BQ=
   pipeline_rsa: |-
     -----BEGIN RSA PRIVATE KEY-----
     MIIJKQIBAAKCAgEAuvXNo0UTMXVgmzG+Mw+HYPbkaE6aEW+Hy64NeR4e3qQIq9JF
