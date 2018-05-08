@@ -108,7 +108,9 @@ func NewMessage(topic string, value []string) *Message {
                 fmt.Println("But we got length heads")
                 fmt.Println(len(heads))
                 fmt.Println("Failure: something wrong with field lengths")
-                return nil
+                if len(fields) != 32 {
+                	return nil
+		}
         }
 
         message := &Message{

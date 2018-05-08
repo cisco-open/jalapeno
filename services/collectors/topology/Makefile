@@ -5,7 +5,7 @@ BINARY ?= bin/$(EXECUTABLE)
 PACKAGES = $(shell go list ./... | grep -E -v '/bin|/vendor|/docs|/cmd|/log|/api/v1/client|/api/v1/gen|/arango/example')
 REPO=dockerhub.cisco.com/gspie-docker-local
 IMAGE=topology
-TAG=1.0
+TAG=1.7
 
 
 all: build
