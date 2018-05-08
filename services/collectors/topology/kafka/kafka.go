@@ -104,8 +104,8 @@ func (c *Consumer) Start() error {
                                         fmt.Println(current_openbmp_record)
 
                                         omsg := openbmp.NewMessage(msg.Topic, current_openbmp_record)
-                                        fmt.Println("The message created by openbmp.go is:")
-                                        fmt.Println(omsg)
+                                        // fmt.Println("The message created by openbmp.go is:")
+                                        // fmt.Println(omsg)
 
                                         if omsg == nil { // error
                                             fmt.Println("Something failed")
