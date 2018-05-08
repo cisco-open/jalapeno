@@ -1,0 +1,33 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: openbmpd
+  namespace: voltron
+spec:
+  serviceName: "openbmpd"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openbmpd
+      annotations:
+        openshift.io/scc: privileged
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+        - name: openbmpd
+          image: openbmp/collector
+          command:
+            - openbmpd -a openshift-openbmp -p 5000 -l /var/log/openbmpd.log -pid /var/run/openbmpd.pid -k 10.200.99.44:30902 -debugDebug -dbgp -dbmp -dmsgbus
+          ports:
+            - containerPort: 5001
+              protocol: TCP
+          env:
+            - name: KAFKA_FQDN
+              value: '10.200.99.44:30902'
+          privileged: true
+          runAsUser: 0
+          resources: {}
+          securityContext:
+            privileged: true
+            runAsUser: 0
