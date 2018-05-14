@@ -1,25 +1,23 @@
 #!/usr/bin/python
-"""Deploy Infrastructure including Kafka,
-Arango, Influx, OpenBMP, Telemetry, MDT.
-"""
+"""Deploy Infrastructure including Kafka, Arango, Influx, Grafana, OpenBMP, Pipeline, and Telemetry."""
 import kafka.deploy_kafka as KafkaDeployer
 import arangodb.deploy_arango as ArangoDeployer
-#import influxdb.deploy_influx as InfluxDeployer
-#import openbmpd.deploy_openbmp as OpenbmpDeployer
-#import telemetry.deploy_telemetry as TelemetryDeployer
-#import mdt-stack.deploy_mdt as MDTDeployer
+import influxdb.deploy_influx as InfluxDeployer
+import grafana.deploy_grafana as GrafanaDeployer
+import openbmpd.deploy_openbmp as OpenbmpDeployer
+import pipeline.deploy_pipeline as PipelineDeployer
+# import telemetry.deploy_telemetry as TelemetryDeployer
 
 def main():
     """Deploy each component of Voltron's Infrastructure."""
-    ### OC Login
-
     ### Infrastructure Deployment
     KafkaDeployer.main()
     ArangoDeployer.main()
-#    InfluxDeployer.main()
-#    OpenbmpDeployer.main()
-#    TelemetryDeployer.main()
-#    MDTDeployer.main()
+    InfluxDeployer.main()
+    GrafanaDeployer.main()
+    OpenbmpDeployer.main()
+    PipelineDeployer.main()
+    #TelemetryDeployer.main()
 
 if __name__ == '__main__':
     main()
