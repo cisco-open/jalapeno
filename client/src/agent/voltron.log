@@ -1695,3 +1695,7 @@
 2018-05-04 12:42:52,993:DEBUG:voltron:ip route del 10.11.0.1/32
 2018-05-04 12:42:52,997:INFO:voltron:Deleted route to 10.11.0.1/32.
 2018-05-04 12:42:52,998:INFO:voltron:Voltron has shut down.
+2018-05-08 17:01:54,041:INFO:voltron:Starting flow monitor.
+2018-05-08 17:01:57,060:INFO:voltron:Stopping Voltron.
+2018-05-08 17:01:57,060:INFO:voltron:Removing Voltron routes.
+2018-05-08 17:01:57,060:DEBUG:voltron:ip route del 10.11.0.1/32

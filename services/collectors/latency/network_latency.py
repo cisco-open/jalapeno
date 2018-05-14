@@ -53,12 +53,21 @@ def calculate_latency(path):
     p2.join(timeout=2)
 
 def main():
-    all_label_stacks = label_generator.generate_labels()
-    for label_stack_set in all_label_stacks:
-        for path in label_stack_set:
-	    print path
+    while True:
+        all_label_stacks = label_generator.generate_labels()
+        #for label_stack_set in all_label_stacks:
+        for path in all_label_stacks[0]:
+            print path
             calculate_latency(path)
             time.sleep(0.5)
+
+    #all_label_stacks = label_generator.generate_labels()
+    #for label_stack_set in all_label_stacks:
+    #    for path in label_stack_set:
+    #	    print path
+    #        calculate_latency(path)
+    #        time.sleep(0.5)
+
 
 if __name__ == '__main__':
     main()

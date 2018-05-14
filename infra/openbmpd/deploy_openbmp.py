@@ -17,8 +17,8 @@ def main():
     persistent_volume_api = kube_client.CoreV1Api()
 
     openshift_project = "voltron"
-#    openshift_deployer.deploy_service(service_api, "openbmpd_svc.yaml", openshift_project)
- #   openshift_deployer.deploy_service(service_api, "openbmpd_svc_np.yaml", openshift_project)
+    openshift_deployer.deploy_service(service_api, "openbmpd_svc.yaml", openshift_project)
+    openshift_deployer.deploy_service(service_api, "openbmpd_svc_np.yaml", openshift_project)
     #openshift_deployer.deploy_stateful_set(stateful_set_api, "openbmpd_ss.yaml", openshift_project)
     subprocess.call(["oc", "apply", "-f", "openbmpd_ss.yaml"])
 

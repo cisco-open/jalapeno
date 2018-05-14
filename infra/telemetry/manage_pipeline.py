@@ -54,6 +54,7 @@ def restart_pipeline(netmiko_linux_dict):
     """Stop and Start Pipeline."""
     logging.info('Restarting Pipeline on %s.', netmiko_linux_dict['ip'])
     stop_pipeline(netmiko_linux_dict)
+    provision_pipeline(netmiko_linux_dict)
     start_pipeline(netmiko_linux_dict)
 
 def reset_pipeline(netmiko_linux_dict):

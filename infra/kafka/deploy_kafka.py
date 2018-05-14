@@ -24,6 +24,7 @@ def main():
     openshift_deployer.deploy_persistent_volume(persistent_volume_api, "zookeeper_pv.yaml", openshift_project)
     #openshift_deployer.deploy_stateful_set(stateful_set_api, "zookeeper_ss.yaml", openshift_project)
     subprocess.call(["oc", "apply", "-f", "zookeeper_ss.yaml"])
+
     openshift_deployer.deploy_config_map(config_map_api, "broker_cfg.yaml", openshift_project)
     openshift_deployer.deploy_persistent_volume(persistent_volume_api, "kafka_pv.yaml", openshift_project)
     openshift_deployer.deploy_service(service_api, "broker_svc.yaml", openshift_project)
