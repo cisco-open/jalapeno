@@ -2,14 +2,14 @@
     {
         "netmiko_network": {
             "device_type": "cisco_xr",
-            "ip": "10.1.1.0",
+            "ip": "10.0.0.0",
             "username": "cisco",
             "password": "cisco",
             "port": 22
         },
         "netmiko_linux": {
             "device_type": "linux",
-            "ip": "10.20.0.52",
+            "ip": "10.0.0.0",
             "username": "voltron",
             "password": "voltron",
             "port": 57722
@@ -18,14 +18,14 @@
     {
         "netmiko_network": {
             "device_type": "cisco_xr",
-            "ip": "10.1.1.1",
+            "ip": "10.0.0.1",
             "username": "cisco",
             "password": "cisco",
             "port": 22
         },
         "netmiko_linux": {
             "device_type": "linux",
-            "ip": "10.20.0.55",
+            "ip": "10.0.0.1",
             "username": "voltron",
             "password": "voltron",
             "port": 57722
@@ -34,14 +34,14 @@
     {
         "netmiko_network": {
             "device_type": "cisco_xr",
-            "ip": "10.1.1.2",
+            "ip": "10.0.0.2",
             "username": "cisco",
             "password": "cisco",
             "port": 22
         },
         "netmiko_linux": {
             "device_type": "linux",
-            "ip": "10.20.0.58",
+            "ip": "10.0.0.2",
             "username": "voltron",
             "password": "voltron",
             "port": 57722
@@ -50,14 +50,14 @@
     {
         "netmiko_network": {
             "device_type": "cisco_xr",
-            "ip": "10.20.0.61",
+            "ip": "10.0.254.2",
             "username": "cisco",
             "password": "cisco",
             "port": 22
         },
         "netmiko_linux": {
             "device_type": "linux",
-            "ip": "10.20.0.61",
+            "ip": "10.0.254.2",
             "username": "voltron",
             "password": "voltron",
             "port": 57722
@@ -66,14 +66,14 @@
     {
         "netmiko_network": {
             "device_type": "cisco_xr",
-            "ip": "10.20.0.64",
+            "ip": "10.0.254.3",
             "username": "cisco",
             "password": "cisco",
             "port": 22
         },
         "netmiko_linux": {
             "device_type": "linux",
-            "ip": "10.20.0.64",
+            "ip": "10.0.254.3",
             "username": "voltron",
             "password": "voltron",
             "port": 57722

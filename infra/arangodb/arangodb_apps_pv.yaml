@@ -9,5 +9,5 @@ spec:
        - ReadWriteMany
   nfs:
     path: /export/arangodb-apps
-    server: 10.200.99.44
+    server: 10.0.250.2
   persistentVolumeReclaimPolicy: Retain

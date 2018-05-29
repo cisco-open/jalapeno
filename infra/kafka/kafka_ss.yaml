@@ -40,7 +40,7 @@ spec:
         - --override
         - listeners=PLAINTEXT://kafka-0.broker.voltron.svc.cluster.local:9092
         - --override
-        - advertised.listeners=PLAINTEXT://ie-snas1.cisco.com:30902
+        - advertised.listeners=PLAINTEXT://10.0.250.2:30902
     #    - --override
   #      - advertised.port=30909
   #      - --override

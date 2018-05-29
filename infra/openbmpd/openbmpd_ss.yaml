@@ -22,7 +22,7 @@ spec:
               protocol: TCP
           env:
             - name: KAFKA_FQDN
-              value: '10.200.99.44:30902'
+              value: '10.128.0.56:9092'
           privileged: true
           runAsUser: 0
           resources: {}
