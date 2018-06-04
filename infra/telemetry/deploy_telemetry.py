@@ -12,11 +12,11 @@ def main():
     print("Enabling guest shell on devices")
     enable_guestshell.main()
 
-    #print("Provisioning Pipeline on devices")
-    #manage_pipeline.main("provision")
+    print("Provisioning Pipeline on devices")
+    manage_pipeline.main("provision")
 
-    #print("Starting Pipeline on devices")
-    #manage_pipeline.main("start")
+    print("Starting Pipeline on devices")
+    manage_pipeline.main("start")
 
 
 if __name__ == '__main__':

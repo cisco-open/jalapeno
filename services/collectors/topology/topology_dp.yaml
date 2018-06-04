@@ -33,6 +33,6 @@ spec:
           - --kafka-topics
           - "openbmp.parsed.peer,openbmp.parsed.unicast_prefix,openbmp.parsed.ls_link"
           - --kafka-brokers
-          - 10.200.99.44:30902
+          - 10.0.250.2:30902
           - --asn
           - "100000"

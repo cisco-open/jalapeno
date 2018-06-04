@@ -5,10 +5,10 @@ metadata:
   namespace: voltron
 spec:
   ports:
-  - name: 5002-tcp
-    port: 5002
+  - name: 5000-tcp
+    port: 5000
     nodePort: 30500
-    targetPort: 5002
+    targetPort: 5000
   type: NodePort
   selector:
     app: openbmpd

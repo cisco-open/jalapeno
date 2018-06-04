@@ -18,11 +18,11 @@ spec:
         - name: openbmpd
           image: openbmp/collector
           ports:
-            - containerPort: 5000
+            - containerPort: 5002
               protocol: TCP
           env:
             - name: KAFKA_FQDN
-              value: '10.0.250.2:30902'
+              value: '10.128.0.56:9092'
           privileged: true
           runAsUser: 0
           resources: {}
