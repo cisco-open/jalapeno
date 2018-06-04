@@ -10,12 +10,13 @@ from contextlib import closing
 from netmiko import ConnectHandler, SCPConn
 from util import get_hosts
 
-def provision_pipeline(netmiko_linux_dict, base_path='./pipeline/'):
+def provision_pipeline(netmiko_linux_dict):
     """Provision Pipeline files to guestshell via SCP.
     Does not start Pipeline.
     """
     logging.info('Provisioning Pipeline on %s.', netmiko_linux_dict['ip'])
     filenames = ['pipeline', 'pipeline_rsa', 'pipeline.conf']
+    base_path = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '/pipeline/'
     file_paths = [os.path.join(base_path, filename) for filename in filenames]
     with ConnectHandler(**netmiko_linux_dict) as connection:
         with closing(SCPConn(connection)) as scp_connection:
@@ -99,7 +100,7 @@ def main(args_from_deploy = None):
     if args.action not in action_map.keys():
         logging.error('Action must be in action_map!')
         exit(1)
-    hosts = get_hosts()
+    hosts = get_hosts(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '/hosts.json')
     guestshell_hosts = set([host['netmiko_linux']['ip'] for host in hosts])
     if args.hostnames:
         if not set(args.hostnames).issubset(guestshell_hosts):

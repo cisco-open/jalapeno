@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """Enable bash access on IOS-XR devices."""
-import logging
+import logging, os
 import socket
 from contextlib import closing
 from netmiko import ConnectHandler
@@ -48,7 +48,7 @@ def main():
     """Load the hosts and enable guestshell."""
     logging.basicConfig(level=logging.INFO)
     logging.getLogger('paramiko.transport').setLevel(logging.WARNING)
-    hosts = get_hosts()
+    hosts = get_hosts(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '/hosts.json')
     for host in hosts:
         network_host = host['netmiko_network']
         guestshell_host = host['netmiko_linux']

@@ -2,7 +2,7 @@ EXECUTABLE ?= voltron
 BINARY ?= bin/$(EXECUTABLE)
 REPO=dockerhub.cisco.com/gspie-docker-local
 IMAGE=path
-TAG=1.0
+TAG=1.1
 
 all: build
 

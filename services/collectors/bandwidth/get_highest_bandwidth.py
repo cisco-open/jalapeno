@@ -27,9 +27,9 @@ def main(source, upstream_source, destination):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Get the highest available bandwidth path from a source to destination.')
-    parser.add_argument('source', help="Source IP (10.1.2.1)")
-    parser.add_argument('upstream_source', help="Upstream Source IP (10.1.1.0)")
-    parser.add_argument('destination', help="Destination IP (10.11.0.0_24)")
+    parser.add_argument('source', help="Source IP (10.0.250.2)")
+    parser.add_argument('upstream_source', help="Upstream Source IP (10.0.0.0)")
+    parser.add_argument('destination', help="Destination IP (10.0.254.0_24)")
     args = parser.parse_args()
 
     if(args.source != queryconfig.vmsource):

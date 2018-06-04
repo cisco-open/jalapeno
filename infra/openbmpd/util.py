@@ -1,5 +1,5 @@
-"""Utility functions for telemetry automation."""
-import json, os
+"""Utility functions for openbmp automation."""
+import json
 import logging
 
 def load_dict_from_json(json_input, raw=False):
