@@ -1,24 +1,25 @@
 #!/bin/bash
 BASEDIR=$(dirname $0)
 
-printf "Deploying Kafka"
+echo "Deploying Kafka"
 oc apply -f ${PWD}/${BASEDIR}/kafka/.
 
-printf "Deploying ArangoDB"
+echo "Deploying ArangoDB"
 oc apply -f ${PWD}/${BASEDIR}/arangodb/.
 
-printf "Deploying InfluxDB"
+echo "Deploying InfluxDB"
 oc apply -f ${PWD}/${BASEDIR}/influxdb/.
 
-printf "Deploying Grafana"
+echo "Deploying Grafana"
 oc apply -f ${PWD}/${BASEDIR}/grafana/.
 
-printf "Deploying OpenBMPD"
-python ${PWD}/${BASEDIR}/openbmpd/configure_openbmp.py
-oc apply -f ${PWD}/${BASEDIR}/openbmpd/.
+echo "Deploying OpenBMPD"
+#python ${PWD}/${BASEDIR}/openbmpd/configure_openbmp.py
+#oc apply -f ${PWD}/${BASEDIR}/openbmpd/.
+sudo python ${PWD}/${BASEDIR}/openbmpd/deploy_openbmp.py
 
-printf "Deploying Telemetry"
+echo "Deploying Telemetry"
 python ${PWD}/${BASEDIR}/telemetry/deploy_telemetry.py
 
-printf "Deploying Pipeline"
+echo "Deploying Pipeline"
 oc apply -f ${PWD}/${BASEDIR}/pipeline/.
