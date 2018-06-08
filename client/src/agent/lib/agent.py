@@ -4,7 +4,7 @@ Currently only supports Linux.
 """
 
 import threading
-import subprocess
+import subprocess, os
 import time
 import atexit
 import requests
@@ -59,12 +59,17 @@ class Agent():
         return label_stack
 
     def __set_flow_route(self, flow, label_stack):
+        #df_src_ip = subprocess.call("ip route | grep default")
+        df_src = os.popen("ip route | grep default").read()
+        df_src_gw = df_src.split()[-4]
         parsed_label_stack = '/'.join(map(str, label_stack))
-        route_cmd = 'ip route add {dest_ip}/32 encap mpls {label_stack} via inet {src_transport_ip} src {src_ip}'.format(
+        #route_cmd = 'ip route add {dest_ip}/32 encap mpls {label_stack} via inet {src_transport_ip} src {src_ip}'.format(
+        route_cmd = 'ip route add {dest_ip}/32 encap mpls {label_stack} via inet {df_src_gw}'.format(
             src_ip=flow.src_ip,
             dest_ip=flow.dest_ip,
             src_transport_ip=flow.src_transport_ip,
-            label_stack=parsed_label_stack
+            label_stack=parsed_label_stack,
+            df_src_gw=df_src_gw
         )
         log.debug(route_cmd)
         cmd_ret = self.__exec_system_command(route_cmd)

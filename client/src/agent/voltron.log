@@ -1699,3 +1699,745 @@
 2018-05-08 17:01:57,060:INFO:voltron:Stopping Voltron.
 2018-05-08 17:01:57,060:INFO:voltron:Removing Voltron routes.
 2018-05-08 17:01:57,060:DEBUG:voltron:ip route del 10.11.0.1/32
+2018-06-06 08:42:59,439:INFO:voltron:Starting flow monitor.
+2018-06-06 08:44:32,767:INFO:voltron:Stopping Voltron.
+2018-06-06 12:28:11,638:INFO:voltron:Starting flow monitor.
+2018-06-06 12:28:11,797:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 12:28:11,798:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.250.1 src 10.1.2.1
+2018-06-06 12:28:14,660:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 12:28:14,661:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.250.1 src 10.1.2.1
+2018-06-06 12:28:14,675:INFO:voltron:Stopping Voltron.
+2018-06-06 12:28:14,675:INFO:voltron:Removing Voltron routes.
+2018-06-06 12:28:14,676:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 12:28:24,080:INFO:voltron:Starting flow monitor.
+2018-06-06 12:28:27,136:INFO:voltron:Stopping Voltron.
+2018-06-06 12:28:27,137:INFO:voltron:Removing Voltron routes.
+2018-06-06 12:28:27,137:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 12:28:49,775:INFO:voltron:Starting flow monitor.
+2018-06-06 12:28:49,788:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 12:28:49,789:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.250.1 src 10.1.2.1
+2018-06-06 12:28:52,801:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 12:28:52,803:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.250.1 src 10.1.2.1
+2018-06-06 12:28:52,820:INFO:voltron:Stopping Voltron.
+2018-06-06 12:28:52,821:INFO:voltron:Removing Voltron routes.
+2018-06-06 12:28:52,821:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 12:32:22,310:INFO:voltron:Starting flow monitor.
+2018-06-06 12:32:22,332:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 12:32:22,332:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 12:32:22,340:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 12:33:19,643:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64003']
+2018-06-06 12:33:19,647:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 12:33:19,666:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 12:33:19,667:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 12:33:19,674:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 12:33:31,726:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 12:33:31,728:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 12:33:31,734:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 12:33:31,735:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 12:33:31,740:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 12:34:04,003:INFO:voltron:Stopping Voltron.
+2018-06-06 12:34:04,006:INFO:voltron:Removing Voltron routes.
+2018-06-06 12:34:04,007:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 12:34:04,023:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 12:34:04,023:INFO:voltron:Voltron has shut down.
+2018-06-06 13:00:40,649:INFO:voltron:Starting flow monitor.
+2018-06-06 13:00:40,667:INFO:voltron:10.1.2.1 -> 10.0.254.1: {'code': 404, 'error': True, 'errorMessage': "unknown path '/queries/10.0.0.0/10.0.254.0_24/bandwidth'", 'errorNum': 404}
+2018-06-06 13:00:40,668:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls code/error/errorMessage/errorNum via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 13:00:43,669:INFO:voltron:10.1.2.1 -> 10.0.254.1: {'code': 404, 'error': True, 'errorMessage': "unknown path '/queries/10.0.0.0/10.0.254.0_24/bandwidth'", 'errorNum': 404}
+2018-06-06 13:00:43,670:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls code/error/errorMessage/errorNum via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 13:00:43,680:INFO:voltron:Stopping Voltron.
+2018-06-06 13:00:43,681:INFO:voltron:Removing Voltron routes.
+2018-06-06 13:00:43,681:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 13:01:09,335:INFO:voltron:Starting flow monitor.
+2018-06-06 13:01:09,373:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 13:01:09,374:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 13:01:09,398:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 13:14:23,500:INFO:voltron:Stopping Voltron.
+2018-06-06 13:14:23,502:INFO:voltron:Removing Voltron routes.
+2018-06-06 13:14:23,502:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 13:14:23,519:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 13:14:23,520:INFO:voltron:Voltron has shut down.
+2018-06-06 13:20:50,788:INFO:voltron:Starting flow monitor.
+2018-06-06 13:20:50,799:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 13:20:50,801:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 13:20:50,815:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 13:21:13,371:INFO:voltron:Stopping Voltron.
+2018-06-06 13:21:13,373:INFO:voltron:Removing Voltron routes.
+2018-06-06 13:21:13,373:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 13:21:13,384:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 13:21:13,385:INFO:voltron:Voltron has shut down.
+2018-06-06 13:30:20,504:INFO:voltron:Starting flow monitor.
+2018-06-06 13:30:20,528:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 13:30:20,529:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 13:30:20,544:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 13:39:45,098:INFO:voltron:Stopping Voltron.
+2018-06-06 13:39:45,101:INFO:voltron:Removing Voltron routes.
+2018-06-06 13:39:45,102:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 13:39:45,122:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 13:39:45,123:INFO:voltron:Voltron has shut down.
+2018-06-06 13:51:09,860:INFO:voltron:Starting flow monitor.
+2018-06-06 13:51:09,873:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 13:51:09,874:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 13:51:09,883:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 13:59:01,832:INFO:voltron:Stopping Voltron.
+2018-06-06 13:59:01,834:INFO:voltron:Removing Voltron routes.
+2018-06-06 13:59:01,835:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 13:59:01,859:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 13:59:01,861:INFO:voltron:Voltron has shut down.
+2018-06-06 14:05:31,998:INFO:voltron:Starting flow monitor.
+2018-06-06 14:05:32,018:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 14:05:32,018:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 14:05:32,025:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 14:07:08,468:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-06 14:07:08,470:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 14:07:08,489:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 14:07:08,490:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 14:07:08,497:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 14:08:23,882:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 14:08:23,885:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 14:08:23,903:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 14:08:23,904:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 14:08:23,911:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 14:09:24,228:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-06 14:09:24,231:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 14:09:24,251:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 14:09:24,252:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 14:09:24,259:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 14:10:24,568:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 14:10:24,570:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 14:10:24,586:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 14:10:24,592:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 14:10:24,599:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 14:11:27,914:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-06 14:11:27,921:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 14:11:27,938:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 14:11:27,939:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 14:11:27,947:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 14:12:43,292:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 14:12:43,295:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 14:12:43,310:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 14:12:43,311:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 14:12:43,317:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 14:14:13,887:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-06 14:14:13,891:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 14:14:13,911:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 14:14:13,912:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 14:14:13,920:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 14:15:11,894:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 14:15:11,897:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 14:15:11,914:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 14:15:11,915:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 14:15:11,922:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 14:15:14,938:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-06 14:15:14,939:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 14:15:14,946:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 14:15:14,946:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 14:15:14,953:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 14:15:22,684:INFO:voltron:Stopping Voltron.
+2018-06-06 14:15:22,686:INFO:voltron:Removing Voltron routes.
+2018-06-06 14:15:22,686:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 14:15:22,695:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 14:15:22,697:INFO:voltron:Voltron has shut down.
+2018-06-06 15:18:47,176:INFO:voltron:Starting flow monitor.
+2018-06-06 15:18:47,206:INFO:voltron:10.0.252.2 -> 10.1.145.1: ['24003', '64002']
+2018-06-06 15:18:47,208:DEBUG:voltron:ip route add 10.1.145.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 15:18:47,221:INFO:voltron:Added route to 10.1.145.1/32.
+2018-06-06 15:18:50,983:INFO:voltron:Stopping Voltron.
+2018-06-06 15:18:50,984:INFO:voltron:Removing Voltron routes.
+2018-06-06 15:18:50,984:DEBUG:voltron:ip route del 10.1.145.1/32
+2018-06-06 15:18:50,993:INFO:voltron:Deleted route to 10.1.145.1/32.
+2018-06-06 15:18:50,994:INFO:voltron:Voltron has shut down.
+2018-06-06 15:19:01,307:INFO:voltron:Starting flow monitor.
+2018-06-06 15:19:01,331:INFO:voltron:10.0.252.2 -> 10.1.144.1: ['24003', '64002']
+2018-06-06 15:19:01,332:DEBUG:voltron:ip route add 10.1.144.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 15:19:01,338:INFO:voltron:Added route to 10.1.144.1/32.
+2018-06-06 15:19:04,892:INFO:voltron:Stopping Voltron.
+2018-06-06 15:19:04,894:INFO:voltron:Removing Voltron routes.
+2018-06-06 15:19:04,895:DEBUG:voltron:ip route del 10.1.144.1/32
+2018-06-06 15:19:04,907:INFO:voltron:Deleted route to 10.1.144.1/32.
+2018-06-06 15:19:04,908:INFO:voltron:Voltron has shut down.
+2018-06-06 15:19:59,834:INFO:voltron:Starting flow monitor.
+2018-06-06 15:19:59,849:INFO:voltron:10.0.252.2 -> 10.1.144.1: ['24003', '64002']
+2018-06-06 15:19:59,849:DEBUG:voltron:ip route add 10.1.144.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 15:19:59,857:INFO:voltron:Added route to 10.1.144.1/32.
+2018-06-06 15:20:16,395:INFO:voltron:Stopping Voltron.
+2018-06-06 15:20:16,396:INFO:voltron:Removing Voltron routes.
+2018-06-06 15:20:16,397:DEBUG:voltron:ip route del 10.1.144.1/32
+2018-06-06 15:20:16,406:INFO:voltron:Deleted route to 10.1.144.1/32.
+2018-06-06 15:20:16,407:INFO:voltron:Voltron has shut down.
+2018-06-06 15:37:27,102:INFO:voltron:Starting flow monitor.
+2018-06-06 15:37:27,117:INFO:voltron:10.0.252.2 -> 10.1.144.1: ['24003', '64002']
+2018-06-06 15:37:27,117:DEBUG:voltron:ip route add 10.1.144.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-06 15:37:27,125:INFO:voltron:Added route to 10.1.144.1/32.
+2018-06-06 15:58:12,031:INFO:voltron:Stopping Voltron.
+2018-06-06 15:58:12,032:INFO:voltron:Removing Voltron routes.
+2018-06-06 15:58:12,033:DEBUG:voltron:ip route del 10.1.144.1/32
+2018-06-06 15:58:12,047:INFO:voltron:Deleted route to 10.1.144.1/32.
+2018-06-06 15:58:12,048:INFO:voltron:Voltron has shut down.
+2018-06-06 17:03:54,795:INFO:voltron:Starting flow monitor.
+2018-06-06 17:03:54,823:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64002']
+2018-06-06 17:03:54,824:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 17:03:54,840:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 17:03:59,752:INFO:voltron:Stopping Voltron.
+2018-06-06 17:03:59,754:INFO:voltron:Removing Voltron routes.
+2018-06-06 17:03:59,755:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 17:03:59,763:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 17:03:59,763:INFO:voltron:Voltron has shut down.
+2018-06-06 22:40:16,431:INFO:voltron:Starting flow monitor.
+2018-06-06 22:40:16,459:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64003']
+2018-06-06 22:40:16,460:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 22:40:19,457:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64003']
+2018-06-06 22:40:19,458:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 22:40:19,468:INFO:voltron:Stopping Voltron.
+2018-06-06 22:40:19,468:INFO:voltron:Removing Voltron routes.
+2018-06-06 22:40:19,468:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 22:40:44,373:INFO:voltron:Starting flow monitor.
+2018-06-06 22:40:47,381:INFO:voltron:Stopping Voltron.
+2018-06-06 22:40:47,382:INFO:voltron:Removing Voltron routes.
+2018-06-06 22:40:47,382:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 22:41:05,527:INFO:voltron:Starting flow monitor.
+2018-06-06 22:41:05,540:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64003']
+2018-06-06 22:41:05,541:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.2 src 10.1.2.1
+2018-06-06 22:41:05,552:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-06 22:41:06,776:INFO:voltron:Stopping Voltron.
+2018-06-06 22:41:06,777:INFO:voltron:Removing Voltron routes.
+2018-06-06 22:41:06,777:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-06 22:41:06,782:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-06 22:41:06,782:INFO:voltron:Voltron has shut down.
+2018-06-07 02:29:31,808:INFO:voltron:Starting flow monitor.
+2018-06-07 02:29:31,833:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 02:29:31,834:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 02:29:31,843:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 02:29:33,125:INFO:voltron:Stopping Voltron.
+2018-06-07 02:29:33,127:INFO:voltron:Removing Voltron routes.
+2018-06-07 02:29:33,127:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 02:29:33,134:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 02:29:33,135:INFO:voltron:Voltron has shut down.
+2018-06-07 02:29:36,109:INFO:voltron:Starting flow monitor.
+2018-06-07 02:29:36,120:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 02:29:36,121:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.2 src 10.1.2.1
+2018-06-07 02:29:36,130:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 02:29:39,165:INFO:voltron:Stopping Voltron.
+2018-06-07 02:29:39,167:INFO:voltron:Removing Voltron routes.
+2018-06-07 02:29:39,167:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 02:29:39,176:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 02:29:39,177:INFO:voltron:Voltron has shut down.
+2018-06-07 02:31:53,821:INFO:voltron:Starting flow monitor.
+2018-06-07 02:31:53,837:INFO:voltron:10.1.2.1 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 02:31:53,838:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.2 src 10.1.2.1
+2018-06-07 02:31:53,852:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 02:32:23,261:INFO:voltron:Stopping Voltron.
+2018-06-07 02:32:23,263:INFO:voltron:Removing Voltron routes.
+2018-06-07 02:32:23,263:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 02:32:23,277:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 02:32:23,278:INFO:voltron:Voltron has shut down.
+2018-06-07 02:32:39,982:INFO:voltron:Starting flow monitor.
+2018-06-07 02:32:40,005:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 02:32:40,006:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 02:32:40,013:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 02:33:26,188:INFO:voltron:Stopping Voltron.
+2018-06-07 02:33:26,190:INFO:voltron:Removing Voltron routes.
+2018-06-07 02:33:26,191:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 02:33:26,202:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 02:33:26,202:INFO:voltron:Voltron has shut down.
+2018-06-07 02:33:36,890:INFO:voltron:Starting flow monitor.
+2018-06-07 02:33:36,900:INFO:voltron:10.0.252.2 -> 10.1.144.1: ['24003', '64002']
+2018-06-07 02:33:36,900:DEBUG:voltron:ip route add 10.1.144.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 02:33:36,919:INFO:voltron:Added route to 10.1.144.1/32.
+2018-06-07 02:33:51,270:INFO:voltron:Stopping Voltron.
+2018-06-07 02:33:51,271:INFO:voltron:Removing Voltron routes.
+2018-06-07 02:33:51,272:DEBUG:voltron:ip route del 10.1.144.1/32
+2018-06-07 02:33:51,281:INFO:voltron:Deleted route to 10.1.144.1/32.
+2018-06-07 02:33:51,281:INFO:voltron:Voltron has shut down.
+2018-06-07 02:33:56,890:INFO:voltron:Starting flow monitor.
+2018-06-07 02:33:56,915:INFO:voltron:10.0.252.2 -> 10.1.145.1: ['24003', '64002']
+2018-06-07 02:33:56,915:DEBUG:voltron:ip route add 10.1.145.1/32 encap mpls 24003/64002 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 02:33:56,921:INFO:voltron:Added route to 10.1.145.1/32.
+2018-06-07 02:34:49,840:INFO:voltron:Stopping Voltron.
+2018-06-07 02:34:49,841:INFO:voltron:Removing Voltron routes.
+2018-06-07 02:34:49,842:DEBUG:voltron:ip route del 10.1.145.1/32
+2018-06-07 02:34:49,857:INFO:voltron:Deleted route to 10.1.145.1/32.
+2018-06-07 02:34:49,858:INFO:voltron:Voltron has shut down.
+2018-06-07 14:24:01,444:INFO:voltron:Starting flow monitor.
+2018-06-07 14:24:01,459:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 14:24:01,460:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 14:24:01,468:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 14:25:15,824:INFO:voltron:Stopping Voltron.
+2018-06-07 14:25:15,827:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:25:15,828:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:25:15,844:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 14:25:15,845:INFO:voltron:Voltron has shut down.
+2018-06-07 14:25:32,317:INFO:voltron:Starting flow monitor.
+2018-06-07 14:25:32,363:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 14:25:32,365:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 14:25:32,379:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 14:25:39,501:INFO:voltron:Stopping Voltron.
+2018-06-07 14:25:39,502:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:25:39,503:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:25:39,512:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 14:25:39,512:INFO:voltron:Voltron has shut down.
+2018-06-07 14:26:12,728:INFO:voltron:Starting flow monitor.
+2018-06-07 14:26:12,747:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 14:26:12,748:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 14:26:12,762:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 14:26:33,350:INFO:voltron:Stopping Voltron.
+2018-06-07 14:26:33,352:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:26:33,352:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:26:33,360:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 14:26:33,361:INFO:voltron:Voltron has shut down.
+2018-06-07 14:26:34,328:INFO:voltron:Starting flow monitor.
+2018-06-07 14:26:34,339:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 14:26:34,341:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 14:26:34,347:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 14:26:37,155:INFO:voltron:Stopping Voltron.
+2018-06-07 14:26:37,156:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:26:37,156:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:26:37,161:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 14:26:37,161:INFO:voltron:Voltron has shut down.
+2018-06-07 14:28:18,253:INFO:voltron:Starting flow monitor.
+2018-06-07 14:28:18,280:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 14:28:18,281:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 14:28:18,296:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 14:28:27,173:INFO:voltron:Stopping Voltron.
+2018-06-07 14:28:27,174:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:28:27,175:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:28:27,186:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 14:28:27,187:INFO:voltron:Voltron has shut down.
+2018-06-07 14:29:37,446:INFO:voltron:Starting flow monitor.
+2018-06-07 14:29:37,472:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 14:29:37,472:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 14:29:37,481:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 14:31:34,204:INFO:voltron:Stopping Voltron.
+2018-06-07 14:31:34,207:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:31:34,208:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:31:34,224:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 14:31:34,225:INFO:voltron:Voltron has shut down.
+2018-06-07 14:31:35,439:INFO:voltron:Starting flow monitor.
+2018-06-07 14:31:35,459:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 14:31:35,460:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 14:31:35,464:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 14:31:36,841:INFO:voltron:Stopping Voltron.
+2018-06-07 14:31:36,842:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:31:36,842:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:31:36,851:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 14:31:36,852:INFO:voltron:Voltron has shut down.
+2018-06-07 14:35:26,709:INFO:voltron:Starting flow monitor.
+2018-06-07 14:35:29,739:INFO:voltron:Stopping Voltron.
+2018-06-07 14:35:29,740:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:35:29,740:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:35:39,163:INFO:voltron:Starting flow monitor.
+2018-06-07 14:35:40,990:INFO:voltron:Stopping Voltron.
+2018-06-07 14:35:40,992:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:35:40,993:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:36:15,633:INFO:voltron:Starting flow monitor.
+2018-06-07 14:36:18,656:INFO:voltron:Stopping Voltron.
+2018-06-07 14:36:18,656:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:36:18,656:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:41:54,532:INFO:voltron:Starting flow monitor.
+2018-06-07 14:41:56,162:INFO:voltron:Stopping Voltron.
+2018-06-07 14:41:56,163:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:41:56,164:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:47:33,136:INFO:voltron:Starting flow monitor.
+2018-06-07 14:47:33,158:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-07 14:47:33,159:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1 src 10.0.250.2
+2018-06-07 14:47:34,169:INFO:voltron:Stopping Voltron.
+2018-06-07 14:47:34,170:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:47:34,172:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:47:58,602:INFO:voltron:Starting flow monitor.
+2018-06-07 14:47:59,894:INFO:voltron:Stopping Voltron.
+2018-06-07 14:47:59,896:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:47:59,897:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:48:32,704:INFO:voltron:Starting flow monitor.
+2018-06-07 14:48:32,715:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-07 14:48:32,715:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1 src 10.0.250.2
+2018-06-07 14:48:33,739:INFO:voltron:Stopping Voltron.
+2018-06-07 14:48:33,742:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:48:33,743:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:55:23,593:INFO:voltron:Starting flow monitor.
+2018-06-07 14:55:23,622:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 14:55:23,623:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.250.2
+2018-06-07 14:55:26,610:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 14:55:26,611:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.250.2
+2018-06-07 14:55:26,626:INFO:voltron:Stopping Voltron.
+2018-06-07 14:55:26,627:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:55:26,627:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:55:35,913:INFO:voltron:Starting flow monitor.
+2018-06-07 14:55:35,924:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 14:55:35,924:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 14:55:35,931:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 14:55:57,830:INFO:voltron:Stopping Voltron.
+2018-06-07 14:55:57,831:INFO:voltron:Removing Voltron routes.
+2018-06-07 14:55:57,832:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 14:55:57,845:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 14:55:57,846:INFO:voltron:Voltron has shut down.
+2018-06-07 15:00:36,011:INFO:voltron:Starting flow monitor.
+2018-06-07 15:00:36,043:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:00:39,033:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:00:39,044:INFO:voltron:Stopping Voltron.
+2018-06-07 15:00:39,045:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:00:39,045:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:00:39,059:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:00:39,059:INFO:voltron:Voltron has shut down.
+2018-06-07 15:01:47,857:INFO:voltron:Starting flow monitor.
+2018-06-07 15:01:47,873:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:01:50,887:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:01:50,899:INFO:voltron:Stopping Voltron.
+2018-06-07 15:01:50,900:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:01:50,900:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:03:12,203:INFO:voltron:Starting flow monitor.
+2018-06-07 15:03:12,234:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:03:15,230:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:03:15,242:INFO:voltron:Stopping Voltron.
+2018-06-07 15:03:15,242:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:03:15,243:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:03:45,733:INFO:voltron:Starting flow monitor.
+2018-06-07 15:03:45,748:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:03:48,748:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:03:48,758:INFO:voltron:Stopping Voltron.
+2018-06-07 15:03:48,758:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:03:48,758:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:04:50,081:INFO:voltron:Starting flow monitor.
+2018-06-07 15:04:50,105:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:04:52,141:INFO:voltron:Stopping Voltron.
+2018-06-07 15:04:52,143:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:04:52,144:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:05:12,008:INFO:voltron:Starting flow monitor.
+2018-06-07 15:05:12,031:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:05:12,037:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 15:05:12,049:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:05:25,064:INFO:voltron:Stopping Voltron.
+2018-06-07 15:05:25,066:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:05:25,067:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:05:25,080:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:05:25,081:INFO:voltron:Voltron has shut down.
+2018-06-07 15:05:52,107:INFO:voltron:Starting flow monitor.
+2018-06-07 15:05:52,127:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:05:52,132:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 15:05:52,140:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:06:02,634:INFO:voltron:Stopping Voltron.
+2018-06-07 15:06:02,635:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:06:02,635:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:06:02,643:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:06:02,643:INFO:voltron:Voltron has shut down.
+2018-06-07 15:06:40,537:INFO:voltron:Starting flow monitor.
+2018-06-07 15:06:40,564:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:06:40,572:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 15:06:40,589:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:06:43,194:INFO:voltron:Stopping Voltron.
+2018-06-07 15:06:43,196:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:06:43,197:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:06:43,206:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:06:43,207:INFO:voltron:Voltron has shut down.
+2018-06-07 15:07:03,257:INFO:voltron:Starting flow monitor.
+2018-06-07 15:07:03,269:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:07:03,270:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 15:07:03,280:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:07:22,830:INFO:voltron:Stopping Voltron.
+2018-06-07 15:07:22,832:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:07:22,832:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:07:22,841:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:07:22,842:INFO:voltron:Voltron has shut down.
+2018-06-07 15:08:29,159:INFO:voltron:Starting flow monitor.
+2018-06-07 15:08:29,183:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:08:29,188:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 15:08:29,195:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:08:33,033:INFO:voltron:Stopping Voltron.
+2018-06-07 15:08:33,034:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:08:33,035:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:08:33,044:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:08:33,045:INFO:voltron:Voltron has shut down.
+2018-06-07 15:08:58,460:INFO:voltron:Starting flow monitor.
+2018-06-07 15:08:58,474:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:08:58,480:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 15:08:58,487:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:09:11,590:INFO:voltron:Stopping Voltron.
+2018-06-07 15:09:11,591:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:09:11,592:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:09:11,603:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:09:11,604:INFO:voltron:Voltron has shut down.
+2018-06-07 15:09:35,028:INFO:voltron:Starting flow monitor.
+2018-06-07 15:09:35,052:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:09:35,061:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 15:09:35,069:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:09:39,474:INFO:voltron:Stopping Voltron.
+2018-06-07 15:09:39,476:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:09:39,477:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:09:39,487:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:09:39,488:INFO:voltron:Voltron has shut down.
+2018-06-07 15:09:47,426:INFO:voltron:Starting flow monitor.
+2018-06-07 15:09:47,447:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:09:47,455:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1 src 10.0.252.2
+2018-06-07 15:09:47,464:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:09:51,614:INFO:voltron:Stopping Voltron.
+2018-06-07 15:09:51,615:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:09:51,616:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:09:51,625:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:09:51,626:INFO:voltron:Voltron has shut down.
+2018-06-07 15:10:56,145:INFO:voltron:Starting flow monitor.
+2018-06-07 15:10:56,165:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:10:58,205:INFO:voltron:Stopping Voltron.
+2018-06-07 15:10:58,206:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:10:58,207:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:11:16,304:INFO:voltron:Starting flow monitor.
+2018-06-07 15:11:16,317:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:11:19,319:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:11:19,332:INFO:voltron:Stopping Voltron.
+2018-06-07 15:11:19,332:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:11:19,332:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:12:12,281:INFO:voltron:Starting flow monitor.
+2018-06-07 15:12:12,298:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:12:12,303:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1
+2018-06-07 15:12:12,310:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:12:17,198:INFO:voltron:Stopping Voltron.
+2018-06-07 15:12:17,198:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:12:17,199:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:12:17,207:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:12:17,207:INFO:voltron:Voltron has shut down.
+2018-06-07 15:12:31,340:INFO:voltron:Starting flow monitor.
+2018-06-07 15:12:31,359:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:12:31,366:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1
+2018-06-07 15:12:31,377:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:13:13,158:INFO:voltron:Stopping Voltron.
+2018-06-07 15:13:13,160:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:13:13,161:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:13:13,175:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:13:13,176:INFO:voltron:Voltron has shut down.
+2018-06-07 15:14:33,670:INFO:voltron:Starting flow monitor.
+2018-06-07 15:14:36,690:INFO:voltron:Stopping Voltron.
+2018-06-07 15:14:36,691:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:14:36,692:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:14:51,098:INFO:voltron:Starting flow monitor.
+2018-06-07 15:14:51,108:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-07 15:14:51,113:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-07 15:14:51,120:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:16:15,492:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-07 15:16:15,495:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:16:15,507:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:16:15,513:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-07 15:16:15,519:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:16:30,590:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-07 15:16:30,592:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:16:30,604:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:16:30,611:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-07 15:16:30,618:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:17:06,815:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-07 15:17:06,817:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:17:06,823:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:17:06,827:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-07 15:17:06,832:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:17:21,898:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-07 15:17:21,899:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:17:21,911:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:17:21,918:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-07 15:17:21,925:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:17:40,005:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-07 15:17:40,007:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:17:40,018:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:17:40,024:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-07 15:17:40,031:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:17:55,093:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-07 15:17:55,094:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:17:55,104:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:17:55,109:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-07 15:17:55,113:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:18:37,961:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:18:37,963:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:18:37,973:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:18:37,977:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1
+2018-06-07 15:18:37,981:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:18:47,026:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-07 15:18:47,027:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:18:47,035:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:18:47,043:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-07 15:18:47,051:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:18:50,732:INFO:voltron:Stopping Voltron.
+2018-06-07 15:18:50,735:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:18:50,736:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:18:50,744:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:18:50,745:INFO:voltron:Voltron has shut down.
+2018-06-07 15:20:06,048:INFO:voltron:Starting flow monitor.
+2018-06-07 15:20:06,066:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-07 15:20:06,075:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1
+2018-06-07 15:20:06,089:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:20:12,081:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-07 15:20:12,083:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:20:12,092:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:20:12,098:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-07 15:20:12,105:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:20:27,212:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-07 15:20:27,214:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:20:27,225:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:20:27,238:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-07 15:20:27,245:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:20:33,269:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-07 15:20:33,270:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:20:33,277:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:20:33,286:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-07 15:20:33,291:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:20:54,380:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-07 15:20:54,381:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:20:54,389:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:20:54,396:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-07 15:20:54,403:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:21:51,670:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-07 15:21:51,673:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:21:51,683:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:21:51,687:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-07 15:21:51,690:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-07 15:22:02,972:INFO:voltron:Stopping Voltron.
+2018-06-07 15:22:02,974:INFO:voltron:Removing Voltron routes.
+2018-06-07 15:22:02,974:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-07 15:22:02,982:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-07 15:22:02,983:INFO:voltron:Voltron has shut down.
+2018-06-08 02:22:05,822:INFO:voltron:Starting flow monitor.
+2018-06-08 02:22:05,845:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-08 02:22:05,850:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-08 02:22:05,859:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 02:23:51,429:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-08 02:23:51,438:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 02:23:51,454:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 02:23:51,461:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-08 02:23:51,467:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 02:24:09,558:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-08 02:24:09,560:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 02:24:09,569:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 02:24:09,575:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-08 02:24:09,581:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 02:24:20,318:INFO:voltron:Stopping Voltron.
+2018-06-08 02:24:20,319:INFO:voltron:Removing Voltron routes.
+2018-06-08 02:24:20,320:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 02:24:20,332:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 02:24:20,333:INFO:voltron:Voltron has shut down.
+2018-06-08 03:50:49,957:INFO:voltron:Starting flow monitor.
+2018-06-08 03:50:52,979:INFO:voltron:Stopping Voltron.
+2018-06-08 03:50:52,980:INFO:voltron:Removing Voltron routes.
+2018-06-08 03:50:52,980:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:13:44,647:INFO:voltron:Starting flow monitor.
+2018-06-08 04:13:47,666:INFO:voltron:Stopping Voltron.
+2018-06-08 04:13:47,666:INFO:voltron:Removing Voltron routes.
+2018-06-08 04:13:47,666:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:14:02,224:INFO:voltron:Starting flow monitor.
+2018-06-08 04:14:05,242:INFO:voltron:Stopping Voltron.
+2018-06-08 04:14:05,242:INFO:voltron:Removing Voltron routes.
+2018-06-08 04:14:05,243:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:14:18,588:INFO:voltron:Starting flow monitor.
+2018-06-08 04:14:21,613:INFO:voltron:Stopping Voltron.
+2018-06-08 04:14:21,613:INFO:voltron:Removing Voltron routes.
+2018-06-08 04:14:21,613:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:15:06,691:INFO:voltron:Starting flow monitor.
+2018-06-08 04:15:08,362:INFO:voltron:Stopping Voltron.
+2018-06-08 04:15:08,364:INFO:voltron:Removing Voltron routes.
+2018-06-08 04:15:08,364:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:15:55,475:INFO:voltron:Starting flow monitor.
+2018-06-08 04:15:56,920:INFO:voltron:Stopping Voltron.
+2018-06-08 04:15:56,922:INFO:voltron:Removing Voltron routes.
+2018-06-08 04:15:56,922:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:16:38,053:INFO:voltron:Starting flow monitor.
+2018-06-08 04:16:38,103:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-08 04:16:38,111:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-08 04:16:38,123:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 04:16:53,219:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64003']
+2018-06-08 04:16:53,221:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:16:53,229:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 04:16:53,236:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64003 via inet 10.0.252.1
+2018-06-08 04:16:53,243:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 04:16:56,329:INFO:voltron:Stopping Voltron.
+2018-06-08 04:16:56,330:INFO:voltron:Removing Voltron routes.
+2018-06-08 04:16:56,331:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:16:56,339:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 04:16:56,340:INFO:voltron:Voltron has shut down.
+2018-06-08 04:17:09,096:INFO:voltron:Starting flow monitor.
+2018-06-08 04:17:09,112:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-08 04:17:09,117:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-08 04:17:09,123:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 04:17:12,113:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-08 04:17:12,114:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:17:12,121:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 04:17:12,127:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-08 04:17:12,132:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 04:17:21,169:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-08 04:17:21,170:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:17:21,176:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 04:17:21,181:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-08 04:17:21,186:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 04:17:36,253:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-08 04:17:36,254:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:17:36,260:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 04:17:36,265:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-08 04:17:36,275:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 04:17:51,335:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-08 04:17:51,336:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:17:51,342:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 04:17:51,347:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-08 04:17:51,352:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 04:17:56,941:INFO:voltron:Stopping Voltron.
+2018-06-08 04:17:56,942:INFO:voltron:Removing Voltron routes.
+2018-06-08 04:17:56,943:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 04:17:56,949:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 04:17:56,953:INFO:voltron:Voltron has shut down.
+2018-06-08 05:00:57,949:INFO:voltron:Starting flow monitor.
+2018-06-08 05:00:58,011:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-08 05:00:58,020:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-08 05:00:58,032:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 05:01:03,044:INFO:voltron:Stopping Voltron.
+2018-06-08 05:01:03,046:INFO:voltron:Removing Voltron routes.
+2018-06-08 05:01:03,046:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 05:01:03,053:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 05:01:03,053:INFO:voltron:Voltron has shut down.
+2018-06-08 05:13:10,882:INFO:voltron:Starting flow monitor.
+2018-06-08 05:13:10,930:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-08 05:13:10,941:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-08 05:13:10,955:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 05:13:13,214:INFO:voltron:Stopping Voltron.
+2018-06-08 05:13:13,215:INFO:voltron:Removing Voltron routes.
+2018-06-08 05:13:13,216:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 05:13:13,224:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 05:13:13,225:INFO:voltron:Voltron has shut down.
+2018-06-08 05:13:16,664:INFO:voltron:Starting flow monitor.
+2018-06-08 05:13:16,680:INFO:voltron:10.0.252.2 -> 10.1.145.1: ['24003', '64002']
+2018-06-08 05:13:16,684:DEBUG:voltron:ip route add 10.1.145.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-08 05:13:16,688:INFO:voltron:Added route to 10.1.145.1/32.
+2018-06-08 05:13:19,845:INFO:voltron:Stopping Voltron.
+2018-06-08 05:13:19,846:INFO:voltron:Removing Voltron routes.
+2018-06-08 05:13:19,846:DEBUG:voltron:ip route del 10.1.145.1/32
+2018-06-08 05:13:19,854:INFO:voltron:Deleted route to 10.1.145.1/32.
+2018-06-08 05:13:19,854:INFO:voltron:Voltron has shut down.
+2018-06-08 05:13:23,340:INFO:voltron:Starting flow monitor.
+2018-06-08 05:13:23,354:INFO:voltron:10.0.252.2 -> 10.1.144.1: ['24003', '64002']
+2018-06-08 05:13:23,358:DEBUG:voltron:ip route add 10.1.144.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-08 05:13:23,363:INFO:voltron:Added route to 10.1.144.1/32.
+2018-06-08 05:13:27,097:INFO:voltron:Stopping Voltron.
+2018-06-08 05:13:27,098:INFO:voltron:Removing Voltron routes.
+2018-06-08 05:13:27,099:DEBUG:voltron:ip route del 10.1.144.1/32
+2018-06-08 05:13:27,107:INFO:voltron:Deleted route to 10.1.144.1/32.
+2018-06-08 05:13:27,114:INFO:voltron:Voltron has shut down.
+2018-06-08 05:58:37,934:INFO:voltron:Starting flow monitor.
+2018-06-08 05:58:37,945:INFO:voltron:10.0.252.2 -> 10.1.144.1: {'error': True, 'code': 404, 'errorMessage': "unknown path '/queries/10.0.0.0/10.1.144.0_24/bandwidth'", 'errorNum': 404}
+2018-06-08 05:58:37,949:DEBUG:voltron:ip route add 10.1.144.1/32 encap mpls error/code/errorMessage/errorNum via inet 10.0.252.1
+2018-06-08 05:58:40,954:INFO:voltron:10.0.252.2 -> 10.1.144.1: {'error': True, 'code': 404, 'errorMessage': "unknown path '/queries/10.0.0.0/10.1.144.0_24/bandwidth'", 'errorNum': 404}
+2018-06-08 05:58:40,962:DEBUG:voltron:ip route add 10.1.144.1/32 encap mpls error/code/errorMessage/errorNum via inet 10.0.252.1
+2018-06-08 05:58:40,971:INFO:voltron:Stopping Voltron.
+2018-06-08 05:58:40,971:INFO:voltron:Removing Voltron routes.
+2018-06-08 05:58:40,972:DEBUG:voltron:ip route del 10.1.144.1/32
+2018-06-08 07:35:16,788:INFO:voltron:Starting flow monitor.
+2018-06-08 07:35:16,815:INFO:voltron:10.0.250.2 -> 10.0.254.1: ['24001', '64003']
+2018-06-08 07:35:16,822:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24001/64003 via inet 10.0.252.1
+2018-06-08 07:35:16,832:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 07:35:22,340:INFO:voltron:Stopping Voltron.
+2018-06-08 07:35:22,342:INFO:voltron:Removing Voltron routes.
+2018-06-08 07:35:22,342:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 07:35:22,351:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 07:35:22,352:INFO:voltron:Voltron has shut down.
+2018-06-08 07:35:32,950:INFO:voltron:Starting flow monitor.
+2018-06-08 07:35:32,968:INFO:voltron:10.0.252.2 -> 10.0.254.1: ['24003', '64002']
+2018-06-08 07:35:32,972:DEBUG:voltron:ip route add 10.0.254.1/32 encap mpls 24003/64002 via inet 10.0.252.1
+2018-06-08 07:35:32,976:INFO:voltron:Added route to 10.0.254.1/32.
+2018-06-08 07:35:35,393:INFO:voltron:Stopping Voltron.
+2018-06-08 07:35:35,395:INFO:voltron:Removing Voltron routes.
+2018-06-08 07:35:35,395:DEBUG:voltron:ip route del 10.0.254.1/32
+2018-06-08 07:35:35,403:INFO:voltron:Deleted route to 10.0.254.1/32.
+2018-06-08 07:35:35,404:INFO:voltron:Voltron has shut down.
+2018-06-08 08:28:46,580:INFO:voltron:Starting flow monitor.
+2018-06-08 08:28:47,822:INFO:voltron:Stopping Voltron.
+2018-06-08 08:28:47,823:INFO:voltron:Removing Voltron routes.
+2018-06-08 08:28:47,824:DEBUG:voltron:ip route del 10.0.254.1/32
