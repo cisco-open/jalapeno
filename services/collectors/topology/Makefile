@@ -5,8 +5,8 @@ BINARY ?= bin/$(EXECUTABLE)
 PACKAGES = $(shell go list ./... | grep -E -v '/bin|/vendor|/docs|/cmd|/log|/api/v1/client|/api/v1/gen|/arango/example')
 REPO=dockerhub.cisco.com/gspie-docker-local
 IMAGE=topology
-TAG=1.8
-
+TAG=1.9
+PROXY=http://proxy.esl.cisco.com:8080
 
 all: build
 
@@ -25,5 +25,4 @@ fast:
 	mv bin/services/collectors/topology bin/voltron
 
 container:
-	docker run -t -w /go/src/wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology -v `pwd`:/go/src/wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology golang:1.7.1-wheezy make
-	docker build -t ${REPO}/${IMAGE}:${TAG} .
+	docker build --build-arg http_proxy=${PROXY} --build-arg https_proxy=${PROXY} -t ${REPO}/${IMAGE}:${TAG} .

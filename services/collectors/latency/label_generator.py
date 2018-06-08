@@ -52,6 +52,7 @@ def generate_label_stacks(db, collection):
         logging.info("\nGenerating the label stacks from " + vmsource + " to " + destination)
         label_stacks = generate_label_stacks_query(database, queryconfig.collection, vmsource, destination)
         all_label_stacks.append(label_stacks)
+        print("--------------------------------------------------------------------------------")
     return all_label_stacks
 
 def generate_label_stacks_query(db, collection, source, destination):

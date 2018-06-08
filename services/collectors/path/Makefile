@@ -2,7 +2,8 @@ EXECUTABLE ?= voltron
 BINARY ?= bin/$(EXECUTABLE)
 REPO=dockerhub.cisco.com/gspie-docker-local
 IMAGE=path
-TAG=1.1
+TAG=1.3.2
+PROXY=http://proxy.esl.cisco.com:8080
 
 all: build
 
@@ -15,6 +16,5 @@ run:
 
 container:
 	cp -R ../../framework/api/v1/py-client .
-	docker run -it --rm --name paths-service -v `pwd`\:/services/path -w /services/path python\:3 python create_paths.py
-        docker build -t ${REPO}/${IMAGE}:${TAG} .
+	docker build --build-arg http_proxy=${PROXY} --build-arg https_proxy=${PROXY} -t ${REPO}/${IMAGE}:${TAG} .
 

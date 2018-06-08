@@ -24,16 +24,12 @@ def calculate_latency(path):
     key=path["Key"]
     source=path["Source"]
     destination=path["Destination"] # ie 10.11.0.0_24
-
+    print("Calculating latency for " + key)
     # question here :: why does the MPLS packet generation need to destination to be 10.11.0.1 instead of 10.11.0.0_24? bug?
-    if(destination == "10.11.0.0_24"):
-        packet_destination = '10.11.0.1'
-    elif(destination == "10.12.0.0_24"):
-        packet_destination = '10.12.0.1'
-    elif(destination == "10.13.0.0_24"):
-        packet_destination = '10.13.0.1'
+    if(destination == "10.0.254.0_24"):
+        packet_destination = '10.0.254.1'
     else:
-	packet_destination = 0
+        packet_destination = 0
 
     labels = ' '.join(path["Label_Path"].split('_'))  # label stack formatting
     labels = [int(x) for x in labels.split(' ')]
@@ -57,8 +53,11 @@ def main():
         all_label_stacks = label_generator.generate_labels()
         #for label_stack_set in all_label_stacks:
         for path in all_label_stacks[0]:
-            print path
-            calculate_latency(path)
+            if '_' in path["Label_Path"]:
+                calculate_latency(path)
+            else:
+                print("Single label path -- NodeSID Labels not currently incorporated. Skipping this path.")
+                print ("###############################################################################")
             time.sleep(0.5)
 
     #all_label_stacks = label_generator.generate_labels()

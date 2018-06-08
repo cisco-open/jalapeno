@@ -63,7 +63,7 @@ def generate_paths(db, collection):
 
 def generate_paths_query(db, source, destination):
     """AQL Query to generate paths from Arango data."""
-    aql = """ FOR v,e,p in 4
+    aql = """ FOR v,e,p in 3
         OUTBOUND @source
         LinkEdgesV4, PrefixEdges
         OPTIONS {bfs: False, uniqueEdges: "path", uniqueVertices: "path"}
@@ -78,18 +78,18 @@ def clean_paths_collection(db, paths, source, destination):
     """Remove any paths in the Paths collection that do not exist in reality."""
     real_paths = []
     for path in paths:
-	route = ', '.join(utilities.uniqify(path[0] + path[1])).replace('Routers/', '')  # formatting route and removing duplicates
+        route = ', '.join(utilities.uniqify(path[0] + path[1])).replace('Routers/', '')  # formatting route and removing duplicates
         key_route = route.replace(', ', "_to_")  # formatting document key
-	real_paths.append("Path:" + source + "_to_" + key_route + "_to_" + destination)
+        real_paths.append("Path:" + source + "_to_" + key_route + "_to_" + destination)
     aql = """FOR p in Paths
-	FILTER p.Destination == @destination
+        FILTER p.Destination == @destination
         RETURN p._key """
     bindVars = {'destination': destination}
     existing_path_collection = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     for current_path in existing_path_collection:
-	if current_path not in real_paths:
-	    print("Path " + str(current_path) + " does not exist anymore. Removing from Paths collection.")
-	    aql = """REMOVE @key IN Paths """
+        if current_path not in real_paths:
+            print("Path " + str(current_path) + " does not exist anymore. Removing from Paths collection.")
+            aql = """REMOVE @key IN Paths """
             bindVars = {'key': str(current_path)}
             db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
 
@@ -125,7 +125,7 @@ def create_path_record(collection, path, source, destination):
         document.save()
     except CreationError:
         print("That path already exists!")
-	pass
+        pass
 
 def setup_logging():
     logging.getLogger().setLevel(logging.INFO)
