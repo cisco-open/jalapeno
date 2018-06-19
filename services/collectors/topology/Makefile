@@ -14,15 +14,16 @@ test:
 	go test -ldflags -s -race -cover $(PACKAGES)
 
 build:
-	CGO_ENABLED=0 go build --ldflags '${EXTLDFLAGS}' -o ${BINARY} wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology
+	CGO_ENABLED=0 go build --ldflags '${EXTLDFLAGS}' -o ${BINARY} wwwin-github.cisco.com/spa-ie/voltron-redux/framework
 
 linux:
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ${BINARY} wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ${BINARY} wwwin-github.cisco.com/spa-ie/voltron-redux/framework
 
 fast:
 	mkdir -p bin
-	GOBIN=$(GOPATH)/src/wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/bin go install --ldflags '${EXTLDFLAGS}' wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology
-	mv bin/services/collectors/topology bin/voltron
+	GOBIN=$(GOPATH)/src/wwwin-github.cisco.com/spa-ie/voltron-redux/frameworkbin go install --ldflags '${EXTLDFLAGS}' wwwin-github.cisco.com/spa-ie/voltron-redux/framework
+	mv bin/framework bin/voltron
 
 container:
+	docker run -t -w /go/src/wwwin-github.cisco.com/spa-ie/voltron-redux/framework -v `pwd`:/go/src/wwwin-github.cisco.com/spa-ie/voltron-redux/framework golang:1.7.1-wheezy make
 	docker build --build-arg http_proxy=${PROXY} --build-arg https_proxy=${PROXY} -t ${REPO}/${IMAGE}:${TAG} .
