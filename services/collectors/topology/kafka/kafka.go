@@ -68,7 +68,7 @@ func (c *Consumer) SetHandler(h handler.Handler) {
 }
 
 func (c *Consumer) Start() error {
-	fmt.Println("Starting...")
+	fmt.Println("Starting Consumer...")
 	consumer, err := cluster.NewConsumer(c.Brokers, c.GroupName, c.Topics, c.Config)
 	if err != nil {
 		return err
@@ -76,6 +76,7 @@ func (c *Consumer) Start() error {
 
 	c.Consumer = consumer
 	c.stop = make(chan bool)
+	fmt.Println(c.Topics)
 
 	// TODO: strategy: We want to process Peers first...
 	// Refactor to allow out of order processing
@@ -99,7 +100,7 @@ func (c *Consumer) Start() error {
 
                                     openbmp_msg_data := strings.Split(string(openbmp_msg[1]), "\n")
                                     for _, element := range openbmp_msg_data {
-                                        fmt.Println("The current individual record to be processed is:")
+                                        fmt.Println("The current record to be processed is:")
                                         current_openbmp_record := strings.Split(element, "\t")
                                         fmt.Println(current_openbmp_record)
 

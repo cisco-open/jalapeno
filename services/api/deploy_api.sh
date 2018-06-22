@@ -2,5 +2,5 @@
 BASEDIR=$(dirname $0)
 
 echo "Deploying APIs"
-sh ${PWD}/${BASEDIR}/arangodb/deploy_foxx_service.sh
+sh ${PWD}/${BASEDIR}/deploy_foxx_service.sh
 

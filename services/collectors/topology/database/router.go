@@ -6,11 +6,13 @@ const RouterName = "Routers"
 
 type Router struct {
 	Key      string `json:"_key,omitempty"`
-	Name     string `json:"_name,omitempty"`
+	Name     string `json:"Name,omitempty"`
 	RouterIP string `json:"RouterIP,omitempty"`
 	BGPID    string `json:"BGPID,omitempty"`
 	IsLocal  bool   `json:"IsLocal"`
 	ASN      string `json:"ASN,omitempty"`
+        SRGB     string `json:"SRGB,omitempty"`
+        SRNodeSID string `json:"SRNodeSID,omitempty"`
 }
 
 func (r Router) GetKey() (string, error) {

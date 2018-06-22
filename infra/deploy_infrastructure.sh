@@ -17,7 +17,6 @@ echo "Deploying OpenBMPD"
 #python ${PWD}/${BASEDIR}/openbmpd/configure_openbmp.py
 #oc apply -f ${PWD}/${BASEDIR}/openbmpd/.
 sudo python ${PWD}/${BASEDIR}/openbmpd/deploy_openbmp.py
-sleep 30
 
 echo "Deploying Telemetry"
 python ${PWD}/${BASEDIR}/telemetry/deploy_telemetry.py

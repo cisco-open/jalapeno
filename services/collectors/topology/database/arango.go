@@ -97,6 +97,12 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
 		return ArangoConn{}, err
 	}
 
+	cols[InternalTransportPrefixName], err = ensureVertexCollection(g, InternalTransportPrefixName)
+	if err != nil {
+		log.WithError(err).Errorf("Failed to connect to collection %q", InternalTransportPrefixName)
+		return ArangoConn{}, err
+	}
+
 	cols[PrefixEdgeName], err = ensureEdgeCollection(g, PrefixEdgeName, []string{RouterName}, []string{PrefixName})
 	if err != nil {
 		log.WithError(err).Errorf("Failed to connect to collection %q", PrefixEdgeName)
@@ -282,6 +288,10 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		get = &Router{
 			Key: key,
 		}
+        case InternalTransportPrefixName:
+		get = &InternalTransportPrefix{
+			Key: key,
+		}
 	case PrefixName:
 		get = &Prefix{
 			Key: key,
@@ -426,7 +436,7 @@ func (a *ArangoConn) Query(q string, bind map[string]interface{}, obj interface{
 	return i, nil
 }
 
-// This function does not support compelx types, []string does not work. Router.Interface specifically
+// This function does not support complex types, []string does not work. Router.Interface specifically
 func (a *ArangoConn) QueryOnObject(obj DBObject, ret interface{}, operators map[string]string) ([]interface{}, error) {
 	if obj == nil {
 		return nil, ErrNilObject

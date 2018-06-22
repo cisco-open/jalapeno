@@ -11,6 +11,8 @@ type PrefixEdge struct {
 	From        string   `json:"_from,omitempty"`
 	To          string   `json:"_to,omitempty"`
 	Key         string   `json:"_key,omitempty"`
+	NextHop     string   `json:"NextHop,omitempty"`
+	InterfaceIP string   `json:"InterfaceIP,omitempty"`
 	ASPath      []string `json:"ASPath,omitempty"`
 	Labels      []string `json:"Labels,omitempty"`
 	BGPPolicy   string   `json:"BGPPolicy,omitempty"`

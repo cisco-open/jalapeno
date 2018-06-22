@@ -15,6 +15,19 @@ func (a *ArangoConn) GetRouterByIP(ip string) *Router {
 	return nil
 }
 
+func (a *ArangoConn) GetSRBeginningLabel(ip string) string {
+        if len(ip) == 0 {
+                return ""
+        }
+        var r string
+        q := fmt.Sprintf("FOR r in Routers FILTER r.RouterIP == %q RETURN r.SRGB", ip)
+        results, _ := a.Query(q, nil, r)
+        if len(results) > 0 {
+                   return results[len(results)-1].(string)
+        }
+        return "" 
+}
+
 func (a *ArangoConn) GetRouterKeyFromInterfaceIP(ip string) string {
 	if len(ip) == 0 {
 		return ""
