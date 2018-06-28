@@ -12,7 +12,7 @@ type InternalTransportPrefix struct {
 	IsLocal  bool   `json:"IsLocal"`
 	ASN      string `json:"ASN,omitempty"`
         SRGB     string `json:"SRGB,omitempty"`
-        SRNodeSID string `json:"SRNodeSID,omitempty"`
+        SRPrefixSID string `json:"SRPrefixSID,omitempty"`
 }
 
 func (r InternalTransportPrefix) GetKey() (string, error) {

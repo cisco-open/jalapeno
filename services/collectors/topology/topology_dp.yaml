@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: topology
-        image: dockerhub.cisco.com/gspie-docker-local/topology:1.9.4.2@sha256:ffafeceb8005b38f4ee2f13b3f430503662bbb4cfe5b4b214c9b9a95caf7202b
+        image: dockerhub.cisco.com/gspie-docker-local/topology:1.9.4.4@sha256:6977983836915e66f9d9415a0c67b96780ff8a765aa306fd7afbd42705804071
         args:
           - topology
           - --arango-url
@@ -31,7 +31,7 @@ spec:
           - --kafka-consumer-group
           - voltron_framework_kube
           - --kafka-topics
-          - "openbmp.parsed.peer,openbmp.parsed.unicast_prefix,openbmp.parsed.ls_link,openbmp.parsed.ls_node,openbmp.parsed.ls_prefix"
+          - "openbmp.parsed.router,openbmp.parsed.peer,openbmp.parsed.unicast_prefix,openbmp.parsed.ls_link,openbmp.parsed.ls_node,openbmp.parsed.ls_prefix"
           - --kafka-brokers
           - 10.0.250.2:30902
           - --asn

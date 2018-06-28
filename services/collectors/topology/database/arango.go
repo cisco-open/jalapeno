@@ -103,6 +103,18 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
 		return ArangoConn{}, err
 	}
 
+	cols[InternalPrefixName], err = ensureVertexCollection(g, InternalPrefixName)
+	if err != nil {
+		log.WithError(err).Errorf("Failed to connect to collection %q", InternalPrefixName)
+		return ArangoConn{}, err
+	}
+
+	cols[ExternalPrefixName], err = ensureVertexCollection(g, ExternalPrefixName)
+	if err != nil {
+		log.WithError(err).Errorf("Failed to connect to collection %q", ExternalPrefixName)
+		return ArangoConn{}, err
+	}
+
 	cols[PrefixEdgeName], err = ensureEdgeCollection(g, PrefixEdgeName, []string{RouterName}, []string{PrefixName})
 	if err != nil {
 		log.WithError(err).Errorf("Failed to connect to collection %q", PrefixEdgeName)
@@ -290,6 +302,14 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		}
         case InternalTransportPrefixName:
 		get = &InternalTransportPrefix{
+			Key: key,
+		}
+        case InternalPrefixName:
+		get = &InternalPrefix{
+			Key: key,
+		}
+        case ExternalPrefixName:
+		get = &ExternalPrefix{
 			Key: key,
 		}
 	case PrefixName:

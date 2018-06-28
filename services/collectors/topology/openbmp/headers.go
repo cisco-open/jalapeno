@@ -103,8 +103,8 @@ var headers = map[string][]string{
 		"is_locrib", "is_locrib_filtered", "table_name",
 	},
 
-	"openbmp.parsed.router": []string{
-		"term_code", "term_reason", "init_data", "term_data",
+	"openbmp.parsed.router": []string{"action", "sequence", "name", "hash", "ip_addr", 
+                "description", "term_code", "term_reason", "init_data", "term_data",
 		"timestamp", "bgp_id",
 	},
 
