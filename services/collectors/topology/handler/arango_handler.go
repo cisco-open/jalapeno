@@ -77,42 +77,42 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 }
 
 func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
-        //log.Infof("Handling HandleUnicastPrefix")
-        //fmt.Println("Handling UnicastPrefix OpenBMP message")
-        //fmt.Println(m)
-        //unicast_prefix(a, m)
+        log.Infof("Handling HandleUnicastPrefix")
+        fmt.Println("Handling UnicastPrefix OpenBMP message")
+        fmt.Println(m)
+        unicast_prefix(a, m)
 }
 
 func (a *ArangoHandler) HandleLSNode(m *openbmp.Message) {
-        //log.Infof("Handling HandleLSNode")
-        //fmt.Println("Handling LSNode OpenBMP message")
-	//fmt.Println(m)
-        //ls_node(a, m)
+        log.Infof("Handling HandleLSNode")
+        fmt.Println("Handling LSNode OpenBMP message")
+	fmt.Println(m)
+        ls_node(a, m)
 }
 
 func (a *ArangoHandler) HandleLSLink(m *openbmp.Message) {
-        //log.Infof("Handling HandleLSLink")
-        //fmt.Println("Handling LSLink OpenBMP message")
-        //fmt.Println(m)
-        //ls_link(a, m)
+        log.Infof("Handling HandleLSLink")
+        fmt.Println("Handling LSLink OpenBMP message")
+        fmt.Println(m)
+        ls_link(a, m)
 }
 
 func (a *ArangoHandler) HandleLSPrefix(m *openbmp.Message) {
         log.Infof("Handling HandleLSPrefix")
-        //fmt.Println("Handling LSPrefix OpenBMP message")
-	//fmt.Println(m)
-        //ls_prefix(a, m)
+        fmt.Println("Handling LSPrefix OpenBMP message")
+	fmt.Println(m)
+        ls_prefix(a, m)
 }
 
 
 func (a *ArangoHandler) HandleBMPStat(m *openbmp.Message) {
-        //log.Infof("Handling HandleBMPStat")
-        //fmt.Println("Handling BMPStat OpenBMP message")
-	//fmt.Println(m)
+        log.Infof("Handling HandleBMPStat")
+        fmt.Println("Handling BMPStat OpenBMP message")
+	fmt.Println(m)
 }
 
 func (a *ArangoHandler) HandleBaseAttribute(m *openbmp.Message) {
-        //log.Infof("Handling HandleBaseAttribute")
-        //fmt.Println("Handling Base Attribute OpenBMP message")
-        //fmt.Println(m)
+        log.Infof("Handling HandleBaseAttribute")
+        fmt.Println("Handling Base Attribute OpenBMP message")
+        fmt.Println(m)
 }
