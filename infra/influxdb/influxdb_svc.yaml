@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb
+  namespace: voltron
+spec:
+  ports:
+  - port: 8086
+  clusterIP: None
+  selector:
+    app: influxdb

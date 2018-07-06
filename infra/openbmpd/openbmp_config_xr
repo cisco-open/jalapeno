@@ -1,0 +1,9 @@
+bmp server 1
+ host 10.0.250.2 port 30500
+ description voltron OpenBMP
+ update-source Loopback0
+ flapping-delay 60
+ initial-delay 5
+ stats-reporting-period 60
+ initial-refresh delay 30 spread 2
+!
