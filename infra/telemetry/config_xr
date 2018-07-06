@@ -31,6 +31,12 @@ telemetry model-driven
  sensor-group link-oper-stats
   sensor-path Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface
  !
+ sensor-group topology
+  sensor-path openconfig-bgp:bgp/global/state/router-id
+  sensor-path openconfig-interfaces:interfaces/interface/subinterfaces/subinterface/ipv4/addresses/address/ip
+  sensor-path openconfig-bgp:bgp/neighbors
+  sensor-path openconfig-interfaces:interfaces/interface/subinterfaces/subinterface/ipv4/neighbors/neighbor/ip
+ !
  subscription base_metrics
   sensor-group-id fib sample-interval 300000
   sensor-group-id bgp-rib sample-interval 300000
@@ -39,5 +45,6 @@ telemetry model-driven
   sensor-group-id link-stats sample-interval 5000
   sensor-group-id isis-routes sample-interval 300000
   sensor-group-id link-oper-stats sample-interval 5000
+  sensor-group-id topology sample-interval 300000
  !
 !
