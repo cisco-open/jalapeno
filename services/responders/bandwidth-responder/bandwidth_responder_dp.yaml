@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: voltron
+  name: bandwidth-responder
+  labels:
+    app: bandwidth-responder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bandwidth-responder
+  template:
+    metadata:
+      labels:
+        app: bandwidth-responder
+    spec:
+      containers:
+      - name: bandwidth-responder
+        image: dockerhub.cisco.com/gspie-docker-local/bandwidth-responder:1.0

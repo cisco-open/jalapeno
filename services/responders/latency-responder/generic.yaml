@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: voltron
+  name: responder
+  labels:
+    app: responder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: responder
+  template:
+    metadata:
+      labels:
+        app: responder
+    spec:
+      containers:
+      - name: responder
+        image: dockerhub.cisco.com/gspie-docker-local/responder:1.0
+        args:
+          - --api-url
+          - 0.0.0.0:8080
+          - --db-url
+          - arangodb.voltron.svc.cluster.local:8529
+          - --framework-url
+          - framework.voltron.svc.cluster.local:8876

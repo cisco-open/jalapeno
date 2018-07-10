@@ -1,0 +1,12 @@
+{
+  "name": "voltron-queries",
+  "version": "0.0.1",
+  "description": "Voltron Fox Servies",
+  "engines": {
+    "arangodb": "^3.1.0"
+  },
+  "author": "Zia Syed",
+  "license": "Apache 2",
+  "main": "index.js"
+}
+

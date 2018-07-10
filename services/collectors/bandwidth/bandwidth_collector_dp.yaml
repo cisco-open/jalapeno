@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: voltron
+  name: bandwidth-collector
+  labels:
+    app: bandwidth-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bandwidth-collector
+  template:
+    metadata:
+      labels:
+        app: bandwidth-collector
+    spec:
+      containers:
+      - name: bandwidth-collector
+        image: dockerhub.cisco.com/gspie-docker-local/bandwidth-collector:1.1@sha256:b8726970b86f5490ac4d1a19c32fe21d5e98810952265a6744dc83c1e5792bfd
