@@ -1,0 +1,38 @@
+# Create an OSEv3 group that contains the masters and nodes groups
+[OSEv3:children]
+masters
+nodes
+
+# Set variables common for all OSEv3 hosts
+[OSEv3:vars]
+# SSH user, this user should allow ssh based auth without requiring a password
+ansible_ssh_user=root
+
+# If ansible_ssh_user is not root, ansible_become must be set to true
+#ansible_become=true
+
+deployment_type=origin
+#openshift_release=v3.6.0
+#openshift_pkg_version=v3.6.0
+#openshift_image_tag=v3.6.0
+openshift_release="1.5.0"
+enable_excluders=false
+openshift_http_proxy=http://proxy.esl.cisco.com:8080
+openshift_https_proxy=http://proxy.esl.cisco.com:8080
+openshift_no_proxy='localhost,10.200.99.44,127.0.0.1'
+openshift_generate_no_proxy_hosts=True
+openshift_master_cluster_hostname=snas1.gspie.lab
+openshift_master_cluster_public_hostname=ie-snas1.cisco.com
+
+# uncomment the following to enable htpasswd authentication; defaults to DenyAllPasswordIdentityProvider
+openshift_master_identity_providers=[{'name': 'allow_all', 'login': 'true', 'challenge': 'true', 'kind': 'AllowAllPasswordIdentityProvider'}]
+
+containerized=true
+
+# host group for masters
+[masters]
+snas1.gspie.lab
+
+# host group for nodes, includes region info
+[nodes]
+snas1.gspie.lab openshift_node_labels="{'region': 'infra', 'zone': 'default'}" openshift_schedulable=true openshift_ip=10.200.99.44 openshift_public_ip=10.200.99.44 openshift_hostname=snas1.gspie.lab openshift_public_hostname=ie-snas1.cisco.com ansible_user=root

@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: voltron
+  name: latency-collector
+  labels:
+    app: latency-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency-collector
+  template:
+    metadata:
+      labels:
+        app: latency-collector
+    spec:
+      containers:
+      - name: latency-collector
+        image: dockerhub.cisco.com/gspie-docker-local/latency-collector:1.5@sha256:0cc42d4bbc6ee43a1e95f0b1f37c9ee3720a8dcc5da640ae71247c12f1f9656e

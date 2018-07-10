@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: topology
+  namespace: voltron
+  labels:
+    app: topology
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: topology
+  template:
+    metadata:
+      labels:
+        app: topology
+    spec:
+      containers:
+      - name: topology
+        image: dockerhub.cisco.com/gspie-docker-local/topology:1.5@sha256:2a46d97d4bbce917b8e605087f064407f13f17298b3de0b7928ea400ca7762ae
+        args:
+          - topology
+          - --arango-url
+          - http://arangodb.voltron.svc.cluster.local:8529
+          - --arango-user
+          - root
+          - --arango-password
+          - voltron
+          - --arango-database
+          - voltron
+          - --kafka-consumer-group
+          - voltron_framework_kube
+          - --kafka-topics
+          - "openbmp.parsed.peer,openbmp.parsed.unicast_prefix,openbmp.parsed.ls_link"
+          - --kafka-brokers
+          - {{ kafka_endpoint }}
+          - --asn
+          - "100000"
