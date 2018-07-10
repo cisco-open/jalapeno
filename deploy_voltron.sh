@@ -1,5 +1,7 @@
 #!/bin/sh
 
+### Deploying Voltron ###
+
 ### OpenShift login
 oc login https://localhost:8443 -u admin -p admin -n voltron
 
@@ -7,7 +9,7 @@ oc login https://localhost:8443 -u admin -p admin -n voltron
 oc new-project voltron --description=voltron --display-name=voltron
 sleep 3
 
-### Deplyoing Infrastructure
+### Deploying Infrastructure
 sh infra/deploy_infrastructure.sh
 sleep 15
 
