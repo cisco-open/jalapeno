@@ -1,0 +1,388 @@
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "1.0"
+  title: Voltron Framework
+  description: |
+    This outlines version 1 of the voltron framework API.
+
+basePath: /v1
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+  Basic:
+    type: basic
+
+security:
+  - Bearer: []
+
+parameters:
+  collector-name:
+    name: collector-name
+    in: path
+    type: string
+    required: true
+  responder-name:
+    name: responder-name
+    in: path
+    type: string
+    required: true
+  edge-type:
+    name: edge-type
+    in: path
+    type: string
+    required: true
+  edge-key:
+    name: edge-key
+    in: path
+    type: string
+    required: true
+  field-name:
+    name: field-name
+    in: path
+    type: string
+    required: true
+  Name:
+    name: Name
+    in: query
+    type: string
+    required: false
+  Description:
+    name: Description
+    in: query
+    type: string
+    required: false
+  Status:
+    name: Status
+    in: query
+    type: string
+    required: false
+  EdgeType:
+    name: EdgeType
+    in: query
+    type: string
+    required: false
+  FieldName:
+    name: FieldName
+    in: query
+    type: string
+    required: false
+  Timeout:
+    name: Timeout
+    in: query
+    type: string
+    required: false
+  LastHeartbeat:
+    name: LastHeartbeat
+    in: query
+    type: string
+    required: false
+  field-value:
+    name: field-value
+    in: path
+    type: string
+    required: true
+  Collection:
+    name: Collection
+    in: path
+    type: string
+    required: true
+
+# Describe your paths here
+paths:
+  /collectors:
+    get:
+      description: get all collector services
+      operationId: getCollectors
+      parameters:
+        - $ref: '#/parameters/Name'
+        - $ref: '#/parameters/Description'
+        - $ref: '#/parameters/Status'
+        - $ref: '#/parameters/EdgeType'
+        - $ref: '#/parameters/FieldName'
+        - $ref: '#/parameters/Timeout'
+        - $ref: '#/parameters/LastHeartbeat'
+      responses:
+        200:
+          description: the fetched collectors
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Collector'
+    post:
+      description: inserts new collector
+      operationId: addCollector
+      parameters:
+        - in: body
+          name: body
+          description: Collector object
+          required: true
+          schema:
+            title: addCollectorRequest
+            $ref: "#/definitions/Collector"
+      responses:
+        201:
+          description: created
+          headers:
+            newUrl:
+              description: /collectors/<new-site-name>
+              type: string
+        400:
+          description: Invalid Collector input
+
+  /collectors/{collector-name}:
+    get:
+     parameters:
+         - $ref: '#/parameters/collector-name'
+     description: get collector by name
+     operationId: getCollector
+     responses:
+       200:
+         description: the fetched collector
+         schema:
+          title: getCollectorRequest
+          $ref: '#/definitions/Collector'
+    post:
+     description: updates collector
+     operationId: updateCollector
+     parameters:
+       - $ref: '#/parameters/collector-name'
+       - in: body
+         name: body
+         description: Collector object
+         required: true
+         schema:
+           title: updateCollectorRequest
+           $ref: "#/definitions/Collector"
+     responses:
+       200:
+         description: accepted
+       400:
+         description: Invalid Collector input
+    delete:
+     description: delete Collector by Name
+     operationId: deleteCollector
+     parameters:
+       - $ref: '#/parameters/collector-name'
+     responses:
+       200:
+         description: success
+       404:
+         description: collector not found
+  /collectors/{collector-name}/heartbeat:
+    get:
+     parameters:
+         - $ref: '#/parameters/collector-name'
+     description: heartbeat endpoint for a specific collector
+     operationId: heartbeatCollector
+     responses:
+       200:
+         description: heartbeat collector
+         schema:
+          title: heartBeatCollector
+          $ref: '#/definitions/Collector'
+  /healthz:
+    get:
+      description: get health of framework
+      operationId: getHealthz
+      responses:
+        200:
+          description: healthy framework
+        500:
+          description: not healthy framework
+  /liveness:
+    get:
+      description: get liveness of framework
+      operationId: getLiveness
+      responses:
+        200:
+          description: live of framework
+        500:
+          description: not live framework
+  /metrics:
+    get:
+      description: lets prometheus scrape the framework
+      operationId: getMetrics
+      responses:
+        200:
+          description: Good metrics
+  /edges/{edge-type}/filter/{field-name}/{field-value}:
+    get:
+      description: get edge with field name/value
+      operationId: getEdge
+      parameters:
+      - $ref: '#/parameters/edge-type'
+      - $ref: '#/parameters/field-name'
+      - $ref: '#/parameters/field-value'
+      responses:
+       200:
+         description: the fetched edge
+         schema:
+          title: getCollectorRequest
+          type: object
+       404:
+         description: the requested edge was not found
+
+
+  /edges/{edge-type}/names/{field-name}:
+    put:
+      description: endpoint for collectors to add services
+      operationId: upsertField
+      parameters:
+      - $ref: '#/parameters/edge-type'
+      - $ref: '#/parameters/field-name'
+      - in: body
+        name: body
+        description: Value object
+        required: true
+        schema:
+          title: addValueToEdge
+          $ref: "#/definitions/EdgeScore"
+      responses:
+        200:
+          description: Adding a field from a collector to an edge
+    delete:
+      description: endpoint to remove all fieldNames from all edges
+      operationId: removeAllFields
+      parameters:
+      - $ref: '#/parameters/edge-type'
+      - $ref: '#/parameters/field-name'
+      responses:
+        200:
+          description: Removed the field from the all edges
+
+  /edges/{edge-type}/key/{edge-key}/names/{field-name}:
+    delete:
+      description: endpoint to remove a value from an edge
+      operationId: removeField
+      parameters:
+      - $ref: '#/parameters/edge-type'
+      - $ref: '#/parameters/edge-key'
+      - $ref: '#/parameters/field-name'
+      responses:
+        200:
+          description: Removed the field from the edge
+  /query/{Collection}:
+    get:
+      description: query arango for edges and nodes
+      operationId: QueryArango
+      parameters:
+        - $ref: '#/parameters/Collection'
+      responses:
+        200:
+          description: Queried Objects
+          schema:
+            type: object
+definitions:
+  Collector:
+    type: object
+    properties:
+      _key:
+        type: string
+      Name:
+        type: string
+      Description:
+        type: string
+      Status:
+        type: string
+        enum:
+          - "Running"
+          - "Down"
+      EdgeType:
+        type: string
+      FieldName:
+        type: string
+      Timeout:
+        type: string
+      LastHeartbeat:
+        type: string
+  LinkEdge:
+    type: object
+    properties:
+      _key:
+        type: string
+      _from:
+        type: string
+      _to:
+        type: string
+      FromIP:
+        type: string
+      ToIP:
+        type: string
+      Netmask:
+        type: string
+      Label:
+        type: string
+      V6:
+        type: boolean
+  PrefixEdge:
+    type: object
+    properties:
+      _key:
+        type: string
+      _from:
+        type: string
+      _to:
+        type: string
+      NextHop:
+        type: string
+      InterfaceIP:
+        type: string
+      ASPath:
+        type: array
+        items:
+          type: string
+      Labels:
+        type: array
+        items:
+          type: string
+      BGPPolicy:
+        type: string
+  Prefix:
+    type: object
+    properties:
+      _key:
+        type: string
+      Prefix:
+        type: string
+      Length:
+        type: integer
+  Router:
+    type: object
+    properties:
+      _key:
+        type: string
+      _name:
+        type: string
+      RouterIP:
+        type: string
+      BGPID:
+        type: string
+      IsLocal:
+        type: boolean
+      ASN:
+        type: string
+  EdgeScore:
+    type: object
+    properties:
+      key:
+        type: string
+      from:
+        type: string
+      to:
+        type: string
+      value:
+        type: number

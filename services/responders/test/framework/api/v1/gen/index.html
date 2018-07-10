@@ -1,0 +1,607 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Mu Agent</title>
+    <style type="text/css">
+      body {
+	font-family: Trebuchet MS, sans-serif;
+	font-size: 15px;
+	color: #444;
+	margin-right: 24px;
+}
+
+h1	{
+	font-size: 25px;
+}
+h2	{
+	font-size: 20px;
+}
+h3	{
+	font-size: 16px;
+	font-weight: bold;
+}
+hr	{
+	height: 1px;
+	border: 0;
+	color: #ddd;
+	background-color: #ddd;
+}
+
+.app-desc {
+  clear: both;
+  margin-left: 20px;
+}
+.param-name {
+  width: 100%;
+}
+.license-info {
+  margin-left: 20px;
+}
+
+.license-url {
+  margin-left: 20px;
+}
+
+.model {
+  margin: 0 0 0px 20px;
+}
+
+.method {
+  margin-left: 20px;
+}
+
+.method-notes	{
+	margin: 10px 0 20px 0;
+	font-size: 90%;
+	color: #555;
+}
+
+pre {
+  padding: 10px;
+  margin-bottom: 2px;
+}
+
+.http-method {
+ text-transform: uppercase;
+}
+
+pre.get {
+  background-color: #0f6ab4;
+}
+
+pre.post {
+  background-color: #10a54a;
+}
+
+pre.put {
+  background-color: #c5862b;
+}
+
+pre.delete {
+  background-color: #a41e22;
+}
+
+.huge	{
+	color: #fff;
+}
+
+pre.example {
+  background-color: #f3f3f3;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+code {
+  white-space: pre;
+}
+
+.nickname {
+  font-weight: bold;
+}
+
+.method-path {
+  font-size: 1.5em;
+  background-color: #0f6ab4;
+}
+
+.up {
+  float:right;
+}
+
+.parameter {
+  width: 500px;
+}
+
+.param {
+  width: 500px;
+  padding: 10px 0 0 20px;
+  font-weight: bold;
+}
+
+.param-desc {
+  width: 700px;
+  padding: 0 0 0 20px;
+  color: #777;
+}
+
+.param-type {
+  font-style: italic;
+}
+
+.param-enum-header {
+width: 700px;
+padding: 0 0 0 60px;
+color: #777;
+font-weight: bold;
+}
+
+.param-enum {
+width: 700px;
+padding: 0 0 0 80px;
+color: #777;
+font-style: italic;
+}
+
+.field-label {
+  padding: 0;
+  margin: 0;
+  clear: both;
+}
+
+.field-items	{
+	padding: 0 0 15px 0;
+	margin-bottom: 15px;
+}
+
+.return-type {
+  clear: both;
+  padding-bottom: 10px;
+}
+
+.param-header {
+  font-weight: bold;
+}
+
+.method-tags {
+  text-align: right;
+}
+
+.method-tag {
+  background: none repeat scroll 0% 0% #24A600;
+  border-radius: 3px;
+  padding: 2px 10px;
+  margin: 2px;
+  color: #FFF;
+  display: inline-block;
+  text-decoration: none;
+}
+
+    </style>
+  </head>
+  <body>
+  <h1>Mu Agent</h1>
+    <div class="app-desc">Mu Agent API
+</div>
+    <div class="app-desc">More information: <a href="https://helloreverb.com">https://helloreverb.com</a></div>
+    <div class="app-desc">Contact Info: <a href="hello@helloreverb.com">hello@helloreverb.com</a></div>
+    <div class="app-desc">Version: 1.0</div>
+    <div class="app-desc">BasePath:/v1</div>
+    <div class="license-info">All rights reserved</div>
+    <div class="license-url">http://apache.org/licenses/LICENSE-2.0.html</div>
+  <h2>Access</h2>
+
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
+
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Default">Default</a></h4>
+  <ul>
+  <li><a href="#getAgentConfig"><code><span class="http-method">get</span> /agent/config</code></a></li>
+  <li><a href="#getAgentStatus"><code><span class="http-method">get</span> /agent/status</code></a></li>
+  <li><a href="#getFacts"><code><span class="http-method">get</span> /facts</code></a></li>
+  <li><a href="#getRunnerConfig"><code><span class="http-method">get</span> /runner/config</code></a></li>
+  <li><a href="#getRunnerStatus"><code><span class="http-method">get</span> /runner/status</code></a></li>
+  </ul>
+
+  <h1><a name="Default">Default</a></h1>
+  <div class="method"><a name="getAgentConfig"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /agent/config</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">getAgentConfig</span>)</div>
+    <div class="method-notes">Get the global config for this mu agent</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="heaader">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#AgentConfig">AgentConfig</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "agentAPI" : {
+    "url" : "aeiou"
+  },
+  "agentManager" : {
+    "heartbeatInterval" : "aeiou",
+    "ctrlAPIEndpoint" : "aeiou"
+  },
+  "agentRunner" : {
+    "enable_debug" : true,
+    "log_level" : "aeiou",
+    "datacenter" : "aeiou",
+    "clientConfig" : {
+      "servers" : [ "aeiou" ],
+      "no_host_uuid" : true,
+      "enabled" : true
+    },
+    "region" : "aeiou",
+    "serverConfig" : {
+      "bootstrap" : 123,
+      "enabled" : true
+    },
+    "advertise" : {
+      "key" : "{}"
+    },
+    "data_dir" : "aeiou"
+  }
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Current config of the agent
+        <a href="#AgentConfig">AgentConfig</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="getAgentStatus"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /agent/status</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">getAgentStatus</span>)</div>
+    <div class="method-notes">Get agent status</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="heaader">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#AgentStatus">AgentStatus</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "status" : "aeiou"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    The status of the agent
+        <a href="#AgentStatus">AgentStatus</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="getFacts"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /facts</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">getFacts</span>)</div>
+    <div class="method-notes">Get system facts for this agent</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="heaader">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Facts">Facts</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "mu.cisco.io/attributes/user" : "aeiou",
+  "mu.cisco.io/attributes/key" : "aeiou",
+  "mu.cisco.io/attributes/time" : "aeiou",
+  "mu.cisco.io/attributes/dist-version" : "aeiou",
+  "mu.cisco.io/attributes/selinux" : "{}",
+  "mu.cisco.io/attributes/arch" : "aeiou",
+  "mu.cisco.io/attributes/system" : "aeiou",
+  "mu.cisco.io/attributes/ip" : "aeiou",
+  "mu.cisco.io/attributes/default-interface" : "{}",
+  "mu.cisco.io/attributes/processor-count" : 123,
+  "mu.cisco.io/attributes/mac" : "aeiou",
+  "mu.cisco.io/attributes/interfaces" : [ "{}" ],
+  "mu.cisco.io/attributes/os" : "aeiou",
+  "mu.cisco.io/attributes/cidr" : "aeiou",
+  "mu.cisco.io/attributes/processor-cores" : 123,
+  "mu.cisco.io/attributes/memory-in-mb" : 123,
+  "mu.cisco.io/attributes/hostname" : "aeiou",
+  "mu.cisco.io/attributes/dist" : "aeiou"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Current map of known Facts info
+        <a href="#Facts">Facts</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="getRunnerConfig"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /runner/config</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">getRunnerConfig</span>)</div>
+    <div class="method-notes">Get the agent runner config</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="heaader">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#AgentRunner">AgentRunner</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "enable_debug" : true,
+  "log_level" : "aeiou",
+  "datacenter" : "aeiou",
+  "clientConfig" : {
+    "servers" : [ "aeiou" ],
+    "no_host_uuid" : true,
+    "enabled" : true
+  },
+  "region" : "aeiou",
+  "serverConfig" : {
+    "bootstrap" : 123,
+    "enabled" : true
+  },
+  "advertise" : {
+    "key" : "{}"
+  },
+  "data_dir" : "aeiou"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Current config of the runner
+        <a href="#AgentRunner">AgentRunner</a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="getRunnerStatus"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /runner/status</code></pre></div>
+    <div class="method-summary"> (<span class="nickname">getRunnerStatus</span>)</div>
+    <div class="method-notes">Get agent runner status</div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="heaader">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#RunnerStatus">RunnerStatus</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "status" : "aeiou"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    The status of the runner
+        <a href="#RunnerStatus">RunnerStatus</a>
+  </div> <!-- method -->
+  <hr/>
+
+  <div class="up"><a href="#__Models">Up</a></div>
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#AgentAPI"><code>AgentAPI</code></a></li>
+    <li><a href="#AgentConfig"><code>AgentConfig</code></a></li>
+    <li><a href="#AgentManager"><code>AgentManager</code></a></li>
+    <li><a href="#AgentRunner"><code>AgentRunner</code></a></li>
+    <li><a href="#AgentStatus"><code>AgentStatus</code></a></li>
+    <li><a href="#Facts"><code>Facts</code></a></li>
+    <li><a href="#NomadClientConfig"><code>NomadClientConfig</code></a></li>
+    <li><a href="#NomadServerConfig"><code>NomadServerConfig</code></a></li>
+    <li><a href="#RunnerStatus"><code>RunnerStatus</code></a></li>
+  </ol>
+
+  <div class="model">
+    <h3 class="field-label"><a name="AgentAPI">AgentAPI - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">url (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3 class="field-label"><a name="AgentConfig">AgentConfig - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">agentAPI (optional)</div><div class="param-desc"><span class="param-type"><a href="#AgentAPI">AgentAPI</a></span>  </div>
+<div class="param">agentManager (optional)</div><div class="param-desc"><span class="param-type"><a href="#AgentManager">AgentManager</a></span>  </div>
+<div class="param">agentRunner (optional)</div><div class="param-desc"><span class="param-type"><a href="#AgentRunner">AgentRunner</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3 class="field-label"><a name="AgentManager">AgentManager - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">heartbeatInterval (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">ctrlAPIEndpoint (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3 class="field-label"><a name="AgentRunner">AgentRunner - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">datacenter (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">region (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">log_level (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">data_dir (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">enable_debug (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">advertise (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">map[String, Object]</a></span>  </div>
+<div class="param">clientConfig (optional)</div><div class="param-desc"><span class="param-type"><a href="#NomadClientConfig">NomadClientConfig</a></span>  </div>
+<div class="param">serverConfig (optional)</div><div class="param-desc"><span class="param-type"><a href="#NomadServerConfig">NomadServerConfig</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3 class="field-label"><a name="AgentStatus">AgentStatus - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">registering</div><div class="param-enum">registered</div><div class="param-enum">assigned</div><div class="param-enum">factered</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3 class="field-label"><a name="Facts">Facts - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">mu.cisco.io/attributes/arch (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/ip (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/user (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/key (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/cidr (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/mac (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/dist (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/dist-version (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/hostname (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/default-interface (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/interfaces (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">array[Object]</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/memory-in-mb (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/os (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/processor-cores (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/processor-count (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/selinux (optional)</div><div class="param-desc"><span class="param-type"><a href="#object">Object</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/system (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">mu.cisco.io/attributes/time (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3 class="field-label"><a name="NomadClientConfig">NomadClientConfig - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">enabled (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">servers (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">array[String]</a></span>  </div>
+<div class="param">no_host_uuid (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3 class="field-label"><a name="NomadServerConfig">NomadServerConfig - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">enabled (optional)</div><div class="param-desc"><span class="param-type"><a href="#boolean">Boolean</a></span>  </div>
+<div class="param">bootstrap (optional)</div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3 class="field-label"><a name="RunnerStatus">RunnerStatus - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">ready</div><div class="param-enum">down</div><div class="param-enum">initializing</div>
+    </div>  <!-- field-items -->
+  </div>
+  </body>
+</html>
