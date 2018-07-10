@@ -1,5 +1,7 @@
 #!/bin/sh
 
+### Deploying Voltron ###
+
 ### OpenShift login
 oc login https://localhost:8443 -u admin -p admin -n voltron
 
