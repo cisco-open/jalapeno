@@ -1,4 +1,4 @@
-"""Voltron client."""
+"""Voltron client"""
 #!/usr/bin/env python
 import os
 import logging
