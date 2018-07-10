@@ -1,5 +1,6 @@
 #!/bin/sh
 
-### Destroying Voltron
+### Destroying Voltron ###
+
 sudo make clean
 sh infra/destroy_infrastructure.sh
