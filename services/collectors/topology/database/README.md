@@ -1,3 +1,5 @@
+# topology/database
+
 This database directory contains the interfaces and structure definitions for each of the ArangoDB collections.
 
 The included collections are:
@@ -9,8 +11,10 @@ The included collections are:
 * Link-Edges - link_edge.go
 * Prefix-Edges - prefix_edge.go
 
-There are also Arango connection and document-creation helper files: collector.go, database.go, helper.go, object.go
+There are also ArangoDB connection and document-creation helper files: collector.go, database.go, helper.go, object.go
 
+#
+### Creating / Modifying Collections
 To add a new collection:
 - modify arango.go
     - extend the NewArango function, ensuring the collection as either a vertex or edge collection
