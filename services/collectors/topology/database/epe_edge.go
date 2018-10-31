@@ -5,27 +5,26 @@ import (
 	"strings"
 )
 
-const PrefixEdgeName = "PrefixEdges"
+const EPEEdgeName = "EPEEdges"
 
-type PrefixEdge struct {
+type EPEEdge struct {
 	From        string   `json:"_from,omitempty"`
 	To          string   `json:"_to,omitempty"`
 	Key         string   `json:"_key,omitempty"`
-	NextHop     string   `json:"NextHop,omitempty"`
-	InterfaceIP string   `json:"InterfaceIP,omitempty"`
 	ASPath      []string `json:"ASPath,omitempty"`
-	Labels      []string `json:"Labels,omitempty"`
-	BGPPolicy   string   `json:"BGPPolicy,omitempty"`
+        EgressIntIP string   `json:"InterfaceIP,omitempty"`
+        SRPrefixSID string   `json:"SRPrefixSID,omitempty"`
+	EPELabel    string `json:"EPELabel,omitempty"`
 }
 
-func (a PrefixEdge) GetKey() (string, error) {
+func (a EPEEdge) GetKey() (string, error) {
 	if a.Key == "" {
 		return a.makeKey()
 	}
 	return a.Key, nil
 }
 
-func (a *PrefixEdge) SetKey() error {
+func (a *EPEEdge) SetKey() error {
 	k, err := a.makeKey()
 	if err != nil {
 		return err
@@ -34,21 +33,21 @@ func (a *PrefixEdge) SetKey() error {
 	return nil
 }
 
-func (a *PrefixEdge) makeKey() (string, error) {
+func (a *EPEEdge) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if a.From != "" && a.To != "" {
-		ret = fmt.Sprintf("%s_%s", strings.Replace(a.From, "/", "_", -1), strings.Replace(a.To, "/", "_", -1))
+		ret = fmt.Sprintf("%s_%s_%s", strings.Replace(a.From, "/", "_", -1), a.EgressIntIP, strings.Replace(a.To, "/", "_", -1))
 		err = nil
 	}
 	return ret, err
 }
 
-func (a PrefixEdge) GetType() string {
-	return PrefixEdgeName
+func (a EPEEdge) GetType() string {
+	return EPEEdgeName
 }
 
-func (a *PrefixEdge) SetEdge(to DBObject, from DBObject) error {
+func (a *EPEEdge) SetEdge(to DBObject, from DBObject) error {
 	var err error
 	a.To, err = GetID(to)
 	if err != nil {

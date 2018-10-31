@@ -2,27 +2,28 @@ package database
 
 import "fmt"
 
-const RouterName = "Routers"
+const InternalRouterName = "InternalRouters"
 
-type Router struct {
+type InternalRouter struct {
 	Key          string `json:"_key,omitempty"`
 	Name         string `json:"Name,omitempty"`
-	RouterIP     string `json:"RouterIP,omitempty"`
 	BGPID        string `json:"BGPID,omitempty"`
 	ASN          string `json:"ASN,omitempty"`
+        RouterIP     string `json:"RouterIP,omitempty"`
         SRGB         string `json:"SRGB,omitempty"`
         NodeSIDIndex string `json:"NodeSIDIndex,omitempty"`
         SRNodeSID    string `json:"SRNodeSID,omitempty"`
+	IGPID        string `json:"IGPID,omitempty"`
 }
 
-func (r Router) GetKey() (string, error) {
+func (r InternalRouter) GetKey() (string, error) {
 	if r.Key == "" {
 		return r.makeKey()
 	}
 	return r.Key, nil
 }
 
-func (r *Router) SetKey() error {
+func (r *InternalRouter) SetKey() error {
 	k, err := r.makeKey()
 	if err != nil {
 		return err
@@ -31,17 +32,16 @@ func (r *Router) SetKey() error {
 	return nil
 }
 
-func (r *Router) makeKey() (string, error) {
+func (r *InternalRouter) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if r.RouterIP != "" {
 		ret = fmt.Sprintf("%s", r.RouterIP)
-//		ret = fmt.Sprintf("Router/%s", r.RouterIP)
 		err = nil
 	}
 	return ret, err
 }
 
-func (r Router) GetType() string {
-	return RouterName
+func (r InternalRouter) GetType() string {
+	return InternalRouterName
 }

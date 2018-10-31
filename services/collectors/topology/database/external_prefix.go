@@ -2,17 +2,15 @@ package database
 
 import "fmt"
 
-const ExternalPrefixName = "ExternalPrefix"
+const ExternalPrefixName = "ExternalPrefixes"
 
 type ExternalPrefix struct {
-	Key      string `json:"_key,omitempty"`
-	Name     string `json:"Name,omitempty"`
-	RouterIP string `json:"RouterIP,omitempty"`
-	BGPID    string `json:"BGPID,omitempty"`
-	IsLocal  bool   `json:"IsLocal"`
-	ASN      string `json:"ASN,omitempty"`
-        SRGB     string `json:"SRGB,omitempty"`
-        SRPrefixSID string `json:"SRPrefixSID,omitempty"`
+	Key         string `json:"_key,omitempty"`
+        Prefix      string `json:"Prefix,omitempty"`
+        Length      int    `json:"Length,omitempty"`
+	Name        string `json:"Name,omitempty"`
+	ASN         string `json:"ASN,omitempty"`
+        ASPathCount string `json:"ASPathCount,omitempty"`
 }
 
 func (r ExternalPrefix) GetKey() (string, error) {
@@ -34,8 +32,8 @@ func (r *ExternalPrefix) SetKey() error {
 func (r *ExternalPrefix) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
-	if r.BGPID != "" {
-		ret = fmt.Sprintf("%s", r.BGPID)
+	if r.Prefix != "" {
+		ret = fmt.Sprintf("%s", r.Prefix)
 		err = nil
 	}
 	return ret, err
