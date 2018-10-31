@@ -3,9 +3,9 @@
 EXECUTABLE ?= voltron
 BINARY ?= bin/$(EXECUTABLE)
 PACKAGES = $(shell go list ./... | grep -E -v '/bin|/vendor|/docs|/cmd|/log|/api/v1/client|/api/v1/gen|/arango/example')
-REPO=dockerhub.cisco.com/gspie-docker-local
+REPO=ievoltron
 IMAGE=topology
-TAG=1.9.5
+TAG=1.0
 PROXY=http://proxy.esl.cisco.com:8080
 
 all: build
