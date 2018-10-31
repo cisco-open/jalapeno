@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: topology
-        image: dockerhub.cisco.com/gspie-docker-local/topology:1.9.5@sha256:011def993d23ce1894e00e78955e90c94f259528bb3ed91dd5fca7932e21354a
+        image: ievoltron/topology:1.0@sha256:e1385a6ec546b3f53448b84e46e76d5f18defc4ba7abb97810f9ef8a2cdc843a
         args:
           - topology
           - --arango-url
