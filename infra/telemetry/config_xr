@@ -32,10 +32,9 @@ telemetry model-driven
   sensor-path Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface
  !
  sensor-group topology
-  sensor-path openconfig-bgp:bgp/global/state/router-id
-  sensor-path openconfig-interfaces:interfaces/interface/subinterfaces/subinterface/ipv4/addresses/address/ip
   sensor-path openconfig-bgp:bgp/neighbors
-  sensor-path openconfig-interfaces:interfaces/interface/subinterfaces/subinterface/ipv4/neighbors/neighbor/ip
+  sensor-path openconfig-interfaces:interfaces
+  sensor-path openconfig-interfaces:interfaces/interface/subinterfaces/subinterface  
  !
  subscription base_metrics
   sensor-group-id fib sample-interval 300000
