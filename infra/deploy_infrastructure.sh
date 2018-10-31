@@ -14,10 +14,6 @@ echo "Deploying Grafana"
 oc apply -f ${PWD}/${BASEDIR}/grafana/.
 
 echo "Deploying OpenBMPD"
-### Assuming OpenBMP is configured on devices
-### python ${PWD}/${BASEDIR}/openbmpd/configure_openbmp.py
-### OpenBMP is running bare-metal, not containerized to avoid NATs etc.
-### oc apply -f ${PWD}/${BASEDIR}/openbmpd/.
 sudo python ${PWD}/${BASEDIR}/openbmpd/deploy_openbmp.py
 
 echo "Deploying Telemetry"
