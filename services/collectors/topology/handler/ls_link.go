@@ -2,68 +2,204 @@ package handler
 
 import (
 	"strings"
-
+        "fmt"
 	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/log"
 	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/openbmp"
 )
 
 func ls_link(a *ArangoHandler, m *openbmp.Message) {
-	if strings.Contains(m.String(), "0.2.0.2") { // Bruce is working on removing this.
-		return
-	}
-	if m.Action() != openbmp.ActionAdd {
-		return
-	}
+	// Collecting necessary fields from message
+        src_router_id    :=  m.GetStr("router_id")
+        src_interface_ip :=  m.GetStr("intf_ip")
+	src_asn          :=  m.GetStr("local_node_asn")
+        dst_router_id    :=  m.GetStr("remote_router_id")
+        dst_interface_ip :=  m.GetStr("nei_ip")
+	dst_asn 	 :=  m.GetStr("remote_node_asn")
+        protocol         :=  m.GetStr("protocol")
+        link_label       :=  m.GetStr("ls_adjacency_sid")
+	epe_label        :=  m.GetStr("peer_node_sid")
 
-	lbl := m.GetOneOf("ls_adjacency_sid", "peer_node_sid")
-	lbls := strings.Split(lbl, " ")
-	lbl = lbls[len(lbls)-1]
-	inserted := false
+	// End parsing if core fields are missing
+        if (link_label == "") && (epe_label == "") {
+                fmt.Println("No ls_adjacency_sid or peer_node_sid available, skipping all ls_link parsing for this message")
+                return
+        }
 
-        // Parsing a Router from current LSLink OpenBMP message
-	router_document := &database.Router{
-		BGPID:    m.GetOneOfIP("router_id", "peer_ip"),
-		ASN:      m.GetOneOf("peer_asn", "local_node_asn"),
-		RouterIP: m.GetStr("router_ip"),
-		IsLocal:  false,
+        // Creating and upserting ls_node documents
+	// internal-router to internal-router
+	if (link_label != "") {
+		link_label_message := strings.Split(link_label, " ")
+        	adjacency_sid := link_label_message[len(link_label_message)-1]
+		parse_ls_link_internal_link_edge(a, src_router_id, src_interface_ip, dst_router_id, dst_interface_ip, protocol, adjacency_sid)		
+		parse_ls_link_internal_router_interface(a, src_router_id, src_interface_ip, src_asn, adjacency_sid)
+		parse_ls_link_internal_router_interface(a, dst_router_id, dst_interface_ip, dst_asn, adjacency_sid)
+	} 
+	// internal-router to internal-bgp-only-router or to external-router
+	if (epe_label != "") {
+		epe_label_message := strings.Split(epe_label, " ")
+	        epe_sid := epe_label_message[len(epe_label_message)-1]
+	        src_has_internal_asn := check_asn_location(src_asn)
+	        dst_has_internal_asn := check_asn_location(dst_asn)
+		// internal-router to internal-bgp-only-router
+		if((src_asn == a.asn) || (src_has_internal_asn)) && ((dst_asn == a.asn) || (dst_has_internal_asn)) {
+			parse_ls_link_internal_link_edge(a, src_router_id, src_interface_ip, dst_router_id, dst_interface_ip, protocol, epe_sid)
+			parse_ls_link_internal_router_interface(a, src_router_id, src_interface_ip, src_asn, epe_sid)
+			parse_ls_link_internal_router_interface(a, dst_router_id, dst_interface_ip, dst_asn, epe_sid)
+		} else { 	// internal-router to external-router
+			parse_ls_link_external_link_edge(a, src_router_id, src_interface_ip, dst_router_id, dst_interface_ip, protocol, epe_sid)
+			if((src_asn == a.asn) || src_has_internal_asn) {
+				parse_ls_link_peering_router_interface(a, src_router_id, src_interface_ip, src_asn, epe_sid)
+				parse_ls_link_external_router_interface(a, dst_router_id, dst_interface_ip, dst_asn)		
+				parse_ls_link_external_prefix_edge(a, dst_router_id, dst_interface_ip, dst_asn)		
+			} else {
+				parse_ls_link_peering_router_interface(a, dst_router_id, dst_interface_ip, dst_asn, epe_sid)
+				parse_ls_link_external_router_interface(a, src_router_id, src_interface_ip, src_asn)
+				parse_ls_link_external_prefix_edge(a, src_router_id, src_interface_ip, src_asn)		
+			}
+		}
 	}
-	if strings.Contains(router_document.BGPID, ":") {
-		//TODO... why did we even get this?
-		//return
-	}
-	if router_document.ASN == a.asn {
-		router_document.IsLocal = true
-                log.Infof("Router has a local ASN!")
-	}
-	router_document.SetKey()
-	if a.db.Insert(router_document) == nil {
-		inserted = true
-	}
+}
 
-	// TODO: Do I try to add this guy too?
-	router_document2 := &database.Router{
-		BGPID: m.GetOneOfIP("remote_router_id"),
-		ASN:   m.GetStr("remote_node_asn"),
-	}
-	router_document2.SetKey()
 
-        // Parsing a LinkEdge from current LSLink OpenBMP message
-	link_edge_document := &database.LinkEdge{
-		ToIP:   m.GetOneOfIP("nei_ip", "peer_ip"),
-		FromIP: m.GetOneOfIP("intf_ip", "router_ip"),
-		Label:  lbl,
-	}
-	if link_edge_document.Label == "" && (strings.Contains(link_edge_document.ToIP, ":") || strings.Contains(link_edge_document.FromIP, ":")) {
-		// TODO: IF ipv6 with no label... don't add. Is this what we want??
-		//return
-	}
-	link_edge_document.SetEdge(router_document2, router_document)
-	link_edge_document.SetKey()
-	if inserted || lbl != "" {
-		a.db.Upsert(link_edge_document)
+// Parses an Internal Link Edge from the current LS-Link OpenBMP message
+// Upserts the created Internal Link Edge document into the InternalLinkEdges collection
+func parse_ls_link_internal_link_edge(a *ArangoHandler, src_router_id string, src_interface_ip string, dst_router_id string, 
+                                      dst_interface_ip string, protocol string, label string) {
+        fmt.Println("Parsing ls_link - document: internal_link_edge_document")
+        fmt.Printf("Parsing current ls_link message's internal_link_edge document: From Router: %q through Interface: %q and Label: %q " +
+                   "to Router: %q through Interface: %q\n", src_router_id, src_interface_ip, label, dst_router_id, dst_interface_ip)
+	a.db.CreateInternalLinkEdge(src_router_id, dst_router_id, src_interface_ip, dst_interface_ip, protocol, label) 
+
+        internal_link_edge_document := &database.InternalLinkEdge{
+	        SrcIP:          src_router_id,
+		DstIP:	        dst_router_id,
+		SrcInterfaceIP: src_interface_ip,
+		DstInterfaceIP: dst_interface_ip,
+		Protocol:  	protocol,
+		Label:		label,
+        }
+	internal_link_edge_document.SetKey()
+	if err := a.db.Insert(internal_link_edge_document); err != nil {
+                fmt.Println("While upserting the current ls_link message's internal_link_edge document, encountered an error:", err)
+        } else {
+                fmt.Printf("Successfully added current ls_link message's internal_link_edge document: From Router: %q through Interface: %q and Label: %q " +
+                            "to Router: %q through Interface: %q\n", src_router_id, src_interface_ip, label, dst_router_id, dst_interface_ip)
+        }
+}
+
+
+// Parses an External Link Edge from the current LS-Link OpenBMP message
+// Upserts the created External Link Edge document into the ExternalLinkEdges collection
+func parse_ls_link_external_link_edge(a *ArangoHandler, src_router_id string, src_interface_ip string, dst_router_id string, 
+                                      dst_interface_ip string, protocol string, epe_label string) {
+        fmt.Println("Parsing ls_link - document: external_link_edge_document")
+        fmt.Printf("Parsing current ls_link message's external_link_edge document: From Router: %q through Interface: %q and Label: %q " +
+                   "to Router: %q through Interface: %q\n", src_router_id, src_interface_ip, epe_label, dst_router_id, dst_interface_ip)
+
+	key := src_router_id + "_" + dst_router_id
+	external_link_edge_exists := a.db.CheckExternalLinkEdgeExists(key)
+	if external_link_edge_exists {
+		a.db.UpdateExternalLinkEdge(src_router_id, dst_router_id, src_interface_ip, dst_interface_ip, protocol, epe_label) 
 	} else {
-		a.db.Insert(link_edge_document)
+		a.db.CreateExternalLinkEdge(src_router_id, dst_router_id, src_interface_ip, dst_interface_ip, protocol, epe_label) 
 	}
-	log.Infof("Added Link: %v_%v(%v) [%s] -->  %v_%v(%v) [%s]: Labels: %v", router_document.BGPID, router_document.ASN, router_document.RouterIP, link_edge_document.FromIP, router_document2.BGPID, router_document2.ASN, router_document2.RouterIP, link_edge_document.ToIP, lbl)
+
+        external_link_edge_document := &database.ExternalLinkEdge{
+	        SrcIP:          src_router_id,
+		DstIP:	        dst_router_id,
+		SrcInterfaceIP: src_interface_ip,
+		DstInterfaceIP: dst_interface_ip,
+		Protocol:  	protocol,
+		Label:		epe_label,
+        }
+	external_link_edge_document.SetKey()
+	if err := a.db.Insert(external_link_edge_document); err != nil {
+                fmt.Println("While upserting the current ls_link message's external_link_edge document, encountered an error:", err)
+        } else {
+                fmt.Printf("Successfully added current ls_link message's external_link_edge document: From Router: %q through Interface: %q and Label: %q " +
+                           "to Router: %q through Interface: %q\n", src_router_id, src_interface_ip, epe_label, dst_router_id, dst_interface_ip)
+        }
+}
+
+
+
+// Parses an Internal Router Interface from the current LSLink OpenBMP message
+// Upserts the created Internal Router Interface document into the InternalRouterInterfaces collection
+func parse_ls_link_internal_router_interface(a *ArangoHandler, router_ip string, router_intf_ip string, router_asn string, router_intf_adjacency_sid string) {
+        fmt.Println("Parsing ls_link - document: internal router interface document")
+	bgp_id := router_ip
+        internal_router_interface_document := &database.InternalRouterInterface {
+                BGPID:             bgp_id,
+                RouterIP:          router_ip,
+                RouterInterfaceIP: router_intf_ip,
+                RouterASN:         router_asn,
+		AdjacencyLabel:    router_intf_adjacency_sid,
+        }
+        if err := a.db.Upsert(internal_router_interface_document); err != nil {
+        	fmt.Println("While upserting the current ls-link message's internal router interface document, encountered an error")
+        } else {
+               	fmt.Printf("Successfully added current ls-link message's internal router interface document -- Internal Router Interface: %q with ASN: %q and Interface: %q and AdjacencyLabel: %q\n", router_ip, router_asn, router_intf_ip, router_intf_adjacency_sid)
+        }
+}
+
+// Parses a Peering Router Interface from the current LSLink OpenBMP message
+// Upserts the created Peering Router Interface document into the PeeringRouterInterfaces collection
+func parse_ls_link_peering_router_interface(a *ArangoHandler, router_ip string, router_intf_ip string, router_asn string, router_intf_epe_sid string) {
+        fmt.Println("Parsing ls_link - document: peering router interface document")
+	bgp_id := router_ip
+        peering_router_interface_document := &database.PeeringRouterInterface {
+                BGPID:             bgp_id,
+                RouterIP:          router_ip,
+                RouterInterfaceIP: router_intf_ip,
+                RouterASN:         router_asn,
+		EPELabel:          router_intf_epe_sid,
+        }
+        if err := a.db.Upsert(peering_router_interface_document); err != nil {
+        	fmt.Println("While upserting the current ls-link message's peering router interface document, encountered an error")
+        } else {
+               	fmt.Printf("Successfully added current ls-link message's peering router interface document -- Peering Router Interface: %q with ASN: %q and Interface: %q and AdjacencyLabel: %q\n", router_ip, router_asn, router_intf_ip, router_intf_epe_sid)
+        }
+}
+
+// Parses an External Router Interface from the current LSLink OpenBMP message
+// Upserts the created External Router Interface document into the ExternalRouterInterfaces collection
+func parse_ls_link_external_router_interface(a *ArangoHandler, router_ip string, router_intf_ip string, router_asn string) {
+        fmt.Println("Parsing ls_link - document: external router interface document")
+	bgp_id := router_ip
+        external_router_interface_document := &database.ExternalRouterInterface {
+                BGPID:             bgp_id,
+                RouterIP:          router_ip,
+                RouterInterfaceIP: router_intf_ip,
+                RouterASN:         router_asn,
+        }
+        if err := a.db.Upsert(external_router_interface_document); err != nil {
+        	fmt.Println("While upserting the current ls-link message's external router interface document, encountered an error")
+        } else {
+               	fmt.Printf("Successfully added current ls-link message's external router interface document -- External Router Interface: %q with ASN: %q and Interface: %q\n", router_ip, router_asn, router_intf_ip)
+        }
+}
+
+
+// Parses an External Prefix Edge from the current LSLink OpenBMP message
+// Upserts the created External Prefix Edge document into the ExternalPrefixEdges collection
+func parse_ls_link_external_prefix_edge(a *ArangoHandler, router_ip string, router_intf_ip string, router_asn string) {
+        fmt.Println("Parsing ls_link - document: external_prefix_edge_document")
+
+	// In this function, we are not creating a new ExternalPrefixEdge. 
+	// There's a chance that an ExternalPrefixEdge with the source ExternalRouter already exists in the 
+        // ExternalPrefixEdges collection. This is due to parsing of unicast-prefix messages. However, that 
+        // ExternalPrefixEdge document will have only the source ExternalRouter's ASN and InterfaceIP, not 
+        // the router's IP itself. This function will get all ExternalPrefixEdges with "SrcInftIP" == router_intf_ip
+        // and "SrcRouterASN" == router_asn. It will then update "SrcRouterIP" and "_from" with router_ip parsed here.
+
+	// If no ExternalPrefixEdges exist with the currently parsed router_intf_ip and router_asn -- that's okay. Previously,
+	// an ExternalPrefixEdge document would have been made with just the source ExternalRouter aspects parsed
+	// in this ls-link message: specifically router_ip, router_intf_ip, and router_asn. However -- the first issue is that
+	// ExternalPrefixEdge keys require the prefix destination, and keys cannot be updated, so creating an ExternalPrefixEdge
+	// record without a destination prefix would lead to a broken data model. Secondly, the concern would be that the association
+	// between router_ip and router_intf_ip would be lost -- however, that relationship is recorded in ExternalRouterInterfaces
+	// parsed in this script itself earlier on. That relationship will be checked for when unicast-prefix messages arrive
+	// with the prefix destination and other relevant data, and thus we will not lose that association. 
+        a.db.CreateExternalPrefixEdgeSource(router_ip, router_asn, router_intf_ip)
+
 }

@@ -3,65 +3,107 @@ package handler
 import (
 	"fmt"
 	"strings"
-        "strconv"
-
 	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/database"
 	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/openbmp"
 )
 
 func ls_prefix(a *ArangoHandler, m *openbmp.Message) {
-        ls_prefix_sid := m.GetStr("ls_prefix_sid")
-        prefix := m.GetStr("prefix")
+        if m.Action() != "add" {
+                fmt.Println("Action was not 'add' -- not parsing ls_prefix message")
+                return
+        }
 
+	// Collecting necessary fields from message
+        prefix         := m.GetStr("prefix")
+        ls_prefix_sid  := m.GetStr("ls_prefix_sid")
+	router_ip      := prefix
+	bgp_id	       := prefix
+
+	if prefix == "" {
+		fmt.Println("No Prefix for current ls_prefix message -- skipping")
+	}
         if ls_prefix_sid == "" {
-                fmt.Println("No SRNodeSID for the current ls_prefix message")
+                fmt.Println("No SIDIndex for the current ls_prefix message -- skipping")
                 return
         }
 
-        // an assumption is made here that the SR-node-SID index is always the last value in the ls_prefix_sid output (field 34) from ls_prefix OpenBMP messages 
-        // for example, in "(ls_prefix_sid): SPF 1001" and "(ls_prefix_sid): N SPF 1", the index is the last value (1001 and 1 respectively).
-        sr_node_sid_split := strings.Split(ls_prefix_sid, " ")
-        sr_node_sid_index := sr_node_sid_split[len(sr_node_sid_split)-1]
-        
-        // this is all data manipulation
-        // for example, to go from an "ls_prefix_sid" of "N SPF 1", to a "sr_node_sid" of "16001" (assuming the beginning label is 16000)
-        srgb := a.db.GetSRBeginningLabel(prefix)
-        // fmt.Println("We got sr_beginning_label:", srgb)
-        if srgb == "" {
-                fmt.Println("No SRGB for the current ls_prefix message")
-                return
-        }
-        srgb_split := strings.Split(srgb, ", ")
-        // fmt.Println("We got SRGB for the current ls_prefix message:", srgb_split)
-        sr_beginning_label := srgb_split[0]
-        // fmt.Println("We got SRGB Beginning Label:", sr_beginning_label)
-        sr_beginning_label_val, _ := strconv.ParseInt(sr_beginning_label, 10, 0)
-        sr_node_sid_index_val, _ := strconv.ParseInt(sr_node_sid_index, 10, 0)
-        sr_node_sid_val := sr_beginning_label_val + sr_node_sid_index_val
-        sr_node_sid := strconv.Itoa(int(sr_node_sid_val))
-        // fmt.Println("Parsed SRNodeSID:", sr_node_sid)
+	node_sid_index := parse_sid_index(ls_prefix_sid)
+	prefix_sid_index := parse_sid_index(ls_prefix_sid)
 
-        // Parsing a Router from current LSPrefix OpenBMP message
+	// Collecting potentially existing SR initial label from previously upserted documents -- this may be empty
+	sr_beginning_label := a.db.GetSRBeginningLabel(bgp_id)
+	sr_node_sid := ""
+	sr_prefix_sid := ""
+	if(sr_beginning_label != 0) {
+		sr_node_sid = calculate_sid(sr_beginning_label, node_sid_index)
+		sr_prefix_sid = calculate_sid(sr_beginning_label, prefix_sid_index)
+	}
+
+        // Creating and upserting peer documents
+        parse_ls_prefix_router(a, bgp_id, router_ip, node_sid_index, sr_node_sid)
+        parse_ls_prefix_internal_router(a, bgp_id, router_ip, node_sid_index, sr_node_sid)
+        parse_ls_prefix_internal_transport_prefix(a, bgp_id, router_ip, prefix_sid_index, sr_prefix_sid)
+}
+
+
+// Parses sid index from ls_prefix_sid field
+func parse_sid_index(ls_prefix_sid string) string {
+        sid_split := strings.Split(ls_prefix_sid, " ")
+        sid_index := sid_split[len(sid_split)-1]
+	return sid_index
+}
+
+
+// Parses a Router from the current LS-Prefix OpenBMP message
+// Upserts the created Router document into the Routers collection
+func parse_ls_prefix_router(a *ArangoHandler, bgp_id string, router_ip string, node_sid_index string, sr_node_sid string) {
+        fmt.Println("Parsing peer - document: router_document")
         router_document := &database.Router{
-                BGPID: prefix,
-                SRNodeSID: sr_node_sid,
+                BGPID:        bgp_id,
+                RouterIP:     router_ip,
+		NodeSIDIndex: node_sid_index,
+                SRNodeSID:    sr_node_sid,
         }
-        if err := a.db.Upsert(router_document); err != nil {
-                fmt.Println("Something went wrong with ls_prefix for a router:", err)
-                return
+	if err := a.db.Upsert(router_document); err != nil {
+                fmt.Println("While upserting the current peer message's router document, encountered an error:", err)
+        } else {
+                fmt.Printf("Successfully added current peer message's router document: Router: %q with NodeSIDIndex: %q and SRNodeSID: %q\n", router_ip, node_sid_index, sr_node_sid)
         }
-        fmt.Println("Successfully added Router:", prefix, "with SRNodeSID:", sr_node_sid)
+}
 
-        sr_prefix_sid := sr_node_sid
-        // Parsing an Internal Transport Prefix from current LSPrefix OpenBMP message
+
+// Parses a Internal Router from the current LS-Prefix OpenBMP message
+// Upserts the created Internal Router document into the InternalRouters collection
+func parse_ls_prefix_internal_router(a *ArangoHandler, bgp_id string, router_ip string, node_sid_index string, sr_node_sid string) {
+        fmt.Println("Parsing ls_prefix - document 2: internal_router_document")
+        internal_router_document := &database.InternalRouter{
+                BGPID:        bgp_id,
+                RouterIP:     router_ip,
+		NodeSIDIndex: node_sid_index,
+                SRNodeSID:    sr_node_sid,
+        }
+        if err := a.db.Upsert(internal_router_document); err != nil {
+                fmt.Println("While upserting the current ls_prefix message's internal router document, encountered an error:", err)
+        } else {
+                fmt.Printf("Successfully added current ls_prefix message's internal router document -- Internal Router: %q with NodeSIDIndex: %q and SRNodeSID: %q\n", router_ip, node_sid_index, sr_node_sid)
+        }
+}
+
+
+// Parses a Internal Transport Prefix from the current LS-Prefix OpenBMP message
+// Upserts the created Internal Transport Prefix document into the InternalTransportPrefixes collection
+func parse_ls_prefix_internal_transport_prefix(a *ArangoHandler, bgp_id string, router_ip string, prefix_sid_index string, sr_prefix_sid string) {
+        fmt.Println("Parsing ls_prefix - document 3: internal_transport_prefix_document")
         internal_transport_prefix_document := &database.InternalTransportPrefix{
-                BGPID: prefix,
-                SRPrefixSID: sr_prefix_sid,
+                BGPID:          bgp_id,
+                RouterIP:       router_ip,
+		PrefixSIDIndex: prefix_sid_index,
+                SRPrefixSID:    sr_prefix_sid,
         }
         if err := a.db.Upsert(internal_transport_prefix_document); err != nil {
-                fmt.Println("Something went wrong with ls_prefix for an internal transport prefix:", err)
-                return
-        }
-        fmt.Println("Successfully added Internal Transport Prefix:", prefix, "with SRNodeSID:", sr_node_sid)
+                fmt.Println("While upserting the current ls_prefix message's internal transport prefix document, encountered an error:", err)
+        } else {
+	        fmt.Printf("Successfully added current ls_prefix message's internal transport prefix document -- Internal Transport Prefix: %q with PrefixSIDIndex: %q and SRPrefixSID: %q\n", bgp_id, prefix_sid_index, sr_prefix_sid)
+	}	
 }
 
