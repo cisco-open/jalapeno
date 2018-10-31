@@ -7,10 +7,10 @@ import configure_telemetry, enable_guestshell, manage_pipeline
 
 def main():
     print("Configuring telemetry on devices")
-    #configure_telemetry.main()
+    configure_telemetry.main()
 
     print("Enabling guest shell on devices")
-    #enable_guestshell.main()
+    enable_guestshell.main()
 
     print("Provisioning Pipeline on devices")
     manage_pipeline.main("provision")
