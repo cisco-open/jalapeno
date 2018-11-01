@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: epe-edges-collector
+  namespace: voltron
+  labels:
+    app: epe-edges-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: epe-edges-collector
+  template:
+    metadata:
+      labels:
+        app: epe-edges-collector
+    spec:
+      containers:
+      - name: epe-edges
+        image: ievoltron/epe-edges:1.1@sha256:40ab967a793334ccafdc4105c2ee4e1b670da6cbf21d6af1b58f95ab693ba24f
