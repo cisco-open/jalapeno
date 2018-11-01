@@ -22,4 +22,5 @@ class InfluxConn():
     def connect_influx(self, host, port, user, password, dbname):
         influx_client = InfluxDBClient(host, port, user, password, dbname)
         return influx_client
+
 # other database connection capabilities can be added here
