@@ -37,6 +37,20 @@ router.get("/:destination/bandwidth", function(req, res) {
 }).summary("Get the lowest utilization (highest available bandwidth) EPEPath and its label stack given a destination.")
 .description("Get the lowest utilization (highest available bandwidth) EPEPath and its label stack given a destination.");
 
+// Get the lowest utilization (highest available bandwidth based on openconfig telemetry) label stack
+router.get("/:destination/bandwidth_openconfig", function(req, res) {
+  const destination = req.pathParams.destination;  
+  const keys = db._query(`
+      FOR e in EPEPaths_Bandwidth_OpenConfig
+    FILTER e.Destination == @destination
+    SORT e.Bandwidth
+    LIMIT 1
+    RETURN [e._key, e.Label_Path]`, {"destination": destination}
+    );
+  res.send(keys);
+}).summary("Get the lowest utilization (highest available bandwidth based on OpenConfig telemetry) EPEPath and its label stack given a destination.")
+.description("Get the lowest utilization (highest available bandwidth based on OpenConfig telemetry) EPEPath and its label stack given a destination.");
+
 
 
 
