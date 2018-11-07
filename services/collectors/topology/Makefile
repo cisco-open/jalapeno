@@ -1,17 +1,11 @@
-.PHONY: vendor
-
 EXECUTABLE ?= voltron
 BINARY ?= bin/$(EXECUTABLE)
-PACKAGES = $(shell go list ./... | grep -E -v '/bin|/vendor|/docs|/cmd|/log|/api/v1/client|/api/v1/gen|/arango/example')
 REPO=ievoltron
 IMAGE=topology
-TAG=1.0
+TAG=1.1
 PROXY=http://proxy.esl.cisco.com:8080
 
 all: build
-
-test:
-	go test -ldflags -s -race -cover $(PACKAGES)
 
 build:
 	CGO_ENABLED=0 go build --ldflags '${EXTLDFLAGS}' -o ${BINARY} wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology
@@ -19,11 +13,5 @@ build:
 linux:
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ${BINARY} wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology
 
-fast:
-	mkdir -p bin
-	GOBIN=$(GOPATH)/src/wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/bin go install --ldflags '${EXTLDFLAGS}' wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology
-	mv bin/services/collectors/topology bin/voltron
-
 container:
-	docker run -t -w /go/src/wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology -v `pwd`:/go/src/wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology:rw golang:1.7.1-wheezy make
 	docker build --build-arg http_proxy=${PROXY} --build-arg https_proxy=${PROXY} -t ${REPO}/${IMAGE}:${TAG} .

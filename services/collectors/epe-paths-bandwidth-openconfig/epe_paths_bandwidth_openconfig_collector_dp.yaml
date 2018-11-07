@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: voltron
+  name: epe-paths-bandwidth-openconfig-collector
+  labels:
+    app: epe-paths-bandwidth-openconfig-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: epe-paths-bandwidth-openconfig-collector
+  template:
+    metadata:
+      labels:
+        app: epe-paths-bandwidth-openconfig-collector
+    spec:
+      containers:
+      - name: epe-paths-bandwidth-openconfig-collector
+        image: ievoltron/epe-paths-bandwidth-openconfig-collector:1.0@sha256:62dc04367b8c66cb118b5c4a67872b26ef57bdcda20591a3138dd77340576642

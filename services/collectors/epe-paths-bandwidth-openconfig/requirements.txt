@@ -1,0 +1,5 @@
+ast
+logging
+requests==2.17.0
+pyArango
+influxdb
