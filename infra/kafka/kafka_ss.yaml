@@ -41,14 +41,10 @@ spec:
         - listeners=PLAINTEXT://kafka-0.broker.voltron.svc.cluster.local:9092
         - --override
         - advertised.listeners=PLAINTEXT://10.0.250.2:30902
-    #    - --override
-  #      - advertised.port=30909
-  #      - --override
-  #      - advertised.host.name=osc01.rio.wwva.ciscolabs.com
         - --override
         -   zookeeper.connect=zookeeper.voltron.svc.cluster.local:2181
         - --override
-        -   log.retention.hours=-1
+        -   log.retention.hours=1
         - --override
         -   log.dirs=/var/lib/kafka/data/topics
         resources:
