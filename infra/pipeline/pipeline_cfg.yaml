@@ -1118,61 +1118,7 @@ data:
                 }
             ]
         }
-    },
-    {
-            "basepath": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters",
-            "spec": {
-                "fields": [
-                    {
-                        "name": "interface-name",
-                        "tag": true
-                    },
-                    {
-                        "name": "packets-received"
-                    },
-                    {
-                        "name": "bytes-received"
-                    },
-                    {
-                        "name": "packets-sent",
-                        "track": true
-                    },
-                    {
-                        "name": "bytes-sent"
-                    },
-                    {
-                        "name": "output-drops"
-                    },
-                    {
-                        "name": "output-queue-drops"
-                    },
-                    {
-                        "name": "input-drops"
-                    },
-                    {
-                        "name": "input-queue-drops"
-                    },
-                    {
-                        "name": "input-errors"
-                    },
-                    {
-                        "name": "crc-errors"
-                    },
-                    {
-                        "name": "input-ignored-packets"
-                    },
-                    {
-                        "name": "output-errors"
-                    },
-                    {
-                        "name": "output-buffer-failures"
-                    },
-                    {
-                        "name": "carrier-transitions"
-                    }
-                ]
-            }
-        }
+    }
     ]
 
   pipeline.conf: >-
