@@ -46,5 +46,21 @@
             "password": "voltron",
             "port": 57722
         }
+    },
+    {
+        "netmiko_network": {
+            "device_type": "cisco_xr",
+            "ip": "10.0.0.11",
+            "username": "cisco",
+            "password": "cisco",
+            "port": 22
+        },
+        "netmiko_linux": {
+            "device_type": "linux",
+            "ip": "10.0.0.11",
+            "username": "voltron",
+            "password": "voltron",
+            "port": 57722
+        }
     }
 ]

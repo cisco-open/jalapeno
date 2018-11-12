@@ -6,11 +6,7 @@ telemetry model-driven
  sensor-group openconfig_interfaces
   sensor-path openconfig-interfaces:interfaces/interface
  !
- sensor-group cisco_interfaces
-  sensor-path Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters
- !
  subscription base_metrics
   sensor-group-id openconfig_interfaces sample-interval 30000
-  sensor-group-id cisco_interfaces sample-interval 30000
  !
 !
