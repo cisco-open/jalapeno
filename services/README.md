@@ -27,13 +27,19 @@ A EPEPath label path is comprised of the SRNodeSID to reach the PeeringRouter an
 The EPEPaths vService is deployed using oc, as seen in the `deploy_collectors.sh` script in the collectors directory. 
 The configuration for EPEPaths's deployment is in "paths_collector_dp.yaml" in epe-paths directory.
 
-### EPEPaths_Bandwidth vService
-The EPEPaths_Bandwidth vService uses the EPEPaths collection to create the metric-oriented EPEPaths_Bandwidth collection. This collection is similar to the EPEPaths collection.
-Each EPEPath in the EPEPaths collection  will also be seen in the EPEPaths_Bandwidth collection -- however, the EPEPaths_Bandwidth documents will also derive link utiliation metrics from telemetry data in InfluxDB. 
-This collection can then be used by the ArangoDB Voltron API to inform the client about which EPEPath has the most available bandwidth to a destination. 
+### EgressLinks_Performance vService
+The EgressLinks_Performance vService uses the PeeringRouterInterfaces collection to create the metric-oriented EgressLinks_Performance collection. 
+Each document will derive link utiliation metrics from telemetry data in InfluxDB. This collection can then be used by the ArangoDB Voltron API to inform the client about various metric optimizations.
 
-The EPEPaths_Bandwidth vService is deployed using oc, as seen in the `deploy_collectors.sh` script in the collectors directory. 
-The configuration for EPEPaths_Bandwidth's deployment is in "epe_paths_bandwidth_collector_dp.yaml" in epe-paths-bandwidth directory.
+The EgressLinks_Performance vService is deployed using oc, as seen in the `deploy_collectors.sh` script in the collectors directory. 
+The configuration for EgressLinks_Performance's deployment is in "egress_links_performance_collector_dp.yaml" in egress-links-performance directory.
+
+### InternalLinks_Performance vService
+The InternalLinks_Performance vService uses the InternalRouterInterfaces collection to create the metric-oriented InternalLinks_Performance collection. 
+Each document will derive link utiliation metrics from telemetry data in InfluxDB. This collection can then be used by the ArangoDB Voltron API to inform the client about various metric optimizations.
+
+The InternalLinks_Performance vService is deployed using oc, as seen in the `deploy_collectors.sh` script in the collectors directory. 
+The configuration for InternalLinks_Performance's deployment is in "internal_links_performance_collector_dp.yaml" in internal-links-performance directory.
 
 ## API
 The ArangoDB Voltron API has two core capabilities.
@@ -42,5 +48,5 @@ This query will return a label stack representing which PeeringRouter and interf
 
 Second, a client can also query the API for the lowest-latency EPEPath. 
 An EPEPaths_Latency vService runs directly on the client. 
-Similar to the EPEPaths_Bandwidth vService, the EPEPaths_Latency vService creates the metric-oriented EPEPaths_Latency collection and has EPEPaths, but with latency scores and label paths associated with them.
+The EPEPaths_Latency vService creates the metric-oriented EPEPaths_Latency collection and has EPEPaths, but with latency scores and label paths associated with them.
 This query will return a label stack representing which PeeringRouter and interface the client should use to send data over.
