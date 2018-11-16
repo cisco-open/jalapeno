@@ -63,10 +63,11 @@ def upsert_internal_link_performance(internal_router_ip, internal_router_interfa
     in_broadcast_pkts, out_broadcast_pkts = performance_metrics["in-broadcast-pkts"], performance_metrics["out-broadcast-pkts"]
     in_discards, out_discards = performance_metrics["in-discards"], performance_metrics["out-discards"]
     in_errors, out_errors = performance_metrics["in-errors"], performance_metrics["out-errors"]
+    in_octets, out_octets = performance_metrics["in-octets"], performance_metrics["out-octets"]
     internal_link_performance_key = internal_router_ip + "_" + internal_router_interface    
     db_upserter.upsert_internal_link_performance(internal_link_performance_key, internal_router_ip, internal_router_interface, in_unicast_pkts, out_unicast_pkts,
                                                in_multicast_pkts, out_multicast_pkts, in_broadcast_pkts, out_broadcast_pkts, in_discards, out_discards, 
-                                               in_errors, out_errors)
+                                               in_errors, out_errors, in_octets, out_octets)
    
 if __name__ == '__main__':
     main()

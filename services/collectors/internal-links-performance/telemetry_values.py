@@ -15,3 +15,6 @@ telemetry_value_mapper['subinterfaces__subinterface__state__counters__out-discar
 
 telemetry_value_mapper['subinterfaces__subinterface__state__counters__in-errors'] = 'in-errors'
 telemetry_value_mapper['subinterfaces__subinterface__state__counters__out-errors'] = 'out-errors'
+
+telemetry_value_mapper['subinterfaces__subinterface__state__counters__in-octets'] = 'in-octets'
+telemetry_value_mapper['subinterfaces__subinterface__state__counters__out-octets'] = 'out-octets'

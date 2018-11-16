@@ -34,12 +34,13 @@ def main():
 
 def create_collection(arango_client):
     """Create new collection in ArangoDB. If the collection exists, connect to that collection."""
-    collection_name = queryconfig.collection  # the collection name is set in queryconfig
-    print("Creating " + collection_name + " collection in Arango")
-    try:
-        collection = arango_client.createCollection(name=collection_name)
-    except CreationError:
-        print(collection_name + " collection already exists!")
+    collections = {queryconfig.collection, queryconfig.edge_collection}  # the collection name is set in queryconfig
+    for collection in collections:
+        print("Creating " + collection + " collection in Arango")
+        try:
+            created_collection = arango_client.createCollection(name=collection)
+        except CreationError:
+            print(collection + " collection already exists!")
 
 def collect_performance_dataset(influx_client, telemetry_producer, interface_name, telemetry_value):
     performance_metric_query = """SELECT moving_average(last(\"""" + telemetry_value + """\"), 5)
@@ -61,10 +62,11 @@ def upsert_egress_link_performance(egress_router_ip, egress_router_interface, pe
     in_broadcast_pkts, out_broadcast_pkts = performance_metrics["in-broadcast-pkts"], performance_metrics["out-broadcast-pkts"]
     in_discards, out_discards = performance_metrics["in-discards"], performance_metrics["out-discards"]
     in_errors, out_errors = performance_metrics["in-errors"], performance_metrics["out-errors"]
+    in_octets, out_octets = performance_metrics["in-octets"], performance_metrics["out-octets"]
     egress_link_performance_key = egress_router_ip + "_" + egress_router_interface    
     db_upserter.upsert_egress_link_performance(egress_link_performance_key, egress_router_ip, egress_router_interface, in_unicast_pkts, out_unicast_pkts,
                                                in_multicast_pkts, out_multicast_pkts, in_broadcast_pkts, out_broadcast_pkts, in_discards, out_discards, 
-                                               in_errors, out_errors)
+                                               in_errors, out_errors, in_octets, out_octets)
    
 if __name__ == '__main__':
     main()

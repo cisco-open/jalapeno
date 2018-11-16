@@ -17,5 +17,5 @@ spec:
     spec:
       containers:
       - name: egress-links-performance-collector
-        image: ievoltron/egress-links-performance-collector:1.0@sha256:64b51a726e2f4bd850194dadd665f95f05f8cd518e99133942e8d175ce3f9389
+        image: ievoltron/egress-links-performance-collector:1.0@sha256:2b0e9c4a58ce3a8fdeee085240585363b92505db0720bb6324b73f156aac23f9
 

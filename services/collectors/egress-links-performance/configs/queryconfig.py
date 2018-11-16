@@ -3,3 +3,4 @@
 Specify the collection to create or join.
 """
 collection = 'EgressLinks_Performance'
+edge_collection = 'EgressEdges_Performance'
