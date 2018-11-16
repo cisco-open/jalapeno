@@ -2,9 +2,9 @@ package database
 
 import "fmt"
 
-const PeeringRouterInterfaceName = "PeeringRouterInterfaces"
+const BorderRouterInterfaceName = "BorderRouterInterfaces"
 
-type PeeringRouterInterface struct {
+type BorderRouterInterface struct {
 	Key               string `json:"_key,omitempty"`
 	BGPID             string `json:"BGPID,omitempty"`
 	RouterASN         string `json:"ASN,omitempty"`
@@ -13,14 +13,14 @@ type PeeringRouterInterface struct {
         EPELabel          string `json:"EPELabel,omitempty"`
 }
 
-func (r PeeringRouterInterface) GetKey() (string, error) {
+func (r BorderRouterInterface) GetKey() (string, error) {
 	if r.Key == "" {
 		return r.makeKey()
 	}
 	return r.Key, nil
 }
 
-func (r *PeeringRouterInterface) SetKey() error {
+func (r *BorderRouterInterface) SetKey() error {
 	k, err := r.makeKey()
 	if err != nil {
 		return err
@@ -29,7 +29,7 @@ func (r *PeeringRouterInterface) SetKey() error {
 	return nil
 }
 
-func (r *PeeringRouterInterface) makeKey() (string, error) {
+func (r *BorderRouterInterface) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if r.RouterIP != "" {
@@ -39,6 +39,6 @@ func (r *PeeringRouterInterface) makeKey() (string, error) {
 	return ret, err
 }
 
-func (r PeeringRouterInterface) GetType() string {
-	return PeeringRouterInterfaceName
+func (r BorderRouterInterface) GetType() string {
+	return BorderRouterInterfaceName
 }

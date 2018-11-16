@@ -105,5 +105,5 @@ func (a *ArangoHandler) HandleBMPStat(m *openbmp.Message) {
 
 func (a *ArangoHandler) HandleBaseAttribute(m *openbmp.Message) {
         fmt.Println("Handling Base Attribute OpenBMP message")
-        //fmt.Println(m)
+        fmt.Println(m)
 }

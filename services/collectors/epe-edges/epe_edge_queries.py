@@ -2,51 +2,51 @@
 """AQL Queries executed by the EPE-Edge Collector.
 """
     
-"""Collect peering-routers from existing collections (InternalRouters and PeeringRouters).
-Although this could be done using only the PeeringRouters collection, including InternalRouters
-allows for an extra level of validation. The list of all peering-routers is returned."""
-def get_peering_routers_query(db):
+"""Collect border-routers from existing collections (InternalRouters and BorderRouters).
+Although this could be done using only the BorderRouters collection, including InternalRouters
+allows for an extra level of validation. The list of all border-routers is returned."""
+def get_border_routers_query(db):
     aql = """ FOR i in InternalRouters 
-              FOR p in PeeringRouters 
-              FILTER i.RouterIP == p.RouterIP 
+              FOR b in BorderRouters 
+              FILTER i.RouterIP == b.RouterIP 
               RETURN i.RouterIP """
     bindVars = {}
-    peering_routers = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
-    return peering_routers
+    border_routers = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return border_routers
 
-def get_peering_router_data_query(db, peering_router):
-    aql = """ FOR p in PeeringRouters
-	      FILTER p.RouterIP == @peering_router_ip
+def get_border_router_data_query(db, border_router):
+    aql = """ FOR p in BorderRouters
+	      FILTER p.RouterIP == @border_router_ip
 	      RETURN { Source : p.RouterIP, SourceASN : p.ASN } """
-    bindVars = {'peering_router_ip': peering_router}
-    peering_router_data = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
-    return peering_router_data
+    bindVars = {'border_router_ip': border_router}
+    border_router_data = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return border_router_data
 
-def get_peering_router_sr_node_sid(db, peering_router):
-    aql = """ FOR p in PeeringRouters
+def get_border_router_sr_node_sid(db, border_router):
+    aql = """ FOR b in BorderRouters
               FOR i in InternalRouters 
-              FILTER p.RouterIP == @peering_router_ip AND i.RouterIP == @peering_router_ip AND p.RouterIP == i.RouterIP
+              FILTER p.RouterIP == @border_router_ip AND i.RouterIP == @border_router_ip AND p.RouterIP == i.RouterIP
 	      RETURN i.SRNodeSID """
-    bindVars = {'peering_router_ip': peering_router}
-    peering_router_sr_node_sid = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
-    return peering_router_sr_node_sid
+    bindVars = {'border_router_ip': border_router}
+    border_router_sr_node_sid = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return border_router_sr_node_sid
 
  
-"""Collect external-routers connected to the given peering-router from existing collections (ExternaLinkEdges).
+"""Collect external-routers connected to the given border-router from existing collections (ExternaLinkEdges).
 The list of all external-routers is returned."""
-def get_external_routers_query(db, peering_router):
+def get_external_routers_query(db, border_router):
     aql = """ FOR e in ExternalLinkEdges
 	      FILTER e._from == @external_link_edge_src
 	      RETURN e._to """
-    bindVars = {'external_link_edge_src': "Routers/"+peering_router}
+    bindVars = {'external_link_edge_src': "Routers/"+border_router}
     external_routers = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)  
     return external_routers
 
-def get_external_link_edge_data_query(db, peering_router, external_router):
+def get_external_link_edge_data_query(db, border_router, external_router):
     aql = """ FOR e in ExternalLinkEdges
 	      FILTER e._from == @external_link_edge_src AND e._to == @external_link_edge_dst
 	      RETURN { Source: e._from, SrcInterfaceIP: e.SrcInterfaceIP, Label: e.Label, DstInterfaceIP: e.DstInterfaceIP, Destination: e._to } """
-    bindVars = {'external_link_edge_src': "Routers/"+peering_router, 'external_link_edge_dst': external_router}
+    bindVars = {'external_link_edge_src': "Routers/"+border_router, 'external_link_edge_dst': external_router}
     external_link_edge_data = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)  
     return external_link_edge_data
 
@@ -78,20 +78,20 @@ def get_epe_edge_key(db, key):
     epe_edge_key = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)  
     return epe_edge_key
     
-"""Given a list of peering routers, collect data from two different collections (ExternalLinkEdge and InternalRouter) for each
-peering router. This allows for the marriage of data in ExternalLinkEdge (interface_ips, etc.) and in InternalRouter (sr_node_sid).
+"""Given a list of border routers, collect data from two different collections (ExternalLinkEdge and InternalRouter) for each
+border router. This allows for the marriage of data in ExternalLinkEdge (interface_ips, etc.) and in InternalRouter (sr_node_sid).
 The data is compiled into an "epe_edge_data" record. The record is then added to a list of all epe_edge_data records. 
 Finally, the list of all records is returned."""
-def get_epe_edges_data_query(db, peering_routers):
+def get_epe_edges_data_query(db, border_routers):
     all_epe_edge_data = []
-    for peering_router in peering_routers:
+    for border_router in border_routers:
         aql = """ FOR e in ExternalLinkEdges
                    FOR i in InternalRouters
                    FILTER e._from == @external_edge_src_router_ip AND i.RouterIP == @src_router_ip
                    RETURN { src : e._from, dst : e._to, src_interface_ip : e.SrcInterfaceIP, dst_interface_ip: e.DstInterfaceIP, label: e.Label, src_router_ip : i.RouterIP, src_asn : i.ASN, src_igp: i.IGPID, src_name : i.Name, src_sr_node_sid : i.SRNodeSID } """
-        bindVars = {'external_edge_src_router_ip': 'Routers/'+peering_router, 'src_router_ip': peering_router}
-        peering_router_epe_edge_data = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
-        for epe_edge_data in peering_router_epe_edge_data:
+        bindVars = {'external_edge_src_router_ip': 'Routers/'+border_router, 'src_router_ip': border_router}
+        border_router_epe_edge_data = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+        for epe_edge_data in border_router_epe_edge_data:
             all_epe_edge_data.append(epe_edge_data)
     return all_epe_edge_data
 

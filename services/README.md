@@ -6,8 +6,8 @@ Voltron Collector vServices are responsible for organizing, parsing, and analysi
 ### Topology vService
 The Topology vService interacts with OpenBMP data in Kafka in order to create topology representations in ArangoDB.
 Collections created using this service are considered base-collections. These base-collections have no inference of relationships between network elements, or of any metrics -- they are organized collections of individual OpenBMP messages.
-For example, the Topology vService creates the InternalRouter collection, the PeeringRouter collection, and the InternalLinkEdge collection directly from OpenBMP message data.
-However, the inference that an InternalRouter can reach a PeeringRouter through a path of three InternalLinkEdges is made using other Collector vServices.
+For example, the Topology vService creates the InternalRouter collection, the BorderRouter collection, and the InternalLinkEdge collection directly from OpenBMP message data.
+However, the inference that an InternalRouter can reach a BorderRouter through a path of three InternalLinkEdges is made using other Collector vServices.
 
 The Topology vService is deployed using oc, as seen in the `deploy_collectors.sh` script in the collectors directory. 
 The configuration for Topology's deployment is in "topology_dp.yaml" in the topology directory.

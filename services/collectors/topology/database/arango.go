@@ -98,9 +98,9 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
-        cols[PeeringRouterName], err = ensureVertexCollection(g, PeeringRouterName)
+        cols[BorderRouterName], err = ensureVertexCollection(g, BorderRouterName)
         if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", PeeringRouterName)
+                log.WithError(err).Errorf("Failed to connect to collection %q", BorderRouterName)
                 return ArangoConn{}, err
         }
 
@@ -116,9 +116,9 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
-        cols[PeeringRouterInterfaceName], err = ensureVertexCollection(g, PeeringRouterInterfaceName)
+        cols[BorderRouterInterfaceName], err = ensureVertexCollection(g, BorderRouterInterfaceName)
         if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", PeeringRouterInterfaceName)
+                log.WithError(err).Errorf("Failed to connect to collection %q", BorderRouterInterfaceName)
                 return ArangoConn{}, err
         }
 
@@ -344,16 +344,16 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                 get = &InternalRouter{
                         Key: key,
                 }
-        case PeeringRouterName:
-                get = &PeeringRouter{
+        case BorderRouterName:
+                get = &BorderRouter{
                         Key: key,
                 }
         case InternalRouterInterfaceName:
                 get = &InternalRouterInterface{
                         Key: key,
                 }
-        case PeeringRouterInterfaceName:
-                get = &PeeringRouterInterface{
+        case BorderRouterInterfaceName:
+                get = &BorderRouterInterface{
                         Key: key,
                 }
         case ExternalRouterInterfaceName:

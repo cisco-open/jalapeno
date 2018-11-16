@@ -2,23 +2,23 @@ package database
 
 import "fmt"
 
-const PeeringRouterName = "PeeringRouters"
+const BorderRouterName = "BorderRouters"
 
-type PeeringRouter struct {
+type BorderRouter struct {
 	Key          string `json:"_key,omitempty"`
 	BGPID        string `json:"BGPID,omitempty"`
 	ASN          string `json:"ASN,omitempty"`
         RouterIP     string `json:"RouterIP,omitempty"`
 }
 
-func (r PeeringRouter) GetKey() (string, error) {
+func (r BorderRouter) GetKey() (string, error) {
 	if r.Key == "" {
 		return r.makeKey()
 	}
 	return r.Key, nil
 }
 
-func (r *PeeringRouter) SetKey() error {
+func (r *BorderRouter) SetKey() error {
 	k, err := r.makeKey()
 	if err != nil {
 		return err
@@ -27,7 +27,7 @@ func (r *PeeringRouter) SetKey() error {
 	return nil
 }
 
-func (r *PeeringRouter) makeKey() (string, error) {
+func (r *BorderRouter) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if r.RouterIP != "" {
@@ -37,6 +37,6 @@ func (r *PeeringRouter) makeKey() (string, error) {
 	return ret, err
 }
 
-func (r PeeringRouter) GetType() string {
-	return PeeringRouterName
+func (r BorderRouter) GetType() string {
+	return BorderRouterName
 }
