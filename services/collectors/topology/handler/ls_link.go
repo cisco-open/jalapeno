@@ -96,7 +96,7 @@ func parse_ls_link_external_link_edge(a *ArangoHandler, src_router_id string, sr
         fmt.Printf("Parsing current ls_link message's external_link_edge document: From Router: %q through Interface: %q and Label: %q " +
                    "to Router: %q through Interface: %q\n", src_router_id, src_interface_ip, epe_label, dst_router_id, dst_interface_ip)
 
-	key := src_router_id + "_" + dst_router_id
+	key := src_router_id + "_" + src_interface_ip + "_" + dst_interface_ip + "_" + dst_router_id
 	external_link_edge_exists := a.db.CheckExternalLinkEdgeExists(key)
 	if external_link_edge_exists {
 		a.db.UpdateExternalLinkEdge(src_router_id, dst_router_id, src_interface_ip, dst_interface_ip, protocol, epe_label) 

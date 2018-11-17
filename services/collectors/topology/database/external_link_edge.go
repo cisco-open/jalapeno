@@ -38,7 +38,7 @@ func (l *ExternalLinkEdge) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if l.SrcInterfaceIP != "" && l.DstInterfaceIP != "" {
-		ret = fmt.Sprintf("%s_%s", l.SrcInterfaceIP, l.DstInterfaceIP)
+		ret = fmt.Sprintf("%s_%s_%s_%s", l.SrcIP, l.SrcInterfaceIP, l.DstInterfaceIP, l.DstIP)
 		err = nil
 	}
 	return ret, err

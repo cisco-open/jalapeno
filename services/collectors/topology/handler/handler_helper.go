@@ -20,8 +20,3 @@ func calculate_sid(sr_beginning_label int, sid_index string) string {
 }
 
 
-// Create a Router document and upsert it into the Routers Collection
-//func create_router_document(router_ip, bgp_id, name="", node_sid_index="", sr_gb="", sr_node_sid="", asn="") {
-//
-//
-//}
