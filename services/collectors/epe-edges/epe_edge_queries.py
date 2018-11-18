@@ -15,9 +15,9 @@ def get_border_routers_query(db):
     return border_routers
 
 def get_border_router_data_query(db, border_router):
-    aql = """ FOR p in BorderRouters
-	      FILTER p.RouterIP == @border_router_ip
-	      RETURN { Source : p.RouterIP, SourceASN : p.ASN } """
+    aql = """ FOR b in BorderRouters
+	      FILTER b.RouterIP == @border_router_ip
+	      RETURN { Source : b.RouterIP, SourceASN : b.ASN } """
     bindVars = {'border_router_ip': border_router}
     border_router_data = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return border_router_data
@@ -25,7 +25,7 @@ def get_border_router_data_query(db, border_router):
 def get_border_router_sr_node_sid(db, border_router):
     aql = """ FOR b in BorderRouters
               FOR i in InternalRouters 
-              FILTER p.RouterIP == @border_router_ip AND i.RouterIP == @border_router_ip AND p.RouterIP == i.RouterIP
+              FILTER b.RouterIP == @border_router_ip AND i.RouterIP == @border_router_ip AND b.RouterIP == i.RouterIP
 	      RETURN i.SRNodeSID """
     bindVars = {'border_router_ip': border_router}
     border_router_sr_node_sid = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: topology
-        image: ievoltron/topology:1.0@sha256:e1385a6ec546b3f53448b84e46e76d5f18defc4ba7abb97810f9ef8a2cdc843a
+        image: ievoltron/topology:2.0@sha256:641d0024b874397056dfad225cfec0bdff4efde7461834123d83be802bab5170
         args:
           - topology
           - --arango-url

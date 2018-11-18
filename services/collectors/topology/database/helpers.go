@@ -168,7 +168,7 @@ func (a *ArangoConn) CreateInternalLinkEdge(edge_from string, edge_to string, ed
 
 func (a *ArangoConn) CreateExternalLinkEdge(edge_from string, edge_to string, edge_src_intf string, edge_dst_intf string, edge_protocol string, edge_label string) {
         var r string
-	edge_key := edge_from + "_" edge_src_intf + "_" + edge_dst_intf + "_" + edge_to
+	edge_key := edge_from + "_" + edge_src_intf + "_" + edge_dst_intf + "_" + edge_to
         edge_from = "Routers/" + edge_from
         edge_to = "Routers/" + edge_to
 	
@@ -183,7 +183,7 @@ func (a *ArangoConn) CreateExternalLinkEdge(edge_from string, edge_to string, ed
 
 func (a *ArangoConn) UpdateExternalLinkEdge(edge_from string, edge_to string, edge_src_intf string, edge_dst_intf string, edge_protocol string, edge_label string) {
         var r string
-	edge_key := edge_from + "_" edge_src_intf + "_" + edge_dst_intf + "_" + edge_to
+	edge_key := edge_from + "_" + edge_src_intf + "_" + edge_dst_intf + "_" + edge_to
         edge_from = "Routers/" + edge_from
         edge_to = "Routers/" + edge_to
 	

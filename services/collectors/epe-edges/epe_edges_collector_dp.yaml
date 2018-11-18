@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
       - name: epe-edges
-        image: ievoltron/epe-edges:1.1@sha256:40ab967a793334ccafdc4105c2ee4e1b670da6cbf21d6af1b58f95ab693ba24f
+        image: ievoltron/epe-edges:2.0@sha256:0142fc4806d2e7e871fe5599ab7dd42463149fc8340dd6e321c0e7338d4902e2
