@@ -1,5 +1,4 @@
 """This maps telemetry values in Influx with their logical represenations"""
-
 telemetry_value_mapper = {}
 telemetry_value_mapper['subinterfaces__subinterface__state__counters__in-unicast-pkts'] = 'in-unicast-pkts'
 telemetry_value_mapper['subinterfaces__subinterface__state__counters__out-unicast-pkts'] = 'out-unicast-pkts'
