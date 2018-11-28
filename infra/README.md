@@ -13,17 +13,26 @@ Kafka is deployed using oc, as seen in the `deploy_infrastructure.sh` script. Th
 ## ArangoDB
 ArangoDB is Voltron's graph database. Voltron vServices parse through data in Kafka and create various collections in ArangoDB that represent both the network's topology and current state. For example, the Topology vService parses OpenBMP messages that have been streamed to Kafka and builds out collections such as "Routers" and "ExternalPrefixes" in Voltron's ArangoDB instance. These collections, in conjunction with ArangoDBs rapid graphical traversals and calculations, make it easy to determine the lowest-latency path, etc. 
 ArangoDB also houses the most interactive aspects of Voltron -- vServices for Bandwidth and Latency upsert their scores here, and clients query the ArangoDB Voltron API to generate label stacks for their desired network optimization attribute.
-ArangoDB is deployed using oc, as seen in the `deploy_infrastructure.sh` script. The configurations for ArangoDB's deployment are in the various YAML files in the `voltron/infra/arangodb/` directory.
+ArangoDB is deployed using oc, as seen in the `deploy_infrastructure.sh` script. The configurations for ArangoDB's deployment are in the various YAML files in the `voltron/infra/arangodb/` directory.  
+To access ArangoDB's UI, log in at <server_ip>:30852, using credentials root/voltron. In the list of DBs, select voltron.
 
 ## InfluxDB
 InfluxDB is Voltron's time-series database. Telemetry data is parsed and passed from Kafka into InfluxDB using a telemetry consumer (Pipeline). 
 The data stored in InfluxDB can be queried by Collector vServices and by the ArangoDB Voltron API. These queries construct and derive relevant metrics. For example, the Bandwidth vService generates rolling-averages of bytes sent out of a router's interface -- thus simulating link utilization.
 Using InfluxDB as a historical data-store, Voltron vServices can also infer trends based on historical analysis. vServices can determine whether instantaneous measurements are extreme anomalies, and can enable requests for any number of threshold-based reactions. 
-InfluxDB is deployed using oc, as seen in the `deploy_infrastructure.sh` script. The configurations for InfluxDB's deployment are in the various YAML files in the `voltron/infra/influxdb/` directory.
+InfluxDB is deployed using oc, as seen in the `deploy_infrastructure.sh` script. The configurations for InfluxDB's deployment are in the various YAML files in the `voltron/infra/influxdb/` directory.  
+To access InfluxDB via OpenShift, enter the pod's terminal and run:
+```bash
+influx
+auth voltron voltron
+use mdt_db
+show series
+```
 
 ## Grafana
 Grafana is Voltron's visual dashboard and metric visualization tool. Loaded with InfluxDB as its data-source, Grafana has various graphical representations of the network, including historical bandwidth usage, historical latency metrics, and more. 
-Grafana is deployed using oc, as seen in the `deploy_infrastructure.sh` script. The configurations for Grafana's deployment are in the various YAML files in the `voltron/infra/grafana/` directory.
+Grafana is deployed using oc, as seen in the `deploy_infrastructure.sh` script. The configurations for Grafana's deployment are in the various YAML files in the `voltron/infra/grafana/` directory.  
+To access Grafana's UI, log in at <server_ip>:30300, using credentials voltron/voltron.
 
 ## OpenBMP
 OpenBMP is Voltron's topology collector. OpenBMP is run as a local container rather than as part of the larger OpenShift deployment. This containerized consumer receives OpenBMP data from every router configured to send OpenBMP data in the network. It then passes the data onto Kafka, where Voltron vServices can infer relationships and create representations of the network. The `voltron/infra/openbmpd` directory also comes with a `hosts.json` file that can be modified to reflect the network. Upon running the `configure_openbmp.py` script, each device in the `hosts.json` file would be configured with the included `openbmp_config_xr` config, and thus would send data to the OpenBMP container. 
