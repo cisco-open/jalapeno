@@ -6,7 +6,11 @@ telemetry model-driven
  sensor-group openconfig_interfaces
   sensor-path openconfig-interfaces:interfaces/interface
  !
+ sensor-group cisco_models
+  sensor-path Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface
+ !
  subscription base_metrics
   sensor-group-id openconfig_interfaces sample-interval 30000
+  sensor-group-id cisco_models sample-interval 30000
  !
 !
