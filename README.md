@@ -10,5 +10,3 @@ For Service Providers looking to manage their networks using segment routing, Vo
 To make “source routing” work, Voltron uses APIs over protocols, and takes advantage of new technologies that enable data collection, scalability and more (such as BMP, gRPC, etc.).
 
 
-
-
