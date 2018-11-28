@@ -6,7 +6,8 @@ from util import connections
 
 def upsert_external_link_performance(collection_name, key, in_unicast_pkts, out_unicast_pkts, in_multicast_pkts,
                                      out_multicast_pkts, in_broadcast_pkts, out_broadcast_pkts, in_discards,
-                                     out_discards, in_errors, out_errors, in_octets, out_octets):
+                                     out_discards, in_errors, out_errors, in_octets, out_octets, speed,
+                                     percent_util_inbound, percent_util_outbound):
     """Insert or update performance measurements into the specified collection."""
     arango_connection = connections.ArangoConn()
     arango_client = arango_connection.connect_arango(arangoconfig.url, arangoconfig.database, arangoconfig.username, arangoconfig.password)
@@ -14,16 +15,19 @@ def upsert_external_link_performance(collection_name, key, in_unicast_pkts, out_
     if(external_link_performance_key_exists):
         update_external_link_performance(arango_client, collection_name, key, in_unicast_pkts, out_unicast_pkts,
                                          in_multicast_pkts, out_multicast_pkts, in_broadcast_pkts, out_broadcast_pkts,
-                                         in_discards, out_discards, in_errors, out_errors, in_octets, out_octets)
+                                         in_discards, out_discards, in_errors, out_errors, in_octets, out_octets,
+                                         speed, percent_util_inbound, percent_util_outbound)
     else:
         insert_external_link_performance(arango_client, collection_name, key, in_unicast_pkts, out_unicast_pkts,
                                          in_multicast_pkts, out_multicast_pkts, in_broadcast_pkts, out_broadcast_pkts,
-                                         in_discards, out_discards, in_errors, out_errors, in_octets, out_octets)
+                                         in_discards, out_discards, in_errors, out_errors, in_octets, out_octets,
+                                         speed, percent_util_inbound, percent_util_outbound)
 
  
 def update_external_link_performance(arango_client, collection_name, key, in_unicast_pkts, out_unicast_pkts,
                                      in_multicast_pkts, out_multicast_pkts, in_broadcast_pkts, out_broadcast_pkts,
-                                     in_discards, out_discards, in_errors, out_errors, in_octets, out_octets):
+                                     in_discards, out_discards, in_errors, out_errors, in_octets, out_octets,
+                                     speed, percent_util_inbound, percent_util_outbound):
     """Update specified collection document with new performance data (document specified by key)."""
     print("Updating existing " + collection_name + " record " + key + " with performance metrics")
     aql = """FOR p in @@collection
@@ -33,20 +37,25 @@ def update_external_link_performance(arango_client, collection_name, key, in_uni
                         in_broadcast_pkts: @in_broadcast_pkts, out_broadcast_pkts: @out_broadcast_pkts,
                         in_discards: @in_discards, out_discards: @out_discards,
                         in_errors: @in_errors, out_errors: @out_errors, 
-                        in_octets: @in_octets, out_octets: @out_octets } in @@collection"""
+                        in_octets: @in_octets, out_octets: @out_octets,                       
+                        speed: @speed, percent_util_inbound: @percent_util_inbound,
+                        percent_util_outbound: @percent_util_outbound } in @@collection"""
     bindVars = {'@collection': collection_name, 'key': key, 
                         'in_unicast_pkts': in_unicast_pkts, 'out_unicast_pkts': out_unicast_pkts,
                         'in_multicast_pkts': in_multicast_pkts, 'out_multicast_pkts': out_multicast_pkts,
                         'in_broadcast_pkts': in_broadcast_pkts, 'out_broadcast_pkts': out_broadcast_pkts,
                         'in_discards': in_discards, 'out_discards': out_discards,
                         'in_errors': in_errors, 'out_errors': out_errors,
-                        'in_octets': in_octets, 'out_octets': out_octets} 
+                        'in_octets': in_octets, 'out_octets': out_octets,
+                        'speed': speed, 'percent_util_inbound': percent_util_inbound,
+                        'percent_util_outbound': percent_util_outbound}
     arango_client.AQLQuery(aql, rawResults=True, bindVars=bindVars)
 
 
 def insert_external_link_performance(arango_client, collection_name, key, in_unicast_pkts, out_unicast_pkts,
                                      in_multicast_pkts, out_multicast_pkts, in_broadcast_pkts, out_broadcast_pkts,
-                                     in_discards, out_discards, in_errors, out_errors, in_octets, out_octets):
+                                     in_discards, out_discards, in_errors, out_errors, in_octets, out_octets,
+                                     speed, percent_util_inbound, percent_util_outbound):
     """Insert performance data into the given collection given a key."""
     print("Inserting " + collection_name + " record " + key + " with performance metrics")
     aql = """INSERT { _key: @key, in_unicast_pkts: @in_unicast_pkts, out_unicast_pkts: @out_unicast_pkts,
@@ -54,14 +63,18 @@ def insert_external_link_performance(arango_client, collection_name, key, in_uni
                         in_broadcast_pkts: @in_broadcast_pkts, out_broadcast_pkts: @out_broadcast_pkts,
                         in_discards: @in_discards, out_discards: @out_discards,
                         in_errors: @in_errors, out_errors: @out_errors,
-                        in_octets: @in_octets, out_octets: @out_octets } into @@collection RETURN { after: NEW }"""
+                        in_octets: @in_octets, out_octets: @out_octets,
+                        speed: @speed, percent_util_inbound: @percent_util_inbound,
+                        percent_util_outbound: @percent_util_outbound } into @@collection RETURN { after: NEW }"""
     bindVars = {'@collection': collection_name, 'key': key,
                         'in_unicast_pkts': in_unicast_pkts, 'out_unicast_pkts': out_unicast_pkts,
                         'in_multicast_pkts': in_multicast_pkts, 'out_multicast_pkts': out_multicast_pkts,
                         'in_broadcast_pkts': in_broadcast_pkts, 'out_broadcast_pkts': out_broadcast_pkts,
                         'in_discards': in_discards, 'out_discards': out_discards,
                         'in_errors': in_errors, 'out_errors': out_errors,
-                        'in_octets': in_octets, 'out_octets': out_octets} 
+                        'in_octets': in_octets, 'out_octets': out_octets,
+                        'speed': speed, 'percent_util_inbound': percent_util_inbound,
+                        'percent_util_outbound': percent_util_outbound} 
     arango_client.AQLQuery(aql, rawResults=True, bindVars=bindVars)
 
 def check_existing_external_link_performance(arango_client, collection_name, key):
