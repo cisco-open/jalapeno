@@ -30,9 +30,16 @@ def main():
             for telemetry_value, performance_metric in telemetry_value_mapper.iteritems(): # the extended base-path and the value it represents
                 current_performance_metric_dataset = collect_performance_dataset(influx_client, telemetry_producer, producer_interface, telemetry_value)
                 current_performance_metric_value = calculate_performance_metric_value(current_performance_metric_dataset)
-                print("Calculated %s: %s" % (performance_metric, current_performance_metric_value))
+                #print("Calculated %s: %s" % (performance_metric, current_performance_metric_value))
                 calculated_performance_metrics[performance_metric] = current_performance_metric_value
-
+            current_port_speed_dataset = collect_port_speed_dataset(influx_client, telemetry_producer, producer_interface)
+	    current_port_speed_value = calculate_port_speed_value(current_port_speed_dataset)
+            percent_util_inbound = calculated_performance_metrics["in-octets"]/float(((current_port_speed_value * 1000)/8))
+            percent_util_outbound = calculated_performance_metrics["out-octets"]/float(((current_port_speed_value * 1000)/8))
+            calculated_performance_metrics["speed"] = current_port_speed_value
+            calculated_performance_metrics["percent-util-inbound"] = percent_util_inbound
+            calculated_performance_metrics["percent-util-outbound"] = percent_util_outbound
+        
             # There are two places to upsert these metrics: the InternalRouterInterfaces collection, and the InternalLinkEdges collection.
             internal_router_interface_key = router_ip + "_" + router_interface_ip
             upsert_internal_link_performance(internal_router_interface_key, calculated_performance_metrics, "InternalRouterInterfaces")
@@ -54,7 +61,7 @@ def create_collections(arango_client):
             print(collection + " collection already exists!")
 
 def collect_performance_dataset(influx_client, telemetry_producer, interface_name, telemetry_value):
-    performance_metric_query = """SELECT moving_average(last(\"""" + telemetry_value + """\"), 5)
+    performance_metric_query = """SELECT non_negative_derivative(last(\"""" + telemetry_value + """\"), 5s)
     FROM \"openconfig-interfaces:interfaces/interface\"
     WHERE (\"Producer\" = '""" + telemetry_producer + """' AND \"name\" = '""" + interface_name + """')
     AND time >= now() - 5m GROUP BY time(200ms) fill(null);"""
@@ -62,10 +69,24 @@ def collect_performance_dataset(influx_client, telemetry_producer, interface_nam
     performance_metric_dataset = influx_client.query(performance_metric_query)
     return performance_metric_dataset
 
+def collect_port_speed_dataset(influx_client, telemetry_producer, interface_name):
+    port_speed_query = """SELECT \"speed\"
+    FROM \"Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface\"
+    WHERE (\"Producer\" = '""" + telemetry_producer + """' AND \"interface-name\" = '""" + interface_name + """')
+    AND time >= now() - 5m;"""
+    #print(port_speed_query)
+    port_speed_dataset = influx_client.query(port_speed_query)
+    return port_speed_dataset
+
 def calculate_performance_metric_value(performance_metric_dataset):
     rolling_avg = list(performance_metric_dataset.get_points())
-    current_performance_metric_value = rolling_avg[-1]['moving_average']
-    return current_performance_metric_value
+    current_performance_metric_value = rolling_avg[-1]['non_negative_derivative']
+    return int(round(current_performance_metric_value))
+
+def calculate_port_speed_value(port_speed_dataset):
+    speed_datapoints = list(port_speed_dataset.get_points())
+    port_speed = speed_datapoints[-1]['speed']
+    return port_speed
    
 def upsert_internal_link_performance(internal_link_performance_key, performance_metrics, collection_name):
     in_unicast_pkts, out_unicast_pkts = performance_metrics["in-unicast-pkts"], performance_metrics["out-unicast-pkts"]
@@ -74,8 +95,11 @@ def upsert_internal_link_performance(internal_link_performance_key, performance_
     in_discards, out_discards = performance_metrics["in-discards"], performance_metrics["out-discards"]
     in_errors, out_errors = performance_metrics["in-errors"], performance_metrics["out-errors"]
     in_octets, out_octets = performance_metrics["in-octets"], performance_metrics["out-octets"]
+    percent_util_inbound, percent_util_outbound = performance_metrics["percent-util-inbound"], performance_metrics["percent-util-outbound"]
+    speed = performance_metrics["speed"]
     db_upserter.upsert_internal_link_performance(collection_name, internal_link_performance_key, in_unicast_pkts, out_unicast_pkts,
                                                in_multicast_pkts, out_multicast_pkts, in_broadcast_pkts, out_broadcast_pkts,
-                                               in_discards, out_discards, in_errors, out_errors, in_octets, out_octets)
+                                               in_discards, out_discards, in_errors, out_errors, in_octets, out_octets, speed,
+                                               percent_util_inbound, percent_util_outbound)
 if __name__ == '__main__':
     main()
