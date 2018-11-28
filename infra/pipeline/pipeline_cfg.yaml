@@ -1118,6 +1118,20 @@ data:
                 }
             ]
         }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "speed"
+                }
+            ]
+        }
     }
     ]
 
