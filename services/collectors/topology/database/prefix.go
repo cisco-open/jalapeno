@@ -8,6 +8,7 @@ type Prefix struct {
 	Key    string `json:"_key,omitempty"`
 	Prefix string `json:"Prefix,omitempty"`
 	Length int    `json:"Length,omitempty"`
+        ASN    string `json:"ASN,omitempty"`
 }
 
 func (p Prefix) GetKey() (string, error) {
@@ -30,7 +31,7 @@ func (p *Prefix) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if p.Prefix != "" && p.Length != 0 {
-		ret = fmt.Sprintf("%s_%d", p.Prefix, p.Length)
+		ret = fmt.Sprintf("%s", p.Prefix)
 		err = nil
 	}
 	return ret, err

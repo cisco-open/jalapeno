@@ -2,17 +2,17 @@ package database
 
 import "fmt"
 
-const InternalTransportPrefixName = "InternalTransportPrefix"
+const InternalTransportPrefixName = "InternalTransportPrefixes"
 
 type InternalTransportPrefix struct {
-	Key      string `json:"_key,omitempty"`
-	Name     string `json:"Name,omitempty"`
-	RouterIP string `json:"RouterIP,omitempty"`
-	BGPID    string `json:"BGPID,omitempty"`
-	IsLocal  bool   `json:"IsLocal"`
-	ASN      string `json:"ASN,omitempty"`
-        SRGB     string `json:"SRGB,omitempty"`
-        SRPrefixSID string `json:"SRPrefixSID,omitempty"`
+	Key            string `json:"_key,omitempty"`
+	Name           string `json:"Name,omitempty"`
+	RouterIP       string `json:"RouterIP,omitempty"`
+	BGPID          string `json:"BGPID,omitempty"`
+	ASN            string `json:"ASN,omitempty"`
+        SRGB           string `json:"SRGB,omitempty"`
+        PrefixSIDIndex string `json:"PrefixSIDIndex,omitempty"`
+        SRPrefixSID    string `json:"SRPrefixSID,omitempty"`
 }
 
 func (r InternalTransportPrefix) GetKey() (string, error) {
@@ -34,8 +34,8 @@ func (r *InternalTransportPrefix) SetKey() error {
 func (r *InternalTransportPrefix) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
-	if r.BGPID != "" {
-		ret = fmt.Sprintf("%s", r.BGPID)
+	if r.RouterIP != "" {
+		ret = fmt.Sprintf("InternalTransportPrefix:%s", r.RouterIP)
 		err = nil
 	}
 	return ret, err

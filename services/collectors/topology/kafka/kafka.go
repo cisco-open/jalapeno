@@ -100,9 +100,9 @@ func (c *Consumer) Start() error {
 
                                     openbmp_msg_data := strings.Split(string(openbmp_msg[1]), "\n")
                                     for _, element := range openbmp_msg_data {
-                                        fmt.Println("The current record to be processed is:")
+                                        // fmt.Println("The current record to be processed is:")
                                         current_openbmp_record := strings.Split(element, "\t")
-                                        fmt.Println(current_openbmp_record)
+                                        // fmt.Println(current_openbmp_record)
 
                                         omsg := openbmp.NewMessage(msg.Topic, current_openbmp_record)
                                         // fmt.Println("The message created by openbmp.go is:")

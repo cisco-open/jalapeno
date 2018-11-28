@@ -15,7 +15,7 @@ var voltronCmd = &cobra.Command{
 
 func init() {
 	if err := config.InitGlobalFlags(voltronCmd, config.InitGlobalCfg()); err != nil {
-		fmt.Fprintf(os.Stderr, "--- Voltront encountered an Error ---\n")
+		fmt.Fprintf(os.Stderr, "--- Voltron encountered an Error ---\n")
 		fmt.Fprintf(os.Stderr, "\t%v\n", err)
 	}
 }

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mdt-pipeline
-        image: dockerhub.cisco.com/gspie-docker/pipeline:v0.1.13
+        image: ievoltron/pipeline:v0.1.13@sha256:9cb8bb29c01423efd700b66e7014bf2efa207453ef16fbcbe709b31c284887bb
         volumeMounts:
         - mountPath: /data
           name: mdt-pipeline-data

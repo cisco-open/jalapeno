@@ -2,9 +2,7 @@ package handler
 
 import (
 	"fmt"
-
 	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/log"
 	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/openbmp"
 )
 
@@ -14,95 +12,196 @@ func peer(a *ArangoHandler, m *openbmp.Message) {
                 return
         }
 
-        local_bgp_id := m.GetStr("local_bgp_id")
-        local_ip := m.GetStr("local_ip")
-        local_asn := m.GetStr("local_asn")
+        // Collecting necessary fields from message
+        local_bgp_id     := m.GetStr("local_bgp_id")
+	local_router_ip  := local_bgp_id
+        local_asn        := m.GetStr("local_asn")
+        local_intf_ip    := m.GetStr("local_ip")
+        remote_bgp_id    := m.GetStr("remote_bgp_id")
+	remote_router_ip := remote_bgp_id
+        remote_asn       := m.GetStr("remote_asn")
+        remote_intf_ip   := m.GetStr("remote_ip")
+	
+	// Creating and upserting peer documents
+        parse_peer_router(a, local_bgp_id, local_router_ip, local_asn)
+        parse_peer_router(a, remote_bgp_id, remote_router_ip, remote_asn)
+        parse_peer_internal_router(a, local_bgp_id, local_router_ip, local_asn)
+	parse_peer_internal_router(a, remote_bgp_id, remote_router_ip, remote_asn)
 
-        remote_bgp_id := m.GetStr("remote_bgp_id")
-        remote_ip := m.GetStr("remote_ip")
-        remote_asn := m.GetStr("remote_asn")
+        parse_peer_border_router(a, local_bgp_id, local_router_ip, local_asn, remote_asn)
+	parse_peer_border_router(a, remote_bgp_id, remote_router_ip, remote_asn, local_asn)
+
+        parse_peer_external_router(a, local_bgp_id, local_router_ip, local_asn)
+	parse_peer_external_router(a, remote_bgp_id, remote_router_ip, remote_asn)
+        parse_peer_internal_transport_prefix(a, local_bgp_id, local_router_ip, local_asn)
+       	parse_peer_internal_transport_prefix(a, remote_bgp_id, remote_router_ip, remote_asn)
+
+        parse_peer_router_interface(a, local_bgp_id, local_router_ip, local_intf_ip, local_asn, remote_asn)
+        parse_peer_router_interface(a, remote_bgp_id, remote_router_ip, remote_intf_ip, remote_asn, local_asn)
+
+}
 
 
-        // Parsing a Router document from current Peer OpenBMP message
+// Parses a Router from the current Peer OpenBMP message
+// Upserts the created Router document into the Routers collection
+func parse_peer_router(a *ArangoHandler, bgp_id string, router_ip string, asn string) {
+	fmt.Println("Parsing peer - document: router_document")
         router_document := &database.Router{
-		BGPID:    local_bgp_id,
-		IsLocal:  false,
-		ASN:      local_asn,
-	}
-	if router_document.ASN == a.asn {
-		router_document.IsLocal = true
-                fmt.Println("Router has local ASN!")
+		BGPID:    bgp_id,
+		RouterIP: router_ip,
+		ASN:      asn,
 	}
 	if err := a.db.Upsert(router_document); err != nil {
-                fmt.Println("While upserting the current message's router document, encountered an error")
-	}
-	router_documentID, err := database.GetID(router_document)
-	if err != nil {
-		log.WithError(err).Error("Could not get From ID")
+                fmt.Println("While upserting the current peer message's router document, encountered an error:", err)
+        } else {
+                fmt.Printf("Successfully added current peer message's router document: Router: %q with ASN: %q\n", router_ip, asn)
+        }
+}
+
+
+// Parses an Internal Router from the current Peer OpenBMP message
+// Upserts the created Internal Router document into the InternalRouters collection
+func parse_peer_internal_router(a *ArangoHandler, bgp_id string, router_ip string, asn string) {
+        fmt.Println("Parsing ls_node - document: internal_router_document")
+	is_internal_asn :=  check_asn_location(asn)
+	if asn != a.asn && is_internal_asn == false {
+		fmt.Println("Current peer message's ASN is not local ASN: this is not an Internal Router -- skipping")
 		return
 	}
+        internal_router_document := &database.InternalRouter{
+                BGPID:    bgp_id,
+                RouterIP: router_ip,
+		ASN:      asn,
+        }
+	if err := a.db.Upsert(internal_router_document); err != nil {
+                fmt.Println("While upserting the current peer message's internal router document, encountered an error", err)
+        } else {
+                fmt.Printf("Successfully added current peer message's internal router document -- Internal Router: %q with ASN: %q\n", router_ip, asn)
+        }
+}
 
 
-        // Parsing a second Router document from current Peer OpenBMP message
-	router_document2 := &database.Router{
-		BGPID:   remote_bgp_id,
-		IsLocal: false,  
-		ASN:     remote_asn,
+// Parses a Border Router from the current Peer OpenBMP message
+// Upserts the created Border Router document into the BorderRouters collection
+func parse_peer_border_router(a *ArangoHandler, bgp_id string, router_ip string, src_asn string, dst_asn string) {
+        fmt.Println("Parsing ls_node - document: border_router_document")
+	src_has_internal_asn :=  check_asn_location(src_asn)
+	dst_has_internal_asn :=  check_asn_location(dst_asn)
+
+	// case 1: neighboring peer is internal -- this is not a border router
+	// case 2: neighboring peer is external, but local node is also external -- this is not a border router
+	if dst_asn == a.asn || dst_has_internal_asn == true {
+		fmt.Println("Current peer message's neighbor ASN is a local ASN: this is not a Border Router -- skipping")
+		return
+	} else if ((dst_asn != a.asn) && (dst_has_internal_asn == false)) && ((src_asn != a.asn) || (src_has_internal_asn == false)) {
+		fmt.Println("Current peer message has external ASN for both local and neighbor: this is not a Border Router -- skipping")
 	}
-	if router_document2.ASN == a.asn {
-		router_document2.IsLocal = true
-                fmt.Println("Router2 has local ASN!")
-	}
-	if err := a.db.Insert(router_document2); err != nil {
-                fmt.Println("While upserting the current message's router2 document, encountered an error")
-	}
-	router_document2ID, err := database.GetID(router_document2)
-	if err != nil {
-		log.WithError(err).Error("Could not get To ID")
+
+        border_router_document := &database.BorderRouter{
+                BGPID:    bgp_id,
+                RouterIP: router_ip,
+		ASN:      src_asn,
+        }
+	if err := a.db.Upsert(border_router_document); err != nil {
+                fmt.Println("While upserting the current peer message's border router document, encountered an error", err)
+        } else {
+                fmt.Printf("Successfully added current peer message's border router document -- Border Router: %q with ASN: %q\n", router_ip, src_asn)
+        }
+}
+
+
+// Parses an External Router from the current Peer OpenBMP message
+// Upserts the created External Router document into the ExternalRouters collection
+func parse_peer_external_router(a *ArangoHandler, bgp_id string, router_ip string, asn string) {
+        fmt.Println("Parsing ls_node - document: external_router_document")
+	is_internal_asn :=  check_asn_location(asn)
+	if asn == a.asn || is_internal_asn == true {
+		fmt.Println("Current peer message's ASN is local ASN: this is an Internal Router -- skipping")
 		return
 	}
+        external_router_document := &database.ExternalRouter{
+                BGPID:    bgp_id,
+                RouterIP: router_ip,
+		ASN:      asn,
+        }
+	if err := a.db.Upsert(external_router_document); err != nil {
+                fmt.Println("While upserting the current peer message's external router document, encountered an error", err)
+        } else {
+                fmt.Printf("Successfully added current peer message's external router document -- External Router: %q with ASN: %q\n", router_ip, asn)
+        }
+}
 
 
-        // Parsing a Link-Edge document from current Peer OpenBMP message
-	link_edge_document := &database.LinkEdge{
-		From:   router_documentID,
-		To:     router_document2ID,
-		FromIP: local_ip,
-		ToIP:   remote_ip,
-	}
-	// Loopbacks questionable -- should these be added?
-	if link_edge_document.FromIP == router_document.BGPID && link_edge_document.ToIP == router_document2.BGPID {
-		log.Warningf("Not sure if I should add this link: %+v", link_edge_document)
+// Parses an Internal Transport Prefix from the current Peer OpenBMP message
+// Upserts the created Internal Transport Prefix document into the InternalTransportPrefixes collection
+func parse_peer_internal_transport_prefix(a *ArangoHandler, bgp_id string, router_ip string, asn string) {
+        fmt.Println("Parsing peer - document: internal_transport_prefix_document")
+	is_internal_asn :=  check_asn_location(asn)
+	if asn != a.asn && is_internal_asn == false {
+		fmt.Println("Current peer message's ASN is not local ASN: this is not an Internal Transport Prefix -- skipping")
 		return
 	}
-	if err := a.db.Insert(link_edge_document); err != nil {
-	}
-
-
-        // Parsing a second Link-Edge document from current Peer OpenBMP message
-	link_edge_document2 := &database.LinkEdge{
-		From:   router_document2ID,
-		To:     router_documentID,
-		FromIP: remote_ip,
-		ToIP:   local_ip,
-	}
-	if err := a.db.Insert(link_edge_document2); err != nil {
-	}
-	log.Infof("Router %v/%v (%v) --> (%v) Peer %v/%v ", router_document.BGPID, router_document.ASN, link_edge_document2.FromIP, link_edge_document2.ToIP, router_document2.BGPID, router_document2.ASN)
-
-
-        // Parsing an Internal Transport Prefix from current Peer OpenBMP message
 	internal_transport_prefix_document := &database.InternalTransportPrefix{
-		BGPID:    local_bgp_id,
-		IsLocal:  false,
-		ASN:      local_asn,
-	}
-	if internal_transport_prefix_document.ASN == a.asn {
-		internal_transport_prefix_document.IsLocal = true
-                fmt.Println("Internal Transport Prefix has local ASN!")
+		BGPID:    bgp_id,
+		RouterIP: router_ip,
+		ASN:      asn,
 	}
 	if err := a.db.Upsert(internal_transport_prefix_document); err != nil {
-                fmt.Println("While upserting the current message's internal transport prefix document, encountered an error")
+                fmt.Println("While upserting the current peer message's internal transport prefix document, encountered an error")
+	} else {
+                fmt.Printf("Successfully added current peer message's internal transport prefix document -- Internal Transport Prefix: %q with ASN: %q\n", router_ip, asn)
+        }
+}
+
+
+// Parses a Router Interface from the current Peer OpenBMP message
+// Upserts the created Router Interface document into either the PeeringRouterInterfaces collection 
+// or the ExternalRouterInterfaces collection depending on the Router location
+func parse_peer_router_interface(a *ArangoHandler, bgp_id string, router_ip string, router_intf_ip string, router_asn string, peer_router_asn string) {
+        fmt.Println("Parsing peer - document: router interface document")
+
+	router_has_internal_asn :=  check_asn_location(router_asn)
+	peer_router_has_internal_asn :=  check_asn_location(peer_router_asn)
+
+	// We don't want to parse router-interfaces when the Peer OpenBMP message is from internal-router to internal-router
+	// This is because the internal bgp relationship is described in Peer OpenBMP messages as loopback to loopback
+	// We will instead parse these interfaces from LSLink OpenBMP messages
+	if (router_asn == a.asn || router_has_internal_asn) && (peer_router_asn == a.asn || peer_router_has_internal_asn) {
+		fmt.Println("Skipping parsing current peer message's router interface document -- internal to internal, will parse in ls_link")
+		return
+	}
+
+	if router_asn != a.asn && router_has_internal_asn == false {
+		external_router_interface_document := &database.ExternalRouterInterface {
+			BGPID:             bgp_id,
+			RouterIP:          router_ip,
+			RouterInterfaceIP: router_intf_ip,
+			RouterASN:         router_asn,
+		}
+		if err := a.db.Upsert(external_router_interface_document); err != nil {
+        	        fmt.Println("While upserting the current peer message's external router interface document, encountered an error")
+		} else {
+        	        fmt.Printf("Successfully added current peer message's external router interface document -- External Router Interface: %q with ASN: %q and Interface: %q\n", router_ip, router_asn, router_intf_ip)
+	        }
+		parse_peer_external_prefix_edge(a, router_ip, router_asn, router_intf_ip)
+	} else {
+		peering_router_interface_document := &database.PeeringRouterInterface {
+			BGPID:             bgp_id,
+			RouterIP:          router_ip,
+			RouterInterfaceIP: router_intf_ip,
+			RouterASN:         router_asn,
+		}
+		if err := a.db.Upsert(peering_router_interface_document); err != nil {
+        	        fmt.Println("While upserting the current peer message's peering router interface document, encountered an error")
+		} else {
+        	        fmt.Printf("Successfully added current peer message's peering router interface document -- Peering Router Interface: %q with ASN: %q and Interface: %q\n", router_ip, router_asn, router_intf_ip)
+	        }
 	}
 }
 
+// Parses an External Prefix Edge from the current Peer OpenBMP message
+// Upserts the created External Prefix Edge document into the ExternalPrefixEdges collection
+func parse_peer_external_prefix_edge(a *ArangoHandler, router_ip string, router_asn string, router_intf_ip string) {
+        fmt.Println("Parsing peer - document: external_prefix_edge_document")
+        a.db.CreateExternalPrefixEdgeSource(router_ip, router_asn, router_intf_ip)
+}

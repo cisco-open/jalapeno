@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: voltron
+  name: internal-links-performance-collector
+  labels:
+    app: internal-links-performance-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: internal-links-performance-collector
+  template:
+    metadata:
+      labels:
+        app: internal-links-performance-collector
+    spec:
+      containers:
+      - name: internal-links-performance-collector
+        image: ievoltron/internal-links-performance-collector:2.1.1@sha256:2a6d9e5f60dfecb9f291a06437753b9e030eb519e457f1d6686a40d29cb3da4f
