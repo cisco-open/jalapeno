@@ -155,7 +155,7 @@ func parse_peer_internal_transport_prefix(a *ArangoHandler, bgp_id string, route
 
 
 // Parses a Router Interface from the current Peer OpenBMP message
-// Upserts the created Router Interface document into either the PeeringRouterInterfaces collection 
+// Upserts the created Router Interface document into either the BorderRouterInterfaces collection 
 // or the ExternalRouterInterfaces collection depending on the Router location
 func parse_peer_router_interface(a *ArangoHandler, bgp_id string, router_ip string, router_intf_ip string, router_asn string, peer_router_asn string) {
         fmt.Println("Parsing peer - document: router interface document")
@@ -185,16 +185,16 @@ func parse_peer_router_interface(a *ArangoHandler, bgp_id string, router_ip stri
 	        }
 		parse_peer_external_prefix_edge(a, router_ip, router_asn, router_intf_ip)
 	} else {
-		peering_router_interface_document := &database.PeeringRouterInterface {
+		border_router_interface_document := &database.BorderRouterInterface {
 			BGPID:             bgp_id,
 			RouterIP:          router_ip,
 			RouterInterfaceIP: router_intf_ip,
 			RouterASN:         router_asn,
 		}
-		if err := a.db.Upsert(peering_router_interface_document); err != nil {
-        	        fmt.Println("While upserting the current peer message's peering router interface document, encountered an error")
+		if err := a.db.Upsert(border_router_interface_document); err != nil {
+        	        fmt.Println("While upserting the current peer message's border router interface document, encountered an error")
 		} else {
-        	        fmt.Printf("Successfully added current peer message's peering router interface document -- Peering Router Interface: %q with ASN: %q and Interface: %q\n", router_ip, router_asn, router_intf_ip)
+        	        fmt.Printf("Successfully added current peer message's border router interface document -- Border Router Interface: %q with ASN: %q and Interface: %q\n", router_ip, router_asn, router_intf_ip)
 	        }
 	}
 }
