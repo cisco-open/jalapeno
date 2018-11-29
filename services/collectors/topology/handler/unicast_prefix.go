@@ -22,21 +22,21 @@ func unicast_prefix(a *ArangoHandler, m *openbmp.Message) {
 		prefix_length = 0
 	}
 
-	if prefix_asn == "" {
-		fmt.Println("No ASN associated with unicast_prefix message -- skipping")
-		return
-	}
-
         // Creating and upserting unicast_prefix documents
         parse_unicast_prefix_prefix(a, prefix_ip, prefix_length, prefix_asn)	
-	is_internal_asn := check_asn_location(prefix_asn)
-	if prefix_asn == a.asn || is_internal_asn {
-	        parse_unicast_prefix_internal_prefix(a, prefix_ip, prefix_length, prefix_asn, sr_label)
+	if prefix_asn == "" {
+		fmt.Println("No ASN associated with unicast_prefix message -- must be internal prefix, allowing parsing")
+   	        parse_unicast_prefix_internal_prefix(a, prefix_ip, prefix_length, prefix_asn, sr_label)
 	} else {
-        	parse_unicast_prefix_external_prefix(a, prefix_ip, prefix_length, prefix_asn)
-		peer_has_internal_asn := check_asn_location(peer_ip) 
-		if (peer_asn != a.asn) && (peer_has_internal_asn == false) {
-	        	parse_unicast_prefix_external_prefix_edge(a, peer_ip, peer_asn, prefix_ip, prefix_length, prefix_asn)
+   		is_internal_asn := check_asn_location(prefix_asn)
+		if prefix_asn == a.asn || is_internal_asn {
+	       		parse_unicast_prefix_internal_prefix(a, prefix_ip, prefix_length, prefix_asn, sr_label)
+		} else {
+        		parse_unicast_prefix_external_prefix(a, prefix_ip, prefix_length, prefix_asn)
+			peer_has_internal_asn := check_asn_location(peer_ip) 
+			if (peer_asn != a.asn) && (peer_has_internal_asn == false) {
+	        		parse_unicast_prefix_external_prefix_edge(a, peer_ip, peer_asn, prefix_ip, prefix_length, prefix_asn)
+			}
 		}
 	}
 }
