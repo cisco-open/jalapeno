@@ -1,16 +1,9 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
-[dev-packages]
-
-
-
 [packages]
-
 "jinja2" = "*"
 colorama = "*"
 configparser = "*"
@@ -18,6 +11,7 @@ pyfiglet = "*"
 termcolor = "*"
 netmiko = "*"
 
+[dev-packages]
+
 [requires]
 
-python_version = "3.5"
