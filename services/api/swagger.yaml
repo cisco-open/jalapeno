@@ -1,0 +1,181 @@
+swagger: '2.0'
+info:
+  description: 'API for defending the universe.'
+  version: '0.0.1'
+  title: 'Voltron API'
+  termsOfService: 'http://www.cisco.com/web/siteassets/legal/terms_condition.html'
+  contact:
+    email: 'voltron-team@cisco.com'
+basePath: '/api/v1'
+tags:
+- name: 'Pathing'
+  description: 'Pathing related functionality, largely optimization.'
+- name: 'Topology'
+  description: 'Topology related functionality.'
+schemes:
+- 'http'
+parameters:
+  src_ip:
+    name: 'src_ip'
+    in: 'query'
+    required: true
+    type: string
+    description: 'The source IP.'
+  src_transport_ip:
+    name: 'src_transport_ip'
+    in: 'query'
+    required: true
+    type: string
+    description: 'The upstream or gateway IP that identifies traversal through the network beyond the host.'
+  dst_ip:
+    name: 'dst_ip'
+    in: 'query'
+    required: true
+    type: string
+    description: 'The destination IP.'
+definitions:
+  SRLabelStack:
+    description: 'Segment Routing Label Stack'
+    type: array
+    items:
+      type: integer
+  d3Node:
+    type: object
+    description: 'd3 node representation.'
+    properties:
+      id:
+        type: string
+      group:
+        type: integer
+  d3Link:
+    type: object
+    description: 'd3 link representation.'
+    properties:
+      source:
+        type: string
+      target:
+        type: string
+      value:
+        type: integer
+  d3Topology:
+    description: 'Topology representation corresponding to d3.'
+    type: object
+    properties:
+      nodes:
+        type: array
+        items:
+          $ref: '#/definitions/d3Node'
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/d3Link'
+paths:
+  /pathing/epe/latency:
+    get:
+      tags:
+      - 'Pathing'
+      summary: 'Optimize pathing to EPE based on latency.'
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - $ref: '#/parameters/src_ip'
+      - $ref: '#/parameters/src_transport_ip'
+      - $ref: '#/parameters/dst_ip'
+      - name: 'max_latency'
+        in: query
+        description: 'Specification of a maximum allowable latency, otherwise the lowest latency path will be returned.'
+        required: false
+        type: integer
+      responses:
+        400:
+          description: 'Invalid source, transport, or destination IP.'
+        200:
+          description: 'Path identified and selected.'
+          schema:
+            $ref: '#/definitions/SRLabelStack'
+  /pathing/epe/bandwidth:
+    get:
+      tags:
+      - 'Pathing'
+      summary: 'Optimize pathing to EPE based on bandwidth.'
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - $ref: '#/parameters/dst_ip'
+      - name: 'min_bandwidth'
+        in: query
+        description: 'Specification of a minimum allowable bandwidth, otherwise the greatest bandwidth path will be returned.'
+        required: false
+        type: integer
+      responses:
+        400:
+          description: 'Invalid destination IP.'
+        200:
+          description: 'Path identified and selected.'
+          schema:
+            $ref: '#/definitions/SRLabelStack'
+  /pathing/epe/utilization:
+    get:
+      tags:
+      - 'Pathing'
+      summary: 'Optimize pathing to EPE based on utilization percentages.'
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - $ref: '#/parameters/dst_ip'
+      - name: 'max_utilization'
+        in: query
+        description: 'Specification of the maximum allowable utilization percentage, otherwise the least utilized path will be returned.'
+        required: false
+        type: integer
+      responses:
+        400:
+          description: 'Invalid destination IP.'
+        200:
+          description: 'Path identified and selected.'
+          schema:
+            $ref: '#/definitions/SRLabelStack'
+  /pathing/epe/lossless:
+    get:
+      tags:
+      - 'Pathing'
+      summary: 'Optimize pathing to EPE based on loss-related statistics.'
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - $ref: '#/parameters/dst_ip'
+      - name: 'max_loss'
+        in: query
+        description: 'Specification of the maximum allowable loss, otherwise the lowest loss path will be returned.'
+        required: false
+        type: integer
+      responses:
+        400:
+          description: 'Invalid destination IP.'
+        200:
+          description: 'Path identified and selected.'
+          schema:
+            $ref: '#/definitions/SRLabelStack'
+  /topology:
+    get:
+      tags:
+      - 'Topology'
+      summary: 'Retrieve the topology representation in the database in d3-desired form.'
+      produces:
+      - application/json
+      responses:
+        200:
+          description: 'Topology representation.'
+          schema:
+            $ref: '#/definitions/d3Topology'
+externalDocs:
+  description: 'Find out more about Voltron'
+  url: 'https://wwwin-github.cisco.com/spa-ie/voltron'
