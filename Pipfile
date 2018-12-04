@@ -9,7 +9,7 @@ colorama = "*"
 configparser = "*"
 pyfiglet = "*"
 termcolor = "*"
-netmiko = "*"
+netmiko = ">=2.3.0"
 
 [dev-packages]
 
