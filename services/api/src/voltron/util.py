@@ -5,4 +5,4 @@ def ip_network_bandaid(address, mask='24'):
     """
     if '/' not in address:
         address = '%s/%s' % (address, mask)
-    return str(ip_interface(address).network.with_prefixlen)
+    return ip_interface(address).network
