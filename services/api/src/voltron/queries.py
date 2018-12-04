@@ -55,12 +55,13 @@ def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None):
         {latency_filter}
         SORT p.Latency
         LIMIT 1
-        RETURN [p._key, p.Label_Path]
+        RETURN [p.Label_Path]
     """
     prefix = ip_network_bandaid(dst_ip)
     prefix_ip = str(prefix.network_address)
     bind_vars = {'source': src_ip, 'destination': prefix_ip}
     if max_latency is not None:
+        max_latency = str(max_latency/1000)
         aql = aql.format(latency_filter='FILTER p.Latency <= @max_latency')
         bind_vars['max_latency'] = max_latency
     db = ArangoDBConnection()
@@ -87,6 +88,7 @@ def pathing_epe_lossless_get(dst_ip, max_loss=None):
     if max_loss is not None:
         aql = aql.format(loss_filter='FILTER total_loss <= @max_loss')
         bind_vars['max_loss'] = max_loss
+    db = ArangoDBConnection()
     label_list = list(db.query_aql(aql, bind_vars))
     if len(label_list) > 0:
         label_list = label_list[0]
