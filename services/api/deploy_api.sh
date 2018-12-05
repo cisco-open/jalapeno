@@ -1,6 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 BASEDIR=$(dirname $0)
-
-echo "Deploying APIs"
-sh ${PWD}/${BASEDIR}/deploy_foxx_service.sh
-
+oc apply -f ${PWD}/${BASEDIR}/api.yml
+oc apply -f ${PWD}/${BASEDIR}/api_svc_np.yaml

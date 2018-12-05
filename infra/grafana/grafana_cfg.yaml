@@ -17,5 +17,5 @@ data:
 
     [security]
     # default admin user, created on startup
-    admin_user = voltron
+    admin_user = root
     admin_password = voltron
