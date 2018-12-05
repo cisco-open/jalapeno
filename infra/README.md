@@ -24,7 +24,7 @@ InfluxDB is deployed using oc, as seen in the `deploy_infrastructure.sh` script.
 To access InfluxDB via OpenShift, enter the pod's terminal and run:
 ```bash
 influx
-auth voltron voltron
+auth root voltron
 use mdt_db
 show series
 ```
@@ -32,7 +32,7 @@ show series
 ## Grafana
 Grafana is Voltron's visual dashboard and metric visualization tool. Loaded with InfluxDB as its data-source, Grafana has various graphical representations of the network, including historical bandwidth usage, historical latency metrics, and more. 
 Grafana is deployed using oc, as seen in the `deploy_infrastructure.sh` script. The configurations for Grafana's deployment are in the various YAML files in the `voltron/infra/grafana/` directory.  
-To access Grafana's UI, log in at <server_ip>:30300, using credentials voltron/voltron.
+To access Grafana's UI, log in at <server_ip>:30300, using credentials root/voltron.
 
 ## OpenBMP
 OpenBMP is Voltron's topology collector. OpenBMP is run as a local container rather than as part of the larger OpenShift deployment. This containerized consumer receives OpenBMP data from every router configured to send OpenBMP data in the network. It then passes the data onto Kafka, where Voltron vServices can infer relationships and create representations of the network. The `voltron/infra/openbmpd` directory also comes with a `hosts.json` file that can be modified to reflect the network. Upon running the `configure_openbmp.py` script, each device in the `hosts.json` file would be configured with the included `openbmp_config_xr` config, and thus would send data to the OpenBMP container. 
