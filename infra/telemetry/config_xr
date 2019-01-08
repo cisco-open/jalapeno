@@ -3,6 +3,12 @@ grpc
  !
 !
 telemetry model-driven
+ destination-group voltron
+  address-family ipv4 10.0.250.2 port 32400
+   encoding self-describing-gpb
+   protocol grpc no-tls
+  !
+ !
  sensor-group openconfig_interfaces
   sensor-path openconfig-interfaces:interfaces/interface
  !
@@ -12,5 +18,6 @@ telemetry model-driven
  subscription base_metrics
   sensor-group-id openconfig_interfaces sample-interval 30000
   sensor-group-id cisco_models sample-interval 30000
+  destination-id voltron
  !
 !
