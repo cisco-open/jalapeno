@@ -68,6 +68,6 @@
 
 ### 11. Add latencies to the topology. Examples:
 sudo tc qdisc add dev r71ge1 root netem delay 120000 <br>
-sudo tc qdisc add dev r71ge2 root netem delay 150000
-sudo tc qdisc add dev r72ge1 root netem delay 180000
-sudo tc qdisc add dev r72ge2 root netem delay 210000
+sudo tc qdisc add dev r71ge2 root netem delay 150000 <br>
+sudo tc qdisc add dev r72ge1 root netem delay 180000 <br>
+sudo tc qdisc add dev r72ge2 root netem delay 210000 <br>
