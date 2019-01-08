@@ -12,11 +12,13 @@
 5. cd into /opt/vlt and run vlt_startup.sh
 
 6. Once the script is complete, check the status of routers/vms, verify routes, etc:
+```bash
     Example XR router console access:
     R00 -> telnet localhost 20000
     R05 -> telnet localhost 20050
     Example CSR router console access:
     sudo virsh console r71
+```
 
 7. Modify openshift's public or reachable IP address:
     1. virsh console os_base1
