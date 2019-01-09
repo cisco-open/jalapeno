@@ -21,3 +21,6 @@ python ${PWD}/${BASEDIR}/telemetry/deploy_telemetry.py
 
 echo "Deploying Pipeline"
 oc apply -f ${PWD}/${BASEDIR}/pipeline/.
+
+echo "Deploying Pipeline Ingress"
+oc apply -f ${PWD}/${BASEDIR}/pipeline-ingress/.
