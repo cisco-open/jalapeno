@@ -1,3 +1,4 @@
+netconf-yang
 telemetry ietf subscription 0
  encoding encode-kvgpb
  filter xpath /oc-if:interfaces/interface
