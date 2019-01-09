@@ -7,41 +7,24 @@ metadata:
 data:
   pipeline.conf: >-
     [default]
-
     id = grpc_kafka
-
     metamonitoring_prometheus_resource = /metrics
-
     metamonitoring_prometheus_server = :8989
 
     [gRPCDialout]
-
     stage = xport_input
-
     type = grpc
-
     encap = gpb
-
     listen = :57400
-
     tls = false
-
     # tls_pem = cert.pem
-
     # tls_key = server.key
-
     # tls_servername = tlsservername
 
     [kafka_producer]
-
     stage=xport_output
-
     type=kafka
-
     encoding=gpb
-
     brokers=broker.voltron.svc:9092
-
     topic=voltron.telemetry
-
     datachanneldepth=1000
