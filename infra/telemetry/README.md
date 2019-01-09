@@ -11,13 +11,12 @@ python deploy_telemetry.py
 
 That deployment script configures telemetry according to the configuration in `config_xr`
 
-In the event you need to reassess your telemetry configuration, run:
+Note: `hosts.json.example` is included as an example of how `hosts.json` should look.
+
+In the event you need to remove	Pipeline or reassess your telemetry configuration, run:
 ```
 python remove_telemetry
 ```
-
-Note: `hosts.json.example` is included as an example of how `hosts.json` should look.
-
 
 ## Helpful Hints
 

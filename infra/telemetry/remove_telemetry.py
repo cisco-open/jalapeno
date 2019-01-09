@@ -1,16 +1,12 @@
 #!/usr/bin/python3.6
-"""Deploy Telemetry streaming on host network devices.
-Configures devices for telemetry streaming, enables guest
-shell, and then provisions and starts Pipeline on devices.
+"""Remove Telemetry streaming on host network devices.
+Unconfigures devices' currently telemetry configurations.
 """
-import configure_telemetry, enable_guestshell, manage_pipeline
+import configure_telemetry
 
 def main():
-    print("Stopping Pipeline on devices")
-    manage_pipeline.main("stop")
-
-    print("Removing Pipeline on devices")
-    manage_pipeline.main("remove")
+    print("Unconfiguring telemetry on devices")
+    configure_telemetry.remove_telemetry_config()
 
 if __name__ == '__main__':
     main()
