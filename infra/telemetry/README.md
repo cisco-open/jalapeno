@@ -9,13 +9,9 @@ Once your hosts file is filled, run:
 python deploy_telemetry.py
 ```
 
-That deployment script does the following:
-- configures telemetry according to the configuration in `config_xr`
-- enables guestshell on the devices
-- provisions Pipeline (a telemetry consumer and forwarder) on the devices based on the configuration in `pipeline/pipeline.conf`
-- starts Pipeline
+That deployment script configures telemetry according to the configuration in `config_xr`
 
-In the event you need to remove	Pipeline or reassess your telemetry configuration, run:
+In the event you need to reassess your telemetry configuration, run:
 ```
 python remove_telemetry
 ```
@@ -31,11 +27,9 @@ SSH onto your network device. Run:
 show telemetry model-driven subscription
 ```
 
-#### To confirm Pipeline is streaming data to your Kafka instance: 
-SSH onto your network device. Run:
+#### To confirm Pipeline is receiving data from your network devices:
+Enter the Pipeline-Ingress pod (through CLI or the OpenShift UI). Run:
 ```
-bash
-cd /home/voltron
 cat pipeline.log
 ```
 
