@@ -1,0 +1,56 @@
+[
+    {
+        "netmiko_network": {
+            "device_type": "cisco_xr",
+            "ip": "10.0.0.0",
+            "username": "cisco",
+            "password": "cisco",
+            "port": 22
+        }
+    },
+    {
+        "netmiko_network": {
+            "device_type": "cisco_xr",
+            "ip": "10.0.0.1",
+            "username": "cisco",
+            "password": "cisco",
+            "port": 22
+        }
+    },
+    {
+        "netmiko_network": {
+            "device_type": "cisco_xr",
+            "ip": "10.0.0.2",
+            "username": "cisco",
+            "password": "cisco",
+            "port": 22
+        }
+    },
+    {
+     	"netmiko_network": {
+            "device_type": "cisco_xr",
+            "ip": "10.251.251.103",
+     	    "username": "cisco",
+            "password": "cisco",
+            "port": 22
+     	}
+    },
+    {
+     	"netmiko_network": {
+            "device_type": "cisco_xr",
+            "ip": "10.251.251.104",
+     	    "username": "cisco",
+            "password": "cisco",
+            "port": 22
+     	}
+    },
+    {
+     	"netmiko_network": {
+            "device_type": "cisco_xe",
+            "ip": "10.0.0.13",
+     	    "username": "cisco",
+            "password": "cisco",
+            "port": 22
+     	}
+    }
+]

@@ -45,7 +45,7 @@ def main():
         remove_telemetry_config(network_host)
         if device_type == "cisco_xr":
             apply_telemetry_config(network_host, xr_telemetry_config)
-        elif device_type == "cisco_xe":
+        elif device_type == "cisco_ios":
             apply_telemetry_config(network_host, xe_telemetry_config)
 
 if __name__ == '__main__':
