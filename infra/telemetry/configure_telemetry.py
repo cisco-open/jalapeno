@@ -20,7 +20,8 @@ def remove_telemetry_config(netmiko_host_dict):
         'no grpc'
     ]
     xe_config_set = [
-        'no telemetry ietf subscription 0'
+        'no telemetry ietf subscription 0',
+        'no netconf-yang'
     ]
     with ConnectHandler(**netmiko_host_dict) as connection:
         if netmiko_host_dict['device_type'] == 'cisco_xr':
