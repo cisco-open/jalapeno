@@ -38,7 +38,7 @@ spec:
         image: swaggerapi/swagger-ui@sha256:5814d0052859277794e7c2d84ee0d5b7cc24e767b5b646af5e1f3b32cc36f47b
         env:
         - name: API_URL
-          value: http://10.200.99.3:30880/api/v1/swagger.json
+          value: http://voltron-sjc.cisco.com:30880/api/v1/swagger.json
         ports:
         - containerPort: 8080
           protocol: TCP
