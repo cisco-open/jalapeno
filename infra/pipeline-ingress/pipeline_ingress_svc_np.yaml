@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mdt-pipeline-ingress-np
+  namespace: voltron
+spec:
+  type: NodePort
+  ports:
+  - name: 57400-tcp
+    port: 57400
+    nodePort: 32400
+    targetPort: 57400
+  selector:
+    app: mdt-pipeline-ingress

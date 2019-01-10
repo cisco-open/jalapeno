@@ -1138,7 +1138,7 @@ data:
   pipeline.conf: >-
     [default]
 
-    id = influx_pipeline
+    id = kafka_influx
 
     metamonitoring_prometheus_resource = /metrics
 

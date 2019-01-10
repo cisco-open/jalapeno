@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mdt-pipeline-ingress-deployment
+  labels:
+    app: mdt-pipeline-ingress
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mdt-pipeline-ingress
+  template:
+    metadata:
+      labels:
+        app: mdt-pipeline-ingress
+    spec:
+      containers:
+      - name: mdt-pipeline-ingress
+        image: ievoltron/pipeline:v0.1.13@sha256:9cb8bb29c01423efd700b66e7014bf2efa207453ef16fbcbe709b31c284887bb
+        volumeMounts:
+        - mountPath: /data
+          name: mdt-pipeline-ingress-data
+        - mountPath: /data/config
+          name: mdt-pipeline-ingress-data-config
+      volumes:
+      - name: mdt-pipeline-ingress-data
+        emptyDir: {}
+      - name: mdt-pipeline-ingress-data-config
+        configMap:
+          defaultMode: 420
+          name: mdt-pipeline-ingress-config
