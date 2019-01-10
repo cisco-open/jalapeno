@@ -21,4 +21,4 @@ sleep 20
 sh services/api/deploy_api.sh
 
 ### Deploying Portal
-sh services/VoltronUI/deploy_portal.sh
+sh services/portal/deploy_portal.sh
