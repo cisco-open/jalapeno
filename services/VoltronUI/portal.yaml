@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: voltron
+  name: portal
+  labels:
+    app: portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portal
+  template:
+    metadata:
+      labels:
+        app: portal
+    spec:
+      containers:
+      - name: portal
+        image: ievoltron/portal:0.0.1
+        env:
+        - name: FLASK_ENV
+          value: production
+        - name: API_URL
+          value: http://voltron-sjc.cisco.com:30880/api/v1/swagger.json
+        ports:
+        - containerPort: 80
+          protocol: TCP
