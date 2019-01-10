@@ -31,7 +31,7 @@ spec:
         - name: INFLUXDB_ADMIN_PASSWORD
           value: "gsplab"
         - name: INFLUXDB_USER
-          value: "voltron"
+          value: "root"
         - name: INFLUXDB_USER_PASSWORD
           value: "voltron"
         command: ["/bin/sh"]
