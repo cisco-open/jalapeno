@@ -9,7 +9,7 @@ Once your hosts file is filled, run:
 python deploy_telemetry.py
 ```
 
-That deployment script configures telemetry according to the configuration in `config_xr`
+That deployment script configures telemetry according to device information and the templates in 'config_xr_template' and 'config_xe_template'
 
 Note: `hosts.json.example` is included as an example of how `hosts.json` should look.
 
