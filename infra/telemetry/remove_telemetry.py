@@ -22,7 +22,7 @@ def main():
     if confirmation != 'y':
         print('Aborting.')
         exit()
-    hosts = get_hosts(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '/hosts.json')
+    hosts = get_hosts(os.path.dirname(os.path.abspath(__file__)) + '/hosts.json')
     for host in hosts:
         network_host = host['netmiko_network']
         host_ip, device_type = network_host['ip'], network_host['device_type']
