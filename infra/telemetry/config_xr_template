@@ -4,7 +4,7 @@ grpc
 !
 telemetry model-driven
  destination-group voltron
-  address-family ipv4 10.0.250.2 port 32400
+  address-family ipv4 {{ pipeline_ip }} port {{ pipeline_port }}
    encoding self-describing-gpb
    protocol grpc no-tls
   !

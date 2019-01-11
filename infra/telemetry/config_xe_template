@@ -4,5 +4,6 @@ telemetry ietf subscription 0
  filter xpath /oc-if:interfaces/interface
  stream yang-push
  update-policy periodic 3000
- receiver ip address 10.0.250.2 32400 protocol grpc-tcp
+ source-address {{ loopback_ip }}
+ receiver ip address {{ pipeline_ip }} {{ pipeline_port }} protocol grpc-tcp
 !
