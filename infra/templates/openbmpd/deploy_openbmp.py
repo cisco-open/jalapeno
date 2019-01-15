@@ -1,4 +1,15 @@
-"""Deploy the openbmp_collector container locally"""
+#!/usr/bin/python3.6
+"""Deploy OpenBMP container locally.
+Receives OpenBMP data and forwards to Kafka."""
+import configure_openbmp
 import os
 
-os.system("docker run -d --name=openbmp_collector -e KAFKA_FQDN={{ kafka_endpoint }} -v /var/openbmp/config:/config -p 5000:5000 openbmp/collector")
+def main():
+    #print("Configuring OpenBMP on devices")
+    #configure_openbmp.main()
+    print("Deploying OpenBMP container on host")
+    os.system("docker run -d --name=openbmp_collector -e KAFKA_FQDN={{ kafka_endpoint }} -v /var/openbmp/config:/config -p {{ openbmp_port }}:{{ openbmp_port }} openbmp/collector")
+
+if __name__ == '__main__':
+    main()
+

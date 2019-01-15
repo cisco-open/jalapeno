@@ -1,0 +1,10 @@
+router bgp 65400
+ bmp server 1
+  address {{ host_ip }} port-number {{ openbmp_port }}
+  initial-delay 5
+  flapping-delay 60
+  stats-reporting-period 60
+  update-source Loopback0
+  activate
+ exit-bmp-server-mode
+ !
