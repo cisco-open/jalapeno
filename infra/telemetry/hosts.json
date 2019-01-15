@@ -1,82 +1,56 @@
 [
     {
         "netmiko_network": {
-            "device_type": "cisco_xr",
+            "device_type": "iosxr",
             "ip": "10.0.0.0",
             "username": "cisco",
             "password": "cisco",
             "port": 22
-        },
-        "netmiko_linux": {
-            "device_type": "linux",
-            "ip": "10.0.0.0",
-            "username": "voltron",
-            "password": "voltron",
-            "port": 57722
         }
     },
     {
         "netmiko_network": {
-            "device_type": "cisco_xr",
+            "device_type": "iosxr",
             "ip": "10.0.0.1",
             "username": "cisco",
             "password": "cisco",
             "port": 22
-        },
-        "netmiko_linux": {
-            "device_type": "linux",
-            "ip": "10.0.0.1",
-            "username": "voltron",
-            "password": "voltron",
-            "port": 57722
         }
     },
     {
         "netmiko_network": {
-            "device_type": "cisco_xr",
+            "device_type": "iosxr",
             "ip": "10.0.0.2",
             "username": "cisco",
             "password": "cisco",
             "port": 22
-        },
-        "netmiko_linux": {
-            "device_type": "linux",
-            "ip": "10.0.0.2",
-            "username": "voltron",
-            "password": "voltron",
-            "port": 57722
         }
     },
     {
      	"netmiko_network": {
-            "device_type": "cisco_xr",
+            "device_type": "iosxr",
             "ip": "10.251.251.103",
      	    "username": "cisco",
             "password": "cisco",
             "port": 22
-     	},
-	"netmiko_linux": {
-            "device_type": "linux",
-            "ip": "10.251.251.103",
-	    "username": "voltron",
-            "password": "voltron",
-            "port": 57722
-	}
+     	}
     },
     {
      	"netmiko_network": {
-            "device_type": "cisco_xr",
+            "device_type": "iosxr",
             "ip": "10.251.251.104",
      	    "username": "cisco",
             "password": "cisco",
             "port": 22
-     	},
-	"netmiko_linux": {
-            "device_type": "linux",
-            "ip": "10.251.251.104",
-	    "username": "voltron",
-            "password": "voltron",
-            "port": 57722
-	}
+     	}
+    },
+    {
+     	"netmiko_network": {
+            "device_type": "ios",
+            "ip": "10.0.0.13",
+     	    "username": "cisco",
+            "password": "cisco",
+            "port": 22
+     	}
     }
 ]

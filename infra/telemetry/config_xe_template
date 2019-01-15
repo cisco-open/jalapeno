@@ -1,0 +1,9 @@
+netconf-yang
+telemetry ietf subscription 0
+ encoding encode-kvgpb
+ filter xpath /oc-if:interfaces/interface
+ stream yang-push
+ update-policy periodic 3000
+ source-address {{ loopback_ip }}
+ receiver ip address {{ pipeline_ip }} {{ pipeline_port }} protocol grpc-tcp
+!

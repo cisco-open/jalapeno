@@ -1,0 +1,1241 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mdt-pipeline-egress-config
+  namespace: voltron
+  selfLink: /api/v1/namespaces/voltron/configmaps/mdt-pipeline-egress-config
+data:
+  metrics.json: |-
+    [
+    {
+        "basepath": "openconfig-interfaces:interfaces/interface", 
+        "spec": {
+            "fields": [
+                { "name": ""}, 
+                {
+                    "name": "aggregation", 
+                    "fields": [
+                        {
+                            "name": "state", 
+                            "fields": [
+                                {"name": "lag-type"}, 
+                                {"name": "lag-speed"}, 
+                                {"name": "min-links"}, 
+                                {"name": "member"}
+                            ]
+                        }, 
+                        {
+                            "name": "config", 
+                            "fields": [
+                                {"name": "lag-type"}, 
+                                {"name": "min-links"}
+                            ]
+                        }, 
+                        {
+                            "name": "switched-vlan", 
+                            "fields": [
+                                {
+                                    "name": "state", 
+                                    "fields": [
+                                        {"name": "access-vlan"}, 
+                                        {"name": "native-vlan"}, 
+                                        {"name": "trunk-vlans"}, 
+                                        {"name": "interface-mode"}
+                                    ]
+                                }, 
+                                {
+                                    "name": "config", 
+                                    "fields": [
+                                        {"name": "native-vlan"}, 
+                                        {"name": "trunk-vlans"}, 
+                                        {"name": "access-vlan"}, 
+                                        {"name": "interface-mode"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }, 
+                {
+                    "name": "ethernet", 
+                    "fields": [
+                        {
+                            "name": "switched-vlan", 
+                            "fields": [
+                                {
+                                    "name": "state", 
+                                    "fields": [
+                                        {"name": "trunk-vlans"}, 
+                                        {"name": "access-vlan"}, 
+                                        {"name": "native-vlan"}, 
+                                        {"name": "interface-mode"}
+                                    ]
+                                }, 
+                                {
+                                    "name": "config", 
+                                    "fields": [
+                                        {"name": "access-vlan"}, 
+                                        {"name": "interface-mode"}, 
+                                        {"name": "trunk-vlans"}, 
+                                        {"name": "native-vlan"}
+                                    ]
+                                }
+                            ]
+                        }, 
+                        {
+                            "name": "poe", 
+                            "fields": [
+                                {
+                                    "name": "state", 
+                                    "fields": [
+                                        {"name": "enabled"}, 
+                                        {"name": "power-used"}, 
+                                        {"name": "power-class"}
+                                    ]
+                                }
+                            ]
+                        }, 
+                        {
+                            "name": "config", 
+                            "fields": [
+                                {"name": "switchport"}, 
+                                {"name": "duplex-mode"}, 
+                                {"name": "enable-flow-control"}, 
+                                {"name": "mac-address", "tag": true}, 
+                                {"name": "aggregate-id"}, 
+                                {"name": "port-speed"}, 
+                                {"name": "auto-negotiate"}
+                            ]
+                        }, 
+                        {
+                            "name": "state", 
+                            "fields": [
+                                {"name": "hw-mac-address", "tag": true}, 
+                                {"name": "mac-address", "tag": true}, 
+                                {"name": "aggregate-id"}, 
+                                {
+                                    "name": "counters", 
+                                    "fields": [
+                                        {"name": "in-mac-control-frames"}, 
+                                        {"name": "in-crc-errors"}, 
+                                        {"name": "out-8021q-frames"}, 
+                                        {"name": "in-mac-pause-frames"}, 
+                                        {"name": "in-jabber-frames"}, 
+                                        {"name": "in-oversize-frames"}, 
+                                        {"name": "out-mac-control-frames"}, 
+                                        {"name": "out-mac-pause-frames"}, 
+                                        {"name": "in-8021q-frames"}, 
+                                        {"name": "in-fragment-frames"}
+                                    ]
+                                }, 
+                                {"name": "auto-negotiate"}, 
+                                {"name": "effective-speed"}, 
+                                {"name": "enable-flow-control"}, 
+                                {"name": "switchport"}, 
+                                {"name": "negotiated-port-speed"}, 
+                                {"name": "port-speed"}, 
+                                {"name": "negotiated-duplex-mode"}, 
+                                {"name": "duplex-mode"}
+                            ]
+                        }
+                    ]
+                }, 
+                {"name": "name"}, 
+                {
+                    "name": "routed-vlan", 
+                    "fields": [
+                        {
+                            "name": "ipv6", 
+                            "fields": [
+                                {
+                                    "name": "config", 
+                                    "fields": [
+                                        {"name": "dup-addr-detect-transmits"}, 
+                                        {"name": "mtu"}, 
+                                        {"name": "enabled"}, 
+                                        {"name": "dhcp-client"}
+                                    ]
+                                }, 
+                                {
+                                    "name": "neighbors", 
+                                    "fields": [
+                                        {
+                                            "name": "neighbor", 
+                                            "fields": [
+                                                {"name": "ip"}, 
+                                                {
+                                                    "name": "state", 
+                                                    "fields": [
+                                                        {"name": "is-router"}, 
+                                                        {"name": "ip", "tag": true}, 
+                                                        {"name": "link-layer-address", "tag": true}, 
+                                                        {"name": "neighbor-state"}, 
+                                                        {"name": "origin"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "config", 
+                                                    "fields": [
+                                                        {"name": "ip", "tag": true}, 
+                                                        {"name": "link-layer-address", "tag": true}
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }, 
+                                {
+                                    "name": "router-advertisement", 
+                                    "fields": [
+                                        {
+                                            "name": "state", 
+                                            "fields": [
+                                                {"name": "interval"}, 
+                                                {"name": "suppress"}, 
+                                                {"name": "lifetime"}
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "config", 
+                                            "fields": [
+                                                {"name": "interval"}, 
+                                                {"name": "lifetime"}, 
+                                                {"name": "suppress"}
+                                            ]
+                                        }
+                                    ]
+                                }, 
+                                {
+                                    "name": "state", 
+                                    "fields": [
+                                        {"name": "dup-addr-detect-transmits"}, 
+                                        {"name": "dhcp-client"}, 
+                                        {"name": "enabled"}, 
+                                        {"name": "mtu"}, 
+                                        {
+                                            "name": "counters", 
+                                            "fields": [
+                                                {"name": "out-discarded-pkts"}, 
+                                                {"name": "in-octets"}, 
+                                                {"name": "out-octets"}, 
+                                                {"name": "in-pkts"}, 
+                                                {"name": "in-error-pkts"}, 
+                                                {"name": "out-pkts"}, 
+                                                {"name": "out-error-pkts"}, 
+                                                {"name": "out-forwarded-octets"},
+                                                {"name": "out-forwarded-pkts"}, 
+                                                {"name": "in-discarded-pkts"}, 
+                                                {"name": "in-forwarded-octets"}, 
+                                                {"name": "in-forwarded-pkts"}
+                                            ]
+                                        }
+                                    ]
+                                }, 
+                                {
+                                    "name": "unnumbered", 
+                                    "fields": [
+                                        {
+                                            "name": "config", 
+                                            "fields": [
+                                                {"name": "enabled"}
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "interface-ref", 
+                                            "fields": [
+                                                {
+                                                    "name": "config", 
+                                                    "fields": [
+                                                        {"name": "subinterface"}, 
+                                                        {"name": "interface"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "state", 
+                                                    "fields": [
+                                                        {"name": "subinterface"}, 
+                                                        {"name": "interface"}
+                                                    ]
+                                                }
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "state", 
+                                            "fields": [
+                                                {"name": "enabled"}
+                                            ]
+                                        }
+                                    ]
+                                }, 
+                                {
+                                    "name": "addresses", 
+                                    "fields": [
+                                        {
+                                            "name": "address", 
+                                            "fields": [
+                                                {
+                                                    "name": "state", 
+                                                    "fields": [
+                                                        {"name": "status"}, 
+                                                        {"name": "ip", "tag": true}, 
+                                                        {"name": "prefix-length"}, 
+                                                        {"name": "origin"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "config", 
+                                                    "fields": [
+                                                        {"name": "ip", "tag": true}, 
+                                                        {"name": "prefix-length"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "vrrp", 
+                                                    "fields": [
+                                                        {
+                                                            "name": "vrrp-group", 
+                                                            "fields": [
+                                                                {
+                                                                    "name": "state", 
+                                                                    "fields": [
+                                                                        {"name": "virtual-router-id"}, 
+                                                                        {"name": "priority"}, 
+                                                                        {"name": "current-priority"}, 
+                                                                        {"name": "virtual-address"}, 
+                                                                        {"name": "preempt-delay"}, 
+                                                                        {"name": "preempt"}, 
+                                                                        {"name": "advertisement-interval"}, 
+                                                                        {"name": "virtual-link-local"}, 
+                                                                        {"name": "accept-mode"}
+                                                                    ]
+                                                                }, 
+                                                                {"name": "virtual-router-id"}, 
+                                                                {
+                                                                    "name": "interface-tracking", 
+                                                                    "fields": [
+                                                                        {
+                                                                            "name": "config", 
+                                                                            "fields": [
+                                                                                {"name": "priority-decrement"}, 
+                                                                                {"name": "track-interface"}
+                                                                            ]
+                                                                        }, 
+                                                                        {
+                                                                            "name": "state", 
+                                                                            "fields": [
+                                                                                {"name": "priority-decrement"}, 
+                                                                                {"name": "track-interface"}
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }, 
+                                                                {
+                                                                    "name": "config", 
+                                                                    "fields": [
+                                                                        {"name": "preempt-delay"}, 
+                                                                        {"name": "accept-mode"}, 
+                                                                        {"name": "advertisement-interval"}, 
+                                                                        {"name": "virtual-router-id"}, 
+                                                                        {"name": "preempt"}, 
+                                                                        {"name": "virtual-link-local"}, 
+                                                                        {"name": "priority"}, 
+                                                                        {"name": "virtual-address"}
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }, 
+                                                {"name": "ip"}
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }, 
+                        {
+                            "name": "ipv4", 
+                            "fields": [
+                                {
+                                    "name": "neighbors", 
+                                    "fields": [
+                                        {
+                                            "name": "neighbor", 
+                                            "fields": [
+                                                {
+                                                    "name": "state", 
+                                                    "fields": [
+                                                        {"name": "ip", "tag": true}, 
+                                                        {"name": "link-layer-address", "tag": true}, 
+                                                        {"name": "origin"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "config", 
+                                                    "fields": [
+                                                        {"name": "link-layer-address", "tag": true}, 
+                                                        {"name": "ip", "tag": true}
+                                                    ]
+                                                }, 
+                                                {"name": "ip"}
+                                            ]
+                                        }
+                                    ]
+                                }, 
+                                {
+                                    "name": "proxy-arp", 
+                                    "fields": [
+                                        {
+                                            "name": "state", 
+                                            "fields": [
+                                                {"name": "mode"}
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "config", 
+                                            "fields": [
+                                                {"name": "mode"}
+                                            ]
+                                        }
+                                    ]
+                                }, 
+                                {
+                                    "name": "addresses", 
+                                    "fields": [
+                                        {
+                                            "name": "address", 
+                                            "fields": [
+                                                {
+                                                    "name": "state", 
+                                                    "fields": [
+                                                        {"name": "ip", "tag": true}, 
+                                                        {"name": "origin"}, 
+                                                        {"name": "prefix-length"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "config", 
+                                                    "fields": [
+                                                        {"name": "ip", "tag": true},
+                                                        {"name": "prefix-length"}
+                                                    ]
+                                                }, 
+                                                {"name": "ip"}, 
+                                                {
+                                                    "name": "vrrp", 
+                                                    "fields": [
+                                                        {
+                                                            "name": "vrrp-group", 
+                                                            "fields": [
+                                                                {"name": "virtual-router-id"}, 
+                                                                {
+                                                                    "name": "config", 
+                                                                    "fields": [
+                                                                        {"name": "accept-mode"}, 
+                                                                        {"name": "preempt"}, 
+                                                                        {"name": "virtual-router-id"}, 
+                                                                        {"name": "advertisement-interval"}, 
+                                                                        {"name": "virtual-address"}, 
+                                                                        {"name": "priority"}, 
+                                                                        {"name": "preempt-delay"}
+                                                                    ]
+                                                                }, 
+                                                                {
+                                                                    "name": "interface-tracking", 
+                                                                    "fields": [
+                                                                        {
+                                                                            "name": "state", 
+                                                                            "fields": [
+                                                                                {"name": "priority-decrement"}, 
+                                                                                {"name": "track-interface"}
+                                                                            ]
+                                                                        }, 
+                                                                        {
+                                                                            "name": "config", 
+                                                                            "fields": [
+                                                                                {"name": "track-interface"}, 
+                                                                                {"name": "priority-decrement"}
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }, 
+                                                                {
+                                                                    "name": "state", 
+                                                                    "fields": [
+                                                                        {"name": "advertisement-interval"}, 
+                                                                        {"name": "current-priority"}, 
+                                                                        {"name": "preempt"}, 
+                                                                        {"name": "virtual-address"}, 
+                                                                        {"name": "priority"}, 
+                                                                        {"name": "virtual-router-id"}, 
+                                                                        {"name": "preempt-delay"}, 
+                                                                        {"name": "accept-mode"}
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }, 
+                                {
+                                    "name": "state", 
+                                    "fields": [
+                                        {"name": "dhcp-client"}, 
+                                        {"name": "enabled"}, 
+                                        {
+                                            "name": "counters", 
+                                            "fields": [
+                                                {"name": "out-discarded-pkts"}, 
+                                                {"name": "out-forwarded-pkts"}, 
+                                                {"name": "out-octets"}, 
+                                                {"name": "out-pkts"}, 
+                                                {"name": "in-forwarded-pkts"}, 
+                                                {"name": "in-error-pkts"}, 
+                                                {"name": "in-octets"}, 
+                                                {"name": "out-error-pkts"}, 
+                                                {"name": "in-forwarded-octets"}, 
+                                                {"name": "out-forwarded-octets"}, 
+                                                {"name": "in-pkts"}, 
+                                                {"name": "in-discarded-pkts"}
+                                            ]
+                                        }, 
+                                        {"name": "mtu"}
+                                    ]
+                                }, 
+                                {
+                                    "name": "config", 
+                                    "fields": [
+                                        {"name": "mtu"}, 
+                                        {"name": "enabled"}, 
+                                        {"name": "dhcp-client"}
+                                    ]
+                                }, 
+                                {
+                                    "name": "unnumbered", 
+                                    "fields": [
+                                        {
+                                            "name": "interface-ref", 
+                                            "fields": [
+                                                {
+                                                    "name": "config", 
+                                                    "fields": [
+                                                        {"name": "subinterface"}, 
+                                                        {"name": "interface"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "state", 
+                                                    "fields": [
+                                                        {"name": "subinterface"}, 
+                                                        {"name": "interface"}
+                                                    ]
+                                                }
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "config", 
+                                            "fields": [
+                                                {"name": "enabled"}
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "state", 
+                                            "fields": [
+                                                {"name": "enabled"}
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }, 
+                        {
+                            "name": "state", 
+                            "fields": [
+                                {"name": "vlan"}
+                            ]
+                        }, 
+                        {
+                            "name": "config", 
+                            "fields": [
+                                {"name": "vlan"}
+                            ]
+                        }
+                    ]
+                }, 
+                {"name": "sonet"}, 
+                {
+                    "name": "config", 
+                    "fields": [
+                        {"name": "enabled"}, 
+                        {"name": "name", "tag": true}, 
+                        {"name": "mtu"}, 
+                        {"name": "type"}, 
+                        {"name": "description", "tag": true}, 
+                        {
+                            "name": "bandwidth", 
+                            "fields": [
+                                {"name": "kilobits"}
+                            ]
+                        }
+                    ]
+                }, 
+                {
+                    "name": "subinterfaces", 
+                    "fields": [
+                        {
+                            "name": "subinterface", 
+                            "fields": [
+                                {
+                                    "name": "vlan", 
+                                    "fields": [
+                                        {
+                                            "name": "state", 
+                                            "fields": [
+                                                {"name": "vlan-id"}
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "config", 
+                                            "fields": [
+                                                {"name": "vlan-id"}
+                                            ]
+                                        }
+                                    ]
+                                }, 
+                                {
+                                    "name": "ipv6", 
+                                    "fields": [
+                                        {
+                                            "name": "addresses", 
+                                            "fields": [
+                                                {
+                                                    "name": "address", 
+                                                    "fields": [
+                                                        {
+                                                            "name": "state", 
+                                                            "fields": [
+                                                                {"name": "status"}, 
+                                                                {"name": "origin"}, 
+                                                                {"name": "ip", "tag": true}, 
+                                                                {"name": "prefix-length"}
+                                                            ]
+                                                        }, 
+                                                        {
+                                                            "name": "config", 
+                                                            "fields": [
+                                                                {"name": "prefix-length"}, 
+                                                                {"name": "ip", "tag": true}
+                                                            ]
+                                                        }, 
+                                                        {"name": "ip"}, 
+                                                        {
+                                                            "name": "vrrp", 
+                                                            "fields": [
+                                                                {
+                                                                    "name": "vrrp-group", 
+                                                                    "fields": [
+                                                                        {
+                                                                            "name": "interface-tracking", 
+                                                                            "fields": [
+                                                                                {
+                                                                                    "name": "state", 
+                                                                                    "fields": [
+                                                                                        {"name": "track-interface"}, 
+                                                                                        {"name": "priority-decrement"}
+                                                                                    ]
+                                                                                }, 
+                                                                                {
+                                                                                    "name": "config", 
+                                                                                    "fields": [
+                                                                                        {"name": "priority-decrement"}, 
+                                                                                        {"name": "track-interface"}
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        }, 
+                                                                        {"name": "virtual-router-id"}, 
+                                                                        {
+                                                                            "name": "config", 
+                                                                            "fields": [
+                                                                                {"name": "accept-mode"}, 
+                                                                                {"name": "virtual-router-id"}, 
+                                                                                {"name": "preempt"}, 
+                                                                                {"name": "advertisement-interval"}, 
+                                                                                {"name": "preempt-delay"}, 
+                                                                                {"name": "virtual-link-local"}, 
+                                                                                {"name": "virtual-address"}, 
+                                                                                {"name": "priority"}
+                                                                            ]
+                                                                        }, 
+                                                                        {
+                                                                            "name": "state", 
+                                                                            "fields": [
+                                                                                {"name": "priority"}, 
+                                                                                {"name": "virtual-address"}, 
+                                                                                {"name": "virtual-router-id"}, 
+                                                                                {"name": "accept-mode"}, 
+                                                                                {"name": "current-priority"}, 
+                                                                                {"name": "preempt"}, 
+                                                                                {"name": "preempt-delay"}, 
+                                                                                {"name": "virtual-link-local"}, 
+                                                                                {"name": "advertisement-interval"}
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "autoconf", 
+                                            "fields": [
+                                                {
+                                                    "name": "state", 
+                                                    "fields": [
+                                                        {"name": "create-global-addresses"}, 
+                                                        {"name": "create-temporary-addresses"}, 
+                                                        {"name": "temporary-valid-lifetime"}, 
+                                                        {"name": "temporary-preferred-lifetime"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "config", 
+                                                    "fields": [
+                                                        {"name": "temporary-preferred-lifetime"}, 
+                                                        {"name": "create-global-addresses"}, 
+                                                        {"name": "create-temporary-addresses"}, 
+                                                        {"name": "temporary-valid-lifetime"}
+                                                    ]
+                                                }
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "neighbors", 
+                                            "fields": [
+                                                {
+                                                    "name": "neighbor", 
+                                                    "fields": [
+                                                        {"name": "ip"}, 
+                                                        {
+                                                            "name": "config", 
+                                                            "fields": [
+                                                                {"name": "ip", "tag": true}, 
+                                                                {"name": "link-layer-address", "tag": true}
+                                                            ]
+                                                        }, 
+                                                        {
+                                                            "name": "state", 
+                                                            "fields": [
+                                                                {"name": "neighbor-state"}, 
+                                                                {"name": "is-router"}, 
+                                                                {"name": "origin"}, 
+                                                                {"name": "link-layer-address", "tag": true}, 
+                                                                {"name": "ip", "tag": true}
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "state", 
+                                            "fields": [
+                                                {
+                                                    "name": "counters", 
+                                                    "fields": [
+                                                        {"name": "in-forwarded-pkts"}, 
+                                                        {"name": "out-forwarded-octets"}, 
+                                                        {"name": "out-pkts"}, 
+                                                        {"name": "in-pkts"}, 
+                                                        {"name": "in-forwarded-octets"}, 
+                                                        {"name": "out-octets"}, 
+                                                        {"name": "in-error-pkts"}, 
+                                                        {"name": "in-discarded-pkts"}, 
+                                                        {"name": "in-octets"}, 
+                                                        {"name": "out-forwarded-pkts"}, 
+                                                        {"name": "out-discarded-pkts"}, 
+                                                        {"name": "out-error-pkts"}
+                                                    ]
+                                                }, 
+                                                {"name": "enabled"}, 
+                                                {"name": "dup-addr-detect-transmits"}, 
+                                                {"name": "mtu"}
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "unnumbered", 
+                                            "fields": [
+                                                {
+                                                    "name": "state", 
+                                                    "fields": [
+                                                        {"name": "enabled"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "config", 
+                                                    "fields": [
+                                                        {"name": "enabled"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "interface-ref", 
+                                                    "fields": [
+                                                        {
+                                                            "name": "config", 
+                                                            "fields": [
+                                                                {"name": "subinterface"}, 
+                                                                {"name": "interface"}
+                                                            ]
+                                                        }, 
+                                                        {
+                                                            "name": "state", 
+                                                            "fields": [
+                                                                {"name": "subinterface"}, 
+                                                                {"name": "interface"}
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "config", 
+                                            "fields": [
+                                                {"name": "mtu"}, 
+                                                {"name": "dup-addr-detect-transmits"}, 
+                                                {"name": "enabled"}
+                                            ]
+                                        }
+                                    ]
+                                }, 
+                                {
+                                    "name": "config", 
+                                    "fields": [
+                                        {"name": "description", "tag": true}, 
+                                        {"name": "enabled"}, 
+                                        {"name": "index"}, 
+                                        {"name": "name", "tag": true}
+                                    ]
+                                }, 
+                                {"name": "index"}, 
+                                {
+                                    "name": "ipv4", 
+                                    "fields": [
+                                        {
+                                            "name": "proxy-arp", 
+                                            "fields": [
+                                                {
+                                                    "name": "state", 
+                                                    "fields": [
+                                                        {"name": "mode"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "config", 
+                                                    "fields": [
+                                                        {"name": "mode"}
+                                                    ]
+                                                }
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "config", 
+                                            "fields": [
+                                                {"name": "enabled"}, 
+                                                {"name": "mtu"}
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "addresses", 
+                                            "fields": [
+                                                {
+                                                    "name": "address", 
+                                                    "fields": [
+                                                        {
+                                                            "name": "config", 
+                                                            "fields": [
+                                                                {"name": "ip", "tag": true}, 
+                                                                {"name": "prefix-length"}
+                                                            ]
+                                                        }, 
+                                                        {"name": "ip"}, 
+                                                        {
+                                                            "name": "state", 
+                                                            "fields": [
+                                                                {"name": "origin"}, 
+                                                                {"name": "prefix-length"}, 
+                                                                {"name": "ip", "tag": true}
+                                                            ]
+                                                        }, 
+                                                        {
+                                                            "name": "vrrp", 
+                                                            "fields": [
+                                                                {
+                                                                    "name": "vrrp-group", 
+                                                                    "fields": [
+                                                                        {
+                                                                            "name": "config", 
+                                                                            "fields": [
+                                                                                {"name": "preempt"}, 
+                                                                                {"name": "advertisement-interval"}, 
+                                                                                {"name": "preempt-delay"}, 
+                                                                                {"name": "virtual-address"}, 
+                                                                                {"name": "accept-mode"}, 
+                                                                                {"name": "priority"}, 
+                                                                                {"name": "virtual-router-id"}
+                                                                            ]
+                                                                        }, 
+                                                                        {"name": "virtual-router-id"}, 
+                                                                        {
+                                                                            "name": "interface-tracking", 
+                                                                            "fields": [
+                                                                                {
+                                                                                    "name": "state", 
+                                                                                    "fields": [
+                                                                                        {"name": "track-interface"}, 
+                                                                                        {"name": "priority-decrement"}
+                                                                                    ]
+                                                                                }, 
+                                                                                {
+                                                                                    "name": "config", 
+                                                                                    "fields": [
+                                                                                        {"name": "priority-decrement"}, 
+                                                                                        {"name": "track-interface"}
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        }, 
+                                                                        {
+                                                                            "name": "state", 
+                                                                            "fields": [
+                                                                                {"name": "advertisement-interval"}, 
+                                                                                {"name": "current-priority"}, 
+                                                                                {"name": "preempt-delay"}, 
+                                                                                {"name": "preempt"}, 
+                                                                                {"name": "virtual-address"}, 
+                                                                                {"name": "virtual-router-id"}, 
+                                                                                {"name": "accept-mode"}, 
+                                                                                {"name": "priority"}
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "unnumbered", 
+                                            "fields": [
+                                                {
+                                                    "name": "state", 
+                                                    "fields": [
+                                                        {"name": "enabled"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "config", 
+                                                    "fields": [
+                                                        {"name": "enabled"}
+                                                    ]
+                                                }, 
+                                                {
+                                                    "name": "interface-ref", 
+                                                    "fields": [
+                                                        {
+                                                            "name": "state", 
+                                                            "fields": [
+                                                                {"name": "subinterface"}, 
+                                                                {"name": "interface"}
+                                                            ]
+                                                        }, 
+                                                        {
+                                                            "name": "config", 
+                                                            "fields": [
+                                                                {"name": "subinterface"}, 
+                                                                {"name": "interface"}
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "state", 
+                                            "fields": [
+                                                {
+                                                    "name": "counters", 
+                                                    "fields": [
+                                                        {"name": "in-error-pkts"}, 
+                                                        {"name": "out-discarded-pkts"}, 
+                                                        {"name": "in-forwarded-octets"}, 
+                                                        {"name": "out-error-pkts"}, 
+                                                        {"name": "out-forwarded-octets"}, 
+                                                        {"name": "out-forwarded-pkts"}, 
+                                                        {"name": "out-pkts"}, 
+                                                        {"name": "out-octets"}, 
+                                                        {"name": "in-pkts"}, 
+                                                        {"name": "in-discarded-pkts"},
+                                                        {"name": "in-forwarded-pkts"}, 
+                                                        {"name": "in-octets"}
+                                                    ]
+                                                }, 
+                                                {"name": "mtu"}, 
+                                                {"name": "enabled"}
+                                            ]
+                                        }, 
+                                        {
+                                            "name": "neighbors", 
+                                            "fields": [
+                                                {
+                                                    "name": "neighbor", 
+                                                    "fields": [
+                                                        {
+                                                            "name": "state", 
+                                                            "fields": [
+                                                                {"name": "ip", "tag": true}, 
+                                                                {"name": "link-layer-address", "tag": true}, 
+                                                                {"name": "origin"}
+                                                            ]
+                                                        }, 
+                                                        {
+                                                            "name": "config", 
+                                                            "fields": [
+                                                                {"name": "ip", "tag": true}, 
+                                                                {"name": "link-layer-address", "tag": true}
+                                                            ]
+                                                        }, 
+                                                        {"name": "ip"}
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }, 
+                                {
+                                    "name": "state", 
+                                    "fields": [
+                                        {
+                                            "name": "counters", 
+                                            "fields": [
+                                                {"name": "out-octets"}, 
+                                                {"name": "out-multicast-pkts"}, 
+                                                {"name": "in-unknown-protos"}, 
+                                                {"name": "out-broadcast-pkts"}, 
+                                                {"name": "last-clear", "tag": true}, 
+                                                {"name": "in-octets"}, 
+                                                {"name": "in-discards"}, 
+                                                {"name": "out-unicast-pkts"}, 
+                                                {"name": "out-discards"}, 
+                                                {"name": "in-broadcast-pkts"}, 
+                                                {"name": "in-errors"}, 
+                                                {"name": "in-multicast-pkts"}, 
+                                                {"name": "in-unicast-pkts"}, 
+                                                {"name": "in-fcs-errors"}, 
+                                                {"name": "out-errors"}
+                                            ]
+                                        }, 
+                                        {"name": "last-change", "tag": true}, 
+                                        {"name": "admin-status"}, 
+                                        {"name": "ifindex"}, 
+                                        {"name": "name", "tag": true}, 
+                                        {"name": "index"}, 
+                                        {"name": "description", "tag": true}, 
+                                        {"name": "enabled"}, 
+                                        {"name": "oper-status"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }, 
+                {
+                    "name": "state", 
+                    "fields": [
+                        {"name": "ifindex"}, 
+                        {"name": "physical-channel"}, 
+                        {"name": "last-change", "tag": true}, 
+                        {"name": "name", "tag": true}, 
+                        {"name": "oper-status"}, 
+                        {"name": "description", "tag": true}, 
+                        {"name": "enabled"}, 
+                        {
+                            "name": "counters", 
+                            "fields": [
+                                {"name": "out-multicast-pkts"}, 
+                                {"name": "out-octets"}, 
+                                {"name": "last-clear", "tag": true}, 
+                                {"name": "in-octets"}, 
+                                {"name": "out-unicast-pkts"}, 
+                                {"name": "in-multicast-pkts"}, 
+                                {"name": "in-errors"}, 
+                                {"name": "in-broadcast-pkts"}, 
+                                {"name": "in-unknown-protos"}, 
+                                {"name": "out-errors"}, 
+                                {"name": "out-broadcast-pkts"}, 
+                                {"name": "in-discards"}, 
+                                {"name": "in-unicast-pkts"}, 
+                                {"name": "in-fcs-errors"}, 
+                                {"name": "out-discards"}
+                            ]
+                        }, 
+                        {"name": "type"}, 
+                        {"name": "admin-status"}, 
+                        {"name": "hardware-port"}, 
+                        {"name": "mtu"}
+                    ]
+                }, 
+                {
+                    "name": "hold-time", 
+                    "fields": [
+                        {
+                            "name": "config", 
+                            "fields": [
+                                {"name": "dampening-time"}, 
+                                {"name": "up"}, 
+                                {"name": "maximum-suppressing-time"}, 
+                                {"name": "down"}
+                            ]
+                        }, 
+                        {
+                            "name": "state", 
+                            "fields": [
+                                {"name": "down"}, 
+                                {"name": "maximum-suppressing-time"}, 
+                                {"name": "dampening-time"}, 
+                                {"name": "up"}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "basepath": "Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface",
+        "spec": {
+            "fields": [
+                {
+                    "name": "interface-name",
+                    "tag": true
+                },
+                {
+                    "name": "speed"
+                }
+            ]
+        }
+    }
+    ]
+
+
+  pipeline.conf: >-
+    [default]
+
+    id = kafka_influx
+
+    metamonitoring_prometheus_resource = /metrics
+
+    metamonitoring_prometheus_server = :8989
+
+
+    [kafka_consumer]
+
+    topic=voltron.telemetry
+
+    # Ideally should not specify a consumergroup, but required by Pipeline
+
+    consumergroup=mdtstack
+
+    type=kafka
+
+    stage=xport_input
+
+    brokers=kafka-0.broker.voltron.svc.cluster.local:9092
+
+    encoding=gpb
+
+    datachanneldepth=1000
+
+
+    [metrics_influx]
+
+    stage=xport_output
+
+    type=metrics
+
+    influx=http://influxdb-0.influxdb.voltron.svc.cluster.local:8086
+
+    datachanneldepth=1000
+
+    database=mdt_db
+
+    file=/data/config/metrics.json
+
+    workers=8
+
+    output=influx
+
+    username=voltron
+
+
+    password=tdiEfR8Kmuf9OAyrEkzu5u6nDPTtK0xpmk3+MfvrmF9tS3I9uSoPZPdYZDtGDV+6ltngJ4hIdGIdl55LQ4NLd6JZxZKE8w4rRzDExN/iKILf1X4LZMHci2COWn8k6zYs0c8NIGYqn3uL7GYWpnh65GghF50ohXNXyLkJGOaooCFFYfBZD9BeB+Fp6bUYi/zxb/JZj6UjB5kN95oiwUuDdAnYsU9niojANKvtdUF9EhBBf5jXqNjHvLKJJpAKLzPJkhg9V1MoP1Q1lGhF5tQcezm3CSP0p/klEThP5ZifqECuqTxo0rMHMhCqHV+rAUJMpqiuXkt0HKpFu9svabkU5ovwoqUwCKUXV7hAxJHITxt1vz/6K51I4bNiZcuknoclDkPYtOr22qfTwl9+KsGrQ084CETbpSDh47JLKz5jOpSX39VqDZ7IOWmc7NmP3aa48PaF6pk+66Adz0+eaMVZfVsQyLQy31HvfXjd7IQfGO8vSmT6+Yz0W9LgorT8gz4WW+xpeHCFkMHzUttd1xms2rtrZcV9fYTvxaI+39BJoSwt8EBW5e4MqiroKijeSwFVn+9fYH2yOqYky4e6UfcES/C8udPoVaLllMVAdyEQ3pdPThduboLU+HSmcg6e2DTDS5EpfjIbPSRg6Gy8P64BAlgFRa6+Ztt+IgFgy7Pt0BQ=
+  pipeline_rsa: |-
+    -----BEGIN RSA PRIVATE KEY-----
+    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
+    -----END RSA PRIVATE KEY-----

@@ -2,7 +2,7 @@ EXECUTABLE ?= voltron
 BINARY ?= bin/$(EXECUTABLE)
 REPO=dockerhub.cisco.com/gspie-docker-local
 IMAGE=telemetry
-TAG=1.0
+TAG=2.0
 
 all: build
 
