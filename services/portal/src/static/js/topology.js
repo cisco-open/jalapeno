@@ -4,6 +4,9 @@ let visualizationContainerId = 'topologyContainer';
 let visualizationWidth = 0;
 let visualizationHeight = 0;
 
+let linkPopulationValueMax = 0;
+let linkPopulationValueMin = 0;
+
 document.addEventListener('DOMContentLoaded', function () {
     let destContainer = document.getElementById(visualizationContainerId);
     visualizationWidth = destContainer.offsetWidth;
@@ -14,12 +17,16 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+function scaleValue(value, populationValueMin, populationValueMax, scaleMin = 0, scaleMax = 1) {
+    return value + ( ( ( scaleMax - scaleMin ) * ( value - populationValueMin ) ) / ( populationValueMax - populationValueMin ) )
+}
+
 function nodeColor (d) {
     return d3.interpolateCool(1 / d.group);
 }
 
 function linkColor (d) {
-    return d3.interpolateSinebow(1 / d.value);
+    return d3.interpolateSinebow(scaleValue(d.value, linkPopulationValueMin, linkPopulationValueMax));
 }
 
 function drag (simulation) {
@@ -51,9 +58,13 @@ function visualizeTopology (topologyData) {
     let topologySvg = d3.select('#' + visualizationSvgId);
     let nodes = topologyData.nodes.map(d => Object.create(d));
     let links = topologyData.links.map(d => Object.create(d));
+    for (let link of links) {
+        if (link.value > linkPopulationValueMax) linkPopulationValueMax = link.value;
+        else if (link.value < linkPopulationValueMin) linkPopulationValueMin = link.value;
+    }
     let topologySimulation = d3.forceSimulation(nodes)
         .force('link', d3.forceLink(links).id(d => d.id))
-        .force('charge', d3.forceManyBody().strength(-50))
+        .force('charge', d3.forceManyBody().strength(-50).distanceMin(40).distanceMax(150))
         .force('center', d3.forceCenter(visualizationWidth / 2, visualizationHeight / 2));
     console.debug('Topology simulation started.');
     let link = topologySvg.append('g').attr('stroke', '#999').attr('stroke-opacity', 0.6)
