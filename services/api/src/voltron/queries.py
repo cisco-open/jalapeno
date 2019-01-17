@@ -95,13 +95,29 @@ def pathing_epe_lossless_get(dst_ip, max_loss=None):
     return label_list
 
 def topology_get():
-    aql_node_router = """
+    aql_node_router_internal = """
     FOR router IN Routers
-        RETURN router._id
+        FOR internal_router IN InternalRouters
+            FILTER router._key == internal_router._key
+                RETURN internal_router._id
     """
-    aql_node_prefix = """
+    aql_node_router_external = """
+    FOR router IN Routers
+        FOR external_router IN ExternalRouters
+            FILTER router._key == external_router._key
+                RETURN external_router._id
+    """
+    aql_node_router_border = """
+    FOR router IN Routers
+        FOR border_router IN BorderRouters
+            FILTER router._key == border_router._key
+                RETURN border_router._id
+    """
+    aql_node_prefix_external = """
     FOR prefix IN Prefixes
-        RETURN prefix._id
+        FOR external_prefix IN ExternalPrefixes
+            FILTER prefix._key == external_prefix._key
+                RETURN external_prefix._id
     """
     aql_link_external_link_edge = """
     FOR ext_link IN ExternalLinkEdges
@@ -137,12 +153,18 @@ def topology_get():
     """
     db = ArangoDBConnection()
     nodes = []
-    node_router = list(db.query_aql(aql_node_router))
-    for node in node_router:
+    node_router_internal = list(db.query_aql(aql_node_router_internal))
+    for node in node_router_internal:
         nodes.append({'id': node, 'group': 1})
-    node_prefix = list(db.query_aql(aql_node_prefix))
-    for node in node_prefix:
+    node_router_external = list(db.query_aql(aql_node_router_external))
+    for node in node_router_external:
         nodes.append({'id': node, 'group': 2})
+    node_router_border = list(db.query_aql(aql_node_router_border))
+    for node in node_router_border:
+        nodes.append({'id': node, 'group': 3})
+    node_prefix_external = list(db.query_aql(aql_node_prefix_external))
+    for node in node_prefix_external:
+        nodes.append({'id': node, 'group': 4})
     links = []
     link_external_link = list(db.query_aql(aql_link_external_link_edge))
     for link in link_external_link:

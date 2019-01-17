@@ -7,6 +7,9 @@ let visualizationHeight = 0;
 let linkPopulationValueMax = 0;
 let linkPopulationValueMin = 0;
 
+let nodePopulationValueMax = 0;
+let nodePopulationValueMin = 0;
+
 document.addEventListener('DOMContentLoaded', function () {
     let destContainer = document.getElementById(visualizationContainerId);
     visualizationWidth = destContainer.offsetWidth;
@@ -22,7 +25,7 @@ function scaleValue(value, populationValueMin, populationValueMax, scaleMin = 0,
 }
 
 function nodeColor (d) {
-    return d3.interpolateCool(1 / d.group);
+    return d3.interpolateCool(scaleValue(d.group, nodePopulationValueMin, nodePopulationValueMax));
 }
 
 function linkColor (d) {
@@ -58,6 +61,10 @@ function visualizeTopology (topologyData) {
     let topologySvg = d3.select('#' + visualizationSvgId);
     let nodes = topologyData.nodes.map(d => Object.create(d));
     let links = topologyData.links.map(d => Object.create(d));
+    for (let node of nodes) {
+        if (node.group > nodePopulationValueMax) nodePopulationValueMax = node.group;
+        else if (node.group < nodePopulationValueMin) nodePopulationValueMin = node.group;
+    }
     for (let link of links) {
         if (link.value > linkPopulationValueMax) linkPopulationValueMax = link.value;
         else if (link.value < linkPopulationValueMin) linkPopulationValueMin = link.value;
