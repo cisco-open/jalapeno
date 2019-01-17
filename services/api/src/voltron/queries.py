@@ -101,7 +101,7 @@ def topology_get():
             FILTER router._key == internal_router._key
                 RETURN {
                     "id": router._id,
-                    "label" internal_router._id,
+                    "label": internal_router._id,
                     "value": 1
                 }
     """
