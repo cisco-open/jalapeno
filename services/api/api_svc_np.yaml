@@ -13,7 +13,7 @@ spec:
     targetPort: 8000
   - name: 8080-tcp
     port: 8080
-    nodePort: 30882
+    nodePort: 30879
     targetPort: 8080
   type: NodePort
   selector:
