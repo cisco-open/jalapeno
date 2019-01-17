@@ -99,25 +99,41 @@ def topology_get():
     FOR router IN Routers
         FOR internal_router IN InternalRouters
             FILTER router._key == internal_router._key
-                RETURN internal_router._id
+                RETURN {
+                    "id": router._id,
+                    "label" internal_router._id,
+                    "value": 1
+                }
     """
     aql_node_router_external = """
     FOR router IN Routers
         FOR external_router IN ExternalRouters
             FILTER router._key == external_router._key
-                RETURN external_router._id
+                RETURN {
+                    "id": router._id,
+                    "label": external_router._id,
+                    "value": 2
+                }
     """
     aql_node_router_border = """
     FOR router IN Routers
         FOR border_router IN BorderRouters
             FILTER router._key == border_router._key
-                RETURN border_router._id
+                RETURN {
+                    "id": router._id,
+                    "label": border_router._id,
+                    "value": 3
+                }
     """
     aql_node_prefix_external = """
     FOR prefix IN Prefixes
         FOR external_prefix IN ExternalPrefixes
             FILTER prefix._key == external_prefix._key
-                RETURN external_prefix._id
+                RETURN {
+                    "id": prefix._id,
+                    "label": external_prefix._id,
+                    "value": 4
+                }
     """
     aql_link_external_link_edge = """
     FOR ext_link IN ExternalLinkEdges
@@ -155,16 +171,16 @@ def topology_get():
     nodes = []
     node_router_internal = list(db.query_aql(aql_node_router_internal))
     for node in node_router_internal:
-        nodes.append({'id': node, 'group': 1})
+        nodes.append(node)
     node_router_external = list(db.query_aql(aql_node_router_external))
     for node in node_router_external:
-        nodes.append({'id': node, 'group': 2})
+        nodes.append(node)
     node_router_border = list(db.query_aql(aql_node_router_border))
     for node in node_router_border:
-        nodes.append({'id': node, 'group': 3})
+        nodes.append(node)
     node_prefix_external = list(db.query_aql(aql_node_prefix_external))
     for node in node_prefix_external:
-        nodes.append({'id': node, 'group': 4})
+        nodes.append(node)
     links = []
     link_external_link = list(db.query_aql(aql_link_external_link_edge))
     for link in link_external_link:
