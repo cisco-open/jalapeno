@@ -24,8 +24,18 @@ function scaleValue(value, populationValueMin, populationValueMax, scaleMin = 0,
     return value + ( ( ( scaleMax - scaleMin ) * ( value - populationValueMin ) ) / ( populationValueMax - populationValueMin ) )
 }
 
+function minMax(nodes) {
+    let localMin = 0;
+    let localMax = 0;
+    for (let node of nodes) {
+        if (node.value > localMax) localMax = node.value;
+        else if (node.value < localMin) localMin = node.value;
+    }
+    return [localMin, localMax];
+}
+
 function nodeColor (d) {
-    return d3.interpolateCool(scaleValue(d.group, nodePopulationValueMin, nodePopulationValueMax));
+    return d3.interpolateCool(scaleValue(d.value, nodePopulationValueMin, nodePopulationValueMax));
 }
 
 function linkColor (d) {
@@ -61,14 +71,8 @@ function visualizeTopology (topologyData) {
     let topologySvg = d3.select('#' + visualizationSvgId);
     let nodes = topologyData.nodes.map(d => Object.create(d));
     let links = topologyData.links.map(d => Object.create(d));
-    for (let node of nodes) {
-        if (node.group > nodePopulationValueMax) nodePopulationValueMax = node.group;
-        else if (node.group < nodePopulationValueMin) nodePopulationValueMin = node.group;
-    }
-    for (let link of links) {
-        if (link.value > linkPopulationValueMax) linkPopulationValueMax = link.value;
-        else if (link.value < linkPopulationValueMin) linkPopulationValueMin = link.value;
-    }
+    [nodePopulationValueMin, nodePopulationValueMax] = minMax(nodes);
+    [linkPopulationValueMin, linkPopulationValueMax] - minMax(links);
     let topologySimulation = d3.forceSimulation(nodes)
         .force('link', d3.forceLink(links).id(d => d.id))
         .force('charge', d3.forceManyBody().strength(-50).distanceMin(40).distanceMax(150))
@@ -83,7 +87,7 @@ function visualizeTopology (topologyData) {
         .append('circle').attr('r', 7).attr('fill', nodeColor)
         .call(drag(topologySimulation));
     console.debug('Nodes created.');
-    node.append('title').text(d => d.id);
+    node.append('title').text(d => d.label);
     topologySimulation.on('tick', function () {
         link
             .attr('x1', d => d.source.x)
