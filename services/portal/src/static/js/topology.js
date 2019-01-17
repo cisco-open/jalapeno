@@ -75,7 +75,7 @@ function visualizeTopology (topologyData) {
     [linkPopulationValueMin, linkPopulationValueMax] = minMax(links);
     let topologySimulation = d3.forceSimulation(nodes)
         .force('link', d3.forceLink(links).id(d => d.id))
-        .force('charge', d3.forceManyBody().strength(-50).distanceMin(40).distanceMax(150))
+        .force('charge', d3.forceManyBody().strength(-500).distanceMin(40).distanceMax(200))
         .force('center', d3.forceCenter(visualizationWidth / 2, visualizationHeight / 2));
     console.debug('Topology simulation started.');
     let link = topologySvg.append('g').attr('stroke', '#999').attr('stroke-opacity', 0.6)

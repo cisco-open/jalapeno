@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: portal
-        image: ievoltron/portal:0.0.1@sha256:76ff6e109a8538686689dea5787a3da17a91e7496efabf50a339f3c7321cc5be
+        image: ievoltron/portal:0.0.1@sha256:2b1364463651b61d88778ce586c7029fbfc83fd4c78806453850d0464c663103
         env:
         - name: FLASK_ENV
           value: production
