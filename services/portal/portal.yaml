@@ -22,7 +22,7 @@ spec:
         - name: FLASK_ENV
           value: production
         - name: API_NETLOC
-          value: voltron-sjc.cisco.com:30880
+          value: voltron-sjc.cisco.com:30881
         ports:
         - containerPort: 80
           protocol: TCP

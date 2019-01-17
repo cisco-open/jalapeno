@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let destContainer = document.getElementById(visualizationContainerId);
     visualizationWidth = destContainer.offsetWidth;
     visualizationHeight = destContainer.offsetHeight;
-    d3.json('http://voltron-sjc.cisco.com:30880/api/v1/topology')
+    d3.json('http://voltron-sjc.cisco.com:30881/api/v1/topology')
     .then(visualizeTopology, function (e) {
         console.error('Could not obtain data!');
     });
@@ -72,7 +72,7 @@ function visualizeTopology (topologyData) {
     let nodes = topologyData.nodes.map(d => Object.create(d));
     let links = topologyData.links.map(d => Object.create(d));
     [nodePopulationValueMin, nodePopulationValueMax] = minMax(nodes);
-    [linkPopulationValueMin, linkPopulationValueMax] - minMax(links);
+    [linkPopulationValueMin, linkPopulationValueMax] = minMax(links);
     let topologySimulation = d3.forceSimulation(nodes)
         .force('link', d3.forceLink(links).id(d => d.id))
         .force('charge', d3.forceManyBody().strength(-50).distanceMin(40).distanceMax(150))

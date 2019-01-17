@@ -7,13 +7,13 @@ metadata:
     app: api
 spec:
   ports:
-  - name: 80-tcp
-    port: 80
-    nodePort: 30880
-    targetPort: 80
+  - name: 8000-tcp
+    port: 8000
+    nodePort: 30881
+    targetPort: 8000
   - name: 8080-tcp
     port: 8080
-    nodePort: 30881
+    nodePort: 30882
     targetPort: 8080
   type: NodePort
   selector:
