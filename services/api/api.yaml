@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: ievoltron/api:0.0.2@sha256:f2c6f028c1aec980058d52fc6e37445fab000939b5a29fb217f1f6d0929bef40
+        image: ievoltron/api:0.0.2@sha256:3a909458e3d8b91d279cc1cb58c0936fb27863879c8f02ddb64a793922bba7a1
         env:
         - name: ARANGODB_PROTOCOL
           value: http

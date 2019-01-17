@@ -115,16 +115,6 @@ def topology_get():
                     "value": 2
                 }
     """
-    aql_node_router_border = """
-    FOR router IN Routers
-        FOR border_router IN BorderRouters
-            FILTER router._key == border_router._key
-                RETURN {
-                    "id": router._id,
-                    "label": border_router._id,
-                    "value": 3
-                }
-    """
     aql_node_prefix_external = """
     FOR prefix IN Prefixes
         FOR external_prefix IN ExternalPrefixes
@@ -132,7 +122,7 @@ def topology_get():
                 RETURN {
                     "id": prefix._id,
                     "label": external_prefix._id,
-                    "value": 4
+                    "value": 3
                 }
     """
     aql_link_external_link_edge = """
@@ -174,9 +164,6 @@ def topology_get():
         nodes.append(node)
     node_router_external = list(db.query_aql(aql_node_router_external))
     for node in node_router_external:
-        nodes.append(node)
-    node_router_border = list(db.query_aql(aql_node_router_border))
-    for node in node_router_border:
         nodes.append(node)
     node_prefix_external = list(db.query_aql(aql_node_prefix_external))
     for node in node_prefix_external:
