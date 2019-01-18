@@ -4,11 +4,12 @@ from gevent.pywsgi import WSGIServer
 from flask import Flask, render_template
 
 
+topology_endpoint = os.environ.get('API_NETLOC')
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', topology_endpoint=topology_endpoint)
 
 def start_prod():
     http_server = WSGIServer(('', 80), app)

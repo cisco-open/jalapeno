@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let destContainer = document.getElementById(visualizationContainerId);
     visualizationWidth = destContainer.offsetWidth;
     visualizationHeight = destContainer.offsetHeight;
-    d3.json('http://voltron-sjc.cisco.com:30881/api/v1/topology')
+    d3.json(topologyEndpointBase + 'api/v1/topology')
     .then(visualizeTopology, function (e) {
         console.error('Could not obtain data!');
     });
