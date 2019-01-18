@@ -1,0 +1,8 @@
+netconf-yang
+telemetry ietf subscription 0
+ encoding encode-kvgpb
+ filter xpath /oc-if:interfaces/interface
+ stream yang-push
+ update-policy periodic 3000
+ receiver ip address 10.0.250.2 32400 protocol grpc-tcp
+!

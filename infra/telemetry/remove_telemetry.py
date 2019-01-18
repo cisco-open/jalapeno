@@ -1,16 +1,19 @@
 #!/usr/bin/python3.6
-"""Deploy Telemetry streaming on host network devices.
-Configures devices for telemetry streaming, enables guest
-shell, and then provisions and starts Pipeline on devices.
+"""Remove Telemetry streaming on host network devices.
+Unconfigures devices' currently telemetry configurations.
 """
-import configure_telemetry, enable_guestshell, manage_pipeline
+import logging, os
+import configure_telemetry
+from util import get_hosts
 
 def main():
-    print("Stopping Pipeline on devices")
-    manage_pipeline.main("stop")
-
-    print("Removing Pipeline on devices")
-    manage_pipeline.main("remove")
+    print("Unconfiguring telemetry on devices")
+    hosts = get_hosts(os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__))) + '/hosts.json')
+    for host in hosts:
+        network_host = host['netmiko_network']
+        logging.info('Removing telemetry configuration for %s', network_host['ip'])
+        configure_telemetry.remove_telemetry_config(network_host)
+    exit()
 
 if __name__ == '__main__':
     main()

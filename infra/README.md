@@ -41,7 +41,6 @@ OpenBMP is Voltron's topology collector. OpenBMP is run as a local container rat
 Telemetry is much more of a multi-step configuration deployment than a component of infrastructure deployed in OpenShift. First, the included `hosts.json` file must reflect the various nodes in the network where telemetry needs to be streamed from. Telemetry is then configured on these device using the `configure_telemetry.py` script, as the telemetry configuration in `config_xr` is set. Next, guest shell is enabled on each device using the `enable_guestshell.py` script to give Voltron bash access. Finally, Pipeline, a telemetry consumer/forwarder, is placed on each device and is started through the `manage_pipeline.py` script. 
 Thus, telemetry is streaming from each device to Pipeline on-box, which is sending the data onwards to Kafka. 
 
-## Pipeline
-Pipeline is a telemetry consumer and forwarder. While instances of Pipeline sit on-box in the network, a deployment of Pipeline also sits in the larger OpenShift deployment in order to consume telemetry data after the data has gotten to Kafka. The data is then forwarded once more to InfluxDB. 
-This Pipeline deployment is deployed using oc, as seen in the `deploy_infrastructure.sh` script. The configurations for Pipeline's deployment are in the various YAML files in the `voltron/infra/pipeline/` directory.
-
+## Pipeline Ingress and Egress
+Pipeline is a telemetry consumer and forwarder. The Pipeline-Ingress deployment of Pipeline receives telemetry from network devices directly and forwards this data to Kafka. The Pipeline-Egress deployment of Pipeline consumes data from Kafka and forwards this data to InfluxDB.
+Both Pipeline deployments are deployed using oc, as seen in the `deploy_infrastructure.sh` script. The configurations for the Pipeline deployments are in the various YAML files in the `voltron/infra/pipeline-ingress/` and `voltron/infra/pipeline-egress/` directories.
