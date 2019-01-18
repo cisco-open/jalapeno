@@ -11,7 +11,7 @@ def main():
     app.app.json_encoder = encoder.JSONEncoder
     app.add_api('swagger.yaml', arguments={'title': 'Voltron API'})
     CORS(app.app)
-    app.run(port=80)
+    app.run(port=8000)
 
 
 if __name__ == '__main__':
