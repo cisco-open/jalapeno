@@ -18,7 +18,8 @@ class TestPathingController(BaseTestCase):
         Optimize pathing to EPE based on bandwidth.
         """
         query_string = [('dst_ip', 'dst_ip_example'),
-                        ('min_bandwidth', 56)]
+                        ('min_bandwidth', 56),
+                        ('peer_preference', 'peer_preference_example')]
         response = self.client.open(
             '/api/v1/pathing/epe/bandwidth',
             method='GET',
@@ -35,7 +36,8 @@ class TestPathingController(BaseTestCase):
         query_string = [('src_ip', 'src_ip_example'),
                         ('src_transport_ip', 'src_transport_ip_example'),
                         ('dst_ip', 'dst_ip_example'),
-                        ('max_latency', 56)]
+                        ('max_latency', 56),
+                        ('peer_preference', 'peer_preference_example')]
         response = self.client.open(
             '/api/v1/pathing/epe/latency',
             method='GET',
@@ -50,7 +52,8 @@ class TestPathingController(BaseTestCase):
         Optimize pathing to EPE based on loss-related statistics.
         """
         query_string = [('dst_ip', 'dst_ip_example'),
-                        ('max_loss', 56)]
+                        ('max_loss', 56),
+                        ('peer_preference', 'peer_preference_example')]
         response = self.client.open(
             '/api/v1/pathing/epe/lossless',
             method='GET',
@@ -65,7 +68,8 @@ class TestPathingController(BaseTestCase):
         Optimize pathing to EPE based on utilization percentages.
         """
         query_string = [('dst_ip', 'dst_ip_example'),
-                        ('max_utilization', 56)]
+                        ('max_utilization', 56),
+                        ('peer_preference', 'peer_preference_example')]
         response = self.client.open(
             '/api/v1/pathing/epe/utilization',
             method='GET',

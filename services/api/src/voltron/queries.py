@@ -1,14 +1,14 @@
 from .db import ArangoDBConnection
 from .util import ip_network_bandaid
 
-def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None):
+def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None):
     aql = """
     FOR edge in ExternalLinkEdges
         FOR v, e, p IN 1..2 OUTBOUND edge._from ExternalLinkEdges, ExternalPrefixEdges
             FILTER p.vertices[2].Prefix == @prefix_ip && p.vertices[2].Length == @prefix_mask
             LET egress_bandwidth = (p.edges[0].speed * 1000) - (p.edges[0].out_octets * 8)
             {bandwidth_filter}
-            SORT egress_bandwidth DESC
+            SORT {peer_preference_filter} egress_bandwidth DESC
             LIMIT 1
             RETURN [p.vertices[0].SRNodeSID, p.edges[0].Label]
     """
@@ -17,21 +17,31 @@ def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None):
     prefix_mask = int(prefix.prefixlen)
     bind_vars = { 'prefix_ip': prefix_ip, 'prefix_mask': prefix_mask }
     if min_bandwidth is not None:
-        aql = aql.format(bandwidth_filter='FILTER egress_bandwidth >= @min_bandwidth')
+        aql = aql.format(bandwidth_filter='FILTER egress_bandwidth >= @min_bandwidth', peer_preference_filter='{peer_preference_filter}')
         bind_vars['min_bandwidth'] = min_bandwidth
+    else:
+        aql = aql.format(bandwidth_filter='', peer_preference_filter='{peer_preference_filter}')
+
+    if peer_preference is not None:
+        aql = aql.format(peer_preference_filter='POSITION([@peer_preference], p.vertices[1].PeerType, true) DESC,')
+        bind_vars['peer_preference'] = str.capitalize(peer_preference)
+    else:
+        aql = aql.format(peer_preference_filter='')
+
     db = ArangoDBConnection()
     label_list = list(db.query_aql(aql, bind_vars))
     if len(label_list) > 0:
         label_list = label_list[0]
     return label_list
 
-def pathing_epe_utilization_get(dst_ip, max_utilization=None):
+
+def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=None):
     aql = """
     FOR edge in ExternalLinkEdges
         FOR v, e, p IN 1..2 OUTBOUND edge._from ExternalLinkEdges, ExternalPrefixEdges
             FILTER p.vertices[2].Prefix == @prefix_ip && p.vertices[2].Length == @prefix_mask
             {utilization_filter}
-            SORT p.edges[0].percent_util_outbound
+            SORT {peer_preference_filter} p.edges[0].percent_util_outbound
             LIMIT 1
             RETURN [p.vertices[0].SRNodeSID, p.edges[0].Label]
     """
@@ -40,44 +50,63 @@ def pathing_epe_utilization_get(dst_ip, max_utilization=None):
     prefix_mask = int(prefix.prefixlen)
     bind_vars = { 'prefix_ip': prefix_ip, 'prefix_mask': prefix_mask }
     if max_utilization is not None:
-        aql = aql.format(utilization_filter='FILTER p.edges[0].percent_util_outbound <= @max_utilization')
+        aql = aql.format(utilization_filter='FILTER p.edges[0].percent_util_outbound <= @max_utilization', peer_preference_filter='{peer_preference_filter}')
         bind_vars['max_utilization'] = max_utilization
+    else:
+        aql = aql.format(utilization_filter='', peer_preference_filter='{peer_preference_filter}')
+
+    if peer_preference is not None:
+        aql = aql.format(peer_preference_filter='POSITION([@peer_preference], p.vertices[1].PeerType, true) DESC,')
+        bind_vars['peer_preference'] = str.capitalize(peer_preference)
+    else:
+        aql = aql.format(peer_preference_filter='')
+
     db = ArangoDBConnection()
     label_list = list(db.query_aql(aql, bind_vars))
     if len(label_list) > 0:
         label_list = label_list[0]
     return label_list
 
-def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None):
+def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, peer_preference=None):
     aql = """
     FOR p IN EPEPaths_Latency
         FILTER p.Source == @source AND p.Destination == @destination
         {latency_filter}
-        SORT p.Latency
+        SORT {peer_preference_filter} p.Latency
         LIMIT 1
         RETURN [p.Label_Path]
     """
     prefix = ip_network_bandaid(dst_ip)
     prefix_ip = str(prefix.network_address)
     bind_vars = {'source': src_ip, 'destination': prefix_ip}
+
     if max_latency is not None:
         max_latency = str(max_latency/1000)
-        aql = aql.format(latency_filter='FILTER p.Latency <= @max_latency')
+        aql = aql.format(latency_filter='FILTER p.Latency <= @max_latency', peer_preference_filter='{peer_preference_filter}')
         bind_vars['max_latency'] = max_latency
+    else: 
+        aql = aql.format(latency_filter='', peer_preference_filter='{peer_preference_filter}')
+
+    if peer_preference is not None:
+        aql = aql.format(peer_preference_filter='POSITION([@peer_preference], p.vertices[1].PeerType, true) DESC,')
+        bind_vars['peer_preference'] = peer_preference
+    else:
+        aql = aql.format(peer_preference_filter='')
+
     db = ArangoDBConnection()
     label_list = list(db.query_aql(aql, bind_vars))
     if len(label_list) > 0:
         label_list = label_list[0]
     return label_list
 
-def pathing_epe_lossless_get(dst_ip, max_loss=None):
+def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None):
     aql = """
     FOR edge in ExternalLinkEdges
         FOR v, e, p IN 1..2 OUTBOUND edge._from ExternalLinkEdges, ExternalPrefixEdges
             FILTER p.vertices[2].Prefix == @prefix_ip && p.vertices[2].Length == @prefix_mask
             LET total_loss = p.edges[0].out_errors + p.edges[0].out_discards
             {loss_filter}
-            SORT total_loss
+            SORT {peer_preference_filter} total_loss
             LIMIT 1
             RETURN [p.vertices[0].SRNodeSID, p.edges[0].Label]
     """
@@ -85,9 +114,19 @@ def pathing_epe_lossless_get(dst_ip, max_loss=None):
     prefix_ip = str(prefix.network_address)
     prefix_mask = int(prefix.prefixlen)
     bind_vars = { 'prefix_ip': prefix_ip, 'prefix_mask': prefix_mask }
+
     if max_loss is not None:
-        aql = aql.format(loss_filter='FILTER total_loss <= @max_loss')
+        aql = aql.format(loss_filter='FILTER total_loss <= @max_loss', peer_preference_filter='{peer_preference_filter}')
         bind_vars['max_loss'] = max_loss
+    else:
+        aql = aql.format(loss_filter='', peer_preference_filter='{peer_preference_filter}')
+
+    if peer_preference is not None:
+        aql = aql.format(peer_preference_filter='POSITION([@peer_preference], p.vertices[1].PeerType, true) DESC,')
+        bind_vars['peer_preference'] = str.capitalize(peer_preference)
+    else:
+        aql = aql.format(peer_preference_filter='')
+
     db = ArangoDBConnection()
     label_list = list(db.query_aql(aql, bind_vars))
     if len(label_list) > 0:
