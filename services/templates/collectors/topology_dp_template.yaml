@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: topology
-        image: ievoltron/topology:2.1@sha256:cf61266039411661f68a3dcb58ccc1a1796ebcb44c09096106214c0a2eb4406d
+        image: ievoltron/topology:2.1.2@sha256:89fffd81c0a75ea40bf731aadc5777adc7eaffedacee73a7ddb37d917dee5e02
         args:
           - topology
           - --arango-url
@@ -35,4 +35,8 @@ spec:
           - --kafka-brokers
           - {{ kafka_endpoint }}
           - --asn
-          - "{{ network_asn }}"
+          - "{{ internal_network_asn }}"
+          - --transit-provider-asns
+          - "{{ transit_provider_asns }}"
+          - --direct-peer-asns
+          - "{{ direct_peer_asns }}"

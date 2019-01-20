@@ -10,6 +10,7 @@ type ExternalRouter struct {
 	BGPID     string `json:"BGPID,omitempty"`
 	ASN       string `json:"ASN,omitempty"`
         RouterIP  string `json:"RouterIP,omitempty"`
+        PeeringType  string `json:"PeerType,omitempty"`
 }
 
 func (r ExternalRouter) GetKey() (string, error) {

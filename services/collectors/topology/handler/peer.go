@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+        "strings"
 	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/database"
 	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/openbmp"
 )
@@ -46,10 +47,26 @@ func peer(a *ArangoHandler, m *openbmp.Message) {
 // Upserts the created Router document into the Routers collection
 func parse_peer_router(a *ArangoHandler, bgp_id string, router_ip string, asn string) {
 	fmt.Println("Parsing peer - document: router_document")
+
+        direct_peer_asns := strings.Split(a.direct_peer_asns, " ")
+        transit_provider_asns := strings.Split(a.transit_provider_asns, " ")
+        peer_type := ""
+        for _, element := range transit_provider_asns {
+            if element == asn {
+                peer_type = "Transit"
+            }
+        }
+        for _, element := range direct_peer_asns {
+            if element == asn {
+                peer_type = "Direct"
+            }
+        }
+
         router_document := &database.Router{
 		BGPID:    bgp_id,
 		RouterIP: router_ip,
 		ASN:      asn,
+                PeeringType: peer_type,
 	}
 	if err := a.db.Upsert(router_document); err != nil {
                 fmt.Println("While upserting the current peer message's router document, encountered an error:", err)
@@ -119,15 +136,32 @@ func parse_peer_external_router(a *ArangoHandler, bgp_id string, router_ip strin
 		fmt.Println("Current peer message's ASN is local ASN: this is an Internal Router -- skipping")
 		return
 	}
+
+        direct_peer_asns := strings.Split(a.direct_peer_asns, " ")
+        transit_provider_asns := strings.Split(a.transit_provider_asns, " ")
+
+        peer_type := "None"        
+        for _, element := range transit_provider_asns {
+            if element == asn {
+                peer_type = "Transit"
+            } 
+        }
+        for _, element := range direct_peer_asns {
+            if element == asn {
+                peer_type = "Direct"
+            }
+        }
+
         external_router_document := &database.ExternalRouter{
                 BGPID:    bgp_id,
                 RouterIP: router_ip,
 		ASN:      asn,
+                PeeringType: peer_type,
         }
 	if err := a.db.Upsert(external_router_document); err != nil {
                 fmt.Println("While upserting the current peer message's external router document, encountered an error", err)
         } else {
-                fmt.Printf("Successfully added current peer message's external router document -- External Router: %q with ASN: %q\n", router_ip, asn)
+                fmt.Printf("Successfully added current peer message's external router document -- External Router: %q with ASN: %q and Peer Type: %q\n", router_ip, asn, peer_type)
         }
 }
 
