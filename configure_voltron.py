@@ -41,7 +41,9 @@ def request_configuration():
     request_kafka_endpoint()
     request_arango_endpoint()
     request_influx_endpoint()
-    request_network_asn()
+    request_internal_network_asns()
+    request_direct_peer_asns()
+    request_transit_provider_asns()
 ###########################################################################################################################
 
 ###########################################################################################################################
@@ -163,10 +165,28 @@ def request_influx_endpoint():
 
 ###########################################################################################################################
 ### ASN Management
-def request_network_asn():
-    asn_input = input("What is(are) your internal network ASN(s)? ")
-    print("Thanks! We'll configure services to recognize inputted ASN(s).")
-    config['VOLTRON']['network_asn'] = asn_input
+def request_internal_network_asns():
+    internal_asn_input = input("What is(are) your internal network ASN(s)? ")
+    print("Thanks! We'll configure services to recognize the inputted ASN(s) of your internal network.")
+    config['VOLTRON']['internal_network_asn'] = internal_asn_input
+    pretty_print_split()
+###########################################################################################################################
+
+###########################################################################################################################
+### Peering Network ASN Management
+def request_direct_peer_asns():
+    direct_peer_asn_input = input("Please list the ASNs of your Direct Peers (i.e. 7100): ")
+    print("Thanks! We'll configure services to recognize the inputted ASN(s) of your Direct Peers.")
+    config['VOLTRON']['direct_peer_asns'] = direct_peer_asn_input
+    pretty_print_split()
+###########################################################################################################################
+
+###########################################################################################################################
+### Transit Network ASN Management
+def request_transit_provider_asns():
+    transit_provider_asn_input = input("Please list the ASNs of your Transit Providers (i.e. 7200 7600): ")
+    print("Thanks! We'll configure services to recognize the inputted ASN(s) of your Transit Providers.")
+    config['VOLTRON']['transit_provider_asns'] = transit_provider_asn_input
     pretty_print_split()
 ###########################################################################################################################
 
@@ -273,19 +293,19 @@ def configure_openbmp_deployment():
 
 ###########################################################################################################################
 ### Telemetry automation
-### Rendering Pipeline infrastructure config file with kafka_endpoint
+### Rendering Pipeline config file with host_IP
 def configure_telemetry_deployment():
     print("Configuring Telemetry deployment")
     templateLoader = FileSystemLoader(searchpath="./infra/templates/telemetry/")
     templateEnv = Environment(loader=templateLoader)
-    TEMPLATE_FILE = "pipeline_template.conf"
+    TEMPLATE_FILE = "pipeline_config.py"
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
-        'kafka_endpoint': config['VOLTRON']['kafka_endpoint'],
+        'host_ip': config['VOLTRON']['host_ip'],
     }
     outputText = template.render(context)
     dirname = os.path.dirname(os.path.abspath(__file__))
-    pipeline_config = os.path.join(dirname, 'infra', 'telemetry', 'pipeline', 'pipeline.conf')
+    pipeline_config = os.path.join(dirname, 'infra', 'telemetry', 'configs', 'pipeline_config.py')
     with open(pipeline_config, "w") as file_handler:
         file_handler.write(outputText)
 ###########################################################################################################################
@@ -301,7 +321,9 @@ def configure_topology_service():
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
         'kafka_endpoint': config['VOLTRON']['kafka_endpoint'],
-        'network_asn' : config['VOLTRON']['network_asn'],
+        'internal_network_asn' : config['VOLTRON']['internal_network_asn'],
+        'direct_peer_asns' : config['VOLTRON']['direct_peer_asns'],
+        'transit_provider_asns' : config['VOLTRON']['transit_provider_asns'],
     }
     outputText = template.render(context)
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -373,14 +395,14 @@ def configure_api_deployment():
     print("Configuring API deployment")
     templateLoader = FileSystemLoader(searchpath="./services/templates/api/")
     templateEnv = Environment(loader=templateLoader)
-    TEMPLATE_FILE = "api.yml"
+    TEMPLATE_FILE = "api.yaml"
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
         'public_host_ip': config['VOLTRON']['public_host_ip'],
     }
     outputText = template.render(context)
     dirname = os.path.dirname(os.path.abspath(__file__))
-    api_deployment = os.path.join(dirname, 'services', 'api', 'api.yml')
+    api_deployment = os.path.join(dirname, 'services', 'api', 'api.yaml')
     with open(api_deployment, "w") as file_handler:
         file_handler.write(outputText)
 ###########################################################################################################################
