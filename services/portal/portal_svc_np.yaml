@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: voltron
+  name: portal-np
+  labels:
+    app: portal
+spec:
+  ports:
+  - name: 80-tcp
+    port: 80
+    nodePort: 30880
+    targetPort: 80
+  type: NodePort
+  selector:
+    app: portal

@@ -13,6 +13,7 @@ type Router struct {
         SRGB         string `json:"SRGB,omitempty"`
         NodeSIDIndex string `json:"NodeSIDIndex,omitempty"`
         SRNodeSID    string `json:"SRNodeSID,omitempty"`
+        PeeringType  string `json:"PeerType,omitempty"`
 }
 
 func (r Router) GetKey() (string, error) {

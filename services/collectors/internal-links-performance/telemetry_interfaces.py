@@ -12,10 +12,3 @@ telemetry_interface_mapper['10.0.0.1_10.1.1.35'] = ['r1.622', 'GigabitEthernet0/
 telemetry_interface_mapper['10.0.0.2_10.1.1.3'] = ['r2.622', 'GigabitEthernet0/0/0/0']
 telemetry_interface_mapper['10.0.0.2_10.1.1.25'] = ['r2.622', 'GigabitEthernet0/0/0/4']
 telemetry_interface_mapper['10.0.0.2_10.1.1.37'] = ['r2.622', 'GigabitEthernet0/0/0/3']
-
-telemetry_interface_mapper['10.0.0.3_10.1.1.27'] = ['IAD_BR03.622', 'GigabitEthernet0/0/0/0']
-telemetry_interface_mapper['10.0.0.3_10.1.1.29'] = ['IAD_BR03.622', 'GigabitEthernet0/0/0/3']
-
-telemetry_interface_mapper['10.0.0.4_10.1.1.31'] = ['IAD_BR04.622', 'GigabitEthernet0/0/0/0']
-telemetry_interface_mapper['10.0.0.4_10.1.1.33'] = ['IAD_BR04.622', 'GigabitEthernet0/0/0/3']
-

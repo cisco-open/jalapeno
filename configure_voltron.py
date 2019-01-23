@@ -37,15 +37,19 @@ def check_configuration():
 ### Request endpoint IPs and more from user (set variables in voltron.ini)
 def request_configuration():
     request_openshift()
+    request_openbmp()
     request_kafka_endpoint()
     request_arango_endpoint()
     request_influx_endpoint()
-    request_network_asn()
+    request_internal_network_asns()
+    request_direct_peer_asns()
+    request_transit_provider_asns()
 ###########################################################################################################################
 
 ###########################################################################################################################
 ### Set variables throughout Voltron (using Jinja templating and variables in voltron.ini)
 def configure_voltron():
+    configure_api_deployment()
     configure_kafka_deployment()
     configure_arango_deployment()
     configure_openbmp_deployment()
@@ -58,12 +62,34 @@ def configure_voltron():
 ### Host Management
 def request_openshift():
     while True:
-        host_ip = input("Please enter the host IP address where OpenShift will be deployed (i.e. 10.0.250.2): ")
+        host_ip = input("Please enter the host IP address where OpenShift will be deployed (i.e. 10.0.250.2, the CentosKVM): ")
         ### VALIDATE INPUT HERE
         if(host_ip != '10.0.250.2'):
             print("Please enter a valid IP address!")
         else:
             config['VOLTRON']['host_ip'] = host_ip
+            break
+    while True:
+        public_host_ip = input("Please enter the public-facing IP address of OpenShift for API/portal accessibility (i.e. 10.200.99.2): ")
+        ### VALIDATE INPUT HERE
+        if(public_host_ip != '10.200.99.2'):
+            print("Please enter a valid IP address!")
+        else:
+            config['VOLTRON']['public_host_ip'] = public_host_ip
+            break
+    pretty_print_split()
+###########################################################################################################################
+
+###########################################################################################################################
+### OpenBMP Port Management
+def request_openbmp():
+    while True:
+        openbmp_port = input("Please enter the host port where OpenBMP data streams will point to (i.e. 5000): ")
+        ### VALIDATE INPUT HERE
+        if(openbmp_port != '5000'):
+            print("Please enter a valid port!")
+        else:
+            config['VOLTRON']['openbmp_port'] = openbmp_port
             break
     pretty_print_split()
 ###########################################################################################################################
@@ -139,10 +165,28 @@ def request_influx_endpoint():
 
 ###########################################################################################################################
 ### ASN Management
-def request_network_asn():
-    asn_input = input("What is(are) your internal network ASN(s)? ")
-    print("Thanks! We'll configure services to recognize inputted ASN(s).")
-    config['VOLTRON']['network_asn'] = asn_input
+def request_internal_network_asns():
+    internal_asn_input = input("What is(are) your internal network ASN(s)? ")
+    print("Thanks! We'll configure services to recognize the inputted ASN(s) of your internal network.")
+    config['VOLTRON']['internal_network_asn'] = internal_asn_input
+    pretty_print_split()
+###########################################################################################################################
+
+###########################################################################################################################
+### Peering Network ASN Management
+def request_direct_peer_asns():
+    direct_peer_asn_input = input("Please list the ASNs of your Direct Peers (i.e. 7100): ")
+    print("Thanks! We'll configure services to recognize the inputted ASN(s) of your Direct Peers.")
+    config['VOLTRON']['direct_peer_asns'] = direct_peer_asn_input
+    pretty_print_split()
+###########################################################################################################################
+
+###########################################################################################################################
+### Transit Network ASN Management
+def request_transit_provider_asns():
+    transit_provider_asn_input = input("Please list the ASNs of your Transit Providers (i.e. 7200 7600): ")
+    print("Thanks! We'll configure services to recognize the inputted ASN(s) of your Transit Providers.")
+    config['VOLTRON']['transit_provider_asns'] = transit_provider_asn_input
     pretty_print_split()
 ###########################################################################################################################
 
@@ -217,7 +261,9 @@ def configure_kafka_deployment():
 def configure_openbmp_deployment():
     print("Configuring OpenBMP deployment")
     context = {
+        'host_ip': config['VOLTRON']['host_ip'],
         'kafka_endpoint': config['VOLTRON']['kafka_endpoint'],
+        'openbmp_port': config['VOLTRON']['openbmp_port'],
     }
     templateLoader = FileSystemLoader(searchpath="./infra/templates/openbmpd/")
     templateEnv = Environment(loader=templateLoader)
@@ -229,23 +275,37 @@ def configure_openbmp_deployment():
     openbmpd_service_template = os.path.join(dirname, 'infra', 'openbmpd', 'deploy_openbmp.py')
     with open(openbmpd_service_template, "w") as file_handler:
         file_handler.write(outputText)
+
+    TEMPLATE_FILE = "openbmp_config_xe"
+    template = templateEnv.get_template(TEMPLATE_FILE)
+    outputText = template.render(context)
+    openbmpd_service_template = os.path.join(dirname, 'infra', 'openbmpd', 'openbmp_config_xe')
+    with open(openbmpd_service_template, "w") as file_handler:
+        file_handler.write(outputText)
+
+    TEMPLATE_FILE = "openbmp_config_xr"
+    template = templateEnv.get_template(TEMPLATE_FILE)
+    outputText = template.render(context)
+    openbmpd_service_template = os.path.join(dirname, 'infra', 'openbmpd', 'openbmp_config_xr')
+    with open(openbmpd_service_template, "w") as file_handler:
+        file_handler.write(outputText)
 ###########################################################################################################################
 
 ###########################################################################################################################
 ### Telemetry automation
-### Rendering Pipeline infrastructure config file with kafka_endpoint
+### Rendering Pipeline config file with host_IP
 def configure_telemetry_deployment():
     print("Configuring Telemetry deployment")
     templateLoader = FileSystemLoader(searchpath="./infra/templates/telemetry/")
     templateEnv = Environment(loader=templateLoader)
-    TEMPLATE_FILE = "pipeline_template.conf"
+    TEMPLATE_FILE = "pipeline_config.py"
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
-        'kafka_endpoint': config['VOLTRON']['kafka_endpoint'],
+        'host_ip': config['VOLTRON']['host_ip'],
     }
     outputText = template.render(context)
     dirname = os.path.dirname(os.path.abspath(__file__))
-    pipeline_config = os.path.join(dirname, 'infra', 'telemetry', 'pipeline', 'pipeline.conf')
+    pipeline_config = os.path.join(dirname, 'infra', 'telemetry', 'configs', 'pipeline_config.py')
     with open(pipeline_config, "w") as file_handler:
         file_handler.write(outputText)
 ###########################################################################################################################
@@ -261,7 +321,9 @@ def configure_topology_service():
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
         'kafka_endpoint': config['VOLTRON']['kafka_endpoint'],
-        'network_asn' : config['VOLTRON']['network_asn'],
+        'internal_network_asn' : config['VOLTRON']['internal_network_asn'],
+        'direct_peer_asns' : config['VOLTRON']['direct_peer_asns'],
+        'transit_provider_asns' : config['VOLTRON']['transit_provider_asns'],
     }
     outputText = template.render(context)
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -323,6 +385,25 @@ def configure_performance_services():
     dirname = os.path.dirname(os.path.abspath(__file__))
     external_links_influx = os.path.join(dirname, 'services', 'collectors', 'external-links-performance', 'configs', 'influxconfig.py')
     with open(external_links_influx, "w") as file_handler:
+        file_handler.write(outputText)
+###########################################################################################################################
+
+###########################################################################################################################
+### API automation
+### Rendering API deployment file with public host IP to enable accessibility
+def configure_api_deployment():
+    print("Configuring API deployment")
+    templateLoader = FileSystemLoader(searchpath="./services/templates/api/")
+    templateEnv = Environment(loader=templateLoader)
+    TEMPLATE_FILE = "api.yaml"
+    template = templateEnv.get_template(TEMPLATE_FILE)
+    context = {
+        'public_host_ip': config['VOLTRON']['public_host_ip'],
+    }
+    outputText = template.render(context)
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    api_deployment = os.path.join(dirname, 'services', 'api', 'api.yaml')
+    with open(api_deployment, "w") as file_handler:
         file_handler.write(outputText)
 ###########################################################################################################################
 

@@ -68,7 +68,7 @@ func topologyRun(cmd *cobra.Command, args []string) {
 		globalErr = err
 		return
 	}
-	hndlr = handler.NewArango(arangoDB, cfg.ASN)
+	hndlr = handler.NewArango(arangoDB, cfg.ASN, cfg.DirectPeerASNS, cfg.TransitProviderASNS)
 
 	consumer, err := kafka.New(cfg.Kafka, hndlr)
 	if err != nil {

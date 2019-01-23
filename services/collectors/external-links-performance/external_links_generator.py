@@ -49,7 +49,7 @@ if __name__ == '__main__':
     arango_connection = connections.ArangoConn()
     arango_client = arango_connection.connect_arango(arangoconfig.url, arangoconfig.database, arangoconfig.username, arangoconfig.password)
     external_links = generate_external_links(arango_client)
-    external_link_edges = generate_external_link_edges(arango_client, "10.0.0.1", "2.2.72.0")
+    external_link_edges = generate_external_link_edges(arango_client, "10.0.0.1", "2.2.72.0") # sample execution
     for link in external_links:
         print(link)
     for external_link_edge in external_link_edges:

@@ -25,32 +25,5 @@
             "password": "cisco",
             "port": 22
         }
-    },
-    {
-     	"netmiko_network": {
-            "device_type": "iosxr",
-            "ip": "10.251.251.103",
-     	    "username": "cisco",
-            "password": "cisco",
-            "port": 22
-     	}
-    },
-    {
-     	"netmiko_network": {
-            "device_type": "iosxr",
-            "ip": "10.251.251.104",
-     	    "username": "cisco",
-            "password": "cisco",
-            "port": 22
-     	}
-    },
-    {
-     	"netmiko_network": {
-            "device_type": "ios",
-            "ip": "10.0.0.13",
-     	    "username": "cisco",
-            "password": "cisco",
-            "port": 22
-     	}
     }
 ]

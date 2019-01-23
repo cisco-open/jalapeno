@@ -29,6 +29,8 @@ type GlobalConfig struct {
 type TopologyConfig struct {
 	Kafka kafka.Config
 	ASN   string
+        DirectPeerASNS string
+        TransitProviderASNS string
 }
 
 func InitGlobalCfg() *GlobalConfig {

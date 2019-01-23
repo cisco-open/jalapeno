@@ -2,7 +2,7 @@ EXECUTABLE ?= voltron
 BINARY ?= bin/$(EXECUTABLE)
 REPO=ievoltron
 IMAGE=api
-TAG=0.0.1
+TAG=0.0.1.2
 PROXY=http://proxy.esl.cisco.com:8080
 
 all: build

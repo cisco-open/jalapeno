@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   description: 'API for defending the universe.'
-  version: '0.0.1'
+  version: '0.0.2'
   title: 'Voltron API'
   termsOfService: 'http://www.cisco.com/web/siteassets/legal/terms_condition.html'
   contact:
@@ -88,6 +88,11 @@ paths:
         description: 'Specification of a maximum allowable latency, otherwise the lowest latency path will be returned.'
         required: false
         type: integer
+      - name: 'peer_preference'
+        in: query
+        description: 'Specification of peer preference, either direct or transit'
+        required: false
+        type: string
       responses:
         400:
           description: 'Invalid source, transport, or destination IP.'
@@ -111,6 +116,11 @@ paths:
         description: 'Specification of a minimum allowable bandwidth, otherwise the greatest bandwidth path will be returned.'
         required: false
         type: integer
+      - name: 'peer_preference'
+        in: query
+        description: 'Specification of peer preference, either direct or transit'
+        required: false
+        type: string
       responses:
         400:
           description: 'Invalid destination IP.'
@@ -134,6 +144,11 @@ paths:
         description: 'Specification of the maximum allowable utilization percentage, otherwise the least utilized path will be returned.'
         required: false
         type: integer
+      - name: 'peer_preference'
+        in: query
+        description: 'Specification of peer preference, either direct or transit'
+        required: false
+        type: string
       responses:
         400:
           description: 'Invalid destination IP.'
@@ -157,6 +172,11 @@ paths:
         description: 'Specification of the maximum allowable loss, otherwise the lowest loss path will be returned.'
         required: false
         type: integer
+      - name: 'peer_preference'
+        in: query
+        description: 'Specification of peer preference, either direct or transit'
+        required: false
+        type: string
       responses:
         400:
           description: 'Invalid destination IP.'

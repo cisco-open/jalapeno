@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: voltron
+  name: portal
+  labels:
+    app: portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portal
+  template:
+    metadata:
+      labels:
+        app: portal
+    spec:
+      containers:
+      - name: portal
+        image: ievoltron/portal:0.0.1@sha256:6e77430fe6bc8a4d2676cdc84ac5cbb75d5a8f61354f535ee5af617b7b43fd15
+        env:
+        - name: FLASK_ENV
+          value: production
+        - name: API_NETLOC
+          value: http://voltron-sjc.cisco.com:30881/
+        ports:
+        - containerPort: 80
+          protocol: TCP

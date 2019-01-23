@@ -11,15 +11,19 @@ import (
 
 type ArangoHandler struct {
 	fmap map[string]HandlerFunc
-	db   database.ArangoConn
-	asn  string
+	db                    database.ArangoConn
+	asn                   string
+        direct_peer_asns      string
+        transit_provider_asns string
 }
 
-func NewArango(db database.ArangoConn, localASN string) *ArangoHandler {
+func NewArango(db database.ArangoConn, localASN string, directPeerASNS string, transitProviderASNS string) *ArangoHandler {
 	a := &ArangoHandler{
 		fmap: make(map[string]HandlerFunc),
 		db:   db,
 		asn:  localASN,
+		direct_peer_asns: directPeerASNS,
+		transit_provider_asns: transitProviderASNS,
 	}
 	a.fmap[openbmp.TopicPeer] = a.HandlePeer
 	a.fmap[openbmp.TopicRouter] = a.HandleRouter
