@@ -2,7 +2,7 @@
 swagger: "2.0"
 info:
   description: "API for defending the universe."
-  version: "0.0.2"
+  version: "0.0.2.1"
   title: "Voltron API"
   termsOfService: "http://www.cisco.com/web/siteassets/legal/terms_condition.html"
   contact:
@@ -54,6 +54,11 @@ paths:
         description: "Specification of peer preference, either direct or transit"
         required: false
         type: "string"
+      - name: "composite"
+        in: "query"
+        description: "Specifies whether or not a client request is a composite request"
+        required: false
+        type: "string"
       responses:
         200:
           description: "Path identified and selected."
@@ -87,6 +92,11 @@ paths:
       - name: "peer_preference"
         in: "query"
         description: "Specification of peer preference, either direct or transit"
+        required: false
+        type: "string"
+      - name: "composite"
+        in: "query"
+        description: "Specifies whether or not a client request is a composite request"
         required: false
         type: "string"
       responses:
@@ -124,6 +134,11 @@ paths:
         description: "Specification of peer preference, either direct or transit"
         required: false
         type: "string"
+      - name: "composite"
+        in: "query"
+        description: "Specifies whether or not a client request is a composite request"
+        required: false
+        type: "string"
       responses:
         200:
           description: "Path identified and selected."
@@ -157,6 +172,11 @@ paths:
       - name: "peer_preference"
         in: "query"
         description: "Specification of peer preference, either direct or transit"
+        required: false
+        type: "string"
+      - name: "composite"
+        in: "query"
+        description: "Specifies whether or not a client request is a composite request"
         required: false
         type: "string"
       responses:

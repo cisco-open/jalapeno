@@ -2,7 +2,7 @@ from ipaddress import ip_address
 from voltron import queries
 
 
-def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None):  # noqa: E501
+def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None, composite=None):  # noqa: E501
     """Optimize pathing to EPE based on bandwidth.
 
      # noqa: E501
@@ -28,10 +28,10 @@ def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None):
     if peer_preference is not None:
         if peer_preference not in ["direct", "transit"]:
             return 'Invalid peer preference, should be direct or transit', 400
-    return queries.pathing_epe_bandwidth_get(dst_ip, min_bandwidth, peer_preference)
+    return queries.pathing_epe_bandwidth_get(dst_ip, min_bandwidth, peer_preference, composite)
 
 
-def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, peer_preference=None):  # noqa: E501
+def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, peer_preference=None, composite=None):  # noqa: E501
     """Optimize pathing to EPE based on latency.
 
      # noqa: E501
@@ -69,10 +69,10 @@ def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, 
     if peer_preference is not None:
         if peer_preference not in ["direct", "transit"]:
             return 'Invalid peer preference, should be direct or transit', 400
-    return queries.pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency, peer_preference)
+    return queries.pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency, peer_preference, composite)
 
 
-def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None):  # noqa: E501
+def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None, composite=None):  # noqa: E501
     """Optimize pathing to EPE based on loss-related statistics.
 
      # noqa: E501
@@ -98,10 +98,10 @@ def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None):  # no
     if peer_preference is not None:
         if peer_preference not in ["direct", "transit"]:
             return 'Invalid peer preference, should be direct or transit', 400
-    return queries.pathing_epe_lossless_get(dst_ip, max_loss, peer_preference)
+    return queries.pathing_epe_lossless_get(dst_ip, max_loss, peer_preference, composite)
 
 
-def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=None):  # noqa: E501
+def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=None, composite=None):  # noqa: E501
     """Optimize pathing to EPE based on utilization percentages.
 
      # noqa: E501
@@ -127,4 +127,4 @@ def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=No
     if peer_preference is not None:
         if peer_preference not in ["direct", "transit"]:
             return 'Invalid peer preference, should be direct or transit', 400
-    return queries.pathing_epe_utilization_get(dst_ip, max_utilization, peer_preference)
+    return queries.pathing_epe_utilization_get(dst_ip, max_utilization, peer_preference, composite)

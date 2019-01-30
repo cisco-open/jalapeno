@@ -19,7 +19,8 @@ class TestPathingController(BaseTestCase):
         """
         query_string = [('dst_ip', 'dst_ip_example'),
                         ('min_bandwidth', 56),
-                        ('peer_preference', 'peer_preference_example')]
+                        ('peer_preference', 'peer_preference_example'),
+                        ('composite', 'composite_example')]
         response = self.client.open(
             '/api/v1/pathing/epe/bandwidth',
             method='GET',
@@ -37,7 +38,8 @@ class TestPathingController(BaseTestCase):
                         ('src_transport_ip', 'src_transport_ip_example'),
                         ('dst_ip', 'dst_ip_example'),
                         ('max_latency', 56),
-                        ('peer_preference', 'peer_preference_example')]
+                        ('peer_preference', 'peer_preference_example'),
+                        ('composite', 'composite_example')]
         response = self.client.open(
             '/api/v1/pathing/epe/latency',
             method='GET',
@@ -53,7 +55,8 @@ class TestPathingController(BaseTestCase):
         """
         query_string = [('dst_ip', 'dst_ip_example'),
                         ('max_loss', 56),
-                        ('peer_preference', 'peer_preference_example')]
+                        ('peer_preference', 'peer_preference_example'),
+                        ('composite', 'composite_example')]
         response = self.client.open(
             '/api/v1/pathing/epe/lossless',
             method='GET',
@@ -69,7 +72,8 @@ class TestPathingController(BaseTestCase):
         """
         query_string = [('dst_ip', 'dst_ip_example'),
                         ('max_utilization', 56),
-                        ('peer_preference', 'peer_preference_example')]
+                        ('peer_preference', 'peer_preference_example'),
+                        ('composite', 'composite_example')]
         response = self.client.open(
             '/api/v1/pathing/epe/utilization',
             method='GET',

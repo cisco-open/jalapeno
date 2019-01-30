@@ -6,7 +6,7 @@ from swagger_server import util
 from voltron.controllers import pathing_controller
 
 
-def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None):  # noqa: E501
+def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None, composite=None):  # noqa: E501
     """Optimize pathing to EPE based on bandwidth.
 
      # noqa: E501
@@ -17,13 +17,15 @@ def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None):
     :type min_bandwidth: int
     :param peer_preference: Specification of peer preference, either direct or transit
     :type peer_preference: str
+    :param composite: Specifies whether or not a client request is a composite request
+    :type composite: str
 
     :rtype: SRLabelStack
     """
-    return pathing_controller.pathing_epe_bandwidth_get(dst_ip, min_bandwidth, peer_preference)
+    return pathing_controller.pathing_epe_bandwidth_get(dst_ip, min_bandwidth, peer_preference, composite)
 
 
-def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, peer_preference=None):  # noqa: E501
+def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, peer_preference=None, composite=None):  # noqa: E501
     """Optimize pathing to EPE based on latency.
 
      # noqa: E501
@@ -38,13 +40,15 @@ def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, 
     :type max_latency: int
     :param peer_preference: Specification of peer preference, either direct or transit
     :type peer_preference: str
+    :param composite: Specifies whether or not a client request is a composite request
+    :type composite: str
 
     :rtype: SRLabelStack
     """
-    return pathing_controller.pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency, peer_preference)
+    return pathing_controller.pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency, peer_preference, composite)
 
 
-def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None):  # noqa: E501
+def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None, composite=None):  # noqa: E501
     """Optimize pathing to EPE based on loss-related statistics.
 
      # noqa: E501
@@ -55,13 +59,15 @@ def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None):  # no
     :type max_loss: int
     :param peer_preference: Specification of peer preference, either direct or transit
     :type peer_preference: str
+    :param composite: Specifies whether or not a client request is a composite request
+    :type composite: str
 
     :rtype: SRLabelStack
     """
-    return pathing_controller.pathing_epe_lossless_get(dst_ip, max_loss, peer_preference)
+    return pathing_controller.pathing_epe_lossless_get(dst_ip, max_loss, peer_preference, composite)
 
 
-def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=None):  # noqa: E501
+def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=None, composite=None):  # noqa: E501
     """Optimize pathing to EPE based on utilization percentages.
 
      # noqa: E501
@@ -72,7 +78,9 @@ def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=No
     :type max_utilization: int
     :param peer_preference: Specification of peer preference, either direct or transit
     :type peer_preference: str
+    :param composite: Specifies whether or not a client request is a composite request
+    :type composite: str
 
     :rtype: SRLabelStack
     """
-    return pathing_controller.pathing_epe_utilization_get(dst_ip, max_utilization, peer_preference)
+    return pathing_controller.pathing_epe_utilization_get(dst_ip, max_utilization, peer_preference, composite)

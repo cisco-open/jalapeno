@@ -1,7 +1,7 @@
 from .db import ArangoDBConnection
 from .util import ip_network_bandaid
 
-def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None):
+def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None, composite=None):
     aql = """
     FOR edge in ExternalLinkEdges
         FOR v, e, p IN 1..2 OUTBOUND edge._from ExternalLinkEdges, ExternalPrefixEdges
@@ -9,13 +9,19 @@ def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None):
             LET egress_bandwidth = (p.edges[0].speed * 1000) - (p.edges[0].out_octets * 8)
             {bandwidth_filter}
             SORT {peer_preference_filter} egress_bandwidth DESC
-            LIMIT 1
-            RETURN [p.vertices[0].SRNodeSID, p.edges[0].Label]
+            {limit_filter}
+            RETURN DISTINCT [p.vertices[0].SRNodeSID, p.edges[0].Label]
     """
     prefix = ip_network_bandaid(dst_ip)
     prefix_ip = str(prefix.network_address)
     prefix_mask = int(prefix.prefixlen)
     bind_vars = { 'prefix_ip': prefix_ip, 'prefix_mask': prefix_mask }
+
+    if composite is not None:
+        aql = aql.format(limit_filter='', bandwidth_filter='{bandwidth_filter}', peer_preference_filter='{peer_preference_filter}')
+    else:
+        aql = aql.format(limit_filter='LIMIT 1', bandwidth_filter='{bandwidth_filter}', peer_preference_filter='{peer_preference_filter}')
+
     if min_bandwidth is not None:
         aql = aql.format(bandwidth_filter='FILTER egress_bandwidth >= @min_bandwidth', peer_preference_filter='{peer_preference_filter}')
         bind_vars['min_bandwidth'] = min_bandwidth
@@ -30,30 +36,37 @@ def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None):
 
     db = ArangoDBConnection()
     label_list = list(db.query_aql(aql, bind_vars))
-    if len(label_list) > 0:
-        label_list = label_list[0]
+    #if len(label_list) > 0:
+    #    label_list = label_list[0]
     return label_list
 
 
-def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=None):
+def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=None, composite=None):
     aql = """
     FOR edge in ExternalLinkEdges
         FOR v, e, p IN 1..2 OUTBOUND edge._from ExternalLinkEdges, ExternalPrefixEdges
             FILTER p.vertices[2].Prefix == @prefix_ip && p.vertices[2].Length == @prefix_mask
             {utilization_filter}
             SORT {peer_preference_filter} p.edges[0].percent_util_outbound
-            LIMIT 1
+            {limit_filter}
             RETURN [p.vertices[0].SRNodeSID, p.edges[0].Label]
     """
     prefix = ip_network_bandaid(dst_ip)
     prefix_ip = str(prefix.network_address)
     prefix_mask = int(prefix.prefixlen)
     bind_vars = { 'prefix_ip': prefix_ip, 'prefix_mask': prefix_mask }
+
+    if composite is not None:
+        aql = aql.format(limit_filter='', utilization_filter='{utilization_filter}', peer_preference_filter='{peer_preference_filter}')
+    else:
+        aql = aql.format(limit_filter='LIMIT 1', utilization_filter='{utilization_filter}', peer_preference_filter='{peer_preference_filter}')
+
     if max_utilization is not None:
         aql = aql.format(utilization_filter='FILTER p.edges[0].percent_util_outbound <= @max_utilization', peer_preference_filter='{peer_preference_filter}')
         bind_vars['max_utilization'] = max_utilization
     else:
         aql = aql.format(utilization_filter='', peer_preference_filter='{peer_preference_filter}')
+
 
     if peer_preference is not None:
         aql = aql.format(peer_preference_filter='POSITION([@peer_preference], p.vertices[1].PeerType, true) DESC,')
@@ -63,22 +76,28 @@ def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=No
 
     db = ArangoDBConnection()
     label_list = list(db.query_aql(aql, bind_vars))
-    if len(label_list) > 0:
-        label_list = label_list[0]
+    #if len(label_list) > 0:
+    #    label_list = label_list[0]
     return label_list
 
-def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, peer_preference=None):
+
+def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, peer_preference=None, composite=None):
     aql = """
     FOR p IN EPEPaths_Latency
         FILTER p.Source == @source AND p.Destination == @destination
         {latency_filter}
         SORT {peer_preference_filter} p.Latency
-        LIMIT 1
+        {limit_filter}
         RETURN [p.Label_Path]
     """
     prefix = ip_network_bandaid(dst_ip)
     prefix_ip = str(prefix.network_address)
     bind_vars = {'source': src_ip, 'destination': prefix_ip}
+
+    if composite is not None:
+        aql = aql.format(limit_filter='', latency_filter='{latency_filter}', peer_preference_filter='{peer_preference_filter}')
+    else:
+        aql = aql.format(limit_filter='LIMIT 1', latency_filter='{latency_filter}', peer_preference_filter='{peer_preference_filter}')    
 
     if max_latency is not None:
         max_latency = str(max_latency/1000)
@@ -95,11 +114,11 @@ def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, 
 
     db = ArangoDBConnection()
     label_list = list(db.query_aql(aql, bind_vars))
-    if len(label_list) > 0:
-        label_list = label_list[0]
+    #if len(label_list) > 0:
+    #    label_list = label_list[0]
     return label_list
 
-def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None):
+def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None, composite=None):
     aql = """
     FOR edge in ExternalLinkEdges
         FOR v, e, p IN 1..2 OUTBOUND edge._from ExternalLinkEdges, ExternalPrefixEdges
@@ -107,13 +126,18 @@ def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None):
             LET total_loss = p.edges[0].out_errors + p.edges[0].out_discards
             {loss_filter}
             SORT {peer_preference_filter} total_loss
-            LIMIT 1
+            {limit_filter}
             RETURN [p.vertices[0].SRNodeSID, p.edges[0].Label]
     """
     prefix = ip_network_bandaid(dst_ip)
     prefix_ip = str(prefix.network_address)
     prefix_mask = int(prefix.prefixlen)
     bind_vars = { 'prefix_ip': prefix_ip, 'prefix_mask': prefix_mask }
+
+    if composite is not None:
+        aql = aql.format(limit_filter='', loss_filter='{loss_filter}', peer_preference_filter='{peer_preference_filter}')
+    else:
+        aql = aql.format(limit_filter='LIMIT 1', loss_filter='{loss_filter}', peer_preference_filter='{peer_preference_filter}')
 
     if max_loss is not None:
         aql = aql.format(loss_filter='FILTER total_loss <= @max_loss', peer_preference_filter='{peer_preference_filter}')
@@ -129,8 +153,8 @@ def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None):
 
     db = ArangoDBConnection()
     label_list = list(db.query_aql(aql, bind_vars))
-    if len(label_list) > 0:
-        label_list = label_list[0]
+    #if len(label_list) > 0:
+    #    label_list = label_list[0]
     return label_list
 
 def topology_get():
