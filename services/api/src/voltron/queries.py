@@ -171,6 +171,7 @@ def pathing_epe_lossless_get(dst_ip, max_loss=None, peer_preference=None, compos
     #    label_list = label_list[0]
     return label_list
 
+
 def topology_get():
     aql_node_router_internal = """
     FOR router IN Routers
@@ -204,7 +205,7 @@ def topology_get():
     """
     aql_link_external_link_edge = """
     FOR ext_link IN ExternalLinkEdges
-        RETURN {
+        RETURN distinct {
             "source": ext_link._from,
             "target": ext_link._to,
             "value": ext_link.Label
@@ -212,28 +213,31 @@ def topology_get():
     """
     aql_link_internal_link_edge = """
     FOR int_link IN InternalLinkEdges
-        RETURN {
+        RETURN distinct {
             "source": int_link._from,
             "target": int_link._to,
             "value": int_link.Label
         }
     """
-    aql_link_epe_edge = """
-    FOR epe_edge IN EPEEdges
-        RETURN {
-            "source": epe_edge._from,
-            "target": epe_edge._to,
-            "value": epe_edge.DestinationASN
-        }
-    """
+
+    #aql_link_epe_edge = """
+    #FOR epe_edge IN EPEEdges
+    #    RETURN {
+    #        "source": epe_edge._from,
+    #        "target": epe_edge._to,
+    #        "value": epe_edge.DestinationASN
+    #    }
+    #"""
+
     aql_link_ext_prefix_edge = """
     FOR prefix_edge IN ExternalPrefixEdges
-        RETURN {
+        RETURN distinct {
             "source": prefix_edge._from,
             "target": prefix_edge._to,
             "value": prefix_edge.DstPrefixASN
         }
     """
+
     db = ArangoDBConnection()
     nodes = []
     node_router_internal = list(db.query_aql(aql_node_router_internal))
@@ -254,15 +258,15 @@ def topology_get():
     for link in link_internal_link:
         link['value'] = int(link['value'])
         links.append(link)
-    link_epe = list(db.query_aql(aql_link_epe_edge))
-    for link in link_epe:
-        link['value'] = int(link['value'])
-        links.append(link)
+    #link_epe = list(db.query_aql(aql_link_epe_edge))
+    #for link in link_epe:
+    #    link['value'] = int(link['value'])
+    #    links.append(link)
     link_ext_prefix = list(db.query_aql(aql_link_ext_prefix_edge))
     for link in link_ext_prefix:
         link['value'] = int(link['value'])
         links.append(link)
     return {
         'nodes': nodes,
-        'links': links
+        'edges': links
     }
