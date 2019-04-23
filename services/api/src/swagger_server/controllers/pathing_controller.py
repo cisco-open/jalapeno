@@ -25,6 +25,21 @@ def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None, 
     return pathing_controller.pathing_epe_bandwidth_get(dst_ip, min_bandwidth, peer_preference, composite)
 
 
+def pathing_epe_latency_all_get(src_ip, src_transport_ip):  # noqa: E501
+    """Returns all latencies of EPE
+
+     # noqa: E501
+
+    :param src_ip: The source IP.
+    :type src_ip: str
+    :param src_transport_ip: The upstream or gateway IP that identifies traversal through the network beyond the host.
+    :type src_transport_ip: str
+
+    :rtype: SRLabelStack
+    """
+    return pathing_controller.pathing_epe_latency_all_get(src_ip, src_transport_ip)
+
+
 def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, peer_preference=None, composite=None):  # noqa: E501
     """Optimize pathing to EPE based on latency.
 

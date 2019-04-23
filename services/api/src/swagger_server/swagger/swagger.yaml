@@ -67,6 +67,36 @@ paths:
         400:
           description: "Invalid source, transport, or destination IP."
       x-swagger-router-controller: "swagger_server.controllers.pathing_controller"
+  /pathing/epe/latencyAll:
+    get:
+      tags:
+      - "Pathing"
+      summary: "Returns all latencies of EPE"
+      operationId: "pathing_epe_latency_all_get"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "src_ip"
+        in: "query"
+        description: "The source IP."
+        required: true
+        type: "string"
+      - name: "src_transport_ip"
+        in: "query"
+        description: "The upstream or gateway IP that identifies traversal through\
+          \ the network beyond the host."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Path identified & selected."
+          schema:
+            $ref: "#/definitions/SRLabelStack"
+        400:
+          description: "Invalid source or transport."
+      x-swagger-router-controller: "swagger_server.controllers.pathing_controller"
   /pathing/epe/bandwidth:
     get:
       tags:

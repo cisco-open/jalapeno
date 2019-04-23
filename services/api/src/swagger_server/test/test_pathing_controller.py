@@ -29,6 +29,21 @@ class TestPathingController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
+    def test_pathing_epe_latency_all_get(self):
+        """Test case for pathing_epe_latency_all_get
+
+        Returns all latencies of EPE
+        """
+        query_string = [('src_ip', 'src_ip_example'),
+                        ('src_transport_ip', 'src_transport_ip_example')]
+        response = self.client.open(
+            '/api/v1/pathing/epe/latencyAll',
+            method='GET',
+            content_type='application/json',
+            query_string=query_string)
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
     def test_pathing_epe_latency_get(self):
         """Test case for pathing_epe_latency_get
 

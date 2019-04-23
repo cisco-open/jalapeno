@@ -30,6 +30,25 @@ def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None, 
             return 'Invalid peer preference, should be direct or transit', 400
     return queries.pathing_epe_bandwidth_get(dst_ip, min_bandwidth, peer_preference, composite)
 
+def pathing_epe_latency_all_get(src_ip, src_transport_ip):  # noqa: E501
+    """Returns all latencies for EPE use-case.
+     # noqa: E501
+    :param src_ip: The source IP.
+    :type src_ip: str
+    :param src_transport_ip: The upstream or gateway IP that identifies traversal through the network beyond the host.
+    :type src_transport_ip: str
+    :rtype: SRLabelStack
+    """
+    try:
+        src_ip = str(ip_address(src_ip))
+    except ValueError:
+        return 'Invalid source IP.', 400
+    try:
+        src_transport_ip = str(ip_address(src_transport_ip))
+    except ValueError:
+        return 'Invalid source transport IP.', 400
+    return queries.pathing_epe_latency_all_get(src_ip, src_transport_ip)
+
 
 def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, peer_preference=None, composite=None):  # noqa: E501
     """Optimize pathing to EPE based on latency.

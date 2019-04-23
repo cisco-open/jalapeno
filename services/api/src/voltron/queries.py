@@ -81,6 +81,20 @@ def pathing_epe_utilization_get(dst_ip, max_utilization=None, peer_preference=No
     return label_list
 
 
+def pathing_epe_latency_all_get(src_ip, src_transport_ip):
+    aql = """
+    FOR p in EPEPaths_Latency
+        FILTER p.Source == @src_ip
+        RETURN  {"source": CONCAT (["Routers/", p.Source]), "target": CONCAT (["Prefixes/", p.Destination]), "SRNodeSID_EPELabel": p.Label_Path, "latency": p.Latency, "Egress_Peer": p.Egress_Peer}
+    """
+    bind_vars = {'src_ip': src_ip}
+    db = ArangoDBConnection()
+    label_list = list(db.query_aql(aql, bind_vars))
+    return {
+        'latencydata': label_list
+    }
+
+
 def pathing_epe_latency_get(src_ip, src_transport_ip, dst_ip, max_latency=None, peer_preference=None, composite=None):
     aql = """
     FOR p IN EPEPaths_Latency
