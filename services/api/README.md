@@ -23,7 +23,7 @@ In ```/voltron/services/api:```
 5. Head to ```/api/src/voltron/```.
 6. Edit ```queries.py``` to add ArangoDB query logic.
 
-Finally, build the image!
+### Finally, build the image!
 
 
 ## Development
