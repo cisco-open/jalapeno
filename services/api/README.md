@@ -6,25 +6,25 @@ The API Gateway is documented via the Open API specification. Swagger UI is depl
 The API Gateway and UI will be visible via NodePort `30880` and `30881`, per configuration in `*_np.yaml`.
 
 ## Usage
+### Generate Swagger Code
+In ```/voltron/services/api:```
+1. Edit ```swagger.yaml```. This is the place to create new API endpoints or edit the parameters of previously created endpoints.
+2. Execute ```./run_editor.sh```
+3. Head to ```http://localhost:8080```. Import the ```swagger.yaml``` file you edited in step 1.
+4. If you have no erorrs, generate the python-flask swagger server. This will download a zip file.
+5. Copy the generated python-flask zip file into your ```/voltron/services/api/``` directory. Name it server.zip. Something like this: ```cp ~/Downloads/python-flask-server-generated.zip server.zip```
+6. Execute ```./swagger_zip_to_src.sh server.zip```
+### Edit generated python files according to old python originals
+1. ```cd /api/src/swagger_server/controllers```
+2. Copy function calls from old ```topology_controller``` and ```pathing_controller``` python files into new python files.
+3. Add new calls as necessary. 
+3. Head to ```/api/src/voltron/controllers/```
+4. Add parameter validation in files there and make call to queries backend.
+5. Head to ```/api/src/voltron/```.
+6. Edit ```queries.py``` to add ArangoDB query logic.
 
-```bash
-# Develop Swagger specification
-./run_editor.sh
-# CodeGen python-flask, example cp to here below
-cp ~/Downloads/python-flask-server-generated.zip server.zip
-./swagger_zip_to_src.sh server.zip
-# Edit all .py files according to .old.py originals
-pushd src/swagger_server/
-...
-popd
-# Go wild developing
-pushd src/voltron
-...
-popd
-# Containerize
-make container
-# Push container to ievoltron
-```
+Finally, build the image!
+
 
 ## Development
 Development of the API is assisted by Swagger Editor via Docker, and custom code on the backend is hand-written.
