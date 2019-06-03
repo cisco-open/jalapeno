@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   description: 'API for defending the universe.'
-  version: '0.0.2'
+  version: '0.0.2.1'
   title: 'Voltron API'
   termsOfService: 'http://www.cisco.com/web/siteassets/legal/terms_condition.html'
   contact:
@@ -93,11 +93,35 @@ paths:
         description: 'Specification of peer preference, either direct or transit'
         required: false
         type: string
+      - name: 'composite'
+        in: query
+        description: 'Specifies whether or not a client request is a composite request'
+        required: false
+        type: string
       responses:
         400:
           description: 'Invalid source, transport, or destination IP.'
         200:
           description: 'Path identified and selected.'
+          schema:
+            $ref: '#/definitions/SRLabelStack'
+  /pathing/epe/latencyAll:
+    get:
+      tags:
+      - 'Pathing'
+      summary: 'Returns all latencies of EPE'
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - $ref: '#/parameters/src_ip'
+      - $ref: '#/parameters/src_transport_ip'
+      responses:
+        400:
+          description: 'Invalid source or transport.'
+        200:
+          description: 'Path identified & selected.'
           schema:
             $ref: '#/definitions/SRLabelStack'
   /pathing/epe/bandwidth:
@@ -119,6 +143,11 @@ paths:
       - name: 'peer_preference'
         in: query
         description: 'Specification of peer preference, either direct or transit'
+        required: false
+        type: string
+      - name: 'composite'
+        in: query
+        description: 'Specifies whether or not a client request is a composite request'
         required: false
         type: string
       responses:
@@ -149,6 +178,11 @@ paths:
         description: 'Specification of peer preference, either direct or transit'
         required: false
         type: string
+      - name: 'composite'
+        in: query
+        description: 'Specifies whether or not a client request is a composite request'
+        required: false
+        type: string
       responses:
         400:
           description: 'Invalid destination IP.'
@@ -175,6 +209,11 @@ paths:
       - name: 'peer_preference'
         in: query
         description: 'Specification of peer preference, either direct or transit'
+        required: false
+        type: string
+      - name: 'composite'
+        in: query
+        description: 'Specifies whether or not a client request is a composite request'
         required: false
         type: string
       responses:
