@@ -17,6 +17,12 @@ virsh start os_base1
 ```
 3. connect to the centos VM and perform the following steps to modify Openshift's IP info to work in your environment:
 ```
+virsh console os_base1
+user = centos
+password = cisco
+
+# Once connected:
+
 1. shutdown openshift
 sudo systemctl stop origin-node
 sudo systemctl stop origin-node-dep
