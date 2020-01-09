@@ -84,4 +84,9 @@ sudo iptables -t nat -A PREROUTING -p tcp -m tcp --dport 30308 -j DNAT --to-dest
 
 Grafana
 sudo iptables -t nat -A PREROUTING -p tcp -m tcp --dport 30300 -j DNAT --to-destination <centos_vm_mgt_ip>:30300
+
+NAT source address of inbound traffic to Openshift, Arango, etc.
+sudo iptables -t nat -A POSTROUTING -o <name_of_mgt_br> -j MASQUERADE
+
+
 ```
