@@ -1,6 +1,5 @@
 <domain type='kvm'>
   <name>os_base1</name>
-  <uuid>fe952adf-36ed-4bb8-a6c1-6f71840b8cf9</uuid>
   <description>vlt_openshift_cluster_vm</description>
   <memory unit='KiB'>8388608</memory>
   <currentMemory unit='KiB'>8388608</currentMemory>
@@ -43,7 +42,6 @@
     <controller type='pci' index='0' model='pci-root'/>
     <interface type='bridge'>
       <target dev='os-eth0'/>
-      <mac address='00:16:3e:e4:b2:a2'/>
       <source bridge='vlt_mgt_br'/>
       <virtualport type='openvswitch'>
         <parameters interfaceid='9ef0e7de-8eec-4ac8-892c-e22303b65836'/>
@@ -53,7 +51,6 @@
     </interface>
     <interface type='bridge'>
       <target dev='os-eth1'/>
-      <mac address='00:16:3e:e4:b2:a3'/>
       <source bridge='vlt_br'/>
       <virtualport type='openvswitch'>
         <parameters interfaceid='3d021e2e-d8a7-47e3-b2c9-1a72c92f1272'/>
