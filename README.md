@@ -10,6 +10,7 @@
 * Combine network and application performance data
 
 #### High level architecture 
+![voltron_architecture] (https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/voltron_architecture.png "voltron architecture")
 
 Voltron's key components
 
