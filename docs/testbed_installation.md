@@ -1,6 +1,12 @@
 ### The following instructions will create a basic virtual network topology as shown here:
 ![voltron_base_testbed](https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/voltron_base_testbed.png "voltron-base-testbed")
 
+The base topology allows one to create and test Voltron virtual topology use cases including
+* Internal traffic engineering - steering traffic over a non-IGP best path toward an internal or external destination
+* Egress Peer Engineering - steering traffic out a non-BGP best path toward an external destination
+* VPN Overlays - creation of VPN tunnels using SR or SRv6 encapsulations
+* Service Chaining - creation of overlay tunnels linking sources and destinations with middle-point services in between
+** see also: https://tools.ietf.org/html/draft-ietf-spring-sr-service-programming-01
 
 ### 1. Server Requirements: 
     * ubuntu 18.04, minimum 16 vCPU, 96GB memory, 200GB disk
@@ -10,7 +16,8 @@
     * optional: apt-get install virt-manager kafkacat
 
 ### 3. Copy VM files over
-Openshift Centos VM (os_base1) qcow2 and xrv9k images files to a directory of your choice
+Create an /opt/images/voltron directory 
+Copy Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files to /opt/images/voltron 
 
 ### 4. Get the server's outside eth interface name.  Edit vlt_startup.sh and replace <server outside interface> with the interface name. Uncomment the iptables masquerade line
 
