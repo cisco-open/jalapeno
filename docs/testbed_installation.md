@@ -8,25 +8,23 @@ The base topology allows one to create and test Voltron virtual topology use cas
 * Service Chaining - creation of overlay tunnels linking sources and destinations with middle-point services in between
 ** see also: https://tools.ietf.org/html/draft-ietf-spring-sr-service-programming-01
 
-### 1. Server Requirements: 
+#### 1. Server Requirements: 
     * ubuntu 18.04, minimum 16 vCPU, 96GB memory, 200GB disk
 
-### 2. Required packages:
+#### 2. Required packages:
     * apt-get install openssh-server lxc lxd-client qemu qemu-kvm libvirt-bin openvswitch-switch python-pip git
     * optional: apt-get install virt-manager kafkacat
 
-### 3. Copy VM files over
-Create an /opt/images/voltron directory on your server
+#### 3. Copy VM files over
+Create an /opt/images/voltron directory 
+Copy the Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files to /opt/images/voltron 
+Copy the libvirt xml files from https://wwwin-github.cisco.com/spa-ie/voltron/edit/brmcdoug/docs/libvirt/ to a directory of your choice
+Copy 
 
-* Copy the Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files to /opt/images/voltron 
-* Copy the libvirt xml files from https://wwwin-github.cisco.com/spa-ie/voltron/edit/brmcdoug/docs/libvirt/ to a directory of your choice
-* Copy https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/testbed_virtual_network_setup.sh to a directory of your choice
+#### 4. Run testbed_setup.sh shell script
+    ./
 
-testbed_virtual_network_setup.sh will bring up ovs bridges, ip routes, and NAT entries necessary for the testbed to function
-      
-    ./testbed_virtual_network_setup.sh
-
-### 4. Define and launch VMs
+#### 4. Define and launch VMs
     virsh define r00.xml
     virsh define r01.xml
     virsh define r02.xml
@@ -51,7 +49,9 @@ testbed_virtual_network_setup.sh will bring up ovs bridges, ip routes, and NAT e
     Example CSR router console access:
     sudo virsh console r71
 
-### 7. Modify openshift's public or reachable IP address:
+#### 6. Modify openshift's public or reachable IP address:
+(more info on installing and configuing the Openshif centos VM at https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/centos_vm.md )
+
     1. virsh console os_base1
     2. shutdown openshift
         sudo systemctl stop origin-node
@@ -72,15 +72,15 @@ testbed_virtual_network_setup.sh will bring up ovs bridges, ip routes, and NAT e
         sudo systemctl start origin-node
         sudo systemctl start origin-node-dep
 
-### 8. Once the virtual network is up and routing is established, ssh to the openshift VM and run voltron k8s deployment script:
+#### 7. Once the virtual network is up and routing is established, ssh to the openshift VM and run voltron k8s deployment script:
         ssh centos@10.0.250.2, pw cisco
         cd ~/voltron
         ./deploy_voltron.sh 
 
-### 9. Verify openshift voltron project is up and pods have all started
+#### 8. Verify openshift voltron project is up and pods have all started
         https://<server_ip>:8443/console/project/voltron/browse/pods
 
-### 10. Validate voltron data:
+#### 9. Validate voltron data:
     1. OpenBMP:
      docker exec -it openbmp_collector bash
       more /var/log/openbmpd.log
@@ -97,10 +97,10 @@ testbed_virtual_network_setup.sh will bring up ovs bridges, ip routes, and NAT e
     3. Arango:
      http://<server_ip>:30852
 
-## Optional:
+### Optional:
 
-### 11. Add latencies to the topology. Examples:
-sudo tc qdisc add dev r71ge1 root netem delay 120000 <br>
-sudo tc qdisc add dev r71ge2 root netem delay 150000 <br>
-sudo tc qdisc add dev r72ge1 root netem delay 180000 <br>
-sudo tc qdisc add dev r72ge2 root netem delay 210000 <br>
+#### 11. Add latencies to the topology. Examples:
+    sudo tc qdisc add dev r71ge1 root netem delay 120000 <br>
+    sudo tc qdisc add dev r71ge2 root netem delay 150000 <br>
+    sudo tc qdisc add dev r72ge1 root netem delay 180000 <br>
+    sudo tc qdisc add dev r72ge2 root netem delay 210000 <br>
