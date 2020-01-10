@@ -1,4 +1,4 @@
-### The following instructions will create a basic virtual network topology as shown in figure 1
+### The following instructions will create a basic virtual network topology as shown here:
 ![voltron_base_testbed](https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/voltron_base_testbed.png "voltron-base-testbed")
 
 
