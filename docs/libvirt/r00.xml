@@ -218,13 +218,13 @@
     </interface>
 
     <!-- SerialPortSection -->
-    <!-- Access: XR Console (telnet localhost 20010) -->
+    <!-- Access: XR Console (telnet localhost 20000) -->
     <serial type='tcp'>
        <source mode="bind" host="0.0.0.0" service="20000"/>
        <protocol type="telnet"/>
        <target port="0"/>
     </serial>
-    <!-- Access: XR Aux (telnet localhost 20011) -->
+    <!-- Access: XR Aux (telnet localhost 20001) -->
     <serial type='tcp'>
        <source mode="bind" host="0.0.0.0" service="20001"/>
        <protocol type="telnet"/>
@@ -236,7 +236,7 @@
        <protocol type="telnet"/>
        <target port="2"/>
     </serial>
-    <!-- Access: HOST VM (telnet localhost 20013)  -->
+    <!-- Access: HOST VM (telnet localhost 20003)  -->
     <serial type='tcp'>
        <source mode="bind" host="0.0.0.0" service="20003"/>
        <protocol type="telnet"/>
