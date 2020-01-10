@@ -21,33 +21,27 @@ Copy the Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files 
 Copy the libvirt xml files from https://wwwin-github.cisco.com/spa-ie/voltron/edit/brmcdoug/docs/libvirt/ to a directory of your choice
 
 ### 4. Define and launch VMs
-    * virsh define r00.xml
-    * virsh define r01.xml
-virsh define r02.xml
-virsh define r05.xml
-virsh define r06.xml
-virsh define r71.xml
-virsh define r72.xml
-virsh define os_base1.xml
+    virsh define r00.xml
+    virsh define r01.xml
+    virsh define r02.xml
+    virsh define r05.xml
+    virsh define r06.xml
+    virsh define r71.xml
+    virsh define r72.xml
+    virsh define os_base1.xml
 
-virsh start r00
-virsh start r01
-virsh start r02
-virsh start r05
-virsh start r06
-virsh start r71
-virsh start r72
-'''
+    virsh start r00
+    virsh start r01
+    virsh start r02
+    virsh start r05
+    virsh start r06
+    virsh start r71
+    virsh start r72
+    virsh start os_base1
 
-
-### 4. Get the server's outside eth interface name.  Edit vlt_startup.sh and replace <server outside interface> with the interface name. Uncomment the iptables masquerade line
-
-### 5. cd into /opt/vlt and run vlt_startup.sh
-
-### 6. Once the script is complete, check the status of routers/vms, verify routes, etc:
-    Example XR router console access:
-    R00 -> telnet localhost 20000
-    R05 -> telnet localhost 20050
+#### 5. Router console access:
+    r00 -> telnet localhost 20000
+    r05 -> telnet localhost 20050
     Example CSR router console access:
     sudo virsh console r71
 
