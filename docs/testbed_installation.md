@@ -1,7 +1,7 @@
 ### The following instructions will create a basic virtual network topology as shown here:
 ![voltron_base_testbed](https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/voltron_base_testbed.png "voltron-base-testbed")
 
-The base topology allows one to create and test Voltron virtual topology use cases including
+The base topology allows one to create and test Voltron virtual topology use cases including:
 * Internal traffic engineering - steering traffic over a non-IGP best path toward an internal or external destination
 * Egress Peer Engineering - steering traffic out a non-BGP best path toward an external destination
 * VPN Overlays - creation of VPN tunnels using SR or SRv6 encapsulations
@@ -17,7 +17,29 @@ The base topology allows one to create and test Voltron virtual topology use cas
 
 ### 3. Copy VM files over
 Create an /opt/images/voltron directory 
-Copy Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files to /opt/images/voltron 
+Copy the Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files to /opt/images/voltron 
+Copy the libvirt xml files from https://wwwin-github.cisco.com/spa-ie/voltron/edit/brmcdoug/docs/libvirt/ to a directory of your choice
+
+### 4. Define and launch VMs
+'''
+virsh define r00.xml
+virsh define r01.xml
+virsh define r02.xml
+virsh define r05.xml
+virsh define r06.xml
+virsh define r71.xml
+virsh define r72.xml
+virsh define os_base1.xml
+
+virsh start r00
+virsh start r01
+virsh start r02
+virsh start r05
+virsh start r06
+virsh start r71
+virsh start r72
+'''
+
 
 ### 4. Get the server's outside eth interface name.  Edit vlt_startup.sh and replace <server outside interface> with the interface name. Uncomment the iptables masquerade line
 
