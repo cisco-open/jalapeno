@@ -1,11 +1,14 @@
-### 1. Requirements: 
+### The following instructions will create a basic virtual network topology as shown in figure 1
+
+### 1. Server Requirements: 
     * ubuntu 18.04, minimum 16 vCPU, 96GB memory, 200GB disk
 
 ### 2. Required packages:
     * apt-get install openssh-server lxc lxd-client qemu qemu-kvm libvirt-bin openvswitch-switch python-pip git
     * optional: apt-get install virt-manager kafkacat
 
-### 3. Copy voltron tar files to /opt/vlt/
+### 3. Copy VM files over
+Openshift Centos VM (os_base1) qcow2 and xrv9k images files to a directory of your choice
 
 ### 4. Get the server's outside eth interface name.  Edit vlt_startup.sh and replace <server outside interface> with the interface name. Uncomment the iptables masquerade line
 
