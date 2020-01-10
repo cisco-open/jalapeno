@@ -169,13 +169,13 @@
     <!-- Data Interface 6 -->
     <interface type='bridge'>
       <source bridge='vlt_br'/>
-      <target dev='r06ge6'/>
+      <target dev='r00ge6'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
       </virtualport>
       <driver >
       </driver>
-      <alias name='r06ge6'/>
+      <alias name='r00ge6'/>
     </interface>
 
     <!-- Data Interface 7 -->
