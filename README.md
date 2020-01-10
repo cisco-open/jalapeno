@@ -1,5 +1,19 @@
 # Voltron
-### Giving applications the power to control their network treatment
+### A database-driven, cloud-native SDN solution
+
+#### Project principles
+* Give applications the ability to choose their service/SLA (path thru the network)
+* SDN is a database problem
+* APIs not Protocols
+* The Host is the control/encapsulation point (linux, VPP, other)
+* Microservice architecture from day 1
+* Combine network and application performance data
+
+#### High level architecture 
+
+Voltron's key components
+
+At the heart of Voltron a set of "collectors" and "services" is a set of microservices that collect and parse network topology and performance data (collectors), and then map that data into a graph database.  With the topology + performance mappings we then add 
 
 Voltron is a collection of microservices that harness real-time network telemetry data and technologies such as segment routing. Voltron reveals new ways of maximizing business growth using the network.
 
