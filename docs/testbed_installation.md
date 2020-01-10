@@ -1,4 +1,6 @@
 ### The following instructions will create a basic virtual network topology as shown in figure 1
+![voltron_base_testbed](voltron/docs/voltron_base_testbed.png "voltron-base-testbed")
+
 
 ### 1. Server Requirements: 
     * ubuntu 18.04, minimum 16 vCPU, 96GB memory, 200GB disk
