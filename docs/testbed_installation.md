@@ -21,9 +21,8 @@ Copy the Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files 
 Copy the libvirt xml files from https://wwwin-github.cisco.com/spa-ie/voltron/edit/brmcdoug/docs/libvirt/ to a directory of your choice
 
 ### 4. Define and launch VMs
-'''
-virsh define r00.xml
-virsh define r01.xml
+    * virsh define r00.xml
+    * virsh define r01.xml
 virsh define r02.xml
 virsh define r05.xml
 virsh define r06.xml
