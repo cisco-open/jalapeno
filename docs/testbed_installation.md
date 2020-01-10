@@ -22,7 +22,8 @@ Create an /opt/images/voltron directory on your server
 * Copy the libvirt xml files from https://wwwin-github.cisco.com/spa-ie/voltron/edit/brmcdoug/docs/libvirt/ to a directory of your choice
 * Copy https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/testbed_virtual_network_setup.sh to a directory of your choice
 
-    Run testbed_virtual_network_setup.sh:
+Run testbed_virtual_network_setup.sh:
+      
     ./testbed_virtual_network_setup.sh
 
 ### 4. Define and launch VMs
