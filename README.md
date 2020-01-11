@@ -7,7 +7,7 @@
 #### SDN is a database problem
 With the statement "SDN is database problem" we are saying all SDN use cases can be executed via database mappings and their associated encapsulations.  With this framework in mind, Voltron has the theoretical ability to address any kind of virtual topology use case.  Therefore, Voltron is a generalized SDN platform, which may be used for:
 
-* Internal Traffic Engineering - engineered tunnels traversing a network under common management
+* Internal Traffic Engineering - engineered tunnels traversing a network under common management (BGP-LS use cases**)
 * Egress Peer Engineering - engineered tunnels sending traffic out a specific egress router/interface to an external network
 * VPN overlays - engineered tunnels creating point-to-point or multipoint overlay virtual networks
 * Network Slicing - see VPN overlays
@@ -24,7 +24,7 @@ With the statement "SDN is database problem" we are saying all SDN use cases can
 
 Voltron is comprised of a series of microservices which can be summarized as:
 
-* Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.  
+* Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.   
 
 * Data Handlers - parse data coming off Kafka and populated virtual topology data collections in the Arango graph database
 
@@ -37,5 +37,10 @@ Voltron's kubernetes/microservice architecture make it inherently extensible, an
 Voltron's initial POC example Apps are "Latency" and "Bandwidth": a user or application may call Voltron's API-GW requesting lowest-latency-path to destination X,  or least-utilized (most BW available) to destination Y.  The API-GW passes the request to the Latency or Bandwidth service which in turn mine the database and respond with the appropriate SR label stack or SRH.  
  
 
+** The key to developing and supporting all these types of virtual topology use cases is the programmatic acquisition of topology data.  Traditional SDN-TE platforms focus on Internal-TE and therefore leverage BGP-LS data.  With Voltron we wish to eventually support all the above categories of use case, and therefore we use BMP data (OpenBMP, snas.io), which provides a superset of topology data:
+
+** BGP-LS
+** iBGP and eBGP IPv4, IPv6, and labeled unicast
+** BGP VPNv6, VPNv6, and EVPN
 
 
