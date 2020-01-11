@@ -1,6 +1,9 @@
 # Voltron
 ### Database-driven, cloud-native SDN
 
+#### High level architecture 
+![voltron_architecture](https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/voltron_architecture.png "voltron architecture")
+
 #### SDN is a database problem
 With the statement "SDN is database problem" we are saying all SDN use cases can be executed via database mappings and their associated encapsulations.  With this framework in mind, Voltron has the theoretical ability to address any kind of virtual topology use case.  Therefore, Voltron is a generalized SDN platform, which may be used for:
 
@@ -16,9 +19,6 @@ With the statement "SDN is database problem" we are saying all SDN use cases can
 * Cloud-native microservice architecture from day 1
 * Combine network and application performance data
 * Emphasize the use of APIs over Protocols - greater agility
-
-#### High level architecture 
-![voltron_architecture](https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/voltron_architecture.png "voltron architecture")
 
 #### Voltron's key components
 
