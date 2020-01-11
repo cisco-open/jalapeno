@@ -37,7 +37,8 @@ Voltron's kubernetes/microservice architecture make it inherently extensible, an
 Voltron's initial POC example Apps are "Latency" and "Bandwidth": a user or application may call Voltron's API-GW requesting lowest-latency-path to destination X,  or least-utilized (most BW available) to destination Y.  The API-GW passes the request to the Latency or Bandwidth service which in turn mine the database and respond with the appropriate SR label stack or SRH.  
  
 
-** Note on BGP-LS
+#### ** Note on BGP-LS
+
 The key to developing and supporting virtual topology use cases is the programmatic acquisition of topology data.  Traditional service provider SDN-TE platforms focus on Internal-TE and therefore leverage BGP-LS.  With Voltron we wish to eventually support all the above categories of use case, and therefore we use BGP Monitoring Protocol (BMP) and leverage the OpenBMP.snas.io collector.  BMP provides a superset of topology data, including:
 
 * BGP-LS topology data - which hopefully includes service-chain data in the near future: https://www.ietf.org/id/draft-dawra-idr-bgp-ls-sr-service-segments-03.txt
