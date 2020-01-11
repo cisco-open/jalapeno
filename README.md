@@ -7,7 +7,7 @@
 #### SDN is a database problem
 With the statement "SDN is database problem" we are saying all SDN use cases can be executed via database mappings and their associated encapsulations.  With this framework in mind, Voltron has the theoretical ability to address any kind of virtual topology use case.  Therefore, Voltron is a generalized SDN platform, which may be used for:
 
-* Internal Traffic Engineering - engineered tunnels traversing a network under common management (BGP-LS use cases**)
+* Internal Traffic Engineering - engineered tunnels traversing a network under common management (BGP-LS use cases - see note below**)
 * Egress Peer Engineering - engineered tunnels sending traffic out a specific egress router/interface to an external network
 * VPN overlays - engineered tunnels creating point-to-point or multipoint overlay virtual networks
 * Network Slicing - see VPN overlays
@@ -37,10 +37,11 @@ Voltron's kubernetes/microservice architecture make it inherently extensible, an
 Voltron's initial POC example Apps are "Latency" and "Bandwidth": a user or application may call Voltron's API-GW requesting lowest-latency-path to destination X,  or least-utilized (most BW available) to destination Y.  The API-GW passes the request to the Latency or Bandwidth service which in turn mine the database and respond with the appropriate SR label stack or SRH.  
  
 
-** The key to developing and supporting all these types of virtual topology use cases is the programmatic acquisition of topology data.  Traditional SDN-TE platforms focus on Internal-TE and therefore leverage BGP-LS data.  With Voltron we wish to eventually support all the above categories of use case, and therefore we use BMP data (OpenBMP, snas.io), which provides a superset of topology data:
+** Note on BGP-LS
+The key to developing and supporting virtual topology use cases is the programmatic acquisition of topology data.  Traditional service provider SDN-TE platforms focus on Internal-TE and therefore leverage BGP-LS.  With Voltron we wish to eventually support all the above categories of use case, and therefore we use BGP Monitoring Protocol (BMP) and leverage the OpenBMP.snas.io collector.  BMP provides a superset of topology data, including:
 
-** BGP-LS
-** iBGP and eBGP IPv4, IPv6, and labeled unicast
-** BGP VPNv6, VPNv6, and EVPN
+* BGP-LS topology data - which hopefully includes service-chain data in the near future: https://www.ietf.org/id/draft-dawra-idr-bgp-ls-sr-service-segments-03.txt
+* iBGP and eBGP IPv4, IPv6, and labeled unicast topology data
+* BGP VPNv6, VPNv6, and EVPN topology data
 
 
