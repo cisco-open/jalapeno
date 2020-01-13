@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
       - name: external-links-performance-collector
-        image: ievoltron/external-links-performance-collector:2.1.1@sha256:1038d837ab849d68309ce2a0099a02ae1c9cb95fbb730d908d1c352dc7a6c215
+        image: ievoltron/external-links-performance-collector:2.2@sha256:a8821d6739f51c47886ca50a95ba42f95946be78a3104990f4cbbe02b47d82ab
