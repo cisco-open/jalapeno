@@ -9,7 +9,7 @@ oc login https://localhost:8443 -u admin -p admin -n voltron
 oc new-project voltron --description=voltron --display-name=voltron
 sleep 3
 
-### Pulling images locally, update image version as necessary
+### Pulling images locally, update image version as necessary. Must be part of https://hub.docker.com/orgs/ievoltron to pull images -- alternatively, build and upload images to personal image repos.
 docker pull ievoltron/topology:2.1.2
 docker pull ievoltron/external-links-performance-collector:2.1.1
 docker pull ievoltron/internal-links-performance-collector:2.1.1
