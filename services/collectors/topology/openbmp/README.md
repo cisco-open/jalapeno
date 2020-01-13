@@ -21,7 +21,7 @@ Voltron leverages the open source OpenBMP (snas.io) collector to capture BMP dat
 https://www.snas.io/
 
 The following configuration is used to establish a BMP session from XR router to OpenBMP:
-
+```
  bmp server 1
  host 10.0.250.2 port 5000
  description voltron OpenBMP  
@@ -30,9 +30,10 @@ The following configuration is used to establish a BMP session from XR router to
  initial-delay 5
  stats-reporting-period 60
  initial-refresh delay 30 spread 2
- 
+``` 
  And enable BMP monitoring for each peer you wish to collect BGP data from:
  
+ ```
  router bgp 65000
   neighbor 10.1.1.1
   remote-as 100000
@@ -42,3 +43,11 @@ The following configuration is used to establish a BMP session from XR router to
   address-family ipv4 unicast
    route-policy pass in
    route-policy pass out
+ ```
+ 
+OpenBMP collector logs may be found here on the OpenBMP container 
+```
+/var/log/openbmpd.log
+```
+
+ 
