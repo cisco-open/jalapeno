@@ -16,9 +16,9 @@ The base topology allows one to create and test Voltron virtual topology use cas
     * optional: apt-get install virt-manager kafkacat
 
 #### 3. Copy VM files over
-Create an /opt/images/voltron directory 
-Copy the Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files to /opt/images/voltron 
-Copy the libvirt xml files from https://wwwin-github.cisco.com/spa-ie/voltron/edit/brmcdoug/docs/libvirt/ to a directory of your choice
+* Create an /opt/images/voltron directory
+* Copy the Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files to /opt/images/voltron
+* Copy the libvirt xml files from https://wwwin-github.cisco.com/spa-ie/voltron/edit/brmcdoug/docs/libvirt/ to a directory of your choice
 Copy 
 
 #### 4. Run testbed_setup.sh shell script
