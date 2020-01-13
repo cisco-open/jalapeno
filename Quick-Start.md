@@ -7,6 +7,8 @@ Currently, Voltron is deployed in a CentosKVM on a server. This CentosKVM houses
 
 To set up the CentosKVM, follow the instructions [here](docs/centos_vm.md). This also brings up an OpenShift cluster for Voltron to use.
 
+#### Server Requirements
+* Ubuntu 18.04, minimum 16 vCPU, 96GB memory, 270GB (200GB for Testbed + 80GB for Voltron)
 
 ## Deploying Voltron
 
