@@ -4,7 +4,7 @@ Once launched, the user will need to modify a few openshift config files on the 
 to Openshift and Voltron/Jalapeno's services that come with UI's.
 
 ## Procedure:
-1. copy the centos VM and supplemental storage qcow2's to the VM image repository on your server host
+1. copy the centos VM and supplemental storage qcow2's to the VM image repository on your server host. the following files are located in `/opt/images/voltron/` on the server (Bruce-Dev or Naja).
 ```
 openshift1.qcow2
 openshift1-vdb.qcow2
