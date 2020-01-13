@@ -45,9 +45,9 @@ The following configuration is used to establish a BMP session from XR router to
    route-policy pass out
  ```
  
-OpenBMP collector logs may be found here on the OpenBMP container 
+OpenBMP collector logs may be found/monitored here on the OpenBMP container 
 ```
-/var/log/openbmpd.log
+tail -f /var/log/openbmpd.log
 ```
 
  
