@@ -5,9 +5,9 @@ Unconfigures devices' currently telemetry configurations.
 import logging, os, napalm
 from util import get_hosts
 
-def remove_telemetry_config(device_type, host_ip):
+def remove_telemetry_config(device_type, host_ip, password):
     driver = napalm.get_network_driver(device_type)
-    device = driver(hostname=host_ip, username='cisco', password='cisco')
+    device = driver(hostname=host_ip, username='cisco', password=password)
     device.open()
     if device_type == 'ios':
         device.load_merge_candidate(config='no netconf-yang\n no telemetry ietf subscription 0')
@@ -25,9 +25,9 @@ def main():
     hosts = get_hosts(os.path.dirname(os.path.abspath(__file__)) + '/hosts.json')
     for host in hosts:
         network_host = host['netmiko_network']
-        host_ip, device_type = network_host['ip'], network_host['device_type']
+        host_ip, device_type, password = network_host['ip'], network_host['device_type'], network_host['password']
         print('Removing telemetry configuration for', host_ip)
-        remove_telemetry_config(device_type, host_ip)
+        remove_telemetry_config(device_type, host_ip, password)
         print('Unconfigured telemetry on', host_ip)
         print()
 
