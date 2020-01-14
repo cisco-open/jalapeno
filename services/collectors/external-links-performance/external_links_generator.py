@@ -54,5 +54,6 @@ if __name__ == '__main__':
         print(link)
     for external_link_edge in external_link_edges:
         print(external_link_edge)
+        #print(external_link_edge['destination'])
     print("--------------------------------------------------------------------------------")
     exit(0)

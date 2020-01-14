@@ -14,12 +14,12 @@ def main():
 
     while(True):
         external_links = external_links_generator.generate_external_links(arango_client)
-        for link in external_links:
-            if link["key"] not in telemetry_interface_mapper:
-                print("\n%s is not currently configured for telemetry" % str(link["RouterIP"]))
+        for link in range(len(external_links)):
+            if external_links[link]["key"] not in telemetry_interface_mapper:
+                print("\n%s is not currently configured for telemetry" % str(external_links[link]["RouterIP"]))
                 continue
-            router_ip = link['RouterIP']
-            router_interface_ip = link['InterfaceIP']
+            router_ip = external_links[link]['RouterIP']
+            router_interface_ip = external_links[link]['InterfaceIP']
             routerIP_interfaceIP = router_ip + "_" + router_interface_ip
             telemetry_interface_info = telemetry_interface_mapper[routerIP_interfaceIP]
 
@@ -27,7 +27,7 @@ def main():
             print("\nCalculating performance metrics for external-link out of %s(%s) through %s(%s)" % (telemetry_producer, router_ip, 
                                                                                                       producer_interface, router_interface_ip))
             calculated_performance_metrics = {}
-            for telemetry_value, performance_metric in telemetry_value_mapper.iteritems(): # the extended base-path and the value it represents
+            for telemetry_value, performance_metric in telemetry_value_mapper.items(): # the extended base-path and the value it represents
                 current_performance_metric_dataset = collect_performance_dataset(influx_client, telemetry_producer, producer_interface, telemetry_value)
                 current_performance_metric_value = calculate_performance_metric_value(current_performance_metric_dataset)
                 #print("Calculated %s: %s" % (performance_metric, current_performance_metric_value))
@@ -44,10 +44,11 @@ def main():
             border_router_interface_key = router_ip + "_" + router_interface_ip
             upsert_external_link_performance(border_router_interface_key, calculated_performance_metrics, "BorderRouterInterfaces")
             external_link_edges = external_links_generator.generate_external_link_edges(arango_client, router_ip, router_interface_ip)
-            for external_link_edge in external_link_edges:
-                external_link_edge_key = router_ip + "_" + router_interface_ip + "_" + external_link_edge['dest_intf_ip'] + "_" + external_link_edge['destination'].replace("Routers/", "")
+            for external_link_edge in list(range(len(external_link_edges))):
+                # print(external_link_edges[external_link_edge])
+                external_link_edge_key = router_ip + "_" + router_interface_ip + "_" + external_link_edges[external_link_edge]['dest_intf_ip'] + "_" + external_link_edges[external_link_edge]['destination'].replace("Routers/", "")
                 upsert_external_link_performance(external_link_edge_key, calculated_performance_metrics, "ExternalLinkEdges")
-	time.sleep(30)
+        time.sleep(30)
 
 def create_collection(arango_client):
     """Create new collection in ArangoDB. If the collection exists, connect to that collection."""
