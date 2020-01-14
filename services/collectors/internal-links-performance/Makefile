@@ -2,7 +2,7 @@ EXECUTABLE ?= voltron
 BINARY ?= bin/$(EXECUTABLE)
 REPO=ievoltron
 IMAGE=internal-links-performance-collector
-TAG=2.2
+TAG=3.0
 PROXY=http://proxy.esl.cisco.com:8080
 
 all: build
