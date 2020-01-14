@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: ievoltron/api:0.0.3@0.0.3@sha256:34ac22e49ad8ae76e31ab235b58bc65373f86068cb779ef37b46b727ad1990b4
+        image: ievoltron/api:0.0.3@sha256:34ac22e49ad8ae76e31ab235b58bc65373f86068cb779ef37b46b727ad1990b4
         env:
         - name: ARANGODB_PROTOCOL
           value: http
@@ -38,7 +38,7 @@ spec:
         image: swaggerapi/swagger-ui@sha256:5814d0052859277794e7c2d84ee0d5b7cc24e767b5b646af5e1f3b32cc36f47b
         env:
         - name: API_URL
-          value: http://10.200.99.2:30881/api/v1/swagger.json
+          value: http://10.200.99.7:30881/api/v1/swagger.json
         ports:
         - containerPort: 8080
           protocol: TCP
