@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: arango-np
-  namespace: voltron
+  namespace: jalapeno
 spec:
   ports:
   - name: 8529-tcp
