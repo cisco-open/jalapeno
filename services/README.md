@@ -1,7 +1,7 @@
-# Voltron Services
+# Jalapeno Services
 
 ## Collector vServices
-Voltron Collector vServices are responsible for organizing, parsing, and analysing network data. Any Voltron Infrastructure component with data is considered a source for a vService. 
+Jalapeno Collector vServices are responsible for organizing, parsing, and analysing network data. Any Jalapeno Infrastructure component with data is considered a source for a vService. 
 
 ### Topology vService
 The Topology vService interacts with OpenBMP data in Kafka in order to create topology representations in ArangoDB.
@@ -29,14 +29,14 @@ The configuration for EPEPaths's deployment is in "paths_collector_dp.yaml" in e
 
 ### InternalLinks Performance vService
 The InternalLinks Performance vService calculates and correlates performance metrics to InternalLinkEdges and InternalRouterInterfaces.
-Each document will derive link utiliation metrics from telemetry data in InfluxDB. This collection can then be used by the ArangoDB Voltron API to inform the client about various metric optimizations.
+Each document will derive link utiliation metrics from telemetry data in InfluxDB. This collection can then be used by the ArangoDB Jalapeno API to inform the client about various metric optimizations.
 
 The InternalLinks Performance vService is deployed using oc, as seen in the `deploy_collectors.sh` script in the collectors directory. 
 The configuration for InternalLinks Performance's deployment is in "internal_links_performance_collector_dp.yaml" in internal-links-performance directory.
 
 ### ExternalLinks Performance vService
 The ExternalLinks Performance vService calculates and correlates performance metrics to ExternalLinkEdges and BorderRouterInterfaces.
-Each document will derive link utiliation metrics from telemetry data in InfluxDB. This collection can then be used by the ArangoDB Voltron API to inform the client about various metric optimizations.
+Each document will derive link utiliation metrics from telemetry data in InfluxDB. This collection can then be used by the ArangoDB Jalapeno API to inform the client about various metric optimizations.
 
 The ExternalLinks Performance vService is deployed using oc, as seen in the `deploy_collectors.sh` script in the collectors directory. 
 The configuration for ExternalLinks Performance's deployment is in "external_links_performance_collector_dp.yaml" in external-links-performance directory.
