@@ -2,7 +2,7 @@ apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: influxdb
-  namespace: voltron
+  namespace: jalapeno
 spec:
   serviceName: "influxdb"
   replicas: 1
@@ -33,7 +33,7 @@ spec:
         - name: INFLUXDB_USER
           value: "root"
         - name: INFLUXDB_USER_PASSWORD
-          value: "voltron"
+          value: "jalapeno"
         command: ["/bin/sh"]
         args: ["-c", "/init-influxdb.sh && /entrypoint.sh influxd"]
         securityContext:
