@@ -2,8 +2,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mdt-pipeline-egress-config
-  namespace: voltron
-  selfLink: /api/v1/namespaces/voltron/configmaps/mdt-pipeline-egress-config
+  namespace: jalapeno
+  selfLink: /api/v1/namespaces/jalapeno/configmaps/mdt-pipeline-egress-config
 data:
   metrics.json: |-
     [
@@ -1148,7 +1148,7 @@ data:
 
     [kafka_consumer]
 
-    topic=voltron.telemetry
+    topic=jalapeno.telemetry
 
     # Ideally should not specify a consumergroup, but required by Pipeline
 
@@ -1158,7 +1158,7 @@ data:
 
     stage=xport_input
 
-    brokers=kafka-0.broker.voltron.svc.cluster.local:9092
+    brokers=kafka-0.broker.jalapeno.svc.cluster.local:9092
 
     encoding=gpb
 
@@ -1171,7 +1171,7 @@ data:
 
     type=metrics
 
-    influx=http://influxdb-0.influxdb.voltron.svc.cluster.local:8086
+    influx=http://influxdb-0.influxdb.jalapeno.svc.cluster.local:8086
 
     datachanneldepth=1000
 
@@ -1183,7 +1183,7 @@ data:
 
     output=influx
 
-    username=voltron
+    username=jalapeno
 
 
     password=tdiEfR8Kmuf9OAyrEkzu5u6nDPTtK0xpmk3+MfvrmF9tS3I9uSoPZPdYZDtGDV+6ltngJ4hIdGIdl55LQ4NLd6JZxZKE8w4rRzDExN/iKILf1X4LZMHci2COWn8k6zYs0c8NIGYqn3uL7GYWpnh65GghF50ohXNXyLkJGOaooCFFYfBZD9BeB+Fp6bUYi/zxb/JZj6UjB5kN95oiwUuDdAnYsU9niojANKvtdUF9EhBBf5jXqNjHvLKJJpAKLzPJkhg9V1MoP1Q1lGhF5tQcezm3CSP0p/klEThP5ZifqECuqTxo0rMHMhCqHV+rAUJMpqiuXkt0HKpFu9svabkU5ovwoqUwCKUXV7hAxJHITxt1vz/6K51I4bNiZcuknoclDkPYtOr22qfTwl9+KsGrQ084CETbpSDh47JLKz5jOpSX39VqDZ7IOWmc7NmP3aa48PaF6pk+66Adz0+eaMVZfVsQyLQy31HvfXjd7IQfGO8vSmT6+Yz0W9LgorT8gz4WW+xpeHCFkMHzUttd1xms2rtrZcV9fYTvxaI+39BJoSwt8EBW5e4MqiroKijeSwFVn+9fYH2yOqYky4e6UfcES/C8udPoVaLllMVAdyEQ3pdPThduboLU+HSmcg6e2DTDS5EpfjIbPSRg6Gy8P64BAlgFRa6+Ztt+IgFgy7Pt0BQ=
