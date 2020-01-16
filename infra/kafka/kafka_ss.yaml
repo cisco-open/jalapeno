@@ -2,7 +2,7 @@ apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: kafka
-  namespace: voltron
+  namespace: jalapeno
 spec:
   serviceName: "broker"
   replicas: 1
@@ -38,11 +38,11 @@ spec:
         - ./bin/kafka-server-start.sh
         - /etc/kafka/server.properties
         - --override
-        - listeners=PLAINTEXT://kafka-0.broker.voltron.svc.cluster.local:9092
+        - listeners=PLAINTEXT://kafka-0.broker.jalapeno.svc.cluster.local:9092
         - --override
         - advertised.listeners=PLAINTEXT://10.0.250.2:30902
         - --override
-        -   zookeeper.connect=zookeeper.voltron.svc.cluster.local:2181
+        -   zookeeper.connect=zookeeper.jalapeno.svc.cluster.local:2181
         - --override
         -   log.retention.hours=1
         - --override
