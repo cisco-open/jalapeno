@@ -24,13 +24,13 @@ With the statement "SDN is database problem" we are saying all SDN use cases can
 
 Jalapeno is comprised of a series of microservices which can be summarized as:
 
-* Collection Stack and Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.   
+* Collection Stack and Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.  The collection stack also includes Influx TSDB and Grafana for darta visualization
 
 ![jalapeno_data collection](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_data_collection.png "jalapeno data collection")
 
-* Data Handlers - parse data coming off Kafka and populate virtual topology data collections in the Arango graph database.
+* Data Handlers and Graph Database - parse data coming off Kafka and populate virtual topology data collections in the Arango graph database.
 
-* Databases - an Influx time-series database, and an Arango graph database.
+![jalapeno_graph db](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_graphDB.png "jalapeno graph db")
 
 * Services (SR-Apps).  are mini-applications that receive user requests for service (TE/QoE, VPN, etc.), and then mine the graph database for the label stack or SRH needed to execute the service request.  Each SR-App's capabilities are exposed via Jalapeno's API.  
 
