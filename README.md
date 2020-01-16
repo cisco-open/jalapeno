@@ -2,7 +2,7 @@
 ### Database-driven, cloud-native SDN
 
 #### High level architecture 
-![jalapeno_architecture](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/jalapeno_architecture.png "jalapeno architecture")
+![jalapeno_architecture](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_architecture.png "jalapeno architecture")
 
 #### SDN is a database problem
 With the statement "SDN is database problem" we are saying all SDN use cases can be executed via database mappings and their associated encapsulations. With this framework in mind, Jalapeno has the theoretical ability to address any kind of virtual topology use case. Therefore, Jalapeno is a generalized SDN platform, which may be used for:
