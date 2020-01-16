@@ -1,7 +1,7 @@
 kind: ConfigMap
 metadata:
   name: zookeeper-config
-  namespace: voltron
+  namespace: jalapeno
 apiVersion: v1
 data:
   init.sh: |-
