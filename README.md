@@ -32,12 +32,19 @@ Jalapeno is comprised of a series of microservices which can be summarized as:
 
 ![jalapeno_graph db](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_graphDB.png "jalapeno graph db")
 
-* Services (SR-Apps).  are mini-applications that receive user requests for service (TE/QoE, VPN, etc.), and then mine the graph database for the label stack or SRH needed to execute the service request.  Each SR-App's capabilities are exposed via Jalapeno's API.  
+* Services (SR-Apps) - are mini-applications that receive user requests for service (TE/QoE, VPN, etc.), and then mine the graph database for the label stack or SRH needed to execute the service request.  Each SR-App's capabilities are exposed via Jalapeno's API.  
+
+![jalapeno_sr-apps](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_sr_apps.png "jalapeno sr-apps")
 
 Jalapeno's kubernetes/microservice architecture make it inherently extensible, and we imagine the number of Collectors, Services (SR-Apps), and graphDB virtual topology use cases to expand significantly as our community grows.
 
+* API - expose SR-Apps services
+
+![jalapeno_api](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_api.png "jalapeno api")
+
 Jalapeno's initial POC example Apps are "Latency" and "Bandwidth": a user or application may call Jalapeno's API-GW requesting lowest-latency-path to destination X, or least-utilized (most BW available) to destination Y. The API-GW passes the request to the Latency or Bandwidth service which in turn mine the database and respond with the appropriate SR label stack or SRH.  
- 
+
+![jalapeno_dataplane](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_dataplane.png "jalapeno dataplane")
 
 #### ** Note on BGP-LS
 
