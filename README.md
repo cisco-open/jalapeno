@@ -1,11 +1,11 @@
-# Voltron
+# Jalapeno
 ### Database-driven, cloud-native SDN
 
 #### High level architecture 
-![voltron_architecture](https://wwwin-github.cisco.com/spa-ie/voltron/blob/master/docs/voltron_architecture.png "voltron architecture")
+![jalapeno_architecture](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/jalapeno_architecture.png "jalapeno architecture")
 
 #### SDN is a database problem
-With the statement "SDN is database problem" we are saying all SDN use cases can be executed via database mappings and their associated encapsulations. With this framework in mind, Voltron has the theoretical ability to address any kind of virtual topology use case. Therefore, Voltron is a generalized SDN platform, which may be used for:
+With the statement "SDN is database problem" we are saying all SDN use cases can be executed via database mappings and their associated encapsulations. With this framework in mind, Jalapeno has the theoretical ability to address any kind of virtual topology use case. Therefore, Jalapeno is a generalized SDN platform, which may be used for:
 
 * Internal Traffic Engineering - engineered tunnels traversing a network under common management (BGP-LS use cases - see note below**)
 * Egress Peer Engineering - engineered tunnels sending traffic out a specific egress router/interface to an external network
@@ -20,9 +20,9 @@ With the statement "SDN is database problem" we are saying all SDN use cases can
 * Combine network and application performance data
 * Emphasize the use of APIs over Protocols - greater agility
 
-#### Voltron's key components
+#### Jalapeno's key components
 
-Voltron is comprised of a series of microservices which can be summarized as:
+Jalapeno is comprised of a series of microservices which can be summarized as:
 
 * Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.   
 
@@ -30,16 +30,16 @@ Voltron is comprised of a series of microservices which can be summarized as:
 
 * Databases - an Influx time-series database, and an Arango graph database.
 
-* Services (SR-Apps).  are mini-applications that receive user requests for service (TE/QoE, VPN, etc.), and then mine the graph database for the label stack or SRH needed to execute the service request.  Each SR-App's capabilities are exposed via Voltron's API.  
+* Services (SR-Apps).  are mini-applications that receive user requests for service (TE/QoE, VPN, etc.), and then mine the graph database for the label stack or SRH needed to execute the service request.  Each SR-App's capabilities are exposed via Jalapeno's API.  
 
-Voltron's kubernetes/microservice architecture make it inherently extensible, and we imagine the number of Collectors, Services (SR-Apps), and graphDB virtual topology use cases to expand significantly as our community grows.
+Jalapeno's kubernetes/microservice architecture make it inherently extensible, and we imagine the number of Collectors, Services (SR-Apps), and graphDB virtual topology use cases to expand significantly as our community grows.
 
-Voltron's initial POC example Apps are "Latency" and "Bandwidth": a user or application may call Voltron's API-GW requesting lowest-latency-path to destination X, or least-utilized (most BW available) to destination Y. The API-GW passes the request to the Latency or Bandwidth service which in turn mine the database and respond with the appropriate SR label stack or SRH.  
+Jalapeno's initial POC example Apps are "Latency" and "Bandwidth": a user or application may call Jalapeno's API-GW requesting lowest-latency-path to destination X, or least-utilized (most BW available) to destination Y. The API-GW passes the request to the Latency or Bandwidth service which in turn mine the database and respond with the appropriate SR label stack or SRH.  
  
 
 #### ** Note on BGP-LS
 
-The key to developing and supporting virtual topology use cases is the programmatic acquisition of topology data.  Traditional service provider SDN-TE platforms focus on Internal-TE and therefore leverage BGP-LS. With Voltron we wish to eventually support all the above categories of use case, and therefore we use BGP Monitoring Protocol (BMP) and leverage the OpenBMP.snas.io collector. BMP provides a superset of topology data, including:
+The key to developing and supporting virtual topology use cases is the programmatic acquisition of topology data.  Traditional service provider SDN-TE platforms focus on Internal-TE and therefore leverage BGP-LS. With Jalapeno we wish to eventually support all the above categories of use case, and therefore we use BGP Monitoring Protocol (BMP) and leverage the OpenBMP.snas.io collector. BMP provides a superset of topology data, including:
 
 * BGP-LS topology data - which hopefully includes service-chain data in the near future: https://www.ietf.org/id/draft-dawra-idr-bgp-ls-sr-service-segments-03.txt
 * iBGP and eBGP IPv4, IPv6, and labeled unicast topology data
