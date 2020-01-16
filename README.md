@@ -46,6 +46,8 @@ Jalapeno's initial POC example Apps are "Latency" and "Bandwidth": a user or app
 
 ![jalapeno_sr dataplane](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_sr_dataplane.png "jalapeno sr dataplane")
 
+![jalapeno_adapt dataplane](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_adapt_dataplane.png "jalapeno adapt dataplane")
+
 #### ** Note on BGP-LS
 
 The key to developing and supporting virtual topology use cases is the programmatic acquisition of topology data.  Traditional service provider SDN-TE platforms focus on Internal-TE and therefore leverage BGP-LS. With Jalapeno we wish to eventually support all the above categories of use case, and therefore we use BGP Monitoring Protocol (BMP) and leverage the OpenBMP.snas.io collector. BMP provides a superset of topology data, including:
