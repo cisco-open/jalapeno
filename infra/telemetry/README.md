@@ -1,8 +1,8 @@
-# Voltron Infrastructure: Telemetry
+# Jalapeno Infrastructure: Telemetry
 
 ## Deployment
 
-To deploy Voltron's telemetry infrastructure, configure `hosts.json` to reflect which devices you would like telemetry data to be streamed from.
+To deploy Jalapeno's telemetry infrastructure, configure `hosts.json` to reflect which devices you would like telemetry data to be streamed from.
 
 Once your hosts file is filled, run:
 ```
@@ -36,15 +36,15 @@ cat pipeline.log
 Enter the Zookeeper pod (through CLI or the OpenShift UI). Run:
 ```
 cd /opt/kafka/bin
-./kafka-topics.sh --zookeeper zookeeper.voltron.svc:2181 --list (lists topics)
-./kafka-console-consumer.sh --zookeeper zookeeper.voltron.svc:2181 --topic voltron.telemetry --from-beginning (consumes and displays data in topic specified)
+./kafka-topics.sh --zookeeper zookeeper.jalapeno.svc:2181 --list (lists topics)
+./kafka-console-consumer.sh --zookeeper zookeeper.jalapeno.svc:2181 --topic jalapeno.telemetry --from-beginning (consumes and displays data in topic specified)
 ```
 
-#### To see if Voltron is receiving telemetry data from a specific device:
+#### To see if Jalapeno is receiving telemetry data from a specific device:
 Enter the InfluxDB pod (through CLI or the OpenShift UI). Run:
 ```
 influx
-auth voltron voltron
+auth jalapeno jalapeno
 use mdt_db
 show series
 ```
