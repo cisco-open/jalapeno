@@ -2,8 +2,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mdt-pipeline-ingress-config
-  namespace: voltron
-  selfLink: /api/v1/namespaces/voltron/configmaps/mdt-pipeline-ingress-config
+  namespace: jalapeno
+  selfLink: /api/v1/namespaces/jalapeno/configmaps/mdt-pipeline-ingress-config
 data:
   pipeline.conf: >-
     [default]
@@ -40,8 +40,8 @@ data:
 
     encoding=gpb
 
-    brokers=broker.voltron.svc:9092
+    brokers=broker.jalapeno.svc:9092
 
-    topic=voltron.telemetry
+    topic=jalapeno.telemetry
 
     datachanneldepth=1000
