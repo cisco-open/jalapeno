@@ -22,7 +22,7 @@ The base topology allows one to create and test Voltron virtual topology use cas
 Copy 
 
 #### 4. Run testbed_setup.sh shell script
-    ./
+https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/testbed_virtual_network_setup.sh
 
 #### 4. Define and launch VMs
     virsh define r00.xml
