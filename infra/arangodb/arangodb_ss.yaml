@@ -2,7 +2,7 @@ apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: arangodb
-  namespace: voltron
+  namespace: jalapeno
 spec:
   serviceName: "arangodb"
   replicas: 1
@@ -18,7 +18,7 @@ spec:
       containers:
       - env:
         - name: ARANGO_ROOT_PASSWORD
-          value: voltron
+          value: jalapeno
         image: arangodb:latest
         name: arangodb
         ports:
