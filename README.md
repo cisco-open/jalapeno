@@ -44,7 +44,7 @@ Jalapeno's kubernetes/microservice architecture make it inherently extensible, a
 
 Jalapeno's initial POC example Apps are "Latency" and "Bandwidth": a user or application may call Jalapeno's API-GW requesting lowest-latency-path to destination X, or least-utilized (most BW available) to destination Y. The API-GW passes the request to the Latency or Bandwidth service which in turn mine the database and respond with the appropriate SR label stack or SRH.  
 
-![jalapeno_dataplane](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_dataplane.png "jalapeno dataplane")
+![jalapeno_sr dataplane](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_sr_dataplane.png "jalapeno sr dataplane")
 
 #### ** Note on BGP-LS
 
