@@ -1,16 +1,16 @@
-# Voltron Portal
-A web interface for Voltron to present some pretty capabilities and easy insights into Voltron.
+# Jalapeno Portal
+A web interface for Jalapeno to present some pretty capabilities and easy insights.
 
 ## Development
-Voltron Portal requires Python, HTML/CSS, and JavaScript knowledge. It utilizes the [Voltron API](../api/) for displaying information about Voltron. Development code is located in `src/`.
+Jalapeno Portal requires Python, HTML/CSS, and JavaScript knowledge. It utilizes the [Jalapeno API](../api/) for displaying information. Development code is located in `src/`.
 
 ### Running
-Using Docker is the easiest way to run/test the Voltron Portal. It is important to note that not all files used for the Portal are included, namely the HTML/CSS styling framework. These are acquired on build.
+Using Docker is the easiest way to run/test the Jalapeno Portal. It is important to note that not all files used for the Portal are included, namely the HTML/CSS styling framework. These are acquired on build.
 
 ```bash
-docker build -t voltron/portal .
+docker build -t jalapeno/portal .
 # Run Portal, exposing on port 5000
-docker run -d -p 5000:80 voltron/portal
+docker run -d -p 5000:80 jalapeno/portal
 open http://localhost:5000/
 ```
 
