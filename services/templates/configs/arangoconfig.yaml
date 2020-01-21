@@ -5,5 +5,5 @@ Specify the values according to environment.
 
 url = 'http://{{ arango_endpoint }}'
 username = 'root'
-password = 'voltron'
-database = 'voltron'
+password = 'jalapeno'
+database = 'jalapeno'
