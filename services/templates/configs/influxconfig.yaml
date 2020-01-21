@@ -5,5 +5,5 @@ Specify the values according to environment.
 host='{{ influx_ip }}'
 port={{ influx_port }}
 user = 'root'
-password = 'voltron'
+password = 'jalapeno'
 dbname = 'mdt_db'
