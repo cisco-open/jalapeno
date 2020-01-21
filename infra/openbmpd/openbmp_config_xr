@@ -1,6 +1,6 @@
 bmp server 1
  host 10.0.250.2 port 5000
- description voltron OpenBMP
+ description jalapeno OpenBMP
  update-source Loopback0
  flapping-delay 60
  initial-delay 5
