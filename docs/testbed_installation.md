@@ -1,7 +1,7 @@
 ### The following instructions will create a basic virtual network topology as shown here:
-![voltron_base_testbed](https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/voltron_base_testbed.png "voltron-base-testbed")
+![jalapeno_base_testbed](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/brmcdoug/docs/jalapeno_base_testbed.png "jalapeno-base-testbed")
 
-The base topology allows one to create and test Voltron virtual topology use cases including:
+The base topology allows one to create and test Jalapeno virtual topology use cases including:
 * Internal traffic engineering - steering traffic over a non-IGP best path toward an internal or external destination
 * Egress Peer Engineering - steering traffic out a non-BGP best path toward an external destination
 * VPN Overlays - creation of VPN tunnels using SR or SRv6 encapsulations
@@ -16,9 +16,9 @@ The base topology allows one to create and test Voltron virtual topology use cas
     * optional: apt-get install virt-manager kafkacat
 
 #### 3. Copy VM files over
-* Create an /opt/images/voltron directory
-* Copy the Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files to /opt/images/voltron
-* Copy the libvirt xml files from https://wwwin-github.cisco.com/spa-ie/voltron/edit/brmcdoug/docs/libvirt/ to a directory of your choice
+* Create an /opt/images/jalapeno directory
+* Copy the Openshift Centos VM (os_base1) qcow2, xrv9k, and any other image files to /opt/images/jalapeno
+* Copy the libvirt xml files from https://wwwin-github.cisco.com/spa-ie/jalapeno/edit/brmcdoug/docs/libvirt/ to a directory of your choice
 Copy 
 
 #### 4. Run testbed_setup.sh shell script
@@ -50,7 +50,7 @@ https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/testbed_virtual_
     sudo virsh console r71
 
 #### 6. Modify openshift's public or reachable IP address:
-(more info on installing and configuing the Openshif centos VM at https://wwwin-github.cisco.com/spa-ie/voltron/blob/brmcdoug/docs/centos_vm.md )
+(more info on installing and configuing the Openshif centos VM at https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/brmcdoug/docs/centos_vm.md )
 
     1. virsh console os_base1
     2. shutdown openshift
@@ -72,15 +72,15 @@ https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/testbed_virtual_
         sudo systemctl start origin-node
         sudo systemctl start origin-node-dep
 
-#### 7. Once the virtual network is up and routing is established, ssh to the openshift VM and run voltron k8s deployment script:
+#### 7. Once the virtual network is up and routing is established, ssh to the openshift VM and run Jalapeno k8s deployment script:
         ssh centos@10.0.250.2, pw cisco
-        cd ~/voltron
-        ./deploy_voltron.sh 
+        cd ~/jalapeno
+        ./deploy_jalapeno.sh 
 
-#### 8. Verify openshift voltron project is up and pods have all started
-        https://<server_ip>:8443/console/project/voltron/browse/pods
+#### 8. Verify openshift Jalapeno project is up and pods have all started
+        https://<server_ip>:8443/console/project/jalapeno/browse/pods
 
-#### 9. Validate voltron data:
+#### 9. Validate Jalapeno data:
     1. OpenBMP:
      docker exec -it openbmp_collector bash
       more /var/log/openbmpd.log
@@ -88,11 +88,11 @@ https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/testbed_virtual_
     2. Kafka: validate bmp data is reaching kafka - login to zookeeper, then:
      cd /opt/kafka/bin
      Example commands:
-    ./kafka-topics.sh --zookeeper zookeeper.voltron.svc:2181 --list
-     ./kafka-console-consumer.sh --zookeeper zookeeper.voltron.svc:2181 --topic openbmp.parsed.ls_link --from-beginning
-     ./kafka-console-consumer.sh --zookeeper zookeeper.voltron.svc:2181 --topic openbmp.parsed.ls_node --from-beginning
-     ./kafka-console-consumer.sh --zookeeper zookeeper.voltron.svc:2181 --topic openbmp.parsed.ls_prefix --from-beginning
-     ./kafka-console-consumer.sh --zookeeper zookeeper.voltron.svc:2181 --topic openbmp.parsed.unicast_prefix --from-beginning
+    ./kafka-topics.sh --zookeeper zookeeper.jalapeno.svc:2181 --list
+     ./kafka-console-consumer.sh --zookeeper zookeeper.jalapeno.svc:2181 --topic openbmp.parsed.ls_link --from-beginning
+     ./kafka-console-consumer.sh --zookeeper zookeeper.jalapeno.svc:2181 --topic openbmp.parsed.ls_node --from-beginning
+     ./kafka-console-consumer.sh --zookeeper zookeeper.jalapeno.svc:2181 --topic openbmp.parsed.ls_prefix --from-beginning
+     ./kafka-console-consumer.sh --zookeeper zookeeper.jalapeno.svc:2181 --topic openbmp.parsed.unicast_prefix --from-beginning
 
     3. Arango:
      http://<server_ip>:30852
