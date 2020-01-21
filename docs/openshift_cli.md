@@ -1,6 +1,6 @@
 # OpenShift CLI
-Almost all of Voltron's infrastructure and services are deployed on an OpenShift cluster.  
-Thus, the OpenShift CLI client must be installed, as 'oc' commands are used through the Voltron deployment process.
+Almost all of Jalapeno's infrastructure and services are deployed on an OpenShift cluster.  
+Thus, the OpenShift CLI client must be installed, as 'oc' commands are used through the Jalapeno deployment process.
 
 ## Installation
 To install on CentosKVM, run:
