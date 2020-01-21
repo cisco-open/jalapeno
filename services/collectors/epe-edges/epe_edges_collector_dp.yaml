@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
 kind: Deployment
 metadata:
   name: epe-edges-collector
-  namespace: voltron
+  namespace: jalapeno
   labels:
     app: epe-edges-collector
 spec:
@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
       - name: epe-edges
-        image: ievoltron/epe-edges:2.0@sha256:0142fc4806d2e7e871fe5599ab7dd42463149fc8340dd6e321c0e7338d4902e2
+        image: iejalapeno/epe-edges:2.0@sha256:0142fc4806d2e7e871fe5599ab7dd42463149fc8340dd6e321c0e7338d4902e2
