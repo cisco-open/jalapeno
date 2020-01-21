@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
 kind: Deployment
 metadata:
   name: epe-paths-collector
-  namespace: voltron
+  namespace: jalapeno
   labels:
     app: epe-paths-collector
 spec:
@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
       - name: epe-paths
-        image: ievoltron/epe-paths:1.0@sha256:3bd8d6fee01b24145b9d2aae06469c92dbb4c57da030f5ddd391219b0b0eb55a
+        image: iejalapeno/epe-paths:1.0@sha256:3bd8d6fee01b24145b9d2aae06469c92dbb4c57da030f5ddd391219b0b0eb55a
