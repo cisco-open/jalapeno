@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  namespace: voltron
+  namespace: jalapeno
   name: internal-links-performance-collector
   labels:
     app: internal-links-performance-collector
@@ -17,5 +17,5 @@ spec:
     spec:
       containers:
       - name: internal-links-performance-collector
-        image: ievoltron/internal-links-performance-collector:3.0@sha256:e3a3273f8df489889306fd80a056de97d89c782da6b109d109cee2646cf69d41
+        image: iejalapeno/internal-links-performance-collector:3.0@sha256:e3a3273f8df489889306fd80a056de97d89c782da6b109d109cee2646cf69d41
 
