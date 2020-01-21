@@ -3,7 +3,7 @@ grpc
  !
 !
 telemetry model-driven
- destination-group voltron
+ destination-group jalapeno
   address-family ipv4 10.0.250.2 port 32400
    encoding self-describing-gpb
    protocol grpc no-tls
@@ -18,6 +18,6 @@ telemetry model-driven
  subscription base_metrics
   sensor-group-id openconfig_interfaces sample-interval 30000
   sensor-group-id cisco_models sample-interval 30000
-  destination-id voltron
+  destination-id jalapeno
  !
 !
