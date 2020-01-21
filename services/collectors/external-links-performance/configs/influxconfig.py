@@ -5,5 +5,5 @@ Specify the values according to environment.
 host='10.0.250.2'
 port=30308
 user = 'root'
-password = 'voltron'
+password = 'jalapeno'
 dbname = 'mdt_db'
