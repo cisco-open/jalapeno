@@ -1,6 +1,6 @@
-EXECUTABLE ?= voltron
+EXECUTABLE ?= jalapeno
 BINARY ?= bin/$(EXECUTABLE)
-REPO=ievoltron
+REPO=iejalapeno
 IMAGE=internal-links-performance-collector
 TAG=3.0
 PROXY=http://proxy.esl.cisco.com:8080
