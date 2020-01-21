@@ -1,4 +1,4 @@
-EXECUTABLE ?= voltron
+EXECUTABLE ?= jalapeno
 BINARY ?= bin/$(EXECUTABLE)
 REPO=dockerhub.cisco.com/gspie-docker-local
 IMAGE=telemetry
@@ -13,6 +13,6 @@ run:
 	python deploy_telemetry.py
 
 container:
-	docker run -it --rm --name telemetry -v `pwd`\:/infra/telemetry -w /infra/telemetry python\:3.6 python deploy_telemetry.py
+	docker run -it --rm --name telemetry -v `pwd`\:/infra/telemetry -w /infra/telemetry jalapeno\:3.6 python deploy_telemetry.py
         docker build -t ${REPO}/${IMAGE}:${TAG} .
 
