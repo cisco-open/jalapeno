@@ -1,4 +1,4 @@
-EXECUTABLE ?= voltron
+EXECUTABLE ?= jalapeno
 BINARY ?= bin/$(EXECUTABLE)
 REPO=ievoltron
 IMAGE=epe-edges
