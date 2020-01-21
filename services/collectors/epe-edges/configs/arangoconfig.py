@@ -5,5 +5,5 @@ Specify the values according to environment.
 
 url = 'http://10.0.250.2:30852'
 username = 'root'
-password = 'voltron'
-database = 'voltron'
+password = 'jalapeno'
+database = 'jalapeno'
