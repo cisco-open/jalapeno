@@ -1,10 +1,9 @@
 # Centos VM packaging
-As of January 2020 Voltron/Jalapeno's Openshift cluster is packaged on a Centos VM.  The VM may be launched via standard virsh (see os_base1.xml).  The Centos VM is built with two vNICs, one for server/host management reachability, and one attached to the Voltron/Jalapeno virtual network (see https://wwwin-github.cisco.com/spa-ie/voltron-testbed)
-Once launched, the user will need to modify a few openshift config files on the VM, and add iptables rules on the server host to enable port forwarding
-to Openshift and Voltron/Jalapeno's services that come with UI's.
+As of January 2020 Jalapeno's Openshift cluster is packaged on a Centos VM.  The VM may be launched via standard virsh (see os_base1.xml).  The Centos VM is built with two vNICs, one for server/host management reachability, and one attached to the Jalapeno virtual network (see https://wwwin-github.cisco.com/spa-ie/jalapeno-testbed)
+Once launched, the user will need to modify a few openshift config files on the VM, and add iptables rules on the server host to enable port forwarding to Openshift and Jalapeno's services that come with UI's.
 
 ## Procedure:
-1. copy the centos VM and supplemental storage qcow2's to the VM image repository on your server host. The following files are located in `/opt/images/voltron/` on the server (Bruce-Dev or Naja).
+1. copy the centos VM and supplemental storage qcow2's to the VM image repository on your server host. The following files are located in `/opt/images/jalapeno/` on the server (Bruce-Dev or Naja).
 ```
 openshift1.qcow2
 openshift1-vdb.qcow2
