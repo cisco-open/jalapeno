@@ -1,5 +1,5 @@
 from ipaddress import ip_address
-from voltron import queries
+from jalapeno import queries
 
 
 def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None, composite=None):  # noqa: E501
