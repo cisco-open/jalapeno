@@ -5,22 +5,22 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/cmd"
-	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/config"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/cmd"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/config"
 )
 
-var voltronCmd = &cobra.Command{
-	Use: "voltron",
+var jalapenoCmd = &cobra.Command{
+	Use: "jalapeno",
 }
 
 func init() {
-	if err := config.InitGlobalFlags(voltronCmd, config.InitGlobalCfg()); err != nil {
-		fmt.Fprintf(os.Stderr, "--- Voltron encountered an Error ---\n")
+	if err := config.InitGlobalFlags(jalapenoCmd, config.InitGlobalCfg()); err != nil {
+		fmt.Fprintf(os.Stderr, "--- Jalapeno encountered an Error ---\n")
 		fmt.Fprintf(os.Stderr, "\t%v\n", err)
 	}
 }
 
 func main() {
-	voltronCmd.AddCommand(cmd.TopologyCmd)
-	voltronCmd.Execute()
+	jalapenoCmd.AddCommand(cmd.TopologyCmd)
+	jalapenoCmd.Execute()
 }
