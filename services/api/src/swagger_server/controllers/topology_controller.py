@@ -1,4 +1,4 @@
-from voltron.controllers import topology_controller
+from jalapeno.controllers import topology_controller
 
 
 def topology_get():  # noqa: E501
