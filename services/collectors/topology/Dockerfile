@@ -2,13 +2,13 @@ FROM alpine:3.4
 MAINTAINER Zia Syed <ziausyed@cisco.com>
 
 # create working directory
-RUN mkdir -p /voltron
+RUN mkdir -p /jalapeno
 
 # set the working directory
-WORKDIR /voltron
+WORKDIR /jalapeno
 
 # add binary
-COPY bin/voltron /bin
+COPY bin/jalapeno /bin
 
 # set the entrypoint
-ENTRYPOINT ["/bin/voltron"]
+ENTRYPOINT ["/bin/jalapeno"]
