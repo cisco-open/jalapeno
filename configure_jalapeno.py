@@ -6,24 +6,24 @@ from termcolor import cprint
 from pyfiglet import figlet_format
 
 def main():
-    welcome_to_voltron()
+    welcome_to_jalapeno()
     global config
     config = configparser.ConfigParser()
-    config['VOLTRON'] = {}
+    config['JALAPENO'] = {}
     configured = check_configuration()
     if not configured: 
         request_configuration()
-        with open('voltron.ini', 'w') as configfile:
+        with open('jalapeno.ini', 'w') as configfile:
             config.write(configfile)
-    config.read('voltron.ini')
-    configure_voltron()
-    print("Voltron is configured! Deploy using `./deploy_voltron.sh`\n")
+    config.read('jalapeno.ini')
+    configure_jalapeno()
+    print("Jalapeno is configured! Deploy using `./deploy_jalapeno.sh`\n")
 
 ###########################################################################################################################
 ### Check if user has pre-configured endpoints
 def check_configuration():
     while(True):
-        configured_input = input("Has your voltron.ini file been filled out (y/n)? ")
+        configured_input = input("Has your jalapeno.ini file been filled out (y/n)? ")
         try:
             is_configured = process_input(configured_input)
         except ValueError:
@@ -34,7 +34,7 @@ def check_configuration():
 ###########################################################################################################################
 
 ###########################################################################################################################
-### Request endpoint IPs and more from user (set variables in voltron.ini)
+### Request endpoint IPs and more from user (set variables in jalapeno.ini)
 def request_configuration():
     request_openshift()
     request_openbmp()
@@ -47,8 +47,8 @@ def request_configuration():
 ###########################################################################################################################
 
 ###########################################################################################################################
-### Set variables throughout Voltron (using Jinja templating and variables in voltron.ini)
-def configure_voltron():
+### Set variables throughout Jalapeno (using Jinja templating and variables in jalapeno.ini)
+def configure_jalapeno():
     configure_api_deployment()
     configure_kafka_deployment()
     configure_arango_deployment()
@@ -67,7 +67,7 @@ def request_openshift():
         if(host_ip != '10.0.250.2'):
             print("Please enter a valid IP address!")
         else:
-            config['VOLTRON']['host_ip'] = host_ip
+            config['JALAPENO']['host_ip'] = host_ip
             break
     while True:
         public_host_ip = input("Please enter the public-facing IP address of OpenShift for API/portal accessibility (i.e. 10.200.99.2): ")
@@ -75,7 +75,7 @@ def request_openshift():
         if(public_host_ip != '10.200.99.2'):
             print("Please enter a valid IP address!")
         else:
-            config['VOLTRON']['public_host_ip'] = public_host_ip
+            config['JALAPENO']['public_host_ip'] = public_host_ip
             break
     pretty_print_split()
 ###########################################################################################################################
@@ -89,7 +89,7 @@ def request_openbmp():
         if(openbmp_port != '5000'):
             print("Please enter a valid port!")
         else:
-            config['VOLTRON']['openbmp_port'] = openbmp_port
+            config['JALAPENO']['openbmp_port'] = openbmp_port
             break
     pretty_print_split()
 ###########################################################################################################################
@@ -107,12 +107,12 @@ def request_kafka_endpoint():
             continue
         if kafka_exists:
             kafka_endpoint = input("Please enter the Kafka endpoint (i.e. 10.200.99.3:30902): ")
-            config['VOLTRON']['kafka_endpoint'] = kafka_endpoint
+            config['JALAPENO']['kafka_endpoint'] = kafka_endpoint
             break
         elif not kafka_exists:
             print("No worries! We'll configure a Kafka cluster to be deployed in OpenShift now.")
-            kafka_endpoint = config['VOLTRON']['host_ip'] + ":30902"
-            config['VOLTRON']['kafka_endpoint'] = kafka_endpoint
+            kafka_endpoint = config['JALAPENO']['host_ip'] + ":30902"
+            config['JALAPENO']['kafka_endpoint'] = kafka_endpoint
             break
     pretty_print_split()
 ###########################################################################################################################
@@ -130,12 +130,12 @@ def request_arango_endpoint():
             continue
         if arango_exists:
             arango_endpoint = input("Please enter the ArangoDB endpoint (i.e. 10.200.99.3:30852): ")
-            config['VOLTRON']['arango_endpoint'] = arango_endpoint
+            config['JALAPENO']['arango_endpoint'] = arango_endpoint
             break
         elif not arango_exists:
             print("No worries! We'll configure an ArangoDB instance to be deployed in OpenShift now.")
-            arango_endpoint = config['VOLTRON']['host_ip'] + ":30852"
-            config['VOLTRON']['arango_endpoint'] = arango_endpoint
+            arango_endpoint = config['JALAPENO']['host_ip'] + ":30852"
+            config['JALAPENO']['arango_endpoint'] = arango_endpoint
             break
     pretty_print_split()
 ###########################################################################################################################
@@ -153,12 +153,12 @@ def request_influx_endpoint():
             continue
         if influx_exists:
             influx_endpoint = input("Please enter the InfluxDB endpoint (i.e. 10.200.99.3:30308): ")
-            config['VOLTRON']['influx_endpoint'] = influx_endpoint
+            config['JALAPENO']['influx_endpoint'] = influx_endpoint
             break
         elif not influx_exists:
             print("No worries! We'll configure an InfluxDB instance to be deployed in OpenShift now.")
-            influx_endpoint = config['VOLTRON']['host_ip'] + ":30308"
-            config['VOLTRON']['influx_endpoint'] = influx_endpoint
+            influx_endpoint = config['JALAPENO']['host_ip'] + ":30308"
+            config['JALAPENO']['influx_endpoint'] = influx_endpoint
             break
     pretty_print_split()
 ###########################################################################################################################
@@ -168,7 +168,7 @@ def request_influx_endpoint():
 def request_internal_network_asns():
     internal_asn_input = input("What is(are) your internal network ASN(s)? ")
     print("Thanks! We'll configure services to recognize the inputted ASN(s) of your internal network.")
-    config['VOLTRON']['internal_network_asn'] = internal_asn_input
+    config['JALAPENO']['internal_network_asn'] = internal_asn_input
     pretty_print_split()
 ###########################################################################################################################
 
@@ -177,7 +177,7 @@ def request_internal_network_asns():
 def request_direct_peer_asns():
     direct_peer_asn_input = input("Please list the ASNs of your Direct Peers (i.e. 7100): ")
     print("Thanks! We'll configure services to recognize the inputted ASN(s) of your Direct Peers.")
-    config['VOLTRON']['direct_peer_asns'] = direct_peer_asn_input
+    config['JALAPENO']['direct_peer_asns'] = direct_peer_asn_input
     pretty_print_split()
 ###########################################################################################################################
 
@@ -186,7 +186,7 @@ def request_direct_peer_asns():
 def request_transit_provider_asns():
     transit_provider_asn_input = input("Please list the ASNs of your Transit Providers (i.e. 7200 7600): ")
     print("Thanks! We'll configure services to recognize the inputted ASN(s) of your Transit Providers.")
-    config['VOLTRON']['transit_provider_asns'] = transit_provider_asn_input
+    config['JALAPENO']['transit_provider_asns'] = transit_provider_asn_input
     pretty_print_split()
 ###########################################################################################################################
 
@@ -200,7 +200,7 @@ def configure_arango_deployment():
     TEMPLATE_FILE = "arangodb_apps_pv_template.yaml"
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
-        'host_ip': config['VOLTRON']['host_ip'],
+        'host_ip': config['JALAPENO']['host_ip'],
     }
     outputText = template.render(context)
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -211,7 +211,7 @@ def configure_arango_deployment():
     TEMPLATE_FILE = "arangodb_pv_template.yaml"
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
-        'host_ip': config['VOLTRON']['host_ip'],
+        'host_ip': config['JALAPENO']['host_ip'],
     }
     outputText = template.render(context)
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -226,8 +226,8 @@ def configure_arango_deployment():
 def configure_kafka_deployment():
     print("Configuring Kafka cluster deployment")
     context = {
-        'host_ip': config['VOLTRON']['host_ip'],
-        'kafka_endpoint': config['VOLTRON']['kafka_endpoint'],
+        'host_ip': config['JALAPENO']['host_ip'],
+        'kafka_endpoint': config['JALAPENO']['kafka_endpoint'],
     }
     templateLoader = FileSystemLoader(searchpath="./infra/templates/kafka/")
     templateEnv = Environment(loader=templateLoader)
@@ -261,9 +261,9 @@ def configure_kafka_deployment():
 def configure_openbmp_deployment():
     print("Configuring OpenBMP deployment")
     context = {
-        'host_ip': config['VOLTRON']['host_ip'],
-        'kafka_endpoint': config['VOLTRON']['kafka_endpoint'],
-        'openbmp_port': config['VOLTRON']['openbmp_port'],
+        'host_ip': config['JALAPENO']['host_ip'],
+        'kafka_endpoint': config['JALAPENO']['kafka_endpoint'],
+        'openbmp_port': config['JALAPENO']['openbmp_port'],
     }
     templateLoader = FileSystemLoader(searchpath="./infra/templates/openbmpd/")
     templateEnv = Environment(loader=templateLoader)
@@ -301,7 +301,7 @@ def configure_telemetry_deployment():
     TEMPLATE_FILE = "pipeline_config.py"
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
-        'host_ip': config['VOLTRON']['host_ip'],
+        'host_ip': config['JALAPENO']['host_ip'],
     }
     outputText = template.render(context)
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -320,10 +320,10 @@ def configure_topology_service():
     TEMPLATE_FILE = "topology_dp_template.yaml"
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
-        'kafka_endpoint': config['VOLTRON']['kafka_endpoint'],
-        'internal_network_asn' : config['VOLTRON']['internal_network_asn'],
-        'direct_peer_asns' : config['VOLTRON']['direct_peer_asns'],
-        'transit_provider_asns' : config['VOLTRON']['transit_provider_asns'],
+        'kafka_endpoint': config['JALAPENO']['kafka_endpoint'],
+        'internal_network_asn' : config['JALAPENO']['internal_network_asn'],
+        'direct_peer_asns' : config['JALAPENO']['direct_peer_asns'],
+        'transit_provider_asns' : config['JALAPENO']['transit_provider_asns'],
     }
     outputText = template.render(context)
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -342,7 +342,7 @@ def configure_performance_services():
     TEMPLATE_FILE = "arangoconfig.yaml"
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
-        'arango_endpoint': config['VOLTRON']['arango_endpoint'],
+        'arango_endpoint': config['JALAPENO']['arango_endpoint'],
     }
     outputText = template.render(context)
 
@@ -369,7 +369,7 @@ def configure_performance_services():
 
     TEMPLATE_FILE = "influxconfig.yaml"
     template = templateEnv.get_template(TEMPLATE_FILE)
-    influx_endpoint = config['VOLTRON']['influx_endpoint']
+    influx_endpoint = config['JALAPENO']['influx_endpoint']
     influx_url = influx_endpoint.split(':')
     context = {
         'influx_ip': influx_url[0],
@@ -398,7 +398,7 @@ def configure_api_deployment():
     TEMPLATE_FILE = "api.yaml"
     template = templateEnv.get_template(TEMPLATE_FILE)
     context = {
-        'public_host_ip': config['VOLTRON']['public_host_ip'],
+        'public_host_ip': config['JALAPENO']['public_host_ip'],
     }
     outputText = template.render(context)
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -409,18 +409,18 @@ def configure_api_deployment():
 
 ###########################################################################################################################
 ### ASCII Art for Fun
-def welcome_to_voltron():
+def welcome_to_jalapeno():
     for i in range(534):
         cprint("-", 'blue', end=' ')
 
     print("\n")
-    cprint(figlet_format('Voltron', font='starwars'),
+    cprint(figlet_format('Jalapeno', font='starwars'),
            'white', attrs=['bold'])
     for i in range(534):
         cprint("-", 'blue', end=' ')
 
     print("\n")
-    print("Welcome to Voltron")
+    print("Welcome to Jalapeno")
     for i in range(178):
         cprint("-", 'blue', end=' ')
 
