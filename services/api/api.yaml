@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  namespace: voltron
+  namespace: jalapeno
   name: api
   labels:
     app: api
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: ievoltron/api:0.0.3@sha256:34ac22e49ad8ae76e31ab235b58bc65373f86068cb779ef37b46b727ad1990b4
+        image: iejalapeno/api:0.0.3@sha256:34ac22e49ad8ae76e31ab235b58bc65373f86068cb779ef37b46b727ad1990b4
         env:
         - name: ARANGODB_PROTOCOL
           value: http
@@ -26,11 +26,11 @@ spec:
         - name: ARANGODB_PORT
           value: "8529"
         - name: ARANGODB_DB
-          value: voltron
+          value: jalapeno
         - name: ARANGODB_USER
           value: root
         - name: ARANGODB_PASSWORD
-          value: voltron
+          value: jalapeno
         ports:
         - containerPort: 8000
           protocol: TCP
