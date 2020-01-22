@@ -1,9 +1,9 @@
 #!/bin/sh
 echo "Logging into OpenShift"
-oc login https://localhost:8443 -u admin -p admin -n voltron
+oc login https://localhost:8443 -u admin -p admin -n jalapeno
 
-echo "Shutting down Voltron"
-oc delete project voltron
+echo "Shutting down Jalapeno"
+oc delete project jalapeno
 
 echo "Please wait"
 sleep 60
