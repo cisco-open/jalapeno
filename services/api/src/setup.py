@@ -18,10 +18,10 @@ REQUIRES = ["connexion"]
 setup(
     name=NAME,
     version=VERSION,
-    description="Voltron API",
-    author_email="voltron-team@cisco.com",
+    description="Jalapeno API",
+    author_email="jalapeno-team@cisco.com",
     url="",
-    keywords=["Swagger", "Voltron API"],
+    keywords=["Swagger", "Jalapeno API"],
     install_requires=REQUIRES,
     packages=find_packages(),
     package_data={'': ['swagger/swagger.yaml']},
