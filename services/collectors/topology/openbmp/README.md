@@ -10,13 +10,13 @@ Per the RFC:
    as the result of multiplexing together the messages received on the
    various monitored BGP sessions.
    
- From the perspective of the Voltron project BMP represents a programmatic means of collecting all BGP topology data:
+ From the perspective of the Jalapeno project BMP represents a programmatic means of collecting all BGP topology data:
  
  * BGP-LS for internal topology
  * eBGP and iBGP IPv4, IPv6, and labeled-unicast for external/Internet or Inter-AS topology
  * MP-BGP for VPNv4, VPNv6, EVPN, etc. for VPN overlay topology
 
-Voltron leverages the open source OpenBMP (snas.io) collector to capture BMP data from the network.
+Jalapeno leverages the open source OpenBMP (snas.io) collector to capture BMP data from the network.
 
 https://www.snas.io/
 
@@ -24,7 +24,7 @@ The following configuration is used to establish a BMP session from XR router to
 ```
  bmp server 1
  host 10.0.250.2 port 5000
- description voltron OpenBMP  
+ description jalapeno OpenBMP  
  update-source Loopback0
  flapping-delay 60
  initial-delay 5
