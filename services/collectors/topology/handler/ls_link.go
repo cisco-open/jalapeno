@@ -3,8 +3,8 @@ package handler
 import (
 	"strings"
         "fmt"
-	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/openbmp"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/database"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/openbmp"
 )
 
 func ls_link(a *ArangoHandler, m *openbmp.Message) {
