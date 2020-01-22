@@ -1,4 +1,4 @@
-from voltron import queries
+from jalapeno import queries
 
 
 def topology_get():  # noqa: E501
