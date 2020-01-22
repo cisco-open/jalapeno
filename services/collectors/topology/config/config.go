@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"strings"
 
-	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/kafka"
-	"wwwin-github.cisco.com/spa-ie/voltron/services/collectors/topology/log"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/database"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/kafka"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/log"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -150,11 +150,11 @@ func getCfg(cfg interface{}) error {
 }
 
 // Process env var overrides for all values
-func setupEnvAndFlags(voltronCmd *cobra.Command, cfg interface{}) error {
+func setupEnvAndFlags(jalapenoCmd *cobra.Command, cfg interface{}) error {
 	// Supports fetching value from env for all config of type: int, float64, bool, and string
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	viper.SetEnvPrefix("voltron")
+	viper.SetEnvPrefix("jalapeno")
 
 	return eachSubField(cfg, func(parent reflect.Value, subFieldName string, crumbs []string) error {
 		p := strings.Join(crumbs, "")
@@ -167,25 +167,25 @@ func setupEnvAndFlags(voltronCmd *cobra.Command, cfg interface{}) error {
 		desc := subField.Tag.Get("desc")
 		switch subField.Type.Kind() {
 		case reflect.Bool:
-			voltronCmd.PersistentFlags().Bool(flagStr, false, desc)
+			jalapenoCmd.PersistentFlags().Bool(flagStr, false, desc)
 		case reflect.Int:
-			voltronCmd.PersistentFlags().Int(flagStr, 0, desc)
+			jalapenoCmd.PersistentFlags().Int(flagStr, 0, desc)
 		case reflect.Int64:
-			voltronCmd.PersistentFlags().Int64(flagStr, 0, desc)
+			jalapenoCmd.PersistentFlags().Int64(flagStr, 0, desc)
 		case reflect.String:
-			voltronCmd.PersistentFlags().String(flagStr, "", desc)
+			jalapenoCmd.PersistentFlags().String(flagStr, "", desc)
 		case reflect.Float64:
-			voltronCmd.PersistentFlags().Float64(flagStr, 0, desc)
+			jalapenoCmd.PersistentFlags().Float64(flagStr, 0, desc)
 		case reflect.Slice:
 			if subField.Type.Elem().Kind() == reflect.String {
-				voltronCmd.PersistentFlags().StringSlice(flagStr, nil, desc)
+				jalapenoCmd.PersistentFlags().StringSlice(flagStr, nil, desc)
 			} else {
 				return fmt.Errorf("%s is unsupported by config @ %s.%s", subField.Type.String(), p, subFieldName)
 			}
 		default:
 			return fmt.Errorf("%s is unsupported by config @ %s.%s", subField.Type.String(), p, subFieldName)
 		}
-		viper.BindPFlag(flagStr, voltronCmd.PersistentFlags().Lookup(flagStr))
+		viper.BindPFlag(flagStr, jalapenoCmd.PersistentFlags().Lookup(flagStr))
 		return nil
 	})
 }
