@@ -1,5 +1,5 @@
 // Derived from https://beta.observablehq.com/@mbostock/d3-force-directed-graph
-let visualizationSvgId = 'voltronTopology';
+let visualizationSvgId = 'jalapenoTopology';
 let visualizationContainerId = 'topologyContainer';
 let visualizationWidth = 0;
 let visualizationHeight = 0;
