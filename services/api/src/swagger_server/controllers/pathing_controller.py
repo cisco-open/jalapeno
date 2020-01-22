@@ -3,7 +3,7 @@ import six
 
 from swagger_server.models.sr_label_stack import SRLabelStack  # noqa: E501
 from swagger_server import util
-from voltron.controllers import pathing_controller
+from jalapeno.controllers import pathing_controller
 
 
 def pathing_epe_bandwidth_get(dst_ip, min_bandwidth=None, peer_preference=None, composite=None):  # noqa: E501
