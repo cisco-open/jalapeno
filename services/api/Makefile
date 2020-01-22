@@ -1,6 +1,6 @@
-EXECUTABLE ?= voltron
+EXECUTABLE ?= jalapeno
 BINARY ?= bin/$(EXECUTABLE)
-REPO=ievoltron
+REPO=iejalapeno
 IMAGE=api
 TAG=0.0.3
 PROXY=http://proxy.esl.cisco.com:8080
