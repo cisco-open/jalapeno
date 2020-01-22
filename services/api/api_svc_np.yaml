@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: voltron
+  namespace: jalapeno
   name: api-np
   labels:
     app: api
