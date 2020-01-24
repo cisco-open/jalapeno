@@ -41,7 +41,7 @@ func DefaultTopics() []string {
 	return []string{"openbmp.parsed.collector", "openbmp.parsed.collector",
 		"openbmp.parsed.router", "openbmp.parsed.peer", "openbmp.parsed.base_attribute",
 		"openbmp.parsed.unicast_prefix", "openbmp.parsed.ls_node",
-		"openbmp.parsed.ls_link", "openbmp.parsed.ls_prefix"}
+		"openbmp.parsed.ls_link", "openbmp.parsed.ls_prefix", "openbmp.parsed.l3vpn", "openbmp.parsed.evpn"}
 }
 
 func New(cfg Config, hndlr handler.Handler) (*Consumer, error) {
