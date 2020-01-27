@@ -14,13 +14,13 @@ echo "Deploying Grafana"
 oc apply -f ${PWD}/${BASEDIR}/grafana/.
 
 echo "Deploying OpenBMPD"
-sudo python ${PWD}/${BASEDIR}/openbmpd/deploy_openbmp.py
+#sudo python ${PWD}/${BASEDIR}/openbmpd/deploy_openbmp.py
 
 echo "Deploying Pipeline Ingress"
 oc apply -f ${PWD}/${BASEDIR}/pipeline-ingress/.
 
 echo "Deploying Telemetry"
-python3.6 ${PWD}/${BASEDIR}/telemetry/deploy_telemetry.py
+#python3.6 ${PWD}/${BASEDIR}/telemetry/deploy_telemetry.py
 
 echo "Deploying Pipeline Egress"
 oc apply -f ${PWD}/${BASEDIR}/pipeline-egress/.
