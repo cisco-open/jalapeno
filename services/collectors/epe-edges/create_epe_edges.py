@@ -26,7 +26,7 @@ def main():
     collection = create_collection(database, queryconfig.collection)  # the collection name is set in queryconfig
     while(True):
         # parse existing collections for relevant fields that correlate to a potential EPEEdge
-	epe_edges_data = collect_epe_edges_data(database, collection)
+        epe_edges_data = collect_epe_edges_data(database, collection)
         # for each record of epe-edge data, create & upsert a corresponding EPEEdge document into the EPEEdges collection
         create_epe_edges(database, collection, epe_edges_data)  
         time.sleep(10)
@@ -53,12 +53,13 @@ def collect_epe_edges_data(db, collection):
     all_epe_edge_data = []
     border_routers = get_border_routers_query(db)
     for border_router in border_routers:
-	border_router_data = get_border_router_data_query(db, border_router)
-	border_router_source = border_router_data[0]['Source']
-	border_router_asn = border_router_data[0]['SourceASN']
-	border_router_sr_node_sid = get_border_router_sr_node_sid(db, border_router)[0]
-	external_routers = get_external_routers_query(db, border_router)
-	for external_router in external_routers:
+        border_router_data = get_border_router_data_query(db, border_router)
+        border_router_source = border_router_data[0]['Source']
+        border_router_asn = border_router_data[0]['SourceASN']
+        border_router_sr_node_sid = get_border_router_sr_node_sid(db, border_router)[0]
+        #print(border_router_source, border_router_asn, border_router_sr_node_sid)
+        external_routers = get_external_routers_query(db, border_router)
+        for external_router in external_routers:
             external_router_hop = external_router
 
             external_link_edge_data = get_external_link_edge_data_query(db, border_router, external_router)
@@ -68,9 +69,9 @@ def collect_epe_edges_data(db, collection):
             external_link_edge_dst_intf_ip = external_link_edge_data[0]['DstInterfaceIP']
             external_link_edge_label = external_link_edge_data[0]['Label']
 
-	    external_prefixes = get_external_prefixes_query(db, external_link_edge_dst_intf_ip, external_router)
+            external_prefixes = get_external_prefixes_query(db, external_link_edge_dst_intf_ip, external_router)
             for external_prefix in external_prefixes:
-		print("Parsing EPEEdge for border_router " + border_router + " for external router " + external_router + " with external_prefix " + external_prefix)
+                print("Parsing EPEEdge for border_router " + border_router + " for external router " + external_router + " with external_prefix " + external_prefix)
                 external_prefix_edge_data = get_external_prefix_edge_data_query(db, external_link_edge_dst_intf_ip, external_router, external_prefix)
                 external_prefix_edge_src_asn = external_prefix_edge_data[0]['SrcRouterASN']
                 external_prefix_edge_src_intf_ip = external_prefix_edge_data[0]['SrcInterfaceIP']
@@ -88,7 +89,7 @@ def collect_epe_edges_data(db, collection):
                     """print("Parsed EPEEdge: \n Source: %s %s %s %s %s \n Hop: %s %s %s \n Destination: %s %s" % (external_link_edge_source, 
 			border_router_asn, border_router_sr_node_sid, external_link_edge_src_intf_ip, external_link_edge_label, external_link_edge_dst_intf_ip, 
 			external_prefix_edge_source, external_prefix_edge_src_asn, external_prefix_edge_destination, external_prefix_edge_dst_prefix_asn))"""
-		    all_epe_edge_data.append(epe_edge_data)		
+                    all_epe_edge_data.append(epe_edge_data)		
     return all_epe_edge_data
 
 
@@ -99,24 +100,24 @@ def create_epe_edges(db, collection, all_epe_edge_data):
     for epe_edge_data in all_epe_edge_data:
         all_fields_exist = check_epe_fields(epe_edge_data)
         if(all_fields_exist):
-	    source = str(epe_edge_data['epe_edge_src'].replace('Routers/', ''))
-	    source_asn = str(epe_edge_data['epe_edge_src_asn'])
-	    source_epe_label = str(epe_edge_data['epe_edge_src_epe_label'])
-	    source_sr_node_sid = str(epe_edge_data['epe_edge_src_sr_node_sid'])
-	    source_intf_ip = str(epe_edge_data['epe_edge_src_intf_ip'])
-	    hop_intf_ip = str(epe_edge_data['epe_edge_hop_intf_ip'])
-	    hop = str(epe_edge_data['epe_edge_hop'].replace('Routers/', ''))
-	    hop_asn = str(epe_edge_data['epe_edge_hop_asn'])
-	    destination = str(epe_edge_data['epe_edge_dst'].replace('Prefixes/', ''))
-	    destination_asn = str(epe_edge_data['epe_edge_dst_asn'])
-	    epe_edge_key = str(source + "_" + epe_edge_data['epe_edge_src_intf_ip'] + "_" + epe_edge_data['epe_edge_hop_intf_ip'] + "_" + hop + "_" + destination)
+            source = str(epe_edge_data['epe_edge_src'].replace('Routers/', ''))
+            source_asn = str(epe_edge_data['epe_edge_src_asn'])
+            source_epe_label = str(epe_edge_data['epe_edge_src_epe_label'])
+            source_sr_node_sid = str(epe_edge_data['epe_edge_src_sr_node_sid'])
+            source_intf_ip = str(epe_edge_data['epe_edge_src_intf_ip'])
+            hop_intf_ip = str(epe_edge_data['epe_edge_hop_intf_ip'])
+            hop = str(epe_edge_data['epe_edge_hop'].replace('Routers/', ''))
+            hop_asn = str(epe_edge_data['epe_edge_hop_asn'])
+            destination = str(epe_edge_data['epe_edge_dst'].replace('Prefixes/', ''))
+            destination_asn = str(epe_edge_data['epe_edge_dst_asn'])
+            epe_edge_key = str(source + "_" + epe_edge_data['epe_edge_src_intf_ip'] + "_" + epe_edge_data['epe_edge_hop_intf_ip'] + "_" + hop + "_" + destination)
 
-	    existing_epe_edge = get_epe_edge_key(db, epe_edge_key)
-	    if len(existing_epe_edge) > 0:
-		update_epe_edge_query(db, epe_edge_key, source, source_asn, source_sr_node_sid, source_intf_ip, source_epe_label, hop_intf_ip, hop, hop_asn, 
+            existing_epe_edge = get_epe_edge_key(db, epe_edge_key)
+            if len(existing_epe_edge) > 0:
+                update_epe_edge_query(db, epe_edge_key, source, source_asn, source_sr_node_sid, source_intf_ip, source_epe_label, hop_intf_ip, hop, hop_asn, 
                                       destination, destination_asn)
-	    else:
-		create_epe_edge_query(db, epe_edge_key, source, source_asn, source_sr_node_sid, source_intf_ip, source_epe_label, hop_intf_ip, hop, hop_asn, 
+            else:
+                create_epe_edge_query(db, epe_edge_key, source, source_asn, source_sr_node_sid, source_intf_ip, source_epe_label, hop_intf_ip, hop, hop_asn, 
                                       destination, destination_asn)
 
 
