@@ -29,7 +29,7 @@ def main():
         epe_edges_data = collect_epe_edges_data(database, collection)
         # for each record of epe-edge data, create & upsert a corresponding EPEEdge document into the EPEEdges collection
         create_epe_edges(database, collection, epe_edges_data)
-        print('=======================Starting next collection in 10 seconds======================')  
+        print("Done parsing EPEEdges! Next collection begins in 10 seconds.\n") 
         time.sleep(10)
  
 def create_collection(db, collection_name):
@@ -51,20 +51,23 @@ def collect_epe_edges_data(db, collection):
     Return records of epe_edge_data in a list.
     """
     all_epe_edge_data = []
-    print("Collecting Border Routers")
+
+    # collecting list of BorderRouters
     border_routers = get_border_routers_query(db)
-    for border_router in border_routers:
-        print("Parsing EPEEdge for Border Router: " + border_router)
+    for border_router_index in range(len(border_routers)):
+        border_router = border_routers[border_router_index]
+        # print("Parsing EPEEdge for BorderRouter: " + border_router)
         border_router_data = get_border_router_data_query(db, border_router)
         border_router_source = border_router_data[0]['Source']
         border_router_asn = border_router_data[0]['SourceASN']
         border_router_sr_node_sid = get_border_router_sr_node_sid(db, border_router)[0]
-        print("Current Border Router data: " + border_router_source + " " + border_router_asn + " " + border_router_sr_node_sid)
+        # print("Current BorderRouter data: " + border_router_source + " " + border_router_asn + " " + border_router_sr_node_sid)
 
-        print("Collecting External Routers connected to Border Router: " + border_router)
+        # collecting ExternalRouters connected to current BorderRouter
         external_routers = get_external_routers_query(db, border_router)
-        for external_router in external_routers:
-            print("Parsing EPEEdge for Border Router: " + border_router + " connected to External Router: " + external_router)
+        for external_router_index in range(len(external_routers)):
+            external_router = external_routers[external_router_index]
+            # print("Parsing EPEEdge for Border Router: " + border_router + " connected to External Router: " + external_router)
             external_router_hop = external_router
             external_link_edge_data = get_external_link_edge_data_query(db, border_router, external_router)
             external_link_edge_source = external_link_edge_data[0]['Source']
@@ -74,13 +77,9 @@ def collect_epe_edges_data(db, collection):
             external_link_edge_label = external_link_edge_data[0]['Label']
 
             external_prefixes = get_external_prefixes_query(db, external_link_edge_dst_intf_ip, external_router)
-            print(external_prefixes)
-            print(len(external_prefixes))
-            count = 0
-            for external_prefix in external_prefixes:
-                print("Counter for debugging " + str(count))
-                print(border_router, external_router, external_prefix)
-                print("Parsing EPEEdge for border_router " + border_router + " for external router " + external_router + " with external_prefix " + external_prefix)
+            for external_prefix_index in range(len(external_prefixes)):
+                external_prefix = external_prefixes[external_prefix_index]
+                print("Parsing EPEEdge for border_router " + border_router + " for external_router " + external_router + " with external_prefix " + external_prefix)
                 external_prefix_edge_data = get_external_prefix_edge_data_query(db, external_link_edge_dst_intf_ip, external_router, external_prefix)
                 external_prefix_edge_src_asn = external_prefix_edge_data[0]['SrcRouterASN']
                 external_prefix_edge_src_intf_ip = external_prefix_edge_data[0]['SrcInterfaceIP']
@@ -99,8 +98,8 @@ def collect_epe_edges_data(db, collection):
 			border_router_asn, border_router_sr_node_sid, external_link_edge_src_intf_ip, external_link_edge_label, external_link_edge_dst_intf_ip, 
 			external_prefix_edge_source, external_prefix_edge_src_asn, external_prefix_edge_destination, external_prefix_edge_dst_prefix_asn))'''
                     all_epe_edge_data.append(epe_edge_data)
-                    print("======================Parsed!===========================")
-                count += 1 
+                    print("======================Parsed!===========================\n")
+    print("========================================================================\n")
     return all_epe_edge_data
 
 
@@ -149,7 +148,9 @@ def check_epe_fields(epe_edge_data):
 
      
 def setup_logging():
-    logging.getLogger().setLevel(logging.INFO)
+    logging.getLogger().setLevel(logging.WARNING)
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 if __name__ == '__main__':
     main()

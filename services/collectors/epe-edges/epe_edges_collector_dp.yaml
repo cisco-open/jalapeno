@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
       - name: epe-edges
-        image: iejalapeno/epe-edges:0.1@sha256:d6ae6113110306719c37fe1069aa136943d42bb1679d9cc281762a8ac97299d9
+        image: iejalapeno/epe-edges:0.1@sha256:ea876ad9dcae62d8159289677fea197128a17f4ae4d359726326f6789dceb68e
