@@ -2,7 +2,7 @@ EXECUTABLE ?= jalapeno
 BINARY ?= bin/$(EXECUTABLE)
 REPO=iejalapeno
 IMAGE=external-links-performance-collector
-TAG=3.0
+TAG=0.1
 PROXY=http://proxy.esl.cisco.com:8080
 
 all: build
@@ -11,7 +11,7 @@ build:
 	pip install -r requirements.txt
 
 run:
-	python calculate_external_links_performance.py
+	python3.6 calculate_external_links_performance.py
 
 container:
 	docker build --build-arg http_proxy=${PROXY} --build-arg https_proxy=${PROXY} -t ${REPO}/${IMAGE}:${TAG} .
