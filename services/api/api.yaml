@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: iejalapeno/api:0.0.3@sha256:34ac22e49ad8ae76e31ab235b58bc65373f86068cb779ef37b46b727ad1990b4
+        image: iejalapeno/api:0.1@sha256:bda2def66810b4502cffc044e95e29e62c58acf5e1f0339e1ddebb67b269c32f
         env:
         - name: ARANGODB_PROTOCOL
           value: http

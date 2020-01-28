@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   description: 'API for defending the universe.'
-  version: '0.0.2.1'
+  version: '0.1'
   title: 'Jalapeno API'
   termsOfService: 'http://www.cisco.com/web/siteassets/legal/terms_condition.html'
   contact:
