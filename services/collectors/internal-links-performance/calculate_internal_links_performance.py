@@ -14,28 +14,23 @@ def main():
 
     while(True):
         internal_links = internal_links_generator.generate_internal_links(arango_client)
-        print(internal_links)
-#        for link in internal_links:
+        #print(internal_links)
         for link in range(len(internal_links)):
-#            print(link)
-            print(internal_links[link])
-#            router_ip = link['RouterIP']
-#            router_interface_ip = link['InterfaceIP']
+            #print(internal_links[link])
             router_ip = internal_links[link]['RouterIP']
             router_interface_ip = internal_links[link]['InterfaceIP']
-
-            print(router_ip, router_interface_ip)
+            #print(router_ip, router_interface_ip)
             if internal_links[link]["key"] not in telemetry_interface_mapper:
                 print("\n%s (interface %s) is not currently configured for internal telemetry measurements or calculations" % (router_ip, router_interface_ip))
                 continue
             routerIP_interfaceIP = router_ip + "_" + router_interface_ip
             telemetry_interface_info = telemetry_interface_mapper[routerIP_interfaceIP]
-            print(routerIP_interfaceIP, telemetry_interface_info)
+            #print(routerIP_interfaceIP, telemetry_interface_info)
             telemetry_producer, producer_interface = telemetry_interface_info[0], telemetry_interface_info[1] 	# i.e. r0.622 and Gig0/0/0/1
             print("\nCalculating performance metrics for internal-link out of %s(%s) through %s(%s)" % (telemetry_producer, router_ip, 
                                                                                                       producer_interface, router_interface_ip))
             calculated_performance_metrics = {}
-            print(telemetry_producer, producer_interface)
+            #print(telemetry_producer, producer_interface)
             for telemetry_value, performance_metric in telemetry_value_mapper.items(): # the extended base-path and the value it represents
                 current_performance_metric_dataset = collect_performance_dataset(influx_client, telemetry_producer, producer_interface, telemetry_value)
                 current_performance_metric_value = calculate_performance_metric_value(current_performance_metric_dataset)
@@ -53,22 +48,17 @@ def main():
             internal_router_interface_key = router_ip + "_" + router_interface_ip
             upsert_internal_link_performance(internal_router_interface_key, calculated_performance_metrics, "InternalRouterInterfaces")
             internal_link_edges = internal_links_generator.generate_internal_link_edges(arango_client, router_ip, router_interface_ip)
-            print(internal_link_edges)
-            print(len(internal_link_edges))
-#            for internal_link_edge in internal_link_edges:
-            for internal_link_edge in range(len(internal_link_edges)):
-                print("wtf")
-                print(internal_link_edges[internal_link_edge])
- #               print(internal_link_edge)
-  #              print(internal_link_edge['dest_intf_ip'])
-   #             print(internal_link_edge['destination'])
-                print(router_ip)
-                print(router_interface_ip)
-                print(internal_link_edges[internal_link_edge]['dest_intf_ip'])
-                print(internal_link_edges[internal_link_edge]['destination'])
-#                internal_link_edge_key = router_ip + "_" + router_interface_ip + "_" + internal_link_edge['dest_intf_ip'] + "_" + internal_link_edge['destination'].replace("Routers/", "")
-                internal_link_edge_key = router_ip + "_" + router_interface_ip + "_" + internal_link_edges[internal_link_edge]['dest_intf_ip'] + "_" + internal_link_edges[internal_link_edge]['destination'].replace("Routers/", "")
+
+            for internal_link_edge_index in range(len(internal_link_edges)):
+                internal_link_edge = internal_link_edges[internal_link_edge_index]
+                #print(internal_link_edge)
+                #print(internal_link_edge['dest_intf_ip'])
+                #print(internal_link_edge['destination'])
+                #print(router_ip)
+                #print(router_interface_ip)
+                internal_link_edge_key = router_ip + "_" + router_interface_ip + "_" + internal_link_edge['dest_intf_ip'] + "_" + internal_link_edge['destination'].replace("Routers/", "")
                 upsert_internal_link_performance(internal_link_edge_key, calculated_performance_metrics, "InternalLinkEdges")
+            print("============================================================")
         time.sleep(30)
 
 

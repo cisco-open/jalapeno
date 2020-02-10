@@ -19,6 +19,7 @@ from pyArango.connection import *
 from configs import arangoconfig, queryconfig
 from util import utilities, connections
 import logging, time
+from epe_path_queries import *
 
 def main():
     setup_logging()
@@ -51,35 +52,27 @@ def generate_paths(db, collection):
     Insert generated paths into the specified collection.
     """
     database = db
-    destination_list = open("configs/prefixes.txt").readlines()  # all prefixes should be listed in file
-    for dest in destination_list:
-        destination = dest.rstrip("\n\r")
+    external_prefixes = get_external_prefixes_query(db)
+    for external_prefix_index in range(len(external_prefixes)):
+        external_prefix = external_prefixes[external_prefix_index]
+        destination = external_prefix.rstrip("\n\r")
         #print("\n#############################################################################################################")
         print("Generating all paths to " + destination)
         #print("#############################################################################################################")
         paths = generate_paths_query(database, destination)
-        for path in paths:
+        for path_index in range(len(paths)):
+            path = paths[path_index]
             create_path_record(collection, path, destination)  # insert path into collection
         clean_paths_collection(database, paths, destination)
     time.sleep(30)
-
-
-def generate_paths_query(db, destination):
-    """AQL Query to generate paths from Arango data."""
-    aql = """FOR e in EPEEdges
-        FILTER e.Destination == @destination
-        RETURN {Source: e.Source, Destination: e.Destination, SRNodeSID: e.SourceSRNodeSID, Interface: e.SourceInterfaceIP, EPELabel: e.EPELabel} """
-    bindVars = {'destination': destination}
-    paths = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
-    return paths
-
 
 def clean_paths_collection(db, paths, destination):
     """Remove any paths in the Paths collection that do not exist in reality."""
     print("Removing stale or broken paths to " + destination)
     print("#############################################################################################################")
     real_paths = []
-    for path in paths:
+    for path_index in range(len(paths)):
+        path = paths[path_index]
         egress_peer = path["Source"]
         epe_label = path["EPELabel"]
         path_destination = path["Destination"]
@@ -91,9 +84,10 @@ def clean_paths_collection(db, paths, destination):
         RETURN p._key """
     bindVars = {'destination': destination}
     existing_path_collection = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
-    for current_path in existing_path_collection:
+    for current_path_index in range(len(existing_path_collection)):
+        current_path = existing_path_collection[current_path_index]
         if current_path not in real_paths:
-            #print("EPEPath " + str(current_path) + " does not exist anymore. Removing from EPEPaths collection.")
+            print("EPEPath " + str(current_path) + " does not exist anymore. Removing from EPEPaths collection.")
             aql = """REMOVE @key IN EPEPaths """
             bindVars = {'key': str(current_path)}
             db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
@@ -113,7 +107,8 @@ def create_path_record(collection, path, destination):
     egress_interface = path["Interface"]
     epe_label = path["EPELabel"]
     path_destination = path["Destination"]
-    label_stack = sr_node_sid + "_" + epe_label
+    #label_stack = sr_node_sid + "_" + epe_label
+    labels = [int(sr_node_sid), int(epe_label)]
     key = "EPEPath:" + egress_peer + "_" + epe_label + "_" + path_destination
     #print("Creating path from egress-peer " + egress_peer + " through interface " + egress_interface + " to external prefix " + path_destination)
     #print("Path key: " + key)
@@ -124,8 +119,9 @@ def create_path_record(collection, path, destination):
         document["_key"] = key 
         document["Egress_Peer"] = egress_peer
         document["Egress_Interface"] = egress_interface
-        document["Label_Path"] = str(label_stack)
+        #document["Label_Path"] = str(label_stack)
         document["Destination"] = destination
+        document["Labels"] = labels
         document.save()
         #print("Successfully created path")
     except CreationError:
@@ -134,7 +130,7 @@ def create_path_record(collection, path, destination):
     #print("#############################################################################################################")
 
 def setup_logging():
-    logging.getLogger().setLevel(logging.INFO)
+    logging.getLogger().setLevel(logging.WARNING)
 
 if __name__ == '__main__':
     main()

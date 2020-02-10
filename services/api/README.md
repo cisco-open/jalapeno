@@ -11,7 +11,7 @@ In ```/jalapeno/services/api:```
 1. Edit ```swagger.yaml```. This is the place to create new API endpoints or edit the parameters of previously created endpoints.
 2. Execute ```./run_editor.sh```
 3. Head to ```http://localhost:8080```. Import the ```swagger.yaml``` file you edited in step 1.
-4. If you have no erorrs, generate the python-flask swagger server. This will download a zip file.
+4. If you have no errors, generate the python-flask swagger server. This will download a zip file.
 5. Copy the generated python-flask zip file into your ```/jalapeno/services/api/``` directory. Name it server.zip. Something like this: ```cp ~/Downloads/python-flask-server-generated.zip server.zip```
 6. Execute ```./swagger_zip_to_src.sh server.zip```
 ### Edit generated python files according to old python originals
