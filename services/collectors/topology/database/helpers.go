@@ -338,5 +338,49 @@ func (a *ArangoConn) CreateExternalPrefixEdgeSource(router_ip string, router_asn
 	}
 }
 */
+func (a *ArangoConn) CheckExistingL3VPNRouter(router_ip string) bool {
+    var r string
+    q := fmt.Sprintf("FOR r in L3VPN_Routers filter r._key == %q return r", router_ip)
+    results, _ := a.Query(q, nil, r)
+    if len(results) > 0 {
+        return true
+    } else {
+        return false
+    }
+}
+
+func (a *ArangoConn) GetExistingVPNRDS(router_ip string) []string {
+    var r string
+    var tmp []string
+    q := fmt.Sprintf("FOR r in L3VPN_Routers filter r._key == %q return r.RD", router_ip)
+    results, _ := a.Query(q, nil, r)
+    fmt.Println("Beginning debugging")
+    fmt.Println(results)
+    fmt.Printf("%T\n", results)
+    if len(results) > 0 {
+        fmt.Println(results[0])
+        //fmt.Println(results[0].(string))
+
+    } else {
+        fmt.Println(results)
+    }
+    return tmp
+}
+
+
+func (a *ArangoConn) UpdateExistingVPNRDS(router_ip string, vpn_rd string) {
+    var r string
+    q := fmt.Sprintf("For e in L3VPN_Routers Filter e._key == %q LET p = e.RD UPDATE { _key: e._key, RD: APPEND(p, %q, True) } IN L3VPN_Routers RETURN { before: OLD, after: NEW }", router_ip, vpn_rd)
+    //q := fmt.Sprintf("LET doc = DOCUMENT(%q) UPDATE doc WITH { RD: PUSH(doc.RD, %q)} IN L3VPN_Routers", router_ip, vpn_rd)
+    results, _ := a.Query(q, nil, r)
+    if len(results) > 0 {
+        fmt.Printf("Successfully updated VPN RD list with %q for Router %q\n", vpn_rd, router_ip)
+    } else {
+        fmt.Println("Something went wrong -- failed to update VPN RD")
+    }
+
+}
+
+
 
 

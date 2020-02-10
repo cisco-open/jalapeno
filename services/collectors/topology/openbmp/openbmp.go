@@ -93,34 +93,43 @@ func parseTopic(topic string) Topic {
 // NewMessage creates a parsed BMP message of topic `topic` with
 // contents `value`
 func NewMessage(topic string, value []string) *Message {
-        fmt.Println("Creating a new BMP message for the current record.")
+        //fmt.Println("Creating a new BMP message for the current record.")
         typ := parseTopic(topic)
         if typ == TopicInvalid {
-               fmt.Println("Failure: topic was invalid")
-                return nil
+        	fmt.Println("Failure: topic was invalid")
+        	return nil
         }
 
         fields := value
         heads := headers[string(typ)]
+
+        // Handling OpenBMP issue, expecting 31 fields for unicast_prefix, and 33 fields
+        // for l3vpn. OpenBMP messages incorrectly come with one additional empty field.
         if len(fields) != len(heads) {
-                fmt.Println("We got length fields")
-                fmt.Println(len(fields))
-                fmt.Println("But we got length heads")
-                fmt.Println(len(heads))
-                fmt.Println("Failure: something wrong with field lengths (if field length are 32 instead of the expected 31, will continue to execute)")
-                if len(fields) != 32 {
-                	return nil
-		}
+        	// empty message
+        	if len(fields) == 1 {
+        		return nil
+        	}
+        	if typ == "openbmp.parsed.unicast_prefix" {
+        		if((len(fields) != 31) && (len(fields) != 32)) {
+        			return nil
+        		}
+        	}
+        	if typ == "openbmp.parsed.l3vpn" {
+        		if((len(fields) != 33) && (len(fields) != 34)) {
+        			return nil
+        		}
+        	}
         }
 
         message := &Message{
-                Topic:  typ,
-                Fields: map[string]interface{}{},
+        	Topic:  typ,
+        	Fields: map[string]interface{}{},
         }
 
         // TODO: Distinguish between empty/nil values
         for i, h := range heads {
-                message.Fields[h] = strings.TrimSpace(fields[i])
+        	message.Fields[h] = strings.TrimSpace(fields[i])
         }
         return message
 }
