@@ -2,16 +2,16 @@
 BASEDIR=$(dirname $0)
 
 echo "Deploying Kafka"
-oc apply -f ${PWD}/${BASEDIR}/kafka/.
+kubectl -f ${PWD}/${BASEDIR}/kafka/.
 
 echo "Deploying ArangoDB"
-oc apply -f ${PWD}/${BASEDIR}/arangodb/.
+kubectl -f ${PWD}/${BASEDIR}/arangodb/.
 
 echo "Deploying InfluxDB"
-oc apply -f ${PWD}/${BASEDIR}/influxdb/.
+kubectl -f ${PWD}/${BASEDIR}/influxdb/.
 
 echo "Deploying Grafana"
-oc apply -f ${PWD}/${BASEDIR}/grafana/.
+kubectl -f ${PWD}/${BASEDIR}/grafana/.
 
 echo "Deploying OpenBMPD"
 sudo python ${PWD}/${BASEDIR}/openbmpd/deploy_openbmp.py
