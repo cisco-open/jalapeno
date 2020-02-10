@@ -1,20 +1,4 @@
-### router.go defines how we handle "router" openbmp messages. 
-currently, router.go parses each "router" openbmp message for three fields:
-	* BGPID (our key)
-	* Name
-	* RouterIP
-
-it then creates a new router object with those fields, and then upserts 
-that router object as a document into the Router collection in Arango.
-
-this process occurs for all "router" openbmp messages.
-
-note: the upserted router documents in the "Router" collection will not have all their fields 
-(defined in the router document schema in ../database/router.go) filled out through this handling. 
-the rest of the fields will be filled out by the handling of other openbmp messages (i.e. peer).
-
-
-### peer.go defines how we handle "peer" openbmp messages.
+### peer.go defines how we handle "parsed.peer" openbmp messages.
 each "peer" openbmp message has pertinent fields for two router documents (local and peer),
 and for the link-edge documents between them (one each way).
 

@@ -104,6 +104,12 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
+        cols[L3VPN_RouterName], err = ensureVertexCollection(g, L3VPN_RouterName)
+        if err != nil {
+                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPN_RouterName)
+                return ArangoConn{}, err
+        }
+
         cols[ExternalRouterName], err = ensureVertexCollection(g, ExternalRouterName)
         if err != nil {
                 log.WithError(err).Errorf("Failed to connect to collection %q", ExternalRouterName)
@@ -131,6 +137,12 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
 	cols[PrefixName], err = ensureVertexCollection(g, PrefixName)
 	if err != nil {
 		log.WithError(err).Errorf("Failed to connect to collection %q", PrefixName)
+		return ArangoConn{}, err
+	}
+
+	cols[L3VPN_PrefixName], err = ensureVertexCollection(g, L3VPN_PrefixName)
+	if err != nil {
+		log.WithError(err).Errorf("Failed to connect to collection %q", L3VPN_PrefixName)
 		return ArangoConn{}, err
 	}
 
@@ -348,6 +360,10 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                 get = &BorderRouter{
                         Key: key,
                 }
+        case L3VPN_RouterName:
+                get = &L3VPN_Router{
+                        Key: key,
+                }
         case InternalRouterInterfaceName:
                 get = &InternalRouterInterface{
                         Key: key,
@@ -366,6 +382,10 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                 }
 	case PrefixName:
 		get = &Prefix{
+			Key: key,
+		}
+	case L3VPN_PrefixName:
+		get = &L3VPN_Prefix{
 			Key: key,
 		}
         case InternalPrefixName:
