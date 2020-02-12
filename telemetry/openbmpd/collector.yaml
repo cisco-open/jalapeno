@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openbmpd-np
+  namespace: jalapeno-telemetry
+  labels:
+    app: openbmpd
+spec:
+  ports:
+    - name: 5000-tcp
+      port: 5000
+      nodePort: 30555
+      targetPort: 5000
+  type: NodePort
+  selector:
+    app: openbmpd
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: openbmpd
+  namespace: jalapeno-telemetry
+spec:
+  selector:
+    matchLabels:
+      app: openbmpd
+  serviceName: "openbmpd"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: openbmpd
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: openbmpd
+        image: openbmpd/collector:latest
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        env:
+        - name: KAFKA_FQDN
+          value: "127.0.0.1:30092"
+        resources: {}

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mdt-pipeline-ingress-config
-  namespace: jalapeno
+  namespace: jalapeno-telemetry
   selfLink: /api/v1/namespaces/jalapeno/configmaps/mdt-pipeline-ingress-config
 data:
   pipeline.conf: >-
@@ -40,7 +40,7 @@ data:
 
     encoding=gpb
 
-    brokers=broker.jalapeno.svc:9092
+    brokers=127.0.0.1:30092
 
     topic=jalapeno.telemetry
 

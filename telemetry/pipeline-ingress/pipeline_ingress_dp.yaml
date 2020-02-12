@@ -2,6 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: mdt-pipeline-ingress-deployment
+  namespace: jalapeno-telemetry
   labels:
     app: mdt-pipeline-ingress
 spec:
@@ -22,6 +23,8 @@ spec:
           name: mdt-pipeline-ingress-data
         - mountPath: /data/config
           name: mdt-pipeline-ingress-data-config
+      imagePullSecrets:
+        - name: regcred          
       volumes:
       - name: mdt-pipeline-ingress-data
         emptyDir: {}
