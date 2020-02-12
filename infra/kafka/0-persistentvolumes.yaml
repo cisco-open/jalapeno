@@ -5,7 +5,7 @@ metadata:
    name: pvzoo1
 spec:
   capacity:
-       storage: 3Gi
+       storage: 10Gi
   accessModes:
        - ReadWriteOnce
   hostPath:
@@ -17,7 +17,7 @@ metadata:
    name: pvkafka
 spec:
   capacity:
-       storage: 3Gi
+       storage: 50Gi
   accessModes:
        - ReadWriteOnce
   hostPath:
