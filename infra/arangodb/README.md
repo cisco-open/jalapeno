@@ -20,4 +20,4 @@ These collections, in conjunction with ArangoDBs rapid graphical traversals and 
 ArangoDB is deployed using oc, as seen in the [deploy_infrastructure script](../deploy_infrastructure.sh) script. The configurations for ArangoDB's deployment are in the various YAML files in the [jalapeno/infra/arangodb/](.) directory.  
 
 ## Accessing ArangoDB
-To access ArangoDB's UI, log in at <server_ip>:30852, using credentials `root/jalapeno`. In the list of DBs, select jalapeno.
+To access ArangoDB's UI, log in at <server_ip>:30852, using credentials `root/jalapeno`. In the list of DBs, select `jalapeno`.
