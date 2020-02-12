@@ -11,10 +11,10 @@ For example, the `Topology Service` parses OpenBMP messages and builds out colle
 These collections, in conjunction with ArangoDBs rapid graphical traversals and calculations, make it easy to determine what path is optimal through the network given a specific SLA. For example, a user can request the `lowest-latency path` from point A to point B.
 
 ## Types of ArangoDB Interactions
-#### Parsing data from Kafka and storing in ArangoDB
-#### Parsing data from InfluxDB and storing in ArangoDB
-#### Parsing data from ArangoDB and storing in ArangoDB
-#### Parsing data from ArangoDB and returning insights to client
+* Parsing data from Kafka and storing in ArangoDB (i.e. Topology Service)
+* Parsing data from InfluxDB and storing in ArangoDB (i.e. InternalLinks Performance Service)
+* Parsing data from ArangoDB and storing in ArangoDB (i.e. EPE-Edges Service)
+* Parsing data from ArangoDB and returning insights to client (i.e. API Gateway)
 
 ## Deploying ArangoDB
 
