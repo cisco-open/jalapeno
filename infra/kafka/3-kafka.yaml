@@ -15,11 +15,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: bootstrap
+    name: kafka
     namespace: jalapeno
 spec:
     ports:
-      - port: 9092
+      - name: 9092-tcp
+        port: 9092
+        nodePort: 30092
+        targetPort: 9092
     selector:
       app: kafka
 ---
@@ -127,5 +130,5 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 3Gi
+          storage: 50Gi
 
