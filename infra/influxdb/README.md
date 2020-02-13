@@ -9,7 +9,7 @@ These queries construct and derive relevant metrics that inform Jalapeno's API G
 Using InfluxDB as a historical data-store, Jalapeno Services can also infer trends based on historical analysis. Services can determine whether instantaneous measurements are extreme anomalies, and can enable requests for any number of threshold-based reactions. 
 
 ## Deploying InfluxDB
-InfluxDB is deployed using oc, as seen in the [deploy_infrastructure script](../deploy_infrastructure.sh). The configurations for InfluxDB's deployment are in the various YAML files in the [jalapeno/infra/influxdb/](.)directory.
+InfluxDB is deployed using `oc`, as seen in the [deploy_infrastructure script](../deploy_infrastructure.sh). The configurations for InfluxDB's deployment are in the various YAML files in the [jalapeno/infra/influxdb/](.)directory.
 
 ## Accessing InfluxDB
 To access InfluxDB via OpenShift, enter the pod's terminal and run:
