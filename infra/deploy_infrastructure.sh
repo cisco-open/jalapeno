@@ -1,23 +1,28 @@
 #!/bin/bash
 BASEDIR=$(dirname $0)
 
+KUBE=microk8s.kubectl
+
 echo "Creating Jalapeno Namespace"
-kubectl create -f ${PWD}/${BASEDIR}/namespace-jalapeno.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno.json
+
+echo "Setting up secret for docker.io"
+${KUBE} create secret generic regcred --from-file=.dockerconfigjson=${HOME}/.docker/config.json --type=kubernetes.io/dockerconfigjson --namespace=jalapeno
 
 echo "Deploying Kafka"
-kubectl create -f ${PWD}/${BASEDIR}/kafka/.
+${KUBE} create -f ${PWD}/${BASEDIR}/kafka/.
 
 echo "Deploying ArangoDB"
-kubectl create -f ${PWD}/${BASEDIR}/arangodb/.
+${KUBE} create -f ${PWD}/${BASEDIR}/arangodb/.
 
 echo "Deploying InfluxDB"
-kubectl create -f ${PWD}/${BASEDIR}/influxdb/.
+${KUBE} create -f ${PWD}/${BASEDIR}/influxdb/.
 
 echo "Deploying Grafana"
-kubectl create -f ${PWD}/${BASEDIR}/grafana/.
+${KUBE} create -f ${PWD}/${BASEDIR}/grafana/.
 
 echo "Deploying Pipeline Egress"
-kubectl create -f ${PWD}/${BASEDIR}/pipeline-egress/.
+${KUBE} create -f ${PWD}/${BASEDIR}/pipeline-egress/.
 
 echo "Finished deploying infra services"
 
