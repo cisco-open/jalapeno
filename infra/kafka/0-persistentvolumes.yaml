@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-   name: pvzoo1
+   name: pvzoo
 spec:
   capacity:
        storage: 10Gi
