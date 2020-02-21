@@ -1,7 +1,7 @@
 kind: ConfigMap
 metadata:
   name: openbmpd-config
-  namespace: jalapeno-telemetry
+  namespace: jalapeno-collectors
 apiVersion: v1
 data:
   openbmpd.conf: |-   

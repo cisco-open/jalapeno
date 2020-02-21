@@ -4,7 +4,7 @@ echo "Starting deployment of telemetry services"
 KUBE=microk8s.kubectl
 
 echo "Creating jalapeno-telemetry Namespace"
-${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno-telemetry.json
+${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno-collectors.json
 
 echo "Deploying Pipeline Ingress"
 ${KUBE} create -f ${PWD}/${BASEDIR}/pipeline-ingress/.

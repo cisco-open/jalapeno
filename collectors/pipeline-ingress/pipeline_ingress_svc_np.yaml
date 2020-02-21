@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mdt-pipeline-ingress-np
-  namespace: jalapeno-telemetry
+  namespace: jalapeno-collectors
 spec:
   type: NodePort
   ports:

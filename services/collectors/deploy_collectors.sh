@@ -1,7 +1,9 @@
 #!/bin/bash
 BASEDIR=$(dirname $0)
-oc apply -f ${PWD}/${BASEDIR}/topology/.
-oc apply -f ${PWD}/${BASEDIR}/epe-edges/.
-oc apply -f ${PWD}/${BASEDIR}/epe-paths/.
-oc apply -f ${PWD}/${BASEDIR}/external-links-performance/.
-oc apply -f ${PWD}/${BASEDIR}/internal-links-performance/.
+KUBE=microk8s.kubectl
+
+${KUBE} create -f ${PWD}/${BASEDIR}/topology/topology_dp.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/epe-edges/epe_edges_collector_dp.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/epe-paths/epe_paths_collector_dp.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/external-links-performance/external_links_performance_collector_dp.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/internal-links-performance/internal_links_performance_collector_dp.yaml
