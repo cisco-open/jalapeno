@@ -5,9 +5,6 @@ echo "Shutting down Jalapeno"
 ${KUBE} delete namespace jalapeno
 ${KUBE} delete namespace jalapeno-collectors
 
-echo "Please wait"
-sleep 60
-
 echo "Deleting Persistent Volumes"
 ${KUBE} delete pv arangodb
 ${KUBE} delete pv arangodb-apps
