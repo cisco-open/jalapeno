@@ -13,6 +13,10 @@
 sh infra/deploy_infrastructure.sh
 sleep 20
 
+### Deploying Collectors
+sh collectors/deploy_collectors.sh
+sleep 20
+
 ### Deploying Services (vCollectors)
 sh services/collectors/deploy_collectors.sh
 sleep 20
