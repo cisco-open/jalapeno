@@ -3,7 +3,7 @@ KUBE=microk8s.kubectl
 
 echo "Shutting down Jalapeno"
 ${KUBE} delete namespace jalapeno
-${KUBE} delete namespace jalapeno-namespace
+${KUBE} delete namespace jalapeno-collectors
 
 echo "Please wait"
 sleep 60
