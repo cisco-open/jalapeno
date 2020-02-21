@@ -1,15 +1,16 @@
 #!/bin/bash
 BASEDIR=$(dirname $0)
 echo "Starting deployment of telemetry services"
+KUBE=microk8s.kubectl
 
 echo "Creating jalapeno-telemetry Namespace"
-kubectl create -f ${PWD}/${BASEDIR}/namespace-jalapeno-telemetry.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno-telemetry.json
 
 echo "Deploying Pipeline Ingress"
-kubectl create -f ${PWD}/${BASEDIR}/pipeline-ingress/.
+${KUBE} create -f ${PWD}/${BASEDIR}/pipeline-ingress/.
 
 echo "Deploying Openbmpd Collector"
-kubectl create -f ${PWD}/${BASEDIR}/openbmbd/.
+${KUBE} create -f ${PWD}/${BASEDIR}/openbmpd/.
 
 echo "Finished deploying telemetry services"
 echo "Next configure routers!"

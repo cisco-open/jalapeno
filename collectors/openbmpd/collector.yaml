@@ -34,11 +34,18 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: openbmpd
-        image: openbmpd/collector:latest
+        image: openbmp/collector:latest
         ports:
         - containerPort: 5000
           protocol: TCP
         env:
         - name: KAFKA_FQDN
-          value: "127.0.0.1:30092"
+          value: "broker.jalapeno.svc.cluster.local:9092"
         resources: {}
+        volumeMounts:
+            - name: configmap
+              mountPath: /config
+      volumes:
+      - name: configmap
+        configMap:
+          name: openbmpd-config
