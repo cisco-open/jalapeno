@@ -4,7 +4,7 @@ MicroK8s is a kuberenetes single node cluster. It is great for development and i
 
 ## Getting Started on Ubuntu
 
-We will leverge this guide: https://tutorials.ubuntu.com/tutorial/install-a-local-kubernetes-with-microk8s#0
+We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-local-kubernetes-with-microk8s#0](https://tutorials.ubuntu.com/tutorial/install-a-local-kubernetes-with-microk8s#0)
 
 1. Ensure that `snap` is installed using `snap version` . If snap is not installed `sudo apt install snapd`.
 
@@ -19,11 +19,11 @@ We will leverge this guide: https://tutorials.ubuntu.com/tutorial/install-a-loca
 
 4. If you are in a Cisco Lab w/ Proxies, configure the proxies by adding `HTTPS_PROXY=http://proxy.esl.cisco.com:8080` to `/var/snap/microk8s/current/args/containerd-env`.
 
-5. Enable dashboard helm and dns: `microk8s.enable dashboard dns ` 
+5. Enable dashboard helm and dns: `microk8s.enable dashboard dns`
 
 6. Check if services are up: `microk8s.kubectl get all --all-namespaces`. The output should look like below. Take note of the columns `READY` and `STATUS`.
 
-   ```
+   ```shell
    kkumara3@ie-dev1:~$ microk8s.kubectl get all --all-namespaces
    NAMESPACE     NAME                                                  READY   STATUS    RESTARTS   AGE
    kube-system   pod/coredns-9b8997588-qxxpf                           1/1     Running   0          2d4h
@@ -31,7 +31,7 @@ We will leverge this guide: https://tutorials.ubuntu.com/tutorial/install-a-loca
    kube-system   pod/heapster-v1.5.2-5c58f64f8b-c8h4x                  4/4     Running   0          2d4h
    kube-system   pod/kubernetes-dashboard-5c848cc544-xrtgw             1/1     Running   0          2d4h
    kube-system   pod/monitoring-influxdb-grafana-v4-6d599df6bf-2c5g5   2/2     Running   0          2d4h
-   
+
    NAMESPACE     NAME                                TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                  AGE
    default       service/kubernetes                  ClusterIP   10.152.183.1     <none>        443/TCP                  3d3h
    kube-system   service/dashboard-metrics-scraper   ClusterIP   10.152.183.131   <none>        8000/TCP                 2d4h
@@ -40,14 +40,14 @@ We will leverge this guide: https://tutorials.ubuntu.com/tutorial/install-a-loca
    kube-system   service/kubernetes-dashboard        ClusterIP   10.152.183.242   <none>        443/TCP                  2d4h
    kube-system   service/monitoring-grafana          ClusterIP   10.152.183.133   <none>        80/TCP                   2d4h
    kube-system   service/monitoring-influxdb         ClusterIP   10.152.183.87    <none>        8083/TCP,8086/TCP        2d4h
-   
+
    NAMESPACE     NAME                                             READY   UP-TO-DATE   AVAILABLE   AGE
    kube-system   deployment.apps/coredns                          1/1     1            1           2d4h
    kube-system   deployment.apps/dashboard-metrics-scraper        1/1     1            1           2d4h
    kube-system   deployment.apps/heapster-v1.5.2                  1/1     1            1           2d4h
    kube-system   deployment.apps/kubernetes-dashboard             1/1     1            1           2d4h
    kube-system   deployment.apps/monitoring-influxdb-grafana-v4   1/1     1            1           2d4h
-   
+
    NAMESPACE     NAME                                                        DESIRED   CURRENT   READY   AGE
    kube-system   replicaset.apps/coredns-9b8997588                           1         1         1       2d4h
    kube-system   replicaset.apps/dashboard-metrics-scraper-687667bb6c        1         1         1       2d4h
@@ -60,7 +60,7 @@ We will leverge this guide: https://tutorials.ubuntu.com/tutorial/install-a-loca
 
    1. `sudo microk8s.kubectl -n kube-system edit deploy kubernetes-dashboard -o yaml`
 
-   2. Add the `-enable-skip-login` flag to deployment's specs 
+   2. Add the `-enable-skip-login` flag to deployment's specs
 
       ```yaml
       spec:
@@ -88,8 +88,6 @@ We will leverge this guide: https://tutorials.ubuntu.com/tutorial/install-a-loca
               - --enable-skip-login
       ```
 
-      
-
 8. Enable Kubernetes proxy in the background to access dashboard from your browser: `microk8s.kubectl proxy --accept-hosts=.* --address=0.0.0.0 &`
 
 9. Access Kubernetes Dashboard: `http://<server-ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/`
@@ -98,18 +96,18 @@ We will leverge this guide: https://tutorials.ubuntu.com/tutorial/install-a-loca
 
 Jalapeno is very easy to deploy in this single cluster environment.
 
-1. Ensure that you have a Docker login set up via the `docker login` command that has access to docker.io/iejalapeno. 
+1. Ensure that you have a Docker login set up via the `docker login` command that has access to docker.io/iejalapeno.
 
    ```bash
    $ cat $HOME/.docker/config.json
    {
-   	"auths": {
-   		"https://index.docker.io/v1/": {
-   			"auth": "c2trdW1hcmF2Zqweqwea2FyNzYxNw=="
-   		}
-   	},
-   	"HttpHeaders": {
-   		"User-Agent": "Docker-Client/19.03.5 (linux)"
+    "auths": {
+      "https://index.docker.io/v1/": {
+        "auth": "c2trdW1hcmF2Zqweqwea2FyNzYxNw=="
+      }
+    },
+    "HttpHeaders": {
+      "User-Agent": "Docker-Client/19.03.5 (linux)"
    }
    ```
 
@@ -119,13 +117,13 @@ Jalapeno is very easy to deploy in this single cluster environment.
    deploy_jalapeno.sh microk8s.kubectl
    ```
 
-2. Check that all services are up using: `microk8s.kubectl get all --all-namespaces`
+3. Check that all services are up using: `microk8s.kubectl get all --all-namespaces`
 
-3. Configure the routers to point towards the cluster. The MDT port is 32400 and the BMP port is 30555.
+4. Configure the routers to point towards the cluster. The MDT port is 32400 and the BMP port is 30555.
 
    1. Example destination group for MDT:
 
-      ```
+      ```shell
        destination-group jalapeno
         address-family ipv4 <server-ip> port 32400
          encoding self-describing-gpb
@@ -136,7 +134,7 @@ Jalapeno is very easy to deploy in this single cluster environment.
 
    2. Example of BMP config:
 
-      ```
+      ```shell
       bmp server 1
        host <server-ip> port 30555
        description jalapeno OpenBMP
@@ -148,19 +146,14 @@ Jalapeno is very easy to deploy in this single cluster environment.
       !
       ```
 
-      
-
-4. Navigate to the dashboard and check invidual services as appropriate.
+5. Navigate to the dashboard and check invidual services as appropriate.
 
 ## Destroying Jalapeno
 
 Jalapeno can also be destroyed using the script.
 
-1. Use the `destroy_jalapeno.sh` script. Will remove both namespaces jalapeno and jalapeno-collectors and all associated services/pods/deployments/etc. and it will remove all the persistent volumes associated with kafka and arangodb. 
+1. Use the `destroy_jalapeno.sh` script. Will remove both namespaces jalapeno and jalapeno-collectors and all associated services/pods/deployments/etc. and it will remove all the persistent volumes associated with kafka and arangodb.
 
    ```shell
    destory_jalapeno.sh microk8s.kubectl
    ```
-
-   
-
