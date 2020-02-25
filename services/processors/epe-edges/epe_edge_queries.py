@@ -115,7 +115,7 @@ def update_epe_edge_query(db, epe_edge_key, source, source_asn, source_sr_node_s
         pass
 	#print("Successfully updated EPEEdge: " + epe_edge_key)
     else:
-	print("Something went wrong while updating EPEEdge")
+        print("Something went wrong while updating EPEEdge")
 
 
 def create_epe_edge_query(db, epe_edge_key, source, source_asn, source_sr_node_sid, source_intf_ip, source_epe_label, hop_intf_ip, hop, hop_asn, destination, destination_asn):
@@ -134,5 +134,4 @@ def create_epe_edge_query(db, epe_edge_key, source, source_asn, source_sr_node_s
         pass
 	#print("Successfully created EPEEdge: " + epe_edge_key)
     else:
-	print("Something went wrong while creating EPEEdge")
-
+        print("Something went wrong while creating EPEEdge")

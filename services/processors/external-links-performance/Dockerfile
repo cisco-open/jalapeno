@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM python:3
 MAINTAINER Zia Syed <ziausyed@cisco.com>
 COPY . /services/external-links-performance-collector
 WORKDIR /services/external-links-performance-collector
