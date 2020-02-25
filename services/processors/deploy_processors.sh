@@ -1,6 +1,10 @@
 #!/bin/bash
 BASEDIR=$(dirname $0)
-KUBE=microk8s.kubectl
+KUBE=$1
+if [ -z "$1" ]
+  then
+    KUBE=kubectl
+fi
 
 ${KUBE} create -f ${PWD}/${BASEDIR}/topology/topology_dp.yaml
 ${KUBE} create -f ${PWD}/${BASEDIR}/epe-edges/epe_edges_collector_dp.yaml

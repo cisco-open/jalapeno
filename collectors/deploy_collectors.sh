@@ -1,7 +1,11 @@
 #!/bin/bash
 BASEDIR=$(dirname $0)
 echo "Starting deployment of telemetry services"
-KUBE=microk8s.kubectl
+KUBE=$1
+if [ -z "$1" ]
+  then
+    KUBE=kubectl
+fi
 
 echo "Creating jalapeno-telemetry Namespace"
 ${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno-collectors.json
