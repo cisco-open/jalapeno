@@ -18,3 +18,5 @@ spec:
       containers:
       - name: epe-paths
         image: iejalapeno/epe-paths:1.0@sha256:3bd8d6fee01b24145b9d2aae06469c92dbb4c57da030f5ddd391219b0b0eb55a
+      imagePullSecrets:
+        - name: regcred  

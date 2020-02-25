@@ -26,3 +26,5 @@ spec:
         ports:
         - containerPort: 80
           protocol: TCP
+      imagePullSecrets:
+        - name: regcred  

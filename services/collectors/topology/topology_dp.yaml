@@ -40,3 +40,5 @@ spec:
           - "7200 7600"
           - --direct-peer-asns
           - "7100"
+    imagePullSecrets:
+      - name: regcred  

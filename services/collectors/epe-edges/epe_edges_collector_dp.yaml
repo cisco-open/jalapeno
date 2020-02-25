@@ -18,3 +18,5 @@ spec:
       containers:
       - name: epe-edges
         image: iejalapeno/epe-edges:2.0@sha256:0142fc4806d2e7e871fe5599ab7dd42463149fc8340dd6e321c0e7338d4902e2
+      imagePullSecrets:
+        - name: regcred  
