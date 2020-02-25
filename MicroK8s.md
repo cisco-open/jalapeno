@@ -98,7 +98,22 @@ We will leverge this guide: https://tutorials.ubuntu.com/tutorial/install-a-loca
 
 Jalapeno is very easy to deploy in this single cluster environment.
 
-1. Use the `deploy_jalapeno.sh` script. This will start the collectors and all jalapeno infra and services on the single node.
+1. Ensure that you have a Docker login set up via the `docker login` command that has access to docker.io/iejalapeno. 
+
+   ```bash
+   $ cat $HOME/.docker/config.json
+   {
+   	"auths": {
+   		"https://index.docker.io/v1/": {
+   			"auth": "c2trdW1hcmF2Zqweqwea2FyNzYxNw=="
+   		}
+   	},
+   	"HttpHeaders": {
+   		"User-Agent": "Docker-Client/19.03.5 (linux)"
+   }
+   ```
+
+2. Use the `deploy_jalapeno.sh` script. This will start the collectors and all jalapeno infra and services on the single node.
 
    ```bash
    deploy_jalapeno.sh microk8s.kubectl
