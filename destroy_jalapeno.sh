@@ -1,5 +1,9 @@
 #!/bin/sh
-KUBE=microk8s.kubectl
+KUBE=$1
+if [ -z "$1" ]
+  then
+    KUBE=kubectl
+fi
 
 echo "Shutting down Jalapeno"
 ${KUBE} delete namespace jalapeno
