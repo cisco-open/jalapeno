@@ -120,7 +120,37 @@ Jalapeno is very easy to deploy in this single cluster environment.
    ```
 
 2. Check that all services are up using: `microk8s.kubectl get all --all-namespaces`
-3. Navigate to the dashboard and check invidual services as appropriate.
+
+3. Configure the routers to point towards the cluster. The MDT port is 32400 and the BMP port is 30555.
+
+   1. Example destination group for MDT:
+
+      ```
+       destination-group jalapeno
+        address-family ipv4 <server-ip> port 32400
+         encoding self-describing-gpb
+         protocol grpc no-tls
+        !
+       !
+      ```
+
+   2. Example of BMP config:
+
+      ```
+      bmp server 1
+       host <server-ip> port 30555
+       description jalapeno OpenBMP
+       update-source MgmtEth0/RP0/CPU0/0
+       flapping-delay 60
+       initial-delay 5
+       stats-reporting-period 60
+       initial-refresh delay 30 spread 2
+      !
+      ```
+
+      
+
+4. Navigate to the dashboard and check invidual services as appropriate.
 
 ## Destroying Jalapeno
 
