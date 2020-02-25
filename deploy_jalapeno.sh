@@ -10,19 +10,16 @@
 #docker pull iejalapeno/portal:0.0.1
 
 ### Deploying Infrastructure
-sh infra/deploy_infrastructure.sh
-sleep 20
+sh infra/deploy_infrastructure.sh $1
 
 ### Deploying Collectors
-sh collectors/deploy_collectors.sh
-sleep 20
+sh collectors/deploy_collectors.sh $1
 
 ### Deploying Services (vCollectors)
-sh services/collectors/deploy_collectors.sh
-sleep 20
+sh services/collectors/deploy_processors.sh $1
 
 ### Deploying API
-sh services/api/deploy_api.sh
+sh services/api/deploy_api.sh $1
 
 ### Deploying Portal
-#sh services/portal/deploy_portal.sh
+#sh services/portal/deploy_portal.sh $1
