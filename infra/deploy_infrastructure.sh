@@ -1,7 +1,11 @@
 #!/bin/bash
 BASEDIR=$(dirname $0)
 
-KUBE=microk8s.kubectl
+KUBE=$1
+if [ -z "$1" ]
+  then
+    KUBE=kubectl
+fi
 
 echo "Creating Jalapeno Namespace"
 ${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno.json
