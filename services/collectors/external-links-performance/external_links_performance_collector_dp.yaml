@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: external-links-performance-collector
-        image: iejalapeno/external-links-performance-collector:2.2@sha256:07da0c9600ec045c26fce560dc6ba9b919b6e9baa41963d61cf5b33a219e700c
+        image: iejalapeno/external-links-performance-collector:0.1@sha256:6e30bfdb6400db82b201972447997a62ec556c8a4e560bc5012654cb3a8ad342
       imagePullSecrets:
         - name: regcred  
