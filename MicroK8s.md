@@ -13,6 +13,8 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
 3. Configure firewall to allow pod to pod communication:
 
    ```bash
+   if running 16.04 you'll first need to install ufw
+   sudo apt install ufw
    sudo ufw allow in on cni0 && sudo ufw allow out on cni0
    sudo ufw default allow routed
    ```
