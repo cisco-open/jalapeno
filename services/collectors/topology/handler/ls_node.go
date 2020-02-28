@@ -11,10 +11,12 @@ import (
 func ls_node(a *ArangoHandler, m *openbmp.Message) {
 	// Collecting necessary fields from message
         router_ip     := m.GetStr("router_id")
-        name          := m.GetStr("name")
+        router_id     := m.GetStr("router_id")
+	name          := m.GetStr("name")
+        asn           := m.GetStr("peer_asn")
         ls_sr         := m.GetStr("ls_sr_capabilities")
 	igp_router_id := m.GetStr("igp_router_id")
- 	bgp_id        := router_ip
+	bgp_id        := router_ip
 
         if ls_sr == "" {
                 fmt.Println("No ls_sr_capabilities value available, skipping this OpenBMP message")
@@ -33,6 +35,7 @@ func ls_node(a *ArangoHandler, m *openbmp.Message) {
 
 	// Creating and upserting ls_node documents  
 	parse_ls_node_router(a, bgp_id, name, router_ip, srgb, sr_node_sid)
+        parse_ls_node(a, bgp_id, name, router_id, asn, srgb, sr_prefix_sid, igp_router_id)
 	parse_ls_node_internal_router(a, bgp_id, name, router_ip, srgb, igp_router_id, sr_node_sid)
 	parse_ls_node_internal_transport_prefix(a, bgp_id, name, router_ip, srgb, sr_prefix_sid)
 }
@@ -53,6 +56,30 @@ func parse_sr_beginning_label(srgb string) int {
         sr_beginning_label_val, _ := strconv.ParseInt(sr_beginning_label, 10, 0)
         return int(sr_beginning_label_val)
 }
+
+// Parses an LS_Node from the current LSNode OpenBMP message
+// Upserts the created LS_Node document into the LS_Node vertex collection
+func parse_ls_node(a *ArangoHandler, bgp_id string, name string, router_id string, asn string, srgb string, sr_prefix_sid string, igp_router_id string) {
+        fmt.Println("Parsing ls_node - document 1: ls_node_document")
+        ls_node_document := &database.LSNode{
+                BGPID:     bgp_id,
+                Name:      name,
+                RouterID:  router_id,
+		ASN:       asn,
+                PrefixSID: sr_prefix_sid,
+                SRGB:      srgb,
+                IGPID:     igp_router_id,
+        }
+        if err := a.db.Upsert(ls_node_document); err != nil {
+                fmt.Println("Encountered an error while upserting the current ls_node message's ls_node document", err)
+        } else {
+                fmt.Printf("Successfully added ls_node document -- LSNode: %q with SRGB: %q, PrefixSID: %q, and name: %q\n", router_id, srgb, sr_prefix_sid, name)
+        }
+}
+
+
+
+
 
 // Parses a Router from the current LSNode OpenBMP message
 // Upserts the created Router document into the Routers collection

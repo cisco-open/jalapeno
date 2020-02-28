@@ -6,8 +6,8 @@ func check_asn_location(asn string) bool {
 	var is_internal_asn bool = false
 	current_asn, _ := strconv.Atoi(asn)
 	if ((current_asn >= 64512) && (current_asn <= 65535)) || ((current_asn >= 4200000000) && (current_asn <= 4294967294)) {
-       		is_internal_asn = true
-   	}
+		is_internal_asn = true
+	}
 	return is_internal_asn
 }
 
