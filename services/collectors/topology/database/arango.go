@@ -86,11 +86,11 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
 	// Create / Connect  collections
 	cols := make(map[string]driver.Collection)
 
-        //cols[EPENodeName], err = ensureVertexCollection(g, EPENodeName)
-        //if err != nil {
-        //        log.WithError(err).Errorf("Failed to connect to collection %q", EPENodeName)
-        //        return ArangoConn{}, err
-        //}
+        cols[EPENodeName], err = ensureVertexCollection(g, EPENodeName)
+        if err != nil {
+                log.WithError(err).Errorf("Failed to connect to collection %q", EPENodeName)
+                return ArangoConn{}, err
+        }
 
         //cols[EPELinkName], err = ensureEdgeCollection(g, EPELinkName, []string{EPENodeName}, []string{ExternalRouterName})
         //if err != nil {
@@ -373,10 +373,10 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 	}
 	switch i.GetType() {
 
-	//case EPENodeName:
-        //        get = &EPENode{
-        //                Key: key,
-        //        }
+	case EPENodeName:
+                get = &EPENode{
+                        Key: key,
+                }
 	//case EPELinkName:
         //        get = &EPELink{
         //                Key: key,
