@@ -92,11 +92,11 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
-        //cols[EPELinkName], err = ensureEdgeCollection(g, EPELinkName, []string{EPENodeName}, []string{ExternalRouterName})
-        //if err != nil {
-        //        log.WithError(err).Errorf("Failed to connect to collection %q", EPELinkName)
-        //        return ArangoConn{}, err
-        //}
+        cols[EPETopologyName], err = ensureEdgeCollection(g, EPETopologyName, []string{EPENodeName}, []string{ExternalPrefixName})
+        if err != nil {
+                log.WithError(err).Errorf("Failed to connect to collection %q", EPETopologyName)
+                return ArangoConn{}, err
+        }
 
         cols[ExternalRouterName], err = ensureVertexCollection(g, ExternalRouterName)
         if err != nil {
@@ -377,10 +377,10 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                 get = &EPENode{
                         Key: key,
                 }
-	//case EPELinkName:
-        //        get = &EPELink{
-        //                Key: key,
-        //        }
+	case EPETopologyName:
+                get = &EPETopology{
+                        Key: key,
+                }
         case ExternalRouterName:
                 get = &ExternalRouter{
                         Key: key,
