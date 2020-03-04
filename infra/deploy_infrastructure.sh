@@ -10,6 +10,9 @@ fi
 echo "Creating Jalapeno Namespace"
 ${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno.json
 
+echo "Creating Jalapeno Service Account"
+${KUBE} create -f ${PWD}/${BASEDIR}/sa.yaml
+
 echo "Setting up secret for docker.io"
 ${KUBE} create secret generic regcred --from-file=.dockerconfigjson=${HOME}/.docker/config.json --type=kubernetes.io/dockerconfigjson --namespace=jalapeno
 
