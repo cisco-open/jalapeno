@@ -95,6 +95,7 @@ func ls_link(a *ArangoHandler, m *openbmp.Message) {
 		} else {	// internal-router to external-router
 
 			parse_ls_link_epe_link(a, local_router_id, local_interface_ip, local_asn, remote_router_id, remote_interface_ip, remote_asn, protocol, epe_sid)
+                        parse_ls_link_epe_topology(a, local_router_id, local_interface_ip, local_asn, remote_router_id, remote_interface_ip, remote_asn, protocol, epe_sid)
 
 			parse_ls_link_external_link_edge(a, src_router_id, src_interface_ip, dst_router_id, dst_interface_ip, protocol, epe_sid)
 			if((src_asn == a.asn) || src_has_internal_asn) {
@@ -172,8 +173,42 @@ adj_sid_tlv string, adj_sid string) {
         }
 }
 
-// Parses an EPE Link Edge from the current LS-Link OpenBMP message
-// Upserts the created EPE Link document into the EPELink edge collection
+// Parses an EPE topology Edge from the current LS-Link OpenBMP message
+// Upserts the created EPE topology document into the EPETopology edge collection
+func parse_ls_link_epe_topology(a *ArangoHandler, local_router_id string, local_interface_ip string, local_asn string, remote_router_id string,
+                                      remote_interface_ip string, remote_asn string, protocol string, epe_label string) {
+        fmt.Println("Parsing ls_link - document: epe_topology_document")
+        fmt.Printf("Parsing current ls_link message's epe_topology document: From EPE Node: %q through Interface: %q and Label: %q " +
+                   "to Peer: %q through Interface: %q\n", local_router_id, local_interface_ip, epe_label, remote_router_id, remote_interface_ip)
+
+        epe_node_key := "EPENode/" + local_router_id
+	//epe_prefix_key := "EPEPrefix/"
+
+        epe_topology_document := &database.EPETopology{
+                EPENodeKey:        epe_node_key,
+                //EPEPrefixKey:      epe_prefix_key,
+                RouterID:          local_router_id,
+                LocalASN:          local_asn,
+                PeerRouterID:      remote_router_id,
+                PeerASN:           remote_asn,
+                LocalInterfaceIP:  local_interface_ip,
+                PeerIP:            remote_interface_ip,
+                Protocol:          protocol,
+                EPESID:             epe_label,
+        }
+        epe_topology_document.SetKey()
+        if err := a.db.Insert(epe_topology_document); err != nil {
+                fmt.Println("Encountered an error while upserting the epe_link document:", err)
+        } else {
+                fmt.Printf("Successfully added current ls_link message's epe_topology document: From EPE Node: %q through Interface: %q and Label: %q " +
+                           "to External Node: %q through Interface: %q\n", local_router_id, local_interface_ip, epe_label, remote_router_id, remote_interface_ip)
+        }
+}
+
+
+
+// Parses an EPE link Edge from the current LS-Link OpenBMP message
+// Upserts the created EPE link document into the EPELink edge collection
 func parse_ls_link_epe_link(a *ArangoHandler, local_router_id string, local_interface_ip string, local_asn string, remote_router_id string,
                                       remote_interface_ip string, remote_asn string, protocol string, epe_label string) {
         fmt.Println("Parsing ls_link - document: epe_link_document")
