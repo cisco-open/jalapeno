@@ -4,6 +4,7 @@ metadata:
   name: zookeeper
   namespace: jalapeno
 spec:
+  type: ClusterIP
   ports:
   - port: 2888
     name: peer
@@ -11,25 +12,24 @@ spec:
     name: leader-election
   - port: 2181
     name: client
-  clusterIP: None
   selector:
     app: zookeeper
     storage: persistent
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: zookeeper-np
-  namespace: jalapeno
-spec:
-  ports:
-  - name: 2181-tcp
-    port: 2181
-    nodePort: 30218
-    targetPort: 2181
-  type: NodePort
-  selector:
-    app: zookeeper
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: zookeeper-np
+#  namespace: jalapeno
+#spec:
+#  ports:
+#  - name: 2181-tcp
+#    port: 2181
+#    nodePort: 30218
+#    targetPort: 2181
+#  type: NodePort
+#  selector:
+#    app: zookeeper
 ---
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget

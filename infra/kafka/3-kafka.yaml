@@ -47,6 +47,7 @@ spec:
         app: kafka
       annotations:
     spec:
+      serviceAccountName: jalapeno
       terminationGracePeriodSeconds: 30
       initContainers:
       - name: init-config
