@@ -15,12 +15,11 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
 4. Configure firewall to allow pod to pod communication (Note: If ufw is not installed use `sudo apt install ufw`):
 
    ```bash
-   if running 16.04 you'll first need to install ufw
    sudo apt install ufw
    sudo ufw allow in on cni0 && sudo ufw allow out on cni0
    sudo ufw default allow routed
    ```
-
+   
 5. If you are in a Cisco Lab w/ Proxies, configure the proxies by adding `HTTPS_PROXY=http://proxy.esl.cisco.com:8080` to `/var/snap/microk8s/current/args/containerd-env`.
 
 6. Enable dashboard helm and dns: `microk8s.enable dashboard dns`
@@ -35,7 +34,7 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
    kube-system   pod/heapster-v1.5.2-5c58f64f8b-c8h4x                  4/4     Running   0          2d4h
    kube-system   pod/kubernetes-dashboard-5c848cc544-xrtgw             1/1     Running   0          2d4h
    kube-system   pod/monitoring-influxdb-grafana-v4-6d599df6bf-2c5g5   2/2     Running   0          2d4h
-   
+
    NAMESPACE     NAME                                TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                  AGE
    default       service/kubernetes                  ClusterIP   10.152.183.1     <none>        443/TCP                  3d3h
    kube-system   service/dashboard-metrics-scraper   ClusterIP   10.152.183.131   <none>        8000/TCP                 2d4h
@@ -44,14 +43,14 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
    kube-system   service/kubernetes-dashboard        ClusterIP   10.152.183.242   <none>        443/TCP                  2d4h
    kube-system   service/monitoring-grafana          ClusterIP   10.152.183.133   <none>        80/TCP                   2d4h
    kube-system   service/monitoring-influxdb         ClusterIP   10.152.183.87    <none>        8083/TCP,8086/TCP        2d4h
-   
+
    NAMESPACE     NAME                                             READY   UP-TO-DATE   AVAILABLE   AGE
    kube-system   deployment.apps/coredns                          1/1     1            1           2d4h
    kube-system   deployment.apps/dashboard-metrics-scraper        1/1     1            1           2d4h
    kube-system   deployment.apps/heapster-v1.5.2                  1/1     1            1           2d4h
    kube-system   deployment.apps/kubernetes-dashboard             1/1     1            1           2d4h
    kube-system   deployment.apps/monitoring-influxdb-grafana-v4   1/1     1            1           2d4h
-   
+
    NAMESPACE     NAME                                                        DESIRED   CURRENT   READY   AGE
    kube-system   replicaset.apps/coredns-9b8997588                           1         1         1       2d4h
    kube-system   replicaset.apps/dashboard-metrics-scraper-687667bb6c        1         1         1       2d4h
