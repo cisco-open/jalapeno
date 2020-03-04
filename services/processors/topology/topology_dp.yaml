@@ -21,7 +21,7 @@ spec:
         args:
           - topology
           - --arango-url
-          - http://arango-np.jalapeno.svc:8529
+          - http://arango-np.jalapeno:8529
           - --arango-user
           - root
           - --arango-password
@@ -33,7 +33,7 @@ spec:
           - --kafka-topics
           - "openbmp.parsed.router,openbmp.parsed.peer,openbmp.parsed.unicast_prefix,openbmp.parsed.ls_link,openbmp.parsed.ls_node,openbmp.parsed.ls_prefix,openbmp.parsed.l3vpn,openbmp.parsed.evpn"
           - --kafka-brokers
-          - broker.jalapeno.svc:9092
+          - broker.jalapeno:9092
           - --asn
           - "100000"
           - --transit-provider-asns
