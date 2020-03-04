@@ -92,11 +92,17 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
-        cols[EPETopologyName], err = ensureEdgeCollection(g, EPETopologyName, []string{EPENodeName}, []string{ExternalPrefixName})
+        cols[EPELinkName], err = ensureEdgeCollection(g, EPELinkName, []string{EPENodeName}, []string{ExternalRouterName})
         if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", EPETopologyName)
+                log.WithError(err).Errorf("Failed to connect to collection %q", EPELinkName)
                 return ArangoConn{}, err
         }
+
+	//cols[EPETopologyName], err = ensureEdgeCollection(g, EPETopologyName, []string{EPENodeName}, []string{ExternalPrefixName})
+        //if err != nil {
+        //        log.WithError(err).Errorf("Failed to connect to collection %q", EPETopologyName)
+        //        return ArangoConn{}, err
+        //}
 
         cols[ExternalRouterName], err = ensureVertexCollection(g, ExternalRouterName)
         if err != nil {
@@ -104,7 +110,13 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
-        cols[ExternalPrefixName], err = ensureVertexCollection(g, ExternalPrefixName)
+        cols[EPEPrefixName], err = ensureVertexCollection(g, EPEPrefixName)
+        if err != nil {
+                log.WithError(err).Errorf("Failed to connect to collection %q", EPEPrefixName)
+                return ArangoConn{}, err
+        }
+
+	cols[ExternalPrefixName], err = ensureVertexCollection(g, ExternalPrefixName)
         if err != nil {
                 log.WithError(err).Errorf("Failed to connect to collection %q", ExternalPrefixName)
                 return ArangoConn{}, err
@@ -377,15 +389,26 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                 get = &EPENode{
                         Key: key,
                 }
-	case EPETopologyName:
-                get = &EPETopology{
+        case EPELinkName:
+                get = &EPELink{
                         Key: key,
-                }
+                } 
+
+	//case EPETopologyName:
+        //        get = &EPETopology{
+        //                Key: key,
+        //        }
         case ExternalRouterName:
                 get = &ExternalRouter{
                         Key: key,
                 }
-        case ExternalPrefixName:
+
+        case EPEPrefixName:
+                get = &EPEPrefix{
+                        Key: key,
+                }
+
+	case ExternalPrefixName:
                 get = &ExternalPrefix{
                         Key: key,
                 }
