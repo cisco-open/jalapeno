@@ -40,7 +40,7 @@ spec:
           protocol: TCP
         env:
         - name: KAFKA_FQDN
-          value: "broker.jalapeno.svc.cluster.local:9092"
+          value: "broker.jalapeno:9092"
         resources: {}
         volumeMounts:
             - name: configmap

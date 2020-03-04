@@ -125,7 +125,7 @@ data:
         #    For IPv6 use "[host or ip]:port".  Make sure to use double quotes for IPv6
         #    Can specify the protocol using <proto>://<host>[:port]
         brokers:
-        - broker.jalapeno.svc.cluster.local:9092
+        - broker.jalapeno:9092
         topics:
 
             # Global/System variables
