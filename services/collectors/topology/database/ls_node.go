@@ -8,7 +8,7 @@ type LSNode struct {
 	Key          string `json:"_key,omitempty"`
 	Name         string `json:"Name,omitempty"`
 	RouterID     string `json:"RouterID,omitempty"`
-	BGPID        string `json:"BGPID,omitempty"`
+	//BGPID        string `json:"BGPID,omitempty"`
 	ASN          string `json:"ASN,omitempty"`
         SRGB         string `json:"SRGB,omitempty"`
         SIDIndex     string `json:"SIDIndex,omitempty"`

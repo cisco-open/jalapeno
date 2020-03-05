@@ -10,7 +10,7 @@ type ExternalPrefix struct {
         Length      int    `json:"Length,omitempty"`
 	Name        string `json:"Name,omitempty"`
 	ASN         string `json:"ASN,omitempty"`
-        ASPathCount string `json:"ASPathCount,omitempty"`
+	ASPathCount string `json:"ASPathCount,omitempty"`
 }
 
 func (r ExternalPrefix) GetKey() (string, error) {
