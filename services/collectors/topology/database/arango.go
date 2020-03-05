@@ -92,9 +92,9 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
-        cols[EPEPrefixName], err = ensureVertexCollection(g, EPEPrefixName)
+        cols[EPEExternalPrefixName], err = ensureVertexCollection(g, EPEExternalPrefixName)
         if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", EPEPrefixName)
+                log.WithError(err).Errorf("Failed to connect to collection %q", EPEExternalPrefixName)
                 return ArangoConn{}, err
         }
 
@@ -378,8 +378,8 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                         Key: key,
                 }
 
-        case EPEPrefixName:
-                get = &EPEPrefix{
+        case EPEExternalPrefixName:
+                get = &EPEExternalPrefix{
                         Key: key,
                 }
 
