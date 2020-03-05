@@ -14,6 +14,8 @@ type EPEPrefix struct {
         PeerASN   string `json:"PeerASN,omitempty"`
 	RemoteASN   string `json:"RemoteASN,omitempty"`
 	ASPath      string `json:"ASPath,omitempty"`
+        Protocol    string `json:"Protocol,omitempty"`
+        EPESID      string `json:"EPESID,omitempty"`
 }
 
 func (r EPEPrefix) GetKey() (string, error) {

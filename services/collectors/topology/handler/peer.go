@@ -14,6 +14,7 @@ func peer(a *ArangoHandler, m *openbmp.Message) {
         }
 
         // Collecting necessary fields from message
+        router_id        := m.GetStr("router_ip")
         local_bgp_id     := m.GetStr("local_bgp_id")
 	local_router_ip  := local_bgp_id
         local_asn        := m.GetStr("local_asn")
@@ -22,17 +23,15 @@ func peer(a *ArangoHandler, m *openbmp.Message) {
 	remote_router_ip := remote_bgp_id
         remote_asn       := m.GetStr("remote_asn")
         remote_intf_ip   := m.GetStr("remote_ip")
-	
+        peer_ip          := m.GetStr("remote_ip")
+
 	// Creating and upserting peer documents
         parse_peer_router(a, local_bgp_id, local_router_ip, local_asn)
         parse_peer_router(a, remote_bgp_id, remote_router_ip, remote_asn)
         parse_peer_internal_router(a, local_bgp_id, local_router_ip, local_asn)
 	parse_peer_internal_router(a, remote_bgp_id, remote_router_ip, remote_asn)
 
-        //parse_peer_epe_node(a, local_bgp_id, local_router_ip, local_asn, remote_asn)
-        //parse_peer_epe_node(a, remote_bgp_id, remote_router_ip, remote_asn, local_asn)
-
-	//parse_peer_epe_topology(a, local_bgp_id, local_router_ip, local_intf_ip, remote_router_ip, remote_intf_ip, local_asn, remote_asn)
+        parse_peer_epe_node(a, router_id, peer_ip, local_asn, remote_asn)
 
         parse_peer_border_router(a, local_bgp_id, local_router_ip, local_asn, remote_asn)
 	parse_peer_border_router(a, remote_bgp_id, remote_router_ip, remote_asn, local_asn)
@@ -40,72 +39,44 @@ func peer(a *ArangoHandler, m *openbmp.Message) {
         parse_peer_external_router(a, local_bgp_id, local_router_ip, local_asn)
 	parse_peer_external_router(a, remote_bgp_id, remote_router_ip, remote_asn)
         parse_peer_internal_transport_prefix(a, local_bgp_id, local_router_ip, local_asn)
-       	parse_peer_internal_transport_prefix(a, remote_bgp_id, remote_router_ip, remote_asn)
+	parse_peer_internal_transport_prefix(a, remote_bgp_id, remote_router_ip, remote_asn)
 
         parse_peer_router_interface(a, local_bgp_id, local_router_ip, local_intf_ip, local_asn, remote_asn)
         parse_peer_router_interface(a, remote_bgp_id, remote_router_ip, remote_intf_ip, remote_asn, local_asn)
 }
 
 // Parses an EPE Node from the current Peer OpenBMP message
-// Upserts the created document into the EPENode collection
-func parse_peer_epe_node(a *ArangoHandler, bgp_id string, router_ip string, src_asn string, dst_asn string) {
+// Updates entries in EPENode collection
+func parse_peer_epe_node(a *ArangoHandler, router_id string, peer_ip string, local_asn string, remote_asn string) {
         fmt.Println("Parsing peer - document: epe_node_document")
-        src_has_internal_asn :=  check_asn_location(src_asn)
-        dst_has_internal_asn :=  check_asn_location(dst_asn)
+
+	var peer_list [] string
+        peer_list = append(peer_list, peer_ip)
+
+        remote_has_internal_asn :=  check_asn_location(remote_asn)
 
         // case 1: neighboring peer is internal -- this is not a border router
-        // case 2: neighboring peer is external, but local node is also external -- this is not a border router
-        if dst_asn == a.asn || dst_has_internal_asn == true {
-                fmt.Println("Current peer message's neighbor ASN is a local ASN: this is not a Border Router -- skipping")
+        if remote_asn == a.asn || remote_has_internal_asn == true {
+                fmt.Println("Current peer message's neighbor ASN is a local ASN: this is not an EPENode -- skipping")
                 return
-        } else if ((dst_asn != a.asn) && (dst_has_internal_asn == false)) && ((src_asn != a.asn) || (src_has_internal_asn == false)) {
-                fmt.Println("Current peer message has external ASN for both local and neighbor: this is not a Border Router -- skipping")
         }
 
+        epe_node_exists := a.db.CheckExistingEPENode(router_id)
+        if (epe_node_exists) {
+            a.db.UpdateExistingPeerIP(router_id, peer_ip)
+        } else {
+
         epe_node_document := &database.EPENode{
-                //BGPID:    bgp_id,
-                RouterID: router_ip,
-                ASN:      src_asn,
-        }
+                RouterID:  router_id,
+		PeerIP:    peer_list,
+	}
         if err := a.db.Upsert(epe_node_document); err != nil {
                 fmt.Println("Encountered an error while upserting the epe node document", err)
         } else {
-                fmt.Printf("Successfully added epe node document: %q with ASN: %q\n", router_ip, src_asn)
+                fmt.Printf("Successfully added epe node document: %q with peer: %q\n", router_id, peer_ip)
         }
+    }
 }
-
-// Parses EPE Topology data from the current Peer OpenBMP message
-// Updates documents in the EPETopology collection
-//func parse_peer_epe_topology(a *ArangoHandler, bgp_id string, router_ip string, local_intf_ip string, remote_router_ip string, remote_intf_ip string, src_asn string, dst_asn string) {
-//        fmt.Println("Parsing peer - document: epe_topology_document")
-//        src_has_internal_asn :=  check_asn_location(src_asn)
-//        dst_has_internal_asn :=  check_asn_location(dst_asn)
-
-        // case 1: neighboring peer is internal -- this is not an epe node
-        // case 2: neighboring peer is external, but local node is also external -- this is not an epe node
-//        if dst_asn == a.asn || dst_has_internal_asn == true {
-//                fmt.Println("Current peer message's neighbor ASN is a local ASN: this is not an epe node -- skipping")
-//                return
-//        } else if ((dst_asn != a.asn) && (dst_has_internal_asn == false)) && ((src_asn != a.asn) || (src_has_internal_asn == false)) {
-//                fmt.Println("Current peer message has external ASN for both local and neighbor: this is not an epe node -- skipping")
-//        }
-
-//        epe_topology_document := &database.EPETopology{
-                //BGPID:    bgp_id,
-//                RouterID:         router_ip,
-//              ASN:              src_asn,
-//		PeerIP:           remote_router_ip,
-//		LocalInterfaceIP: local_intf_ip,
-//		RemoteInterfaceIP: remote_intf_ip,
-//		PeerASN:          dst_asn,
-//        }
-//        if err := a.db.Upsert(epe_topology_document); err != nil {
-//                fmt.Println("Encountered an error while upserting the epe topology document", err)
-//        } else {
-//                fmt.Printf("Successfully added epe topology document: %q with ASN: %q\n", router_ip, src_asn)
-//        }
-//}
-
 
 // Parses a Router from the current Peer OpenBMP message
 // Upserts the created Router document into the Routers collection

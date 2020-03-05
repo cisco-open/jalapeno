@@ -8,12 +8,12 @@ type EPENode struct {
 	Key          string `json:"_key,omitempty"`
 	Name         string `json:"Name,omitempty"`
 	RouterID     string `json:"RouterID,omitempty"`
-	//BGPID        string `json:"BGPID,omitempty"`
 	ASN          string `json:"ASN,omitempty"`
         SRGB         string `json:"SRGB,omitempty"`
         SIDIndex     string `json:"SIDIndex,omitempty"`
         PrefixSID    string `json:"PrefixSID,omitempty"`
 	IGPID        string `json:"IGPID,omitempty"`
+	PeerIP       []string `json:"PeerIP,omitempty"`
 }
 
 func (r EPENode) GetKey() (string, error) {
