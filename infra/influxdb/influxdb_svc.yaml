@@ -6,6 +6,6 @@ metadata:
 spec:
   ports:
   - port: 8086
-  clusterIP: None
+#  clusterIP: None
   selector:
     app: influxdb
