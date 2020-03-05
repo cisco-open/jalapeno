@@ -17,14 +17,15 @@ func unicast_prefix(a *ArangoHandler, m *openbmp.Message) {
         asns              := strings.Split(as_path, " ")
         prefix_asn        := asns[len(asns)-1]
 	prefix_length, ok := m.GetInt("prefix_len")
-        sr_label          := m.GetStr("labels")
-        peer_ip           := m.GetStr("peer_ip")
-	peer_asn          := m.GetStr("peer_asn")
-	//nexthop           := m.GetStr("nexthop")
-
 	if !ok {
 		prefix_length = 0
 	}
+        sr_label          := m.GetStr("labels")
+        peer_ip           := m.GetStr("peer_ip")
+	peer_asn          := m.GetStr("peer_asn")
+        origin_as         := m.GetStr("origin_as")
+	//nexthop           := m.GetStr("nexthop")
+
 
         // Creating and upserting unicast_prefix documents
         parse_unicast_prefix_prefix(a, prefix_ip, prefix_length, prefix_asn)
@@ -38,40 +39,38 @@ func unicast_prefix(a *ArangoHandler, m *openbmp.Message) {
 		} else {
 			parse_unicast_prefix_external_prefix(a, prefix, prefix_length, prefix_asn)
 
-			//parse_unicast_prefix_epe_topology(a, router_id, peer_ip, nexthop, prefix_asn, as_path, prefix)
-
 			peer_has_internal_asn := check_asn_location(prefix_asn)
 			//peer_has_internal_asn := check_asn_location(peer_ip)
 			if (peer_asn != a.asn) && (peer_has_internal_asn == false) {
 				parse_unicast_prefix_external_prefix_edge(a, peer_ip, peer_asn, prefix_ip, prefix_length, prefix_asn)
-				parse_unicast_prefix_epe_prefix(a, prefix, prefix_length, router_id, peer_ip, peer_asn, prefix_asn, as_path)
+				parse_unicast_prefix_epe_external_prefix(a, prefix, prefix_length, router_id, peer_ip, peer_asn, as_path, origin_as)
 			}
 		}
 	}
 }
 
-// Parses an EPE Prefix from the current Prefix OpenBMP message
-// Upserts the created EPE Prefix document into the Prefixes collection
-func parse_unicast_prefix_epe_prefix(a *ArangoHandler, prefix string, prefix_length int, router_id string, peer_ip string, peer_asn string, prefix_asn string, as_path string) {
-        fmt.Println("Parsing unicast_prefix - document: epe_prefix_document")
-        epe_prefix_document :=&database.EPEPrefix{
+// Parses an EPE External Prefix from the current Prefix OpenBMP message
+// Upserts the created EPE External Prefix document into the EPEExternalPrefix collection
+func parse_unicast_prefix_epe_external_prefix(a *ArangoHandler, prefix string, prefix_length int, router_id string, peer_ip string, peer_asn string, as_path string, origin_as string) {
+        fmt.Println("Parsing unicast_prefix - document: epe_external_prefix_document")
+        epe_external_prefix_document :=&database.EPEExternalPrefix{
                 Prefix:       prefix,
                 Length:       prefix_length,
                 RouterID:     router_id,
                 PeerIP:       peer_ip,
 		PeerASN:      peer_asn,
-                RemoteASN:    prefix_asn,
                 ASPath:       as_path,
+                OriginAS:     origin_as,
 	}
-        epe_prefix_document.SetKey()
+        epe_external_prefix_document.SetKey()
         //if strings.Contains(epe_prefix_document.PeerASN, "100000") {
         //        fmt.Println("This is an internal BGP advertisement of an external prefix -- skipping unicast_prefix parsing for this OpenBMP message")
         //        return
         //}
-        if err := a.db.Upsert(epe_prefix_document); err != nil {
-                fmt.Println("Encountered an error while upserting the current unicast_prefix epe prefix document:", err)
+        if err := a.db.Upsert(epe_external_prefix_document); err != nil {
+                fmt.Println("Encountered an error while upserting the current unicast_prefix epe external prefix document:", err)
         } else {
-                fmt.Printf("Successfully inserted current unicast_prefix message's epe prefix document: %s/%d with ASN: %v\n", prefix, prefix_length, prefix_asn)
+                fmt.Printf("Successfully inserted current unicast_prefix message's epe external prefix document: %s/%d with ASN: %v\n", prefix, prefix_length, origin_as)
         }
 }
 

@@ -2,30 +2,27 @@ package database
 
 import "fmt"
 
-const EPEPrefixName = "EPEPrefix"
+const EPEExternalPrefixName = "EPEExternalPrefix"
 
-type EPEPrefix struct {
+type EPEExternalPrefix struct {
 	Key         string `json:"_key,omitempty"`
         Prefix      string `json:"Prefix,omitempty"`
         Length      int    `json:"Length,omitempty"`
-	Name        string `json:"Name,omitempty"`
         RouterID    string `json:"RouterID,omitempty"`
         PeerIP      string `json:"PeerIP,omitempty"`
-        PeerASN   string `json:"PeerASN,omitempty"`
-	RemoteASN   string `json:"RemoteASN,omitempty"`
+        PeerASN     string `json:"PeerASN,omitempty"`
+	OriginAS    string `json:"OriginAS,omitempty"`
 	ASPath      string `json:"ASPath,omitempty"`
-        Protocol    string `json:"Protocol,omitempty"`
-        EPESID      string `json:"EPESID,omitempty"`
 }
 
-func (r EPEPrefix) GetKey() (string, error) {
+func (r EPEExternalPrefix) GetKey() (string, error) {
 	if r.Key == "" {
 		return r.makeKey()
 	}
 	return r.Key, nil
 }
 
-func (r *EPEPrefix) SetKey() error {
+func (r *EPEExternalPrefix) SetKey() error {
 	k, err := r.makeKey()
 	if err != nil {
 		return err
@@ -34,7 +31,7 @@ func (r *EPEPrefix) SetKey() error {
 	return nil
 }
 
-func (r *EPEPrefix) makeKey() (string, error) {
+func (r *EPEExternalPrefix) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if r.Prefix != "" {
@@ -44,6 +41,6 @@ func (r *EPEPrefix) makeKey() (string, error) {
 	return ret, err
 }
 
-func (r EPEPrefix) GetType() string {
-	return EPEPrefixName
+func (r EPEExternalPrefix) GetType() string {
+	return EPEExternalPrefixName
 }
