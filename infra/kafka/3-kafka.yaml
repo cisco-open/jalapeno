@@ -8,7 +8,6 @@ spec:
     ports:
       - port: 9092
     # [podname].broker.kafka
-    clusterIP: None
     selector:
       app: kafka
 ---

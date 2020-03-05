@@ -7,6 +7,5 @@ spec:
   ports:
   - port: 3000
     name: grafana
-  clusterIP: None
   selector:
     app: grafana
