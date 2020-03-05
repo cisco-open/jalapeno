@@ -38,11 +38,11 @@ spec:
         - ./bin/kafka-server-start.sh
         - /etc/kafka/server.properties
         - --override
-        - listeners=PLAINTEXT://kafka-0.broker.jalapeno.svc.cluster.local:9092
+        - listeners=PLAINTEXT://kafka-0.broker.jalapeno:9092
         - --override
         - advertised.listeners=PLAINTEXT://{{ kafka_endpoint }}
         - --override
-        -   zookeeper.connect=zookeeper.jalapeno.svc.cluster.local:2181
+        -   zookeeper.connect=zookeeper.jalapeno:2181
         - --override
         -   log.retention.hours=1
         - --override
