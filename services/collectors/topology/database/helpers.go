@@ -396,14 +396,14 @@ func (a *ArangoConn) CheckExistingEPENode(router_id string) bool {
 func (a *ArangoConn) GetExistingPeerIP(router_id string) []string {
     var r string
     var tmp []string
-    q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r.peer", router_id)
+    q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r.PeerIP", router_id)
     results, _ := a.Query(q, nil, r)
     fmt.Println("Beginning debugging")
     fmt.Println(results)
     fmt.Printf("%T\n", results)
     if len(results) > 0 {
         fmt.Println(results[0])
-        //fmt.Println(results[0].(string))
+        fmt.Println(results[0].(string))
 
     } else {
         fmt.Println(results)
@@ -413,8 +413,8 @@ func (a *ArangoConn) GetExistingPeerIP(router_id string) []string {
 
 func (a *ArangoConn) UpdateExistingPeerIP(router_id string, peer_ip string) {
     var r string
-    q := fmt.Sprintf("For e in EPENode Filter e._key == %q LET p = e.peer UPDATE { _key: e._key, PeerIP: APPEND(p, %q, True) } IN EPENode RETURN { before: OLD, after: NEW }", router_id, peer_ip)
-    //q := fmt.Sprintf("LET doc = DOCUMENT(%q) UPDATE doc WITH { RD: PUSH(doc.RD, %q)} IN L3VPN_Routers", router_ip, vpn_rd)
+    q := fmt.Sprintf("For e in EPENode Filter e._key == %q LET p = e.PeerIP UPDATE { _key: e._key, PeerIP: APPEND(p, %q, True) } IN EPENode RETURN { before: OLD, after: NEW }", router_id, peer_ip)
+    //q := fmt.Sprintf("LET doc = DOCUMENT(%q) UPDATE doc WITH { RD: PUSH(doc.RD, %q)} IN EPENode", router_id, peer_ip)
     results, _ := a.Query(q, nil, r)
     if len(results) > 0 {
         fmt.Printf("Successfully updated EPENode peer list with %q for Router %q\n", peer_ip, router_id)

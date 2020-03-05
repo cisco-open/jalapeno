@@ -63,6 +63,8 @@ func parse_peer_epe_node(a *ArangoHandler, router_id string, peer_ip string, loc
 
         epe_node_exists := a.db.CheckExistingEPENode(router_id)
         if (epe_node_exists) {
+            tempVariable := a.db.GetExistingPeerIP(peer_ip)
+            print(tempVariable)
             a.db.UpdateExistingPeerIP(router_id, peer_ip)
         } else {
 
