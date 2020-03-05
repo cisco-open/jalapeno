@@ -75,34 +75,6 @@ func parse_unicast_prefix_epe_prefix(a *ArangoHandler, prefix string, prefix_len
         }
 }
 
-// Parses EPE Topology documents from unicast prefix OpenBMP message
-// Upserts the document into the EPETopology edge collection
-//func parse_unicast_prefix_epe_topology(a *ArangoHandler, router_id string, peer_ip string, nexthop string, prefix_asn string, as_path string, prefix string) {
-//        fmt.Println("Parsing unicast_prefix - document: epe_topology_document")
-//        fmt.Printf("Parsing current unicast_prefix message's epe_topology document: From EPE Node: %q through Interface: %q and Label: %q " +
-//                   "to External Prefix: %q through Interface: %q\n", router_id, prefix)
-
-//	epe_node_key := "EPENode/" + router_id
-//        ext_prefix_key := "ExternalPrefix/" + prefix
-
-//        epe_topology_document := &database.EPETopology{
-//                EPENodeKey:    epe_node_key,
-//                ExtPrefixKey:  ext_prefix_key,
-//                RouterID:      router_id,
-//                PeerIP:        peer_ip,
-//		NextHop:       nexthop,
-//		PrefixASN:     prefix_asn,
-//                ASPath:        as_path,
-//        }
-//        epe_topology_document.SetKey()
-//        if err := a.db.Insert(epe_topology_document); err != nil {
-//                fmt.Println("Encountered an error while upserting the epe_topology document:", err)
-//        } else {
-//                fmt.Printf("Successfully added epe_topology document: From EPE Node: %q through Interface: %q and Label: %q " +
-//                           "to External Node: %q through Interface: %q\n", router_id, prefix)
-//        }
-//}
-
 // Parses a Prefix from the current Prefix OpenBMP message
 // Upserts the created Prefix document into the Prefixes collection
 func parse_unicast_prefix_prefix(a *ArangoHandler, prefix_ip string, prefix_length int, prefix_asn string) {
