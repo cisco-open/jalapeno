@@ -110,15 +110,15 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
-        cols[L3VPN_RouterName], err = ensureVertexCollection(g, L3VPN_RouterName)
+        cols[L3VPNNodeName], err = ensureVertexCollection(g, L3VPNNodeName)
         if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPN_RouterName)
+                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPNNodeName)
                 return ArangoConn{}, err
         }
 
-        cols[L3VPN_PrefixName], err = ensureVertexCollection(g, L3VPN_PrefixName)
+        cols[L3VPNPrefixName], err = ensureVertexCollection(g, L3VPNPrefixName)
         if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPN_PrefixName)
+                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPNPrefixName)
                 return ArangoConn{}, err
         }
 
@@ -203,6 +203,12 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
 	cols[ExternalPrefixEdgeName], err = ensureEdgeCollection(g, ExternalPrefixEdgeName, []string{RouterName}, []string{PrefixName})
         if err != nil {
                 log.WithError(err).Errorf("Failed to connect to collection %q", ExternalPrefixEdgeName)
+                return ArangoConn{}, err
+        }
+
+        cols[L3VPN_TopologyName], err = ensureEdgeCollection(g, L3VPN_TopologyName, []string{L3VPNNodeName}, []string{L3VPNPrefixName})
+        if err != nil {
+                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPN_TopologyName)
                 return ArangoConn{}, err
         }
 
@@ -392,12 +398,16 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                 get = &ExternalPrefix{
                         Key: key,
                 }
-	case L3VPN_RouterName:
-                get = &L3VPN_Router{
+	case L3VPNNodeName:
+                get = &L3VPNNode{
                         Key: key,
                 }
-        case L3VPN_PrefixName:
-                get = &L3VPN_Prefix{
+        case L3VPNPrefixName:
+                get = &L3VPNPrefix{
+                        Key: key,
+                }
+        case L3VPN_TopologyName:
+                get = &L3VPN_Topology{
                         Key: key,
                 }
         case LSNodeName:
