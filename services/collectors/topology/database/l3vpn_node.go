@@ -2,26 +2,25 @@ package database
 
 import "fmt"
 
-const L3VPN_RouterName = "L3VPN_Routers"
+const L3VPNNodeName = "L3VPNNode"
 
-type L3VPN_Router struct {
+type L3VPNNode struct {
         Key              string `json:"_key,omitempty"`
         RD               []string `json:"RD,omitempty"`
-        RouterIP         string `json:"RouterIP,omitempty"`
+        RouterID         string `json:"RouterID,omitempty"`
         ASN              string `json:"ASN,omitempty"`
-        AdvertisingPeer  string `json:"AdvertisingPeer,omitempty"`
         Prefix_SID       string `json:"Prefix_SID,omitempty"`
         ExtComm          string `json:"ExtComm,omitempty"`
 }
 
-func (r L3VPN_Router) GetKey() (string, error) {
+func (r L3VPNNode) GetKey() (string, error) {
 	if r.Key == "" {
 		return r.makeKey()
 	}
 	return r.Key, nil
 }
 
-func (r *L3VPN_Router) SetKey() error {
+func (r *L3VPNNode) SetKey() error {
 	k, err := r.makeKey()
 	if err != nil {
 		return err
@@ -30,16 +29,16 @@ func (r *L3VPN_Router) SetKey() error {
 	return nil
 }
 
-func (r *L3VPN_Router) makeKey() (string, error) {
+func (r *L3VPNNode) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
-	if (r.RouterIP != "") {
-		ret = fmt.Sprintf("%s", r.RouterIP)
+	if (r.RouterID != "") {
+		ret = fmt.Sprintf("%s", r.RouterID)
 		err = nil
 	}
 	return ret, err
 }
 
-func (r L3VPN_Router) GetType() string {
-	return L3VPN_RouterName
+func (r L3VPNNode) GetType() string {
+	return L3VPNNodeName
 }

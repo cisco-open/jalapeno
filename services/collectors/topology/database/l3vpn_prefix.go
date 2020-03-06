@@ -2,28 +2,27 @@ package database
 
 import "fmt"
 
-const L3VPN_PrefixName = "L3VPN_Prefixes"
+const L3VPNPrefixName = "L3VPNPrefix"
 
-type L3VPN_Prefix struct {
+type L3VPNPrefix struct {
         Key             string `json:"_key,omitempty"`
         RD              string `json:"RD,omitempty"`
         Prefix          string `json:"Prefix,omitempty"`
         Length          int    `json:"Length,omitempty"`
-        RouterIP        string `json:"RouterIP,omitempty"`
+        RouterID        string `json:"RouterID,omitempty"`
         ASN             string `json:"ASN,omitempty"`
-        AdvertisingPeer string `json:"AdvertisingPeer,omitempty"`
-        VPN_Label       string `json:"VPN_Label,omitempty"`
+        VPN_Label       int    `json:"VPN_Label,omitempty"`
         ExtComm         string `json:"ExtComm,omitempty"`
 }
 
-func (p L3VPN_Prefix) GetKey() (string, error) {
+func (p L3VPNPrefix) GetKey() (string, error) {
 	if p.Key == "" {
 		return p.makeKey()
 	}
 	return p.Key, nil
 }
 
-func (p *L3VPN_Prefix) SetKey() error {
+func (p *L3VPNPrefix) SetKey() error {
 	k, err := p.makeKey()
 	if err != nil {
 		return err
@@ -32,16 +31,16 @@ func (p *L3VPN_Prefix) SetKey() error {
 	return nil
 }
 
-func (p *L3VPN_Prefix) makeKey() (string, error) {
+func (p *L3VPNPrefix) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if p.RD != "" && p.Prefix != "" && p.Length != 0 {
-		ret = fmt.Sprintf("%s:%s:%d", p.RD, p.Prefix, p.Length)
+		ret = fmt.Sprintf("%s_%s_%d", p.RD, p.Prefix, p.Length)
 		err = nil
 	}
 	return ret, err
 }
 
-func (p L3VPN_Prefix) GetType() string {
-	return L3VPN_PrefixName
+func (p L3VPNPrefix) GetType() string {
+	return L3VPNPrefixName
 }
