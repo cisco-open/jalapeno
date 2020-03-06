@@ -11,7 +11,6 @@ type L3VPNPrefix struct {
         Length          int    `json:"Length,omitempty"`
         RouterID        string `json:"RouterID,omitempty"`
         ASN             string `json:"ASN,omitempty"`
-        AdvertisingPeer string `json:"AdvertisingPeer,omitempty"`
         VPN_Label       int    `json:"VPN_Label,omitempty"`
         ExtComm         string `json:"ExtComm,omitempty"`
 }
