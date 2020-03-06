@@ -206,12 +206,6 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
-        cols[L3VPN_TopologyName], err = ensureEdgeCollection(g, L3VPN_TopologyName, []string{L3VPNNodeName}, []string{L3VPNPrefixName})
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPN_TopologyName)
-                return ArangoConn{}, err
-        }
-
 	cols[EPEEdgeName], err = ensureEdgeCollection(g, EPEEdgeName, []string{RouterName}, []string{PrefixName})
         if err != nil {
                 log.WithError(err).Errorf("Failed to connect to collection %q", EPEEdgeName)
@@ -404,10 +398,6 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                 }
         case L3VPNPrefixName:
                 get = &L3VPNPrefix{
-                        Key: key,
-                }
-        case L3VPN_TopologyName:
-                get = &L3VPN_Topology{
                         Key: key,
                 }
         case LSNodeName:
