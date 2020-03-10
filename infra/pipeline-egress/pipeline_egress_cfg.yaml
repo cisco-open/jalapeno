@@ -1158,7 +1158,7 @@ data:
 
     stage=xport_input
 
-    brokers=kafka-0.broker.jalapeno:9092
+    brokers=broker.jalapeno:9092
 
     encoding=gpb
 
@@ -1171,7 +1171,7 @@ data:
 
     type=metrics
 
-    influx=http://influxdb-0.influxdb.jalapeno:8086
+    influx=http://influxdb.jalapeno:8086
 
     datachanneldepth=1000
 

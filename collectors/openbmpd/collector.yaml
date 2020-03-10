@@ -6,12 +6,12 @@ metadata:
   labels:
     app: openbmpd
 spec:
+  type: NodePort
   ports:
     - name: 5000-tcp
       port: 5000
       nodePort: 30555
       targetPort: 5000
-  type: NodePort
   selector:
     app: openbmpd
 ---

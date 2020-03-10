@@ -15,7 +15,7 @@ data:
     
         # IPv4/IPv6 mode setting
         #    Can be "v4" "v6" or "v4v6"
-        listen_mode: v4
+        listen_mode: v4v6
     
         # Listening IP address
         #    Default is to listen/bind to the ANY IP address.  Configure one or both of the below
@@ -34,7 +34,7 @@ data:
         #        by the collector to dynamically grow based on blocking hits.
         #
         # Default is 5, range is 2 - 384
-        router: 15
+        router: 64
     
         heartbeat:
         # In minutes; Collector heartbeat messages will be generated based on this interval.
@@ -48,7 +48,7 @@ data:
         startup:
         # max_concurrent_routers defines the maximum allowed routers that can connect after openbmpd startup for RIB dump
         # Default is 2
-        max_concurrent_routers: 2
+        max_concurrent_routers: 4
         
         # initial_router_time defines the initial time in seconds before allowing another concurrent router. 
         #     When openbmpd starts, it allows immediately the max concurrent routers to connect and start RIB dumping.  
@@ -79,8 +79,8 @@ data:
     
     debug:
         general: true       # General debugging
-        bmp:     false       # BMP related
-        bgp:     false       # BGP related
+        bmp:     true       # BMP related
+        bgp:     true       # BGP related
         msgbus:  true       # Kafka/message bus - this will enable librdkafka debugging as well
     
     
