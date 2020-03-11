@@ -2,7 +2,7 @@ EXECUTABLE ?= jalapeno
 BINARY ?= bin/$(EXECUTABLE)
 REPO=iejalapeno
 IMAGE=topology
-TAG=0.0.2.4
+TAG=0.0.2.8
 PROXY=http://proxy.esl.cisco.com:8080
 
 all: build

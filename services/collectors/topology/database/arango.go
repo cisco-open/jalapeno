@@ -86,17 +86,17 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
 	// Create / Connect  collections
 	cols := make(map[string]driver.Collection)
 
-        //cols[EPENodeName], err = ensureVertexCollection(g, EPENodeName)
-        //if err != nil {
-        //        log.WithError(err).Errorf("Failed to connect to collection %q", EPENodeName)
-        //        return ArangoConn{}, err
-        //}
+        cols[EPENodeName], err = ensureVertexCollection(g, EPENodeName)
+        if err != nil {
+                log.WithError(err).Errorf("Failed to connect to collection %q", EPENodeName)
+                return ArangoConn{}, err
+        }
 
-        //cols[EPELinkName], err = ensureEdgeCollection(g, EPELinkName, []string{EPENodeName}, []string{ExternalRouterName})
-        //if err != nil {
-        //        log.WithError(err).Errorf("Failed to connect to collection %q", EPELinkName)
-        //        return ArangoConn{}, err
-        //}
+        cols[EPEExternalPrefixName], err = ensureVertexCollection(g, EPEExternalPrefixName)
+        if err != nil {
+                log.WithError(err).Errorf("Failed to connect to collection %q", EPEExternalPrefixName)
+                return ArangoConn{}, err
+        }
 
         cols[ExternalRouterName], err = ensureVertexCollection(g, ExternalRouterName)
         if err != nil {
@@ -104,21 +104,21 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
-        cols[ExternalPrefixName], err = ensureVertexCollection(g, ExternalPrefixName)
+	cols[ExternalPrefixName], err = ensureVertexCollection(g, ExternalPrefixName)
         if err != nil {
                 log.WithError(err).Errorf("Failed to connect to collection %q", ExternalPrefixName)
                 return ArangoConn{}, err
         }
 
-        cols[L3VPN_RouterName], err = ensureVertexCollection(g, L3VPN_RouterName)
+        cols[L3VPNNodeName], err = ensureVertexCollection(g, L3VPNNodeName)
         if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPN_RouterName)
+                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPNNodeName)
                 return ArangoConn{}, err
         }
 
-        cols[L3VPN_PrefixName], err = ensureVertexCollection(g, L3VPN_PrefixName)
+        cols[L3VPNPrefixName], err = ensureVertexCollection(g, L3VPNPrefixName)
         if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPN_PrefixName)
+                log.WithError(err).Errorf("Failed to connect to collection %q", L3VPNPrefixName)
                 return ArangoConn{}, err
         }
 
@@ -373,28 +373,31 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 	}
 	switch i.GetType() {
 
-	//case EPENodeName:
-        //        get = &EPENode{
-        //                Key: key,
-        //        }
-	//case EPELinkName:
-        //        get = &EPELink{
-        //                Key: key,
-        //        }
+	case EPENodeName:
+                get = &EPENode{
+                        Key: key,
+                }
+
+        case EPEExternalPrefixName:
+                get = &EPEExternalPrefix{
+                        Key: key,
+                }
+
         case ExternalRouterName:
                 get = &ExternalRouter{
                         Key: key,
                 }
-        case ExternalPrefixName:
+
+	case ExternalPrefixName:
                 get = &ExternalPrefix{
                         Key: key,
                 }
-	case L3VPN_RouterName:
-                get = &L3VPN_Router{
+	case L3VPNNodeName:
+                get = &L3VPNNode{
                         Key: key,
                 }
-        case L3VPN_PrefixName:
-                get = &L3VPN_Prefix{
+        case L3VPNPrefixName:
+                get = &L3VPNPrefix{
                         Key: key,
                 }
         case LSNodeName:
