@@ -15,11 +15,8 @@ sh infra/deploy_infrastructure.sh $1
 ### Deploying Collectors
 sh collectors/deploy_collectors.sh $1
 
-### Deploying Services (vCollectors)
-sh services/processors/deploy_processors.sh $1
+### Deploying Processors
+sh processors/deploy_processors.sh $1
 
 ### Deploying API
 sh services/api/deploy_api.sh $1
-
-### Deploying Portal
-#sh services/portal/deploy_portal.sh $1
