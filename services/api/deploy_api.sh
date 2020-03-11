@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
 BASEDIR=$(dirname $0)
-oc apply -f ${PWD}/${BASEDIR}/api.yaml
-oc apply -f ${PWD}/${BASEDIR}/api_svc_np.yaml
+KUBE=$1
+if [ -z "$1" ]
+  then
+    KUBE=kubectl
+fi
+
+${KUBE} create -f ${PWD}/${BASEDIR}/api.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/api_svc_np.yaml

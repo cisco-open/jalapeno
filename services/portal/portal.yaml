@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: jalapeno
@@ -26,3 +26,5 @@ spec:
         ports:
         - containerPort: 80
           protocol: TCP
+      imagePullSecrets:
+        - name: regcred  

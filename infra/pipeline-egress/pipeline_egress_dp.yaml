@@ -1,7 +1,8 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mdt-pipeline-egress-deployment
+  namespace: jalapeno
   labels:
     app: mdt-stack-pipeline-egress
 spec:
@@ -22,6 +23,8 @@ spec:
           name: mdt-pipeline-egress-data
         - mountPath: /data/config
           name: mdt-pipeline-egress-data-config
+      imagePullSecrets:
+        - name: regcred    
       volumes:
       - name: mdt-pipeline-egress-data
         emptyDir: {}
