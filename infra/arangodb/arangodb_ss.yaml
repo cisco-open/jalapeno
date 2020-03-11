@@ -1,9 +1,12 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: arangodb
   namespace: jalapeno
 spec:
+  selector:
+    matchLabels:
+      app: arangodb
   serviceName: "arangodb"
   replicas: 1
   template:
@@ -11,8 +14,6 @@ spec:
       labels:
         app: arangodb
         storage: persistent
-      annotations:
-        openshift.io/scc: privileged
     spec:
       terminationGracePeriodSeconds: 5
       containers:
@@ -24,9 +25,6 @@ spec:
         ports:
         - containerPort: 8529
           protocol: TCP
-        securityContext:
-          privileged: true
-          runAsUser: 0
         resources: {}
         volumeMounts:
         - name: data
