@@ -1,26 +1,33 @@
 #!/bin/bash
 BASEDIR=$(dirname $0)
 
+KUBE=$1
+if [ -z "$1" ]
+  then
+    KUBE=kubectl
+fi
+
+echo "Creating Jalapeno Namespace"
+${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno.json
+
+echo "Setting up secret for docker.io"
+${KUBE} create secret generic regcred --from-file=.dockerconfigjson=${HOME}/.docker/config.json --type=kubernetes.io/dockerconfigjson --namespace=jalapeno
+
 echo "Deploying Kafka"
-oc apply -f ${PWD}/${BASEDIR}/kafka/.
+${KUBE} create -f ${PWD}/${BASEDIR}/kafka/.
 
 echo "Deploying ArangoDB"
-oc apply -f ${PWD}/${BASEDIR}/arangodb/.
+${KUBE} create -f ${PWD}/${BASEDIR}/arangodb/.
 
 echo "Deploying InfluxDB"
-oc apply -f ${PWD}/${BASEDIR}/influxdb/.
+${KUBE} create -f ${PWD}/${BASEDIR}/influxdb/.
 
 echo "Deploying Grafana"
-oc apply -f ${PWD}/${BASEDIR}/grafana/.
-
-echo "Deploying OpenBMPD"
-#sudo python ${PWD}/${BASEDIR}/openbmpd/deploy_openbmp.py
-
-echo "Deploying Pipeline Ingress"
-oc apply -f ${PWD}/${BASEDIR}/pipeline-ingress/.
-
-echo "Deploying Telemetry"
-#python3.6 ${PWD}/${BASEDIR}/telemetry/deploy_telemetry.py
+${KUBE} create -f ${PWD}/${BASEDIR}/grafana/.
 
 echo "Deploying Pipeline Egress"
-oc apply -f ${PWD}/${BASEDIR}/pipeline-egress/.
+${KUBE} create -f ${PWD}/${BASEDIR}/pipeline-egress/.
+
+echo "Finished deploying infra services"
+
+
