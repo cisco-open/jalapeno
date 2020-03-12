@@ -2,7 +2,7 @@ package database
 
 import "fmt"
 
-const InternalPrefixName = "InternalPrefixes"
+const InternalPrefixName = "InternalPrefix"
 
 type InternalPrefix struct {
 	Key         string `json:"_key,omitempty"`
@@ -10,8 +10,7 @@ type InternalPrefix struct {
         Length      int    `json:"Length,omitempty"`
 	Name        string `json:"Name,omitempty"`
 	ASN         string `json:"ASN,omitempty"`
-        ASPathCount string `json:"ASPathCount,omitempty"`
-        SRLabel     string `json:"SRLabel,omitempty"`
+        Label       string `json:"Label,omitempty"`
 }
 
 func (r InternalPrefix) GetKey() (string, error) {

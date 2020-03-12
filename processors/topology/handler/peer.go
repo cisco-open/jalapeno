@@ -32,15 +32,12 @@ func peer(a *ArangoHandler, m *openbmp.Message) {
 	parse_peer_internal_router(a, remote_bgp_id, remote_router_ip, remote_asn)
 
         parse_peer_epe_node(a, local_bgp_id, peer_ip, local_asn, remote_asn)
-	//parse_peer_epe_node(a, router_id, peer_ip, local_asn, remote_asn)
 
         parse_peer_border_router(a, local_bgp_id, local_router_ip, local_asn, remote_asn)
 	parse_peer_border_router(a, remote_bgp_id, remote_router_ip, remote_asn, local_asn)
 
         parse_peer_external_router(a, local_bgp_id, local_router_ip, local_asn)
 	parse_peer_external_router(a, remote_bgp_id, remote_router_ip, remote_asn)
-        parse_peer_internal_transport_prefix(a, local_bgp_id, local_router_ip, local_asn)
-	parse_peer_internal_transport_prefix(a, remote_bgp_id, remote_router_ip, remote_asn)
 
         parse_peer_router_interface(a, local_bgp_id, local_router_ip, local_intf_ip, local_asn, remote_asn)
         parse_peer_router_interface(a, remote_bgp_id, remote_router_ip, remote_intf_ip, remote_asn, local_asn)
@@ -201,28 +198,6 @@ func parse_peer_external_router(a *ArangoHandler, bgp_id string, router_ip strin
                 fmt.Println("While upserting the current peer message's external router document, encountered an error", err)
         } else {
                 fmt.Printf("Successfully added current peer message's external router document -- External Router: %q with ASN: %q and Peer Type: %q\n", router_ip, asn, peer_type)
-        }
-}
-
-
-// Parses an Internal Transport Prefix from the current Peer OpenBMP message
-// Upserts the created Internal Transport Prefix document into the InternalTransportPrefixes collection
-func parse_peer_internal_transport_prefix(a *ArangoHandler, bgp_id string, router_ip string, asn string) {
-        fmt.Println("Parsing peer - document: internal_transport_prefix_document")
-	is_internal_asn :=  check_asn_location(asn)
-	if asn != a.asn && is_internal_asn == false {
-		fmt.Println("Current peer message's ASN is not local ASN: this is not an Internal Transport Prefix -- skipping")
-		return
-	}
-	internal_transport_prefix_document := &database.InternalTransportPrefix{
-		BGPID:    bgp_id,
-		RouterIP: router_ip,
-		ASN:      asn,
-	}
-	if err := a.db.Upsert(internal_transport_prefix_document); err != nil {
-                fmt.Println("While upserting the current peer message's internal transport prefix document, encountered an error")
-	} else {
-                fmt.Printf("Successfully added current peer message's internal transport prefix document -- Internal Transport Prefix: %q with ASN: %q\n", router_ip, asn)
         }
 }
 

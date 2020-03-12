@@ -28,21 +28,17 @@ func ls_prefix(a *ArangoHandler, m *openbmp.Message) {
         }
 
 	node_sid_index := parse_sid_index(ls_prefix_sid)
-	prefix_sid_index := parse_sid_index(ls_prefix_sid)
 
 	// Collecting potentially existing SR initial label from previously upserted documents -- this may be empty
 	sr_beginning_label := a.db.GetSRBeginningLabel(bgp_id)
 	sr_node_sid := ""
-	sr_prefix_sid := ""
 	if(sr_beginning_label != 0) {
 		sr_node_sid = calculate_sid(sr_beginning_label, node_sid_index)
-		sr_prefix_sid = calculate_sid(sr_beginning_label, prefix_sid_index)
 	}
 
         // Creating and upserting peer documents
         parse_ls_prefix_router(a, bgp_id, router_ip, node_sid_index, sr_node_sid)
         parse_ls_prefix_internal_router(a, bgp_id, router_ip, node_sid_index, sr_node_sid)
-        parse_ls_prefix_internal_transport_prefix(a, bgp_id, router_ip, prefix_sid_index, sr_prefix_sid)
 }
 
 
@@ -89,21 +85,4 @@ func parse_ls_prefix_internal_router(a *ArangoHandler, bgp_id string, router_ip 
         }
 }
 
-
-// Parses a Internal Transport Prefix from the current LS-Prefix OpenBMP message
-// Upserts the created Internal Transport Prefix document into the InternalTransportPrefixes collection
-func parse_ls_prefix_internal_transport_prefix(a *ArangoHandler, bgp_id string, router_ip string, prefix_sid_index string, sr_prefix_sid string) {
-        fmt.Println("Parsing ls_prefix - document 3: internal_transport_prefix_document")
-        internal_transport_prefix_document := &database.InternalTransportPrefix{
-                BGPID:          bgp_id,
-                RouterIP:       router_ip,
-		PrefixSIDIndex: prefix_sid_index,
-                SRPrefixSID:    sr_prefix_sid,
-        }
-        if err := a.db.Upsert(internal_transport_prefix_document); err != nil {
-                fmt.Println("While upserting the current ls_prefix message's internal transport prefix document, encountered an error:", err)
-        } else {
-	        fmt.Printf("Successfully added current ls_prefix message's internal transport prefix document -- Internal Transport Prefix: %q with PrefixSIDIndex: %q and SRPrefixSID: %q\n", bgp_id, prefix_sid_index, sr_prefix_sid)
-	}	
-}
 

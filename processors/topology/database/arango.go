@@ -182,12 +182,6 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
 		return ArangoConn{}, err
 	}
 
-	cols[InternalTransportPrefixName], err = ensureVertexCollection(g, InternalTransportPrefixName)
-	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", InternalTransportPrefixName)
-		return ArangoConn{}, err
-	}
-
 	cols[InternalLinkEdgeName], err = ensureEdgeCollection(g, InternalLinkEdgeName, []string{RouterName}, []string{RouterName})
         if err != nil {
                 log.WithError(err).Errorf("Failed to connect to collection %q", InternalLinkEdgeName)
@@ -211,12 +205,6 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 log.WithError(err).Errorf("Failed to connect to collection %q", EPEEdgeName)
                 return ArangoConn{}, err
         }
-
-	cols[CollectorName], err = ensureVertexCollection(g, CollectorName)
-	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", CollectorName)
-		return ArangoConn{}, err
-	}
 
 	return ArangoConn{db: db, g: g, cols: cols}, nil
 }
@@ -440,10 +428,6 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		get = &InternalPrefix{
 			Key: key,
 		}
-        case InternalTransportPrefixName:
-		get = &InternalTransportPrefix{
-			Key: key,
-		}
         case InternalLinkEdgeName:
                 get = &InternalLinkEdge{
                         Key: key,
@@ -460,10 +444,6 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                 get = &ExternalPrefixEdge{
                         Key: key,
                 }
-	case CollectorName:
-		get = &Collector{
-			Key: key,
-		}
 	}
 
 	err = a.Read(get)

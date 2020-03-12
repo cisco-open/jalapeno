@@ -37,10 +37,8 @@ func ls_node(a *ArangoHandler, m *openbmp.Message) {
 	parse_ls_node_router(a, bgp_id, name, router_ip, srgb, sr_node_sid)
 
 	parse_ls_node(a, name, router_id, asn, srgb, sr_prefix_sid, igp_router_id)
-        //parse_epe_node(a, name, router_id, asn, srgb, sr_prefix_sid, igp_router_id)
 
 	parse_ls_node_internal_router(a, bgp_id, name, router_ip, srgb, igp_router_id, sr_node_sid)
-	parse_ls_node_internal_transport_prefix(a, bgp_id, name, router_ip, srgb, sr_prefix_sid)
 }
 
 
@@ -80,28 +78,6 @@ func parse_ls_node(a *ArangoHandler, name string, router_id string, asn string, 
         }
 }
 
-// Parses EPE_Node prefix-SID from an LSNode OpenBMP message
-// Updates EPENode vertex documents with prefix-sid data
-//func parse_epe_node(a *ArangoHandler, bgp_id string, name string, router_id string, srgb string, sr_prefix_sid string, igp_router_id string) {
-//func parse_epe_node(a *ArangoHandler, name string, router_id string, asn string, srgb string, sr_prefix_sid string, igp_router_id string) {
-//        fmt.Println("Parsing epe_node - document 1: epe_node_document")
-//        epe_node_document := &database.EPENode{
-//                //BGPID:     bgp_id,
-//                Name:      name,
-//                RouterID:  router_id,
-//                ASN:       asn,
-//                PrefixSID: sr_prefix_sid,
-//                SRGB:      srgb,
-//                IGPID:     igp_router_id,
-//        }
-//        if err := a.db.Update(epe_node_document); err != nil {
-//                fmt.Println("Encountered an error while updating the current ls_node message's epe_node data", err)
-//        } else {
-//                fmt.Printf("Successfully added current ls_node message's epe_node data -- Router: %q with SRGB: %q, PrefixSID: %q\n", router_id, srgb, sr_prefix_sid)
-//        }
-//}
-
-
 // Parses a Router from the current LSNode OpenBMP message
 // Upserts the created Router document into the Routers collection
 func parse_ls_node_router(a *ArangoHandler, bgp_id string, name string, router_ip string, srgb string, sr_node_sid string) {
@@ -139,20 +115,3 @@ func parse_ls_node_internal_router(a *ArangoHandler, bgp_id string, name string,
 	}	
 }
 
-// Parses an Internal Transport Prefix from the current LSNode OpenBMP message
-// Upserts the created Internal Transport Prefix document into the Routers collection
-func parse_ls_node_internal_transport_prefix(a *ArangoHandler, bgp_id string, name string, router_ip string, srgb string, sr_prefix_sid string) {
-        fmt.Println("Parsing ls_node - document 3: internal_transport_prefix_document")
-        internal_transport_prefix_document := &database.InternalTransportPrefix{
-                BGPID:       bgp_id,
-                Name:        name,
-                RouterIP:    router_ip,
-		SRPrefixSID: sr_prefix_sid,
-                SRGB:        srgb,
-        }
-        if err := a.db.Upsert(internal_transport_prefix_document); err != nil {
-                fmt.Println("While upserting the current ls_node message's internal transport prefix document, encountered an error", err)
-        } else {
-        	fmt.Printf("Successfully added current ls_node message's internal transport prefix document -- Internal Transport Prefix: %q with SRGB: %q, SRPrefixSID: %q, and name: %q\n", router_ip, srgb, sr_prefix_sid, name)
-	}
-}
