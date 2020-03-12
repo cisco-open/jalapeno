@@ -19,4 +19,4 @@ sh collectors/deploy_collectors.sh $1
 sh processors/deploy_processors.sh $1
 
 ### Deploying API
-sh services/api/deploy_api.sh $1
+sh api/deploy_api.sh $1
