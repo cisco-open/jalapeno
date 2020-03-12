@@ -33,7 +33,7 @@ spec:
           - --kafka-topics
           - "openbmp.parsed.router,openbmp.parsed.peer,openbmp.parsed.unicast_prefix,openbmp.parsed.ls_link,openbmp.parsed.ls_node,openbmp.parsed.ls_prefix,openbmp.parsed.l3vpn,openbmp.parsed.evpn"
           - --kafka-brokers
-          - 10.200.99.3:30902
+          - broker.jalapeno.svc:9092
           - --asn
           - "100000"
           - --transit-provider-asns
