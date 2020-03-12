@@ -7,6 +7,12 @@ def get_prefix_data(db):
     prefix_data = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return prefix_data
 
+def get_prefixSID(db, routerID):
+    aql = """ FOR e in LSNode FILTER e._key == @ls_node_key return e.PrefixSID """
+    bindVars = {'ls_node_key': routerID)
+    prefixSID = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return prefixSID
+
 def get_all_rds(db):
     aql = """ RETURN MERGE (For r in L3VPNNode return { ["RDs"]: r.RD}) """
     bindVars = {}
