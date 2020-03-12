@@ -8,9 +8,9 @@ import (
 	"strings"
 	"github.com/Shopify/sarama"
 	cluster "github.com/bsm/sarama-cluster"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/handler"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/log"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/openbmp"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/handler"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/log"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
 )
 
 func init() {
