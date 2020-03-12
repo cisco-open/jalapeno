@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: l3vpn-processor
+  namespace: jalapeno
+  labels:
+    app: l3vpn-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: l3vpn-processor
+  template:
+    metadata:
+      labels:
+        app: l3vpn-processor
+    spec:
+      containers:
+      - name: l3vpn-processor
+        image: iejalapeno/l3vpn-processor:0.1@sha256:5a7cdccd94177e9b3e961a4429ff095624062081b345cb325aaf9bf30c3d6dc1
