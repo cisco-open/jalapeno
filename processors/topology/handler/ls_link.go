@@ -4,8 +4,8 @@ import (
 	"strings"
         "fmt"
         "encoding/json"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/openbmp"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/database"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
 )
 
 type AdjacencySids struct {

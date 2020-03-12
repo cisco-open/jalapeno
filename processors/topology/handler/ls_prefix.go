@@ -3,8 +3,8 @@ package handler
 import (
 	"fmt"
 	"strings"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/openbmp"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/database"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
 )
 
 func ls_prefix(a *ArangoHandler, m *openbmp.Message) {

@@ -349,9 +349,9 @@ func (a *ArangoConn) CheckExistingL3VPNRouter(router_ip string) bool {
     }
 }
 
-func (a *ArangoConn) CheckExistingEPENode(router_id string) bool {
+func (a *ArangoConn) CheckExistingEPENode(local_bgp_id string) bool {
     var r string
-    q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r", router_id)
+    q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r", local_bgp_id)
     results, _ := a.Query(q, nil, r)
     if len(results) > 0 {
         return true
@@ -360,10 +360,10 @@ func (a *ArangoConn) CheckExistingEPENode(router_id string) bool {
     }
 }
 
-func (a *ArangoConn) GetExistingPeerIP(router_id string) []string {
+func (a *ArangoConn) GetExistingPeerIP(local_bgp_id string) []string {
     var r string
     var tmp []string
-    q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r.PeerIP", router_id)
+    q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r.PeerIP", local_bgp_id)
     results, _ := a.Query(q, nil, r)
     fmt.Println("Beginning debugging")
     fmt.Println(results)
@@ -378,13 +378,13 @@ func (a *ArangoConn) GetExistingPeerIP(router_id string) []string {
     return tmp
 }
 
-func (a *ArangoConn) UpdateExistingPeerIP(router_id string, peer_ip string) {
+func (a *ArangoConn) UpdateExistingPeerIP(local_bgp_id string, peer_ip string) {
     var r string
-    q := fmt.Sprintf("For e in EPENode Filter e._key == %q LET p = e.PeerIP UPDATE { _key: e._key, PeerIP: APPEND(p, %q, True) } IN EPENode RETURN { before: OLD, after: NEW }", router_id, peer_ip)
+    q := fmt.Sprintf("For e in EPENode Filter e._key == %q LET p = e.PeerIP UPDATE { _key: e._key, PeerIP: APPEND(p, %q, True) } IN EPENode RETURN { before: OLD, after: NEW }", local_bgp_id, peer_ip)
     //q := fmt.Sprintf("LET doc = DOCUMENT(%q) UPDATE doc WITH { RD: PUSH(doc.RD, %q)} IN EPENode", router_id, peer_ip)
     results, _ := a.Query(q, nil, r)
     if len(results) > 0 {
-        fmt.Printf("Successfully updated EPENode peer list with %q for Router %q\n", peer_ip, router_id)
+        fmt.Printf("Successfully updated EPENode peer list with %q for Router %q\n", peer_ip, local_bgp_id)
     } else {
         fmt.Println("Something went wrong -- failed to update peer ip")
     }

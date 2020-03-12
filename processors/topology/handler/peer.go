@@ -3,8 +3,8 @@ package handler
 import (
 	"fmt"
         "strings"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/openbmp"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/database"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
 )
 
 func peer(a *ArangoHandler, m *openbmp.Message) {
@@ -14,7 +14,7 @@ func peer(a *ArangoHandler, m *openbmp.Message) {
         }
 
         // Collecting necessary fields from message
-        router_id        := m.GetStr("router_ip")
+        //router_id        := m.GetStr("router_ip")
         local_bgp_id     := m.GetStr("local_bgp_id")
 	local_router_ip  := local_bgp_id
         local_asn        := m.GetStr("local_asn")
@@ -31,7 +31,8 @@ func peer(a *ArangoHandler, m *openbmp.Message) {
         parse_peer_internal_router(a, local_bgp_id, local_router_ip, local_asn)
 	parse_peer_internal_router(a, remote_bgp_id, remote_router_ip, remote_asn)
 
-        parse_peer_epe_node(a, router_id, peer_ip, local_asn, remote_asn)
+        parse_peer_epe_node(a, local_bgp_id, peer_ip, local_asn, remote_asn)
+	//parse_peer_epe_node(a, router_id, peer_ip, local_asn, remote_asn)
 
         parse_peer_border_router(a, local_bgp_id, local_router_ip, local_asn, remote_asn)
 	parse_peer_border_router(a, remote_bgp_id, remote_router_ip, remote_asn, local_asn)
@@ -47,7 +48,8 @@ func peer(a *ArangoHandler, m *openbmp.Message) {
 
 // Parses an EPE Node from the current Peer OpenBMP message
 // Updates entries in EPENode collection
-func parse_peer_epe_node(a *ArangoHandler, router_id string, peer_ip string, local_asn string, remote_asn string) {
+func parse_peer_epe_node(a *ArangoHandler, local_bgp_id string, peer_ip string, local_asn string, remote_asn string) {
+//func parse_peer_epe_node(a *ArangoHandler, router_id string, peer_ip string, local_asn string, remote_asn string) {
         fmt.Println("Parsing peer - document: epe_node_document")
 
 	var peer_list [] string
@@ -61,21 +63,21 @@ func parse_peer_epe_node(a *ArangoHandler, router_id string, peer_ip string, loc
                 return
         }
 
-        epe_node_exists := a.db.CheckExistingEPENode(router_id)
+        epe_node_exists := a.db.CheckExistingEPENode(local_bgp_id)
         if (epe_node_exists) {
             tempVariable := a.db.GetExistingPeerIP(peer_ip)
             print(tempVariable)
-            a.db.UpdateExistingPeerIP(router_id, peer_ip)
+            a.db.UpdateExistingPeerIP(local_bgp_id, peer_ip)
         } else {
 
         epe_node_document := &database.EPENode{
-                RouterID:  router_id,
+                RouterID:  local_bgp_id,
 		PeerIP:    peer_list,
 	}
         if err := a.db.Upsert(epe_node_document); err != nil {
                 fmt.Println("Encountered an error while upserting the epe node document", err)
         } else {
-                fmt.Printf("Successfully added epe node document: %q with peer: %q\n", router_id, peer_ip)
+                fmt.Printf("Successfully added epe node document: %q with peer: %q\n", local_bgp_id, peer_ip)
         }
     }
 }

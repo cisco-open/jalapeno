@@ -5,8 +5,8 @@ import (
 	"sort"
 	"strings"
 
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/log"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/openbmp"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/log"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
 )
 
 /* all the garbage in here will be removed soon. This is for testing. */

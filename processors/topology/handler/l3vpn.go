@@ -3,8 +3,8 @@ package handler
 import (
     "strings"
     "fmt"
-    "wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/database"
-    "wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/openbmp"
+    "wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/database"
+    "wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
 )
 
 func l3vpn(a *ArangoHandler, m *openbmp.Message) {

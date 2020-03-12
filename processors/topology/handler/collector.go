@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/log"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/services/collectors/topology/openbmp"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/log"
+	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
 )
 
 func collector(a *ArangoHandler, m *openbmp.Message) {
