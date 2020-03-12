@@ -47,7 +47,7 @@ func ls_node(a *ArangoHandler, m *openbmp.Message) {
 func parse_srgb(ls_sr string) string {
 	// Transforming ls_sr to SRGB
         srgb_split := strings.Split(ls_sr, " ")
-        srgb_start, srgb_range := srgb_split[2], srgb_split[1]
+        srgb_start, srgb_range := srgb_split[len(srgb_split)-1], srgb_split[len(srgb_split)-2]
         combining_srgb := []string{srgb_start, srgb_range}
         combined_srgb  := strings.Join(combining_srgb, ", ")
 	return combined_srgb
