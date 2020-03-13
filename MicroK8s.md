@@ -21,6 +21,7 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
    ```
    
 5. If you are in a Cisco Lab w/ Proxies, configure the proxies by adding `HTTPS_PROXY=http://proxy.esl.cisco.com:8080` to `/var/snap/microk8s/current/args/containerd-env`.
+    Restart containerd `sudo systemctl restart snap.microk8s.daemon-containerd.service`
 
 6. Enable dashboard helm and dns: `microk8s.enable dashboard dns`
 
