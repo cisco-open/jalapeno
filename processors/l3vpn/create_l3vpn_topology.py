@@ -43,8 +43,9 @@ def create_l3vpnprefix_l3vpnnode_edges(database, collection):
             vpn_label = current_prefix_document["VPN_Label"]
             rd = current_prefix_document["RD"]
             rt = current_prefix_document["ExtComm"]
-            upsert_l3vpnprefix_l3vpnnode_edge(database, collection, vpn_prefix, vpn_prefix_length, router_id, "prefix_sid", vpn_label, rd, rt)
-            upsert_l3vpnnode_l3vpnprefix_edge(database, collection, vpn_prefix, vpn_prefix_length, router_id, "prefix_sid", vpn_label, rd, rt)
+            prefixSID = get_prefixSID(database, router_id)
+            upsert_l3vpnprefix_l3vpnnode_edge(database, collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt)
+            upsert_l3vpnnode_l3vpnprefix_edge(database, collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt)
             print("===========================================================================")
 
 def create_l3vpnnode_l3vpnnode_edges(database, collection):
