@@ -1,0 +1,17 @@
+EXECUTABLE ?= jalapeno
+BINARY ?= bin/$(EXECUTABLE)
+REPO=iejalapeno
+IMAGE=topology
+TAG=0.0.2.8
+PROXY=http://proxy.esl.cisco.com:8080
+
+all: build
+
+build:
+	CGO_ENABLED=0 go build --ldflags '${EXTLDFLAGS}' -o ${BINARY} wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology
+
+linux:
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ${BINARY} wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology
+
+container:
+	docker build --build-arg http_proxy=${PROXY} --build-arg https_proxy=${PROXY} -t ${REPO}/${IMAGE}:${TAG} .
