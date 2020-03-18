@@ -35,14 +35,14 @@ spec:
   - metadata:
       name: data
     spec:
-      accessModes: [ "ReadWriteMany" ]
+      accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
           storage: 50Gi
   - metadata:
       name: appdata
     spec:
-      accessModes: [ "ReadWriteMany" ]
+      accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
           storage: 10Gi

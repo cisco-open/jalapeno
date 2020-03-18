@@ -7,6 +7,5 @@ spec:
   ports:
   - port: 8529
     name: arango
-  clusterIP: None
   selector:
     app: arangodb
