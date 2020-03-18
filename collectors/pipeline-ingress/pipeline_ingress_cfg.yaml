@@ -40,7 +40,7 @@ data:
 
     encoding=gpb
 
-    brokers=broker.jalapeno.svc:9092
+    brokers=broker.jalapeno:9092
 
     topic=jalapeno.telemetry
 

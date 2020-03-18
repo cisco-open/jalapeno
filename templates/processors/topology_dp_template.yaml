@@ -21,7 +21,7 @@ spec:
         args:
           - topology
           - --arango-url
-          - http://arangodb.jalapeno.svc.cluster.local:8529
+          - http://arangodb.jalapeno:8529
           - --arango-user
           - root
           - --arango-password

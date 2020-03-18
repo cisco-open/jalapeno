@@ -6,12 +6,12 @@ metadata:
   labels:
     app: openbmpd
 spec:
+  type: NodePort
   ports:
     - name: 5000-tcp
       port: 5000
       nodePort: 30555
       targetPort: 5000
-  type: NodePort
   selector:
     app: openbmpd
 ---
@@ -40,7 +40,7 @@ spec:
           protocol: TCP
         env:
         - name: KAFKA_FQDN
-          value: "broker.jalapeno.svc.cluster.local:9092"
+          value: "broker.jalapeno:9092"
         resources: {}
         volumeMounts:
             - name: configmap
