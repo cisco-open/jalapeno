@@ -1,0 +1,22 @@
+apiVersion: apps/v1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: epe-paths-collector
+  namespace: jalapeno
+  labels:
+    app: epe-paths-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: epe-paths-collector
+  template:
+    metadata:
+      labels:
+        app: epe-paths-collector
+    spec:
+      containers:
+      - name: epe-paths
+        image: iejalapeno/epe-paths:0.1@sha256:ccfcb90f9f4ffacb7f685495b8737fc0f1df3a659ee8ade2dc95096be0ee798c
+      imagePullSecrets:
+        - name: regcred  

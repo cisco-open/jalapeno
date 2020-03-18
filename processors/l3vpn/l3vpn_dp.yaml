@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: jalapeno
+  name: l3vpn-processor
+  labels:
+    app: l3vpn-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: l3vpn-processor
+  template:
+    metadata:
+      labels:
+        app: l3vpn-processor
+    spec:
+      containers:
+      - name: l3vpn-processor
+        image: iejalapeno/l3vpn-processor:0.1@sha256:5a7cdccd94177e9b3e961a4429ff095624062081b345cb325aaf9bf30c3d6dc1
+      imagePullSecrets:
+        - name: regcred

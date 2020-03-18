@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: topology
+  namespace: jalapeno
+  labels:
+    app: topology
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: topology
+  template:
+    metadata:
+      labels:
+        app: topology
+    spec:
+      containers:
+      - name: topology
+        image: iejalapeno/topology:2.1.2@sha256:89fffd81c0a75ea40bf731aadc5777adc7eaffedacee73a7ddb37d917dee5e02
+        args:
+          - topology
+          - --arango-url
+          - http://arangodb.jalapeno:8529
+          - --arango-user
+          - root
+          - --arango-password
+          - jalapeno
+          - --arango-database
+          - jalapeno
+          - --kafka-consumer-group
+          - jalapeno_framework_kube
+          - --kafka-topics
+          - "openbmp.parsed.router,openbmp.parsed.peer,openbmp.parsed.unicast_prefix,openbmp.parsed.ls_link,openbmp.parsed.ls_node,openbmp.parsed.ls_prefix,openbmp.parsed.l3vpn,openbmp.parsed.evpn"
+          - --kafka-brokers
+          - {{ kafka_endpoint }}
+          - --asn
+          - "{{ internal_network_asn }}"
+          - --transit-provider-asns
+          - "{{ transit_provider_asns }}"
+          - --direct-peer-asns
+          - "{{ direct_peer_asns }}"

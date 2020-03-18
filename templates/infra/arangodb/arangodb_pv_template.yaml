@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: arangodb
+spec:
+  capacity:
+       storage: 50Gi
+  accessModes:
+       - ReadWriteMany
+  nfs:
+    path: /export/arangodb
+    server: {{ host_ip }}
+  persistentVolumeReclaimPolicy: Retain

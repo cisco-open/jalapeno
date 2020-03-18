@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+"""Configuration file for InfluxDB connections.
+Specify the values according to environment.
+"""
+host='{{ influx_ip }}'
+port={{ influx_port }}
+user = 'root'
+password = 'jalapeno'
+dbname = 'mdt_db'

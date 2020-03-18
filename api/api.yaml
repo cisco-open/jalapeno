@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: jalapeno
+  name: api
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: iejalapeno/api:0.1@sha256:bda2def66810b4502cffc044e95e29e62c58acf5e1f0339e1ddebb67b269c32f
+        env:
+        - name: ARANGODB_PROTOCOL
+          value: http
+        - name: ARANGODB_HOST
+          value: arangodb
+        - name: ARANGODB_PORT
+          value: "8529"
+        - name: ARANGODB_DB
+          value: jalapeno
+        - name: ARANGODB_USER
+          value: root
+        - name: ARANGODB_PASSWORD
+          value: jalapeno
+        ports:
+        - containerPort: 8000
+          protocol: TCP
+      - name: api-ui
+        image: swaggerapi/swagger-ui@sha256:5814d0052859277794e7c2d84ee0d5b7cc24e767b5b646af5e1f3b32cc36f47b
+        env:
+        - name: API_URL
+          value: http://10.200.99.7:30881/api/v1/swagger.json
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+      imagePullSecrets:
+        - name: regcred  

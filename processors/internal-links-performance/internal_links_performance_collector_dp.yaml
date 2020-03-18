@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: jalapeno
+  name: internal-links-performance-collector
+  labels:
+    app: internal-links-performance-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: internal-links-performance-collector
+  template:
+    metadata:
+      labels:
+        app: internal-links-performance-collector
+    spec:
+      containers:
+      - name: internal-links-performance-collector
+        image: iejalapeno/internal-links-performance-collector:0.1@sha256:2118dc563a2d26fb935c85bcf74bfbbe6f74ff9f7011d85ba3404e84e4eee68b
+      imagePullSecrets:
+        - name: regcred  

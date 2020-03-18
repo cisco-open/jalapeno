@@ -1,0 +1,22 @@
+apiVersion: apps/v1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: epe-edges-collector
+  namespace: jalapeno
+  labels:
+    app: epe-edges-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: epe-edges-collector
+  template:
+    metadata:
+      labels:
+        app: epe-edges-collector
+    spec:
+      containers:
+      - name: epe-edges
+        image: iejalapeno/epe-edges:0.1@sha256:ea876ad9dcae62d8159289677fea197128a17f4ae4d359726326f6789dceb68e
+      imagePullSecrets:
+        - name: regcred  

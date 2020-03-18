@@ -1,0 +1,9 @@
+bmp server 1
+ host {{ host_ip }} port {{ openbmp_port }}
+ description jalapeno OpenBMP
+ update-source Loopback0
+ flapping-delay 60
+ initial-delay 5
+ stats-reporting-period 60
+ initial-refresh delay 30 spread 2
+!
