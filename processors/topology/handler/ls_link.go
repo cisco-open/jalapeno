@@ -3,37 +3,9 @@ package handler
 import (
 	"strings"
         "fmt"
-        "encoding/json"
 	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/database"
 	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
 )
-
-type AdjacencySids struct {
-        AdjacencySids []AdjSid `json:"adjacency-sids"`
-}
-
-type AdjSid struct {
-                AdjacencySid string `json:"adjacency-sid"`
-                Flags        string `json:"flags"`
-                Weight       string `json:"weight"`
-}
-
-func parseAdjSids(adjSidRaw string) AdjacencySids {
-        AdjSids := AdjacencySids{}
-        aSids := strings.Split(adjSidRaw, ", ")
-        fmt.Println(aSids)
-        for _, aSid :=  range aSids {
-                s := strings.Split(aSid, " ")
-                fmt.Println(s)
-                a := AdjSid{
-                        AdjacencySid: s[2],
-                        Flags: s[0],
-                        Weight: s[1],
-                }
-                AdjSids.AdjacencySids = append(AdjSids.AdjacencySids, a)
-        }
-        return AdjSids
-}
 
 func ls_link(a *ArangoHandler, m *openbmp.Message) {
 	// Collecting necessary fields from message
@@ -73,19 +45,9 @@ func ls_link(a *ArangoHandler, m *openbmp.Message) {
         }
 
         if (adj_sid_tlv != "") {
-                //adj_sid_tlv_message := parseAdjSids(adj_sid_tlv)
-                adj_sid_tlv_message := (adj_sid_tlv)
-                result := parseAdjSids(adj_sid_tlv_message)
-                fmt.Println(result)
-                jsonResult, err := json.Marshal(result)
-                if err != nil {
-                  fmt.Println(err)
-                }
-                fmt.Println(string(jsonResult))
-                adj_sid := string([]byte(jsonResult))
                 parse_ls_link(a, local_router_id, local_interface_ip, asn, remote_router_id, remote_interface_ip, protocol,
                 igp_id, igp_metric, te_metric, admin_group, max_link_bw, max_resv_bw, unresv_bw, link_protection, srlg, link_name,
-                adj_sid_tlv, adj_sid)
+                adj_sid_tlv)
         }
 }
 
@@ -93,13 +55,10 @@ func ls_link(a *ArangoHandler, m *openbmp.Message) {
 // Upserts the LSLink Edge document into the LSTopology collection
 func parse_ls_link(a *ArangoHandler, local_router_id string, local_interface_ip string, asn string, remote_router_id string, remote_interface_ip string, protocol string,
 igp_id string, igp_metric string, te_metric string, admin_group string, max_link_bw string, max_resv_bw string, unresv_bw string, link_protection string, srlg string, link_name string,
-adj_sid_tlv string, adj_sid string) {
+adj_sid_tlv string) {
         fmt.Println("Parsing ls_link message to ls_link_document")
         fmt.Printf("Parsing current ls_link message to ls_link document: From LSNode: %q through Interface: %q " +
                    "to LSNode: %q through Interface: %q\n", local_router_id, local_interface_ip, remote_router_id, remote_interface_ip)
-
-        var adj_sid_list [] string
-        adj_sid_list = append(adj_sid_list, adj_sid)
 
         local_router_key := "LSNode/" + local_router_id
         remote_router_key := "LSNode/" + remote_router_id
@@ -124,14 +83,22 @@ adj_sid_tlv string, adj_sid string) {
                 SRLG:              srlg,
                 LinkName:          link_name,
                 AdjacencySID:      adj_sid_tlv,
-                AdjSID:            adj_sid_list,
         }
-        ls_link_document.SetKey()
-        if err := a.db.Insert(ls_link_document); err != nil {
+        if err := a.db.Upsert(ls_link_document); err != nil {
                 fmt.Println("Encountered an error while upserting ls_link document:", err)
         } else {
                 fmt.Printf("Successfully added ls_link edge document from ls_link message: From Router: %q through Interface: %q " +
                             "to Router: %q through Interface: %q\n", local_router_id, local_interface_ip, remote_router_id, remote_interface_ip)
+        }
+
+        aSids := strings.Split(adj_sid_tlv, ", ")
+        key := local_router_id + "_" + local_interface_ip + "_" + remote_interface_ip + "_" + remote_router_id
+        for _, aSid :=  range aSids {
+                s := strings.Split(aSid, " ")
+                adj_sid := s[2]
+                flags := s[0]
+                weight := s[1]
+                a.db.CreateAdjacencyList(key, adj_sid, flags, weight)
         }
 }
 

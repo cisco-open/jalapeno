@@ -114,3 +114,17 @@ func (a *ArangoConn) UpdateExistingVPNRDS(router_ip string, vpn_rd string) {
 
 }
 
+
+func (a *ArangoConn) CreateAdjacencyList(key string, adjacency_sid string, flags string, weight string) {
+    var r string
+    fmt.Println(key, adjacency_sid, flags, weight)
+    doc_key := "LSLink/" + key
+    q := fmt.Sprintf("LET doc = DOCUMENT(%q) UPDATE doc WITH { Adjacencies: PUSH(doc.Adjacencies, {adjacency_sid:%q, flags:%q, weight:%q}, True) } IN LSLink RETURN { before: OLD, after: NEW }", doc_key, adjacency_sid, flags, weight)
+    results, _ := a.Query(q, nil, r)
+    if len(results) > 0 {
+        fmt.Printf("Successfully updated Adjacency List with %q for Link %q\n", adjacency_sid, key)
+    } else {
+        fmt.Println("Something went wrong -- failed to update adjacency_list")
+    }
+}
+
