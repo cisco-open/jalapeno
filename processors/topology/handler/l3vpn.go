@@ -34,13 +34,10 @@ func l3vpn(a *ArangoHandler, m *openbmp.Message) {
 
         //l3vpn_prefix_key := vpn_rd + "_" + prefix + "_" + strconv.Itoa(prefix_len)
         //l3vpn_node_key := nexthop
-
         l3vpn_prefix_object := parse_l3vpn_prefix(a, real_vpn_rd, prefix, prefix_len, nexthop, peer_ip, peer_asn, labels, ext_community_list, is_ipv4)
         l3vpn_node_object := parse_l3vpn_node(a, real_vpn_rd, nexthop, peer_ip, peer_asn, ext_community_list)
         if (action == "add") {
             create_l3vpn_prefix(a, l3vpn_prefix_object)
-            //var vpn_rd_list [] string
-            //vpn_rd_list = append(vpn_rd_list, real_vpn_rd)
             l3vpn_node_exists := a.db.CheckExistingL3VPNNode(nexthop)
             if (l3vpn_node_exists) {
                 a.db.UpdateExistingVPNRDS(nexthop, real_vpn_rd)

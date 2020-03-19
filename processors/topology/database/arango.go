@@ -86,6 +86,12 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
 	// Create / Connect  collections
 	cols := make(map[string]driver.Collection)
 
+        cols[RouterName], err = ensureVertexCollection(g, RouterName)
+        if err != nil {
+                log.WithError(err).Errorf("Failed to connect to collection %q", RouterName)
+                return ArangoConn{}, err
+        }
+
         cols[EPENodeName], err = ensureVertexCollection(g, EPENodeName)
         if err != nil {
                 log.WithError(err).Errorf("Failed to connect to collection %q", EPENodeName)
@@ -95,18 +101,6 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
         cols[EPEExternalPrefixName], err = ensureVertexCollection(g, EPEExternalPrefixName)
         if err != nil {
                 log.WithError(err).Errorf("Failed to connect to collection %q", EPEExternalPrefixName)
-                return ArangoConn{}, err
-        }
-
-        cols[ExternalRouterName], err = ensureVertexCollection(g, ExternalRouterName)
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", ExternalRouterName)
-                return ArangoConn{}, err
-        }
-
-	cols[ExternalPrefixName], err = ensureVertexCollection(g, ExternalPrefixName)
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", ExternalPrefixName)
                 return ArangoConn{}, err
         }
 
@@ -131,78 +125,6 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
         cols[LSLinkName], err = ensureEdgeCollection(g, LSLinkName, []string{LSNodeName}, []string{LSNodeName})
         if err != nil {
                 log.WithError(err).Errorf("Failed to connect to collection %q", LSLinkName)
-                return ArangoConn{}, err
-        }
-
-        cols[RouterName], err = ensureVertexCollection(g, RouterName)
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", RouterName)
-                return ArangoConn{}, err
-        }
-
-        cols[InternalRouterName], err = ensureVertexCollection(g, InternalRouterName)
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", InternalRouterName)
-                return ArangoConn{}, err
-        }
-
-        cols[BorderRouterName], err = ensureVertexCollection(g, BorderRouterName)
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", BorderRouterName)
-                return ArangoConn{}, err
-        }
-
-        cols[InternalRouterInterfaceName], err = ensureVertexCollection(g, InternalRouterInterfaceName)
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", InternalRouterInterfaceName)
-                return ArangoConn{}, err
-        }
-
-        cols[BorderRouterInterfaceName], err = ensureVertexCollection(g, BorderRouterInterfaceName)
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", BorderRouterInterfaceName)
-                return ArangoConn{}, err
-        }
-
-        cols[ExternalRouterInterfaceName], err = ensureVertexCollection(g, ExternalRouterInterfaceName)
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", ExternalRouterInterfaceName)
-                return ArangoConn{}, err
-        }
-
-	cols[PrefixName], err = ensureVertexCollection(g, PrefixName)
-	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", PrefixName)
-		return ArangoConn{}, err
-	}
-
-	cols[InternalPrefixName], err = ensureVertexCollection(g, InternalPrefixName)
-	if err != nil {
-		log.WithError(err).Errorf("Failed to connect to collection %q", InternalPrefixName)
-		return ArangoConn{}, err
-	}
-
-	cols[InternalLinkEdgeName], err = ensureEdgeCollection(g, InternalLinkEdgeName, []string{RouterName}, []string{RouterName})
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", InternalLinkEdgeName)
-                return ArangoConn{}, err
-        }
-
-	cols[ExternalLinkEdgeName], err = ensureEdgeCollection(g, ExternalLinkEdgeName, []string{RouterName}, []string{RouterName})
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", ExternalLinkEdgeName)
-                return ArangoConn{}, err
-        }
-
-	cols[ExternalPrefixEdgeName], err = ensureEdgeCollection(g, ExternalPrefixEdgeName, []string{RouterName}, []string{PrefixName})
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", ExternalPrefixEdgeName)
-                return ArangoConn{}, err
-        }
-
-	cols[EPEEdgeName], err = ensureEdgeCollection(g, EPEEdgeName, []string{RouterName}, []string{PrefixName})
-        if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", EPEEdgeName)
                 return ArangoConn{}, err
         }
 
@@ -360,7 +282,10 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		return err
 	}
 	switch i.GetType() {
-
+	case RouterName:
+                get = &Router{
+                        Key: key,
+                }
 	case EPENodeName:
                 get = &EPENode{
                         Key: key,
@@ -368,16 +293,6 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 
         case EPEExternalPrefixName:
                 get = &EPEExternalPrefix{
-                        Key: key,
-                }
-
-        case ExternalRouterName:
-                get = &ExternalRouter{
-                        Key: key,
-                }
-
-	case ExternalPrefixName:
-                get = &ExternalPrefix{
                         Key: key,
                 }
 	case L3VPNNodeName:
@@ -394,54 +309,6 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                 }
 	case LSLinkName:
                 get = &LSLink{
-                        Key: key,
-                }
-	case RouterName:
-                get = &Router{
-                        Key: key,
-                }
-        case InternalRouterName:
-                get = &InternalRouter{
-                        Key: key,
-                }
-        case BorderRouterName:
-                get = &BorderRouter{
-                        Key: key,
-                }
-	case InternalRouterInterfaceName:
-                get = &InternalRouterInterface{
-                        Key: key,
-                }
-        case BorderRouterInterfaceName:
-                get = &BorderRouterInterface{
-                        Key: key,
-                }
-        case ExternalRouterInterfaceName:
-                get = &ExternalRouterInterface{
-                        Key: key,
-                }
-	case PrefixName:
-		get = &Prefix{
-			Key: key,
-		}
-        case InternalPrefixName:
-		get = &InternalPrefix{
-			Key: key,
-		}
-        case InternalLinkEdgeName:
-                get = &InternalLinkEdge{
-                        Key: key,
-                }
-        case ExternalLinkEdgeName:
-                get = &ExternalLinkEdge{
-                        Key: key,
-                }
-        case EPEEdgeName:
-                get = &EPEEdge{
-                        Key: key,
-                }
-        case ExternalPrefixEdgeName:
-                get = &ExternalPrefixEdge{
                         Key: key,
                 }
 	}

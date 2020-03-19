@@ -24,21 +24,15 @@ func ls_node(a *ArangoHandler, m *openbmp.Message) {
         }
 	srgb := parse_srgb(ls_sr)
 
-	sr_node_sid := ""
 	sr_prefix_sid := ""
         sr_beginning_label := parse_sr_beginning_label(srgb)
         sid_index := a.db.GetSIDIndex(bgp_id)
         if(sid_index != "") {
-                sr_node_sid = calculate_sid(sr_beginning_label, sid_index)
                 sr_prefix_sid = calculate_sid(sr_beginning_label, sid_index)
         }
 
 	// Creating and upserting ls_node documents  
-	parse_ls_node_router(a, bgp_id, name, router_ip, srgb, sr_node_sid)
-
 	parse_ls_node(a, name, router_id, asn, srgb, sr_prefix_sid, igp_router_id)
-
-	parse_ls_node_internal_router(a, bgp_id, name, router_ip, srgb, igp_router_id, sr_node_sid)
 }
 
 
@@ -76,42 +70,5 @@ func parse_ls_node(a *ArangoHandler, name string, router_id string, asn string, 
         } else {
                 fmt.Printf("Successfully added ls_node document -- LSNode: %q with SRGB: %q, PrefixSID: %q, and name: %q\n", router_id, srgb, sr_prefix_sid, name)
         }
-}
-
-// Parses a Router from the current LSNode OpenBMP message
-// Upserts the created Router document into the Routers collection
-func parse_ls_node_router(a *ArangoHandler, bgp_id string, name string, router_ip string, srgb string, sr_node_sid string) {
-        fmt.Println("Parsing ls_node - document 1: router_document")
-        router_document := &database.Router{
-                BGPID:     bgp_id,
-                Name:      name,
-                RouterIP:  router_ip,
-		SRNodeSID: sr_node_sid,
-                SRGB:      srgb,
-        }
-        if err := a.db.Upsert(router_document); err != nil {
-                fmt.Println("While upserting the current ls_node message's router document, encountered an error", err)
-        } else {
-        	fmt.Printf("Successfully added current ls_node message's router document -- Router: %q with SRGB: %q, SRNodeSID: %q, and name: %q\n", router_ip, srgb, sr_node_sid, name)
-	}
-}
-
-// Parses an Internal Router from the current LSNode OpenBMP message
-// Upserts the created Internal Router document into the Routers collection
-func parse_ls_node_internal_router(a *ArangoHandler, bgp_id string, name string, router_ip string, srgb string, igp_router_id string, sr_node_sid string) {
-        fmt.Println("Parsing ls_node - document 2: internal_router_document")
-        internal_router_document := &database.InternalRouter{
-                BGPID:     bgp_id,
-                Name:      name,
-                RouterIP:  router_ip,
-		SRNodeSID: sr_node_sid,
-                SRGB:      srgb,
-		IGPID:     igp_router_id,
-        }
-        if err := a.db.Upsert(internal_router_document); err != nil {
-                fmt.Println("While upserting the current ls_node message's internal router document, encountered an error", err)
-        } else {
-        	fmt.Printf("Successfully added current ls_node message's internal router document -- Internal Router: %q with SRGB: %q, SRNodeSID: %q, and name: %q\n", router_ip, srgb, sr_node_sid, name)
-	}	
 }
 

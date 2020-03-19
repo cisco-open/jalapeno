@@ -80,8 +80,8 @@ func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
 
 func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 	fmt.Println("Handling UnicastPrefix OpenBMP message")
-	fmt.Println(m)
-	unicast_prefix(a, m)
+	//fmt.Println(m)
+	//unicast_prefix(a, m)
 }
 
 func (a *ArangoHandler) HandleLSNode(m *openbmp.Message) {
