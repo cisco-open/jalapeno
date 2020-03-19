@@ -28,10 +28,9 @@ type LSLink struct {
         UnResvBW        string `json:"UnResvBW,omitempty"`
         LinkProtection  string `json:"LinkProtection,omitempty"`
         LinkName        string `json:"LinkName,omitempty"`
-	SRLG            string `json:"SRLG,omitempty"`
+	SRLG            string `json:"SRLG"`
 	UniDirMinDelay  string `json:"UniDirMinDelay,omitempty"`
 	AdjacencySID    string `json:"AdjacencySID,omitempty"`
-	AdjSID         []string `json:"adj_sid_list,omitempty"`
 }
 
 func (l LSLink) GetKey() (string, error) {
