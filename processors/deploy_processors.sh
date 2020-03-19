@@ -7,6 +7,7 @@ if [ -z "$1" ]
 fi
 
 ${KUBE} create -f ${PWD}/${BASEDIR}/topology/topology_dp.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/ls/ls_dp.yaml
 ${KUBE} create -f ${PWD}/${BASEDIR}/l3vpn/l3vpn_dp.yaml
 ${KUBE} create -f ${PWD}/${BASEDIR}/epe-edges/epe_edges_collector_dp.yaml
 ${KUBE} create -f ${PWD}/${BASEDIR}/epe-paths/paths_collector_dp.yaml
