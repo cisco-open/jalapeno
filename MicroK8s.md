@@ -103,7 +103,7 @@ Jalapeno is very easy to deploy in this single cluster environment.
 
 1. Clone repo and `cd` into folder: `git clone <repo> && cd jalapeno`
 
-2. Ensure that you have a Docker login set up via the `docker login` command that has access to docker.io/iejalapeno. **Note: You need docker installed for this step**
+2. Ensure that you have a Docker login set up via `sudo docker login` command that has access to docker.io/iejalapeno. **Note: You need docker installed for this step**
 
    ```bash
    $ cat $HOME/.docker/config.json
