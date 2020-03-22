@@ -49,6 +49,7 @@ func parse_peer_epe_node(a *ArangoHandler, local_bgp_id string, peer_ip string, 
         epe_node_document := &database.EPENode{
                 RouterID:  local_bgp_id,
 		PeerIP:    peer_list,
+		ASN:       local_asn,
 	}
         if err := a.db.Upsert(epe_node_document); err != nil {
                 fmt.Println("Encountered an error while upserting the epe node document", err)

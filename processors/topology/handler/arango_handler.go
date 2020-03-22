@@ -61,9 +61,9 @@ func (a *ArangoHandler) RegisterDefault(f HandlerFunc) {
 }
 
 func (a *ArangoHandler) HandleCollector(m *openbmp.Message) {
-	fmt.Println("Handling Collector OpenBMP message")
-	fmt.Println(m)
-	collector(a, m)
+	fmt.Println("No need for Collector OpenBMP message -- skipping")
+	//fmt.Println(m)
+	//collector(a, m)
 }
 
 func (a *ArangoHandler) HandleRouter(m *openbmp.Message) {
@@ -73,15 +73,15 @@ func (a *ArangoHandler) HandleRouter(m *openbmp.Message) {
 }
 
 func (a *ArangoHandler) HandlePeer(m *openbmp.Message) {
-	fmt.Println("Handling Peer OpenBMP message")
+        fmt.Println("Handling Peer OpenBMP message")
 	fmt.Println(m)
 	peer(a, m)
 }
 
 func (a *ArangoHandler) HandleUnicastPrefix(m *openbmp.Message) {
 	fmt.Println("Handling UnicastPrefix OpenBMP message")
-	//fmt.Println(m)
-	//unicast_prefix(a, m)
+	fmt.Println(m)
+	unicast_prefix(a, m)
 }
 
 func (a *ArangoHandler) HandleLSNode(m *openbmp.Message) {

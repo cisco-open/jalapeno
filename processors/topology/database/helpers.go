@@ -18,16 +18,6 @@ func (a *ArangoConn) GetSIDIndex(ip string) string {
         return ""
 }
 
-func (a *ArangoConn) CheckExistingL3VPNRouter(router_ip string) bool {
-    var r string
-    q := fmt.Sprintf("FOR r in L3VPN_Routers filter r._key == %q return r", router_ip)
-    results, _ := a.Query(q, nil, r)
-    if len(results) > 0 {
-        return true
-    } else {
-        return false
-    }
-}
 
 func (a *ArangoConn) CheckExistingEPENode(local_bgp_id string) bool {
     var r string
@@ -68,7 +58,17 @@ func (a *ArangoConn) UpdateExistingPeerIP(local_bgp_id string, peer_ip string) {
     } else {
         fmt.Println("Something went wrong -- failed to update peer ip")
     }
+}
 
+func (a *ArangoConn) CheckExistingL3VPNRouter(router_ip string) bool {
+    var r string
+    q := fmt.Sprintf("FOR r in L3VPN_Routers filter r._key == %q return r", router_ip)
+    results, _ := a.Query(q, nil, r)
+    if len(results) > 0 {
+        return true
+    } else {
+        return false
+    }
 }
 
 func (a *ArangoConn) CheckExistingL3VPNNode(router_ip string) bool {
