@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/log"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
+        "github.com/cisco-ie/jalapeno/processors/topology/log"
+        "github.com/cisco-ie/jalapeno/processors/topology/openbmp"
 )
+
 
 func collector(a *ArangoHandler, m *openbmp.Message) {
 	if m.Action() != openbmp.ActionHeartbeat {
