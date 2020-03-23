@@ -8,9 +8,9 @@ import (
 	"reflect"
 	"strings"
 
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/kafka"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/log"
+	"github.com/cisco-ie/jalapeno/processors/topology/database"
+	"github.com/cisco-ie/jalapeno/processors/topology/kafka"
+	"github.com/cisco-ie/jalapeno/processors/topology/log"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
