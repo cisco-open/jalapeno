@@ -3,7 +3,7 @@ BINARY ?= bin/$(EXECUTABLE)
 REPO=iejalapeno
 IMAGE=l3vpn-processor
 TAG=0.1
-# If your cluster is behind and proxy: uncomment edit the following line to allow a proxied connection to dockerhub.
+# If you connect to dockerhub via a proxy: uncomment and edit the following line (and see below docker build lines)
 #PROXY=http://proxy.esl.cisco.com:8080
 
 all: build
