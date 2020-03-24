@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/log"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
+	"github.com/cisco-ie/jalapeno/processors/topology/database"
+	"github.com/cisco-ie/jalapeno/processors/topology/log"
+	"github.com/cisco-ie/jalapeno/processors/topology/openbmp"
 )
 
 type ArangoHandler struct {

@@ -9,7 +9,7 @@ import (
 	
 	driver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
-	log "wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/log"
+	log "github.com/cisco-ie/jalapeno/processors/topology/log"
 )
 
 var (

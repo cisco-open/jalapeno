@@ -2,8 +2,8 @@ package handler
 
 import (
 	"fmt"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
+	"github.com/cisco-ie/jalapeno/processors/topology/database"
+	"github.com/cisco-ie/jalapeno/processors/topology/openbmp"
 )
 
 func peer(a *ArangoHandler, m *openbmp.Message) {

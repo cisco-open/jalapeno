@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/openbmp"
+	"github.com/cisco-ie/jalapeno/processors/topology/openbmp"
 )
 
 func unicast_prefix(a *ArangoHandler, m *openbmp.Message) {
