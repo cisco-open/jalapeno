@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-	
+
 	driver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
-	log "wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/log"
+	log "github.com/cisco-ie/jalapeno/processors/topology/log"
 )
 
 var (
@@ -98,9 +98,15 @@ func NewArango(cfg ArangoConfig) (ArangoConn, error) {
                 return ArangoConn{}, err
         }
 
-        cols[EPEExternalPrefixName], err = ensureVertexCollection(g, EPEExternalPrefixName)
+        cols[EPEPrefixName], err = ensureVertexCollection(g, EPEPrefixName)
         if err != nil {
-                log.WithError(err).Errorf("Failed to connect to collection %q", EPEExternalPrefixName)
+                log.WithError(err).Errorf("Failed to connect to collection %q", EPEPrefixName)
+                return ArangoConn{}, err
+        }
+
+        cols[EPELinkName], err = ensureVertexCollection(g, EPELinkName)
+        if err != nil {
+                log.WithError(err).Errorf("Failed to connect to collection %q", EPELinkName)
                 return ArangoConn{}, err
         }
 
@@ -291,10 +297,16 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
                         Key: key,
                 }
 
-        case EPEExternalPrefixName:
-                get = &EPEExternalPrefix{
+        case EPEPrefixName:
+                get = &EPEPrefix{
                         Key: key,
                 }
+
+        case EPELinkName:
+                get = &EPELink{
+                        Key: key,
+                }
+
 	case L3VPNNodeName:
                 get = &L3VPNNode{
                         Key: key,

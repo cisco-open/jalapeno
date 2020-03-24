@@ -7,11 +7,11 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/stephenrlouie/service"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/config"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/database"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/handler"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/kafka"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/log"
+	"github.com/cisco-ie/jalapeno/processors/topology/config"
+	"github.com/cisco-ie/jalapeno/processors/topology/database"
+	"github.com/cisco-ie/jalapeno/processors/topology/handler"
+	"github.com/cisco-ie/jalapeno/processors/topology/kafka"
+	"github.com/cisco-ie/jalapeno/processors/topology/log"
 )
 
 func init() {
