@@ -1,5 +1,5 @@
 # Jalapeno
-### Database-driven, cloud-native SDN
+### A database-driven, cloud-native SDN infrastructure platform
 
 #### High level architecture 
 ![jalapeno_architecture](https://github.com/cisco-ie/jalapeno/blob/master/docs/diagrams/jalapeno_architecture.png "jalapeno architecture")
@@ -15,7 +15,7 @@ With the statement "SDN is database problem" we are saying all SDN use cases can
 
 #### Some project principles
 * Give applications the ability to choose their service/SLA (path through the network)
-* The Host is the control/encapsulation point (linux, VPP, other)
+* The Host may be the control/encapsulation point (linux, VPP, other)
 * Cloud-native microservice architecture from day 1
 * Combine network and application performance data
 * Emphasize the use of APIs over Protocols - greater agility
@@ -24,25 +24,25 @@ With the statement "SDN is database problem" we are saying all SDN use cases can
 
 Jalapeno is comprised of a series of microservices which can be summarized as:
 
-* Collection Stack and Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.  The collection stack also includes Influx TSDB and Grafana for darta visualization
+* Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.  The collection stack also includes Influx TSDB and Grafana for darta visualization
 
 ![jalapeno_data collection](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_data_collection.png "jalapeno data collection")
 
-* Data Handlers and Graph Database - parse data coming off Kafka and populate virtual topology data collections in the Arango graph database.
+* Data Processors and Graph Database - processors parse topology and performance data coming off Kafka and populate the Influx TSDB and virtual topology data collections in the Arango graph database.
 
 ![jalapeno_graph db](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_graphDB.png "jalapeno graph db")
 
-* Services (SR-Apps) - are mini-applications that receive user requests for service (TE/QoE, VPN, etc.), and then mine the graph database for the label stack or SRH needed to execute the service request.  Each SR-App's capabilities are exposed via Jalapeno's API.  
+* API-GW - expose Jalapeno's virtual topology data for application consumption
+
+![jalapeno_api](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_api.png "jalapeno api")
+
+* SR-Apps - mini-applications that mine the graph and time-series databases for the label stack or SRH data needed to execute topology or traffic engineering use cases.  Each SR-App should have its own API to field client requests for Segment Routing network services.  
 
 ![jalapeno_sr-apps](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_sr_apps.png "jalapeno sr-apps")
 
 Jalapeno's kubernetes/microservice architecture make it inherently extensible, and we imagine the number of Collectors, Services (SR-Apps), and graphDB virtual topology use cases to expand significantly as our community grows.
 
-* API - expose SR-Apps services
-
-![jalapeno_api](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_api.png "jalapeno api")
-
-Jalapeno's initial POC example Apps are "Latency" and "Bandwidth": a user or application may call Jalapeno's API-GW requesting lowest-latency-path to destination X, or least-utilized (most BW available) to destination Y. The API-GW passes the request to the Latency or Bandwidth service which in turn mine the database and respond with the appropriate SR label stack or SRH.  
+Jalapeno's initial POC example Apps are EPE "Latency" and "Bandwidth": a user or application may call the EPE Latency or Bandwidth API requesting lowest-latency-path to External destination X, or least-utilized (most BW available) to destination Y. The App makes a Jalapeno API-GW call for Latency or Bandwidth which in turn mines the EPE virtual topology database and respond with the appropriate SR label stack or SRH.  
 
 ![jalapeno_sr dataplane](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/diagrams/jalapeno_sr_dataplane.png "jalapeno sr dataplane")
 
@@ -56,8 +56,8 @@ The key to developing and supporting virtual topology use cases is the programma
 * iBGP and eBGP IPv4, IPv6, and labeled unicast topology data
 * BGP VPNv6, VPNv6, and EVPN topology data
 
-## Getting Started
-To get started, visit the [Quick Start](Quick-Start.md) guide.
+## Installing and Deploying Jalapeno
+To get started, visit the [MicroK8s.md](Quick-Start.md) guide.
 
 
 
