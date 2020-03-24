@@ -1,3 +1,5 @@
+# Sample config
+
 bmp server 1
  host <ip_addr> port 30555
  description jalapeno OpenBMP
