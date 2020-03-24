@@ -4,7 +4,10 @@
 #### High level architecture 
 ![jalapeno_architecture](https://github.com/cisco-ie/jalapeno/blob/master/docs/diagrams/jalapeno_architecture.png "jalapeno architecture")
 
-#### SDN is a database problem
+## Installing and Deploying Jalapeno
+To get started, visit the [MicroK8s.md](MicroK8s.md) guide.
+
+#### Platform Overview: SDN is a database problem
 With the statement "SDN is database problem" we are saying all SDN use cases can be executed via database mappings and their associated encapsulations. With this framework in mind, Jalapeno has the theoretical ability to address any kind of virtual topology use case. Therefore, Jalapeno is a generalized SDN platform, which may be used for:
 
 * Internal Traffic Engineering - engineered tunnels traversing a network under common management (BGP-LS use cases - see note below**)
