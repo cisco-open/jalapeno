@@ -1,6 +1,5 @@
-## Some reference CLI commands for users who deploy Jalapeno on the Openshift k8s orchestrator:
+### Some reference CLI commands for users who deploy Jalapeno on the Openshift k8s orchestrator:
 
-### Command Reference
 ```bash
 oc login <server ip_address>    # log in to your cluster
 oc project <project_name>       # enter your project
