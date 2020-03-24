@@ -103,9 +103,7 @@ Jalapeno is very easy to deploy in this single cluster environment.
 
 Note: prior to deploying, we recommend setting your Internal BGP ASN, and optionally, the ASNs of any direct or transit BGP peers you wish to track.  These settings are found in:
 
-[topology_dp.yaml](topology_dp.yaml)
-
-https://github.com/cisco-ie/jalapeno/blob/master/processors/topology/topology_dp.yaml
+[topology_dp.yaml] (https://github.com/cisco-ie/jalapeno/blob/master/processors/topology/topology_dp.yaml)
 
 Example:
 ```
@@ -116,6 +114,7 @@ Example:
           - "7200 7600"
           - --direct-peer-asns
           - "7100"
+```
 
 1. Clone repo and `cd` into folder: `git clone <repo> && cd jalapeno`
 
