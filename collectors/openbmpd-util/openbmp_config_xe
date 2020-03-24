@@ -1,6 +1,8 @@
-router bgp 65400
+# Sample config
+
+router bgp <asn>
  bmp server 1
-  address 10.0.250.2 port-number 5000
+  address <ip_addr> port-number 30555
   initial-delay 5
   flapping-delay 60
   stats-reporting-period 60
