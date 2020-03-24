@@ -2,14 +2,13 @@ EXECUTABLE ?= jalapeno
 BINARY ?= bin/$(EXECUTABLE)
 REPO=iejalapeno
 IMAGE=topology
-TAG=0.0.3.3
+TAG=0.0.3.2
 PROXY=http://proxy.esl.cisco.com:8080
 
 all: build
 
 build:
 	CGO_ENABLED=0 go build --ldflags '${EXTLDFLAGS}' -o ${BINARY} github.com/cisco-ie/jalapeno/processors/topology
-
 
 linux:
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ${BINARY} github.com/cisco-ie/jalapeno/processors/topology
