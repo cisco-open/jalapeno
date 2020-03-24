@@ -101,7 +101,7 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
 
 Jalapeno is very easy to deploy in this single cluster environment.
 
-Note: prior to deploying, we recommend setting your Internal BGP ASN, and optionally, the ASNs of any direct or transit BGP peers you wish to track.  These settings are found in:
+Note: prior to deploying, we recommend setting your Internal BGP ASN(s), and optionally, the ASNs of any direct or transit BGP peers you wish to track.  These settings are found in:
 
 https://github.com/cisco-ie/jalapeno/blob/master/processors/topology/topology_dp.yaml
 
@@ -109,11 +109,11 @@ Example:
 ```
         args:
           - --asn
-          - "100000"
+          - "109 36692 13445"
           - --transit-provider-asns
-          - "7200 7600"
+          - "3356 2914"
           - --direct-peer-asns
-          - "7100"
+          - "2906 8075"
 ```
 
 1. Clone repo and `cd` into folder: `git clone <repo> && cd jalapeno`
