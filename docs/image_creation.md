@@ -31,7 +31,7 @@ docker push iejalapeno/api:0.0.3 # sample command
 
 ## Using an image
 
-# If you built and pushed a new image upto the dockerhub repo from your local machine, be sure to pull it into the Jalapeno environment.
+If you built and pushed a new image upto the dockerhub repo from your local machine, be sure to pull it into the Jalapeno environment.
 docker pull [REPOSTIORY NAME]:[TAG]
 docker pull iejalapeno/api:0.0.3 # sample command
 ```
