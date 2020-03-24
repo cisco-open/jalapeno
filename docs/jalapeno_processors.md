@@ -1,10 +1,10 @@
 # Jalapeno Services
 
-## Collector vServices
-Jalapeno Collector vServices are responsible for organizing, parsing, and analysing network data. Any Jalapeno Infrastructure component with data is considered a source for a vService. 
+## Data Processors
+Jalapeno's Data Processors are responsible for organizing, parsing, and analysing network topology and performance data. Any Jalapeno Infrastructure component with data is considered a source for a Processor. 
 
-### Topology vService
-The Topology vService interacts with OpenBMP data in Kafka in order to create topology representations in ArangoDB.
+### Topology Processor
+BGP speakers send BMP data feeds to OpenBMP, which then passes the data to Kafka.  The Topology Processor subscribes to Kafka's BMP topics in order to create topology representations in ArangoDB.
 Collections created using this service are considered base-collections. These base-collections have no inference of relationships between network elements, or of any metrics -- they are organized collections of individual OpenBMP messages.
 For example, the Topology vService creates the LSNode collection and the LSLink collection directly from OpenBMP BGP-LS message data.
 However, the inference that an LSNode can reach another LSNode via some set of LSLinks is made using the separate link-state topology processor.
