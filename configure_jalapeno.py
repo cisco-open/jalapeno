@@ -1,3 +1,5 @@
+# MArch 23, 20202: This configuration script needs to be updated to work with native k8s cluster deployments.  Please don't use this script at this time.
+
 import sys, configparser, os
 from jinja2 import *
 from colorama import init
