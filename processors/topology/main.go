@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/cmd"
-	"wwwin-github.cisco.com/spa-ie/jalapeno/processors/topology/config"
+	"github.com/cisco-ie/jalapeno/processors/topology/cmd"
+	"github.com/cisco-ie/jalapeno/processors/topology/config"
 )
 
 var jalapenoCmd = &cobra.Command{
