@@ -1,10 +1,10 @@
 package handler
 
 import (
-    "strings"
-    "fmt"
-    "github.com/cisco-ie/jalapeno/processors/topology/database"
-    "github.com/cisco-ie/jalapeno/processors/topology/openbmp"
+        "strings"
+        "fmt"
+        "github.com/cisco-ie/jalapeno/processors/topology/database"
+        "github.com/cisco-ie/jalapeno/processors/topology/openbmp"
 )
 
 func l3vpn(a *ArangoHandler, m *openbmp.Message) {

@@ -3,27 +3,23 @@ package handler
 import (
 	"strings"
         "fmt"
-	"github.com/cisco-ie/jalapeno/processors/topology/database"
-	"github.com/cisco-ie/jalapeno/processors/topology/openbmp"
+        "github.com/cisco-ie/jalapeno/processors/topology/database"
+        "github.com/cisco-ie/jalapeno/processors/topology/openbmp"
 )
 
 func ls_link(a *ArangoHandler, m *openbmp.Message) {
 	// Collecting necessary fields from message
-        //src_router_id        :=  m.GetStr("router_id")
         local_router_id      :=  m.GetStr("router_id")
-        //src_interface_ip     :=  m.GetStr("intf_ip")
         local_interface_ip   :=  m.GetStr("intf_ip")
-        //src_asn              :=  m.GetStr("local_node_asn")
-        //local_asn            :=  m.GetStr("local_node_asn")
         asn                  :=  m.GetStr("local_node_asn")
-        //dst_router_id        :=  m.GetStr("remote_router_id")
         remote_router_id     :=  m.GetStr("remote_router_id")
-        //dst_interface_ip     :=  m.GetStr("nei_ip")
         remote_interface_ip  :=  m.GetStr("nei_ip")
-        // dst_asn              :=  m.GetStr("remote_node_asn")
-        //remote_asn           :=  m.GetStr("remote_node_asn")
+	peer_asn             :=  m.GetStr("remote_node_asn")
         protocol             :=  m.GetStr("protocol")
-        igp_id               :=  m.GetStr("igp_router_id")
+	local_pref           :=  m.GetStr("local_pref")
+        med                  :=  m.GetStr("med")
+        nexthop              :=  m.GetStr("nexthop")
+	igp_id               :=  m.GetStr("igp_router_id")
         igp_metric           :=  m.GetStr("igp_metric")
         te_metric            :=  m.GetStr("te_default_metric")
         admin_group          :=  m.GetStr("admin_group")
@@ -44,11 +40,15 @@ func ls_link(a *ArangoHandler, m *openbmp.Message) {
                 return
         }
 
+        // Creating and upserting ls_link edge documents
         if (adj_sid_tlv != "") {
                 parse_ls_link(a, local_router_id, local_interface_ip, asn, remote_router_id, remote_interface_ip, protocol,
                 igp_id, igp_metric, te_metric, admin_group, max_link_bw, max_resv_bw, unresv_bw, link_protection, srlg, link_name,
                 adj_sid_tlv)
-        }
+	}
+
+        // Creating and upserting epe_link vertex documents
+	parse_epe_link(a, local_router_id, local_interface_ip, asn, remote_router_id, remote_interface_ip, peer_asn, protocol, local_pref, med, nexthop, epe_label)
 }
 
 // Parses an LSLink Edge entry from the current LS-Link OpenBMP message
@@ -102,6 +102,44 @@ adj_sid_tlv string) {
         }
 }
 
+// Parses an EPELink vertex entry from the current LS-Link OpenBMP message
+// Upserts the LSLink Edge document into the LSTopology collection
+func parse_epe_link(a *ArangoHandler, local_router_id string, local_interface_ip string, asn string, remote_router_id string, remote_interface_ip string, peer_asn string, protocol string, local_pref string, med string, nexthop string, epe_label string) {
+        fmt.Println("Parsing ls_link message to epe_link_document")
+
+        peer_has_internal_asn :=  check_asn_location(peer_asn)
+
+        // case 1: neighboring peer is internal -- this is not an EPE prefix
+        if peer_asn == a.asn || peer_has_internal_asn == true {
+                fmt.Println("Current peer message's neighbor ASN is a local ASN: this is not an EPEPrefix -- skipping")
+                return
+        }
+
+        fmt.Printf("Parsing current ls_link message to epe_link document: From EPENode: %q, Peer: %q, Interface: %q\n", local_router_id, remote_interface_ip, local_interface_ip)
+
+        //local_router_key := "LSNode/" + local_router_id
+        //remote_router_key := "LSNode/" + remote_router_id
+
+        epe_link_document := &database.EPELink{
+                //LocalRouterKey:    local_router_key,
+                //RemoteRouterKey:   remote_router_key,
+                RouterID:          local_router_id,
+                ASN:               asn,
+                PeerRouterID:      remote_router_id,
+                LocalInterfaceIP:  local_interface_ip,
+                PeerIP:            remote_interface_ip,
+                Protocol:          protocol,
+		LocalPref:         local_pref,
+		MED:               med,
+		Nexthop:           nexthop,
+		EPELabel:          epe_label,
+	}
+        if err := a.db.Upsert(epe_link_document); err != nil {
+                fmt.Println("Encountered an error while upserting epe_link document:", err)
+        } else {
+                fmt.Printf("Successfully added epe_link document from ls_link message: EPENode: %q, Peer: %q, Interface: %q\n", local_router_id, remote_interface_ip, local_interface_ip)
+        }
+}
 
 
 
