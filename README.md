@@ -29,7 +29,7 @@ Jalapeno is comprised of a series of microservices which can be summarized as:
 
 * Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.  The collection stack also includes Influx TSDB and Grafana for darta visualization
 
-* Data Processors and Graph Database - Jalapeno has two classes of processors: 
+* Data Processors, Graph Database, and Time-Series Database - Jalapeno has two classes of processors: 
   * Base data processors: parse topology and performance data coming off Kafka and populate the Influx TSDB and base data collections in the Arango graph database.  The Topology and Telegraf pods are base processors.
   * Virtual_Topology processors: mine the graph and TSDB data collections and then populate virtual topology collections in the graph DB.  LS, EPE, and L3VPN, are examples of virtual topology processors.
 
