@@ -1,0 +1,30 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: telegraf-ingress-config
+  namespace: jalapeno-collectors
+  selfLink: /api/v1/namespaces/jalapeno/configmaps/telegraf-ingress-config
+data:
+  telegraf.conf: +|
+    [agent]
+      interval = "10s"
+      round_interval = true
+      metric_buffer_limit = 10000
+      flush_buffer_when_full = true
+      collection_jitter = "0s"
+      flush_interval = "10s"
+      flush_jitter = "0s"
+      debug = false
+      quiet = false
+      hostname = "telegraf"
+
+    [[inputs.cisco_telemetry_mdt]]
+      transport = "grpc"
+      service_address = ":57400"
+      [inputs.cisco_telemetry_mdt.aliases]
+        ifstats = "ietf-interfaces:interfaces-state/interface/statistics"
+
+    [[outputs.kafka]]
+      brokers = ["broker.jalapeno.svc:9092"]
+      topic = "jalapeno.telemetry"
+
