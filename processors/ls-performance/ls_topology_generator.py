@@ -23,6 +23,14 @@ def generate_ls_topology_query(arango_client):
     ls_topology = arango_client.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return ls_topology
 
+def get_node_hostname(arango_client, router_ip):
+    aql = """FOR n in LSNode
+        FILTER n._key == @ls_node_key
+        RETURN n.Name"""
+    bindVars = {"ls_node_key": router_ip}
+    node_hostname = arango_client.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return node_hostname[0]
+
 def generate_internal_link_edges(arango_client, router_ip, router_interface_ip):
     """Connect to Arango using parameters in arangoconfig.
     Collect InternalLinkEdges given a Source RouterIP and InterfaceIP.

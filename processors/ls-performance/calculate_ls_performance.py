@@ -13,13 +13,17 @@ def main():
 
     while(True):
         ls_topology = ls_topology_generator.generate_ls_topology(arango_client)
-        print(ls_topology)
-        for link in range(len(ls_topology)):
-            print(ls_topology[link])
-            router_ip = ls_topology[link]['RouterID']
-            router_interface_ip = ls_topology[link]['InterfaceIP']
-            print(router_ip, router_interface_ip)
-            exit()
+#        print(ls_topology)
+        for link_index in range(len(ls_topology)):
+            current_ls_link = ls_topology[link_index]
+            router_ip = current_ls_link['RouterID']
+            router_interface_ip = current_ls_link['InterfaceIP']
+            router_hostname = ls_topology_generator.get_node_hostname(arango_client, router_ip)
+            if(router_ip == "10.0.0.1"):
+                interface_name = collect_interface_name(influx_client, router_hostname, router_interface_ip)
+                print(router_ip, router_interface_ip, router_hostname, interface_name)
+        time.sleep(30)
+"""            exit()
             if internal_links[link]["key"] not in telemetry_interface_mapper:
                 print("\n%s (interface %s) is not currently configured for internal telemetry measurements or calculations" % (router_ip, router_interface_ip))
                 continue
@@ -61,7 +65,7 @@ def main():
                 internal_link_edge_key = router_ip + "_" + router_interface_ip + "_" + internal_link_edge['dest_intf_ip'] + "_" + internal_link_edge['destination'].replace("Routers/", "")
                 upsert_internal_link_performance(internal_link_edge_key, calculated_performance_metrics, "InternalLinkEdges")
             print("============================================================")
-        time.sleep(30)
+"""
 
 
 def collect_performance_dataset(influx_client, source, interface_name, telemetry_value):
@@ -73,10 +77,22 @@ def collect_performance_dataset(influx_client, source, interface_name, telemetry
     performance_metric_dataset = influx_client.query(performance_metric_query)
     return performance_metric_dataset
 
+def collect_interface_name(influx_client, source, interface_ip):
+    map_query = """SELECT last(\"ip_information/ip_address\") AS \"interface_ip\", \"interface_name\"
+    FROM \"Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface\"
+    WHERE (\"source\" = '""" + source + """') GROUP BY \"interface_name\";"""
+    map = influx_client.query(map_query)
+    map_list = list(map.get_points())
+    interface_name = ""
+    for e in range(len(map_list)):
+        if((map_list[e]["interface_ip"] == interface_ip)):
+            interface_name = map_list[e]["interface_name"]
+    return interface_name
+
 def collect_interface_ip(influx_client, source, interface_name):
     interface_ip_query = """SELECT last(\"ip_information/ip_address\")
     FROM \"Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface\"
-    WHERE (\"source\" = '""" + source + """"' AND \"interface_name\" = '"""' + interface_name + """"');"""
+    WHERE (\"source\" = '""" + source + """' AND \"interface_name\" = '""" + interface_name + """');"""
     print(interface_ip_query)
     interface_ip = influx_client.query(interface_ip_query)
     return interface_ip
