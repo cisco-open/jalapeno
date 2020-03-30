@@ -40,6 +40,8 @@ Example from topology_dp.yaml:
 
 3. Use the `deploy_jalapeno.sh` script. This will start the collectors and all jalapeno infra and services on the single node.
 
+[deploy_jalapeno.sh](deploy_jalapeno.sh)
+
    ```bash
    deploy_jalapeno.sh microk8s.kubectl
    ```
