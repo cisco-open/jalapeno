@@ -25,7 +25,7 @@ data:
     data_format = "influx"
 
   [[outputs.influxdb]]
-    urls = ["http://influxdb-0.influxdb.jalapeno.svc.cluster.local:8086"]
+    urls = ["influxdb-np.jalapeno:8086"]
     database = "mdt_db"
     username = "jalapeno"
     password = "jalapeno"
