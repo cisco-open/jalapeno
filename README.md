@@ -1,9 +1,9 @@
 # Jalapeno
 ### A cloud-native SDN infrastructure platform
-#### Installing and Deploying Jalapeno
+
 To install Jalapeno and get started, visit the [Getting-Started.md](Getting-Started.md) guide.
 
-#### High level architecture 
+### High level architecture 
 ![jalapeno_architecture](https://github.com/cisco-ie/jalapeno/blob/master/docs/diagrams/jalapeno_architecture.png "jalapeno architecture")
 
 #### Platform Overview: SDN is a database problem
