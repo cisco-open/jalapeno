@@ -10,8 +10,8 @@ fi
 echo "Creating jalapeno-telemetry Namespace"
 ${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno-collectors.json
 
-echo "Deploying Pipeline Ingress"
-${KUBE} create -f ${PWD}/${BASEDIR}/pipeline-ingress/.
+echo "Deploying Telegraf Ingress"
+${KUBE} create -f ${PWD}/${BASEDIR}/telegraf-ingress/.
 
 echo "Deploying Openbmpd Collector"
 ${KUBE} create -f ${PWD}/${BASEDIR}/openbmpd/.

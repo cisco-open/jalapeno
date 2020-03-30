@@ -11,7 +11,7 @@ echo "Creating Jalapeno Namespace"
 ${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno.json
 
 echo "Creating Jalapeno Service Account"
-${KUBE} create -f ${PWD}/${BASEDIR}/sa.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/service_account.yaml
 
 echo "Setting up secret for docker.io"
 ${KUBE} create secret generic regcred --from-file=.dockerconfigjson=${HOME}/.docker/config.json --type=kubernetes.io/dockerconfigjson --namespace=jalapeno
@@ -28,8 +28,8 @@ ${KUBE} create -f ${PWD}/${BASEDIR}/influxdb/.
 echo "Deploying Grafana"
 ${KUBE} create -f ${PWD}/${BASEDIR}/grafana/.
 
-echo "Deploying Pipeline Egress"
-${KUBE} create -f ${PWD}/${BASEDIR}/pipeline-egress/.
+echo "Deploying Telegraf Egress"
+${KUBE} create -f ${PWD}/${BASEDIR}/telegraf-egress/.
 
 echo "Finished deploying infra services"
 
