@@ -50,8 +50,6 @@ The key to developing and supporting virtual topology use cases is the programma
 * iBGP and eBGP IPv4, IPv6, and labeled unicast topology data
 * BGP VPNv6, VPNv6, and EVPN topology data
 
-## Installing and Deploying Jalapeno
-To get started, visit the [MicroK8s.md](MicroK8s.md) guide.
 
 
 
