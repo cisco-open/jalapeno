@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-"""AQL Queries executed by the L3VPN_Topology Service."""
+"""AQL Queries executed by the LS_Topology Service."""
 
 def get_ls_topology_keys(db):
     aql = """ FOR l in LS_Topology return l._key """
