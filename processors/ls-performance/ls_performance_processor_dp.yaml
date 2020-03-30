@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: jalapeno
+  name: ls-performance-processor
+  labels:
+    app: ls-performance-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ls-performance-processor
+  template:
+    metadata:
+      labels:
+        app: ls-performance-processor
+    spec:
+      containers:
+      - name: ls-performance-processor
+        image: iejalapeno/ls-performance-processor:0.1@sha256:b0d5b485e9ab1cfc673f9eec3b726438d086ac5e03f4d326013ee40995008ba4
+      imagePullSecrets:
+        - name: regcred  
