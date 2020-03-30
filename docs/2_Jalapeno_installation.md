@@ -1,33 +1,82 @@
-# Jalapeno Services
+# Jalapeno Installation in Microk8s
 
-## Data Processors
-Jalapeno's Data Processors are responsible for organizing, parsing, and analysing network topology and performance data. Any Jalapeno Infrastructure component with data is considered a source for a Processor. 
+Jalapeno is very easy to deploy in this single cluster environment.
 
-### Topology Processor
-BGP speakers send BMP data feeds to OpenBMP, which then passes the data to Kafka.  The Topology Processor subscribes to Kafka's BMP topics in order to create topology representations in ArangoDB.
-Collections created using this service are considered base-collections. These base-collections have no inference of relationships between network elements, or of any metrics -- they are organized collections of individual OpenBMP messages.
-For example, the Topology vService creates the LSNode collection and the LSLink collection directly from OpenBMP BGP-LS message data.
-However, the inference that an LSNode can reach another LSNode via some set of LSLinks is made using the separate link-state topology processor.
- 
-The configuration for Topology's deployment is in "topology_dp.yaml" in the topology directory.
+Note: prior to deploying, we recommend setting your Internal BGP ASN(s), and optionally, the ASNs of any direct or transit BGP peers you wish to track.  These settings are found in:
 
-### EPE_Topology - Egress Peer Engineering for Internal to External Traffic Engineering
-The EPE_Topology processor uses EPENode, EPELink, and EPEPrefix base-collections in ArangoDB to creat the EPE_Topology edge collection. This edge collection is a virtual topology representation of egress paths from an internal network to external (Internet) prefixes.
-The source of an EPEEdge is a PeeringRouter, while the destination is an ExternalPrefix. Additional information is included such as ASN, InterfaceIP, SRNodeSID, and EPELabel.
+https://github.com/cisco-ie/jalapeno/blob/master/processors/topology/topology_dp.yaml
 
-The configuration for EPE_Topology deployment is in "epe_topology_dp.yaml" in the epe-topology directory.
+Example:
+```
+        args:
+          - --asn
+          - "109 36692 13445"
+          - --transit-provider-asns
+          - "3356 2914"
+          - --direct-peer-asns
+          - "2906 8075"
+```
 
-### LSLink Performance Processor
-The LSLink Performance Processor calculates and correlates performance metrics to link-state interfaces and populates metric data in the LS_Topology edge collection.
-Each document will derive link utiliation metrics from telemetry data in InfluxDB. 
+1. Clone repo and `cd` into folder: `git clone <repo> && cd jalapeno`
 
-The configuration for LSLink Performance's deployment is in "lslink_performance_dp.yaml" in the lslinks-performance directory.
+2. Ensure that you have a Docker login set up via `sudo docker login` command that has access to docker.io/iejalapeno. **Note: You need docker installed for this step**
 
-### EPELink Performance Processor
-The EPELink Performance Processor calculates and correlates performance metrics on EPELinks and populates metric data in the EPE_Topology edge collection.
-Each document will derive link utiliation metrics from telemetry data in InfluxDB. 
+   ```bash
+   $ cat $HOME/.docker/config.json
+   {
+    "auths": {
+      "https://index.docker.io/v1/": {
+        "auth": "c2trdW1hcmF2Zqweqwea2FyNzYxNw=="
+      }
+    },
+    "HttpHeaders": {
+      "User-Agent": "Docker-Client/19.03.5 (linux)"
+   }
+   ```
 
-The configuration for EPELink Performance's deployment is in "epeink_performance_dp.yaml" in the epelink-performance directory.
+3. Use the `deploy_jalapeno.sh` script. This will start the collectors and all jalapeno infra and services on the single node.
 
-## API
-The API is deployed using Swagger and enables the client to make a variety of requests for optomized paths through the network. 
+   ```bash
+   deploy_jalapeno.sh microk8s.kubectl
+   ```
+
+4. Check that all services are up using: `microk8s.kubectl get all --all-namespaces`
+
+5. Configure the routers to point towards the cluster. The MDT port is 32400 and the BMP port is 30555.
+
+   1. Example destination group for MDT: **Note: you may need to set TPA mgmt**
+
+      ```shell
+       destination-group jalapeno
+        address-family ipv4 <server-ip> port 32400
+         encoding self-describing-gpb
+         protocol grpc no-tls
+        !
+       !
+      ```
+
+   2. Example of BMP config:
+
+      ```shell
+      bmp server 1
+       host <server-ip> port 30555
+       description jalapeno OpenBMP
+       update-source MgmtEth0/RP0/CPU0/0
+       flapping-delay 60
+       initial-delay 5
+       stats-reporting-period 60
+       initial-refresh delay 30 spread 2
+      !
+      ```
+
+6. Navigate to the dashboard and check invidual services as appropriate.
+
+## Destroying Jalapeno
+
+Jalapeno can also be destroyed using the script.
+
+1. Use the `destroy_jalapeno.sh` script. Will remove both namespaces jalapeno and jalapeno-collectors and all associated services/pods/deployments/etc. and it will remove all the persistent volumes associated with kafka and arangodb.
+
+   ```shell
+   destory_jalapeno.sh microk8s.kubectl
+   ```
