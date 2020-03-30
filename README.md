@@ -1,5 +1,5 @@
 # Jalapeno
-### A database-driven, cloud-native SDN infrastructure platform
+### A cloud-native SDN infrastructure platform
 
 #### High level architecture 
 ![jalapeno_architecture](https://github.com/cisco-ie/jalapeno/blob/master/docs/diagrams/jalapeno_architecture.png "jalapeno architecture")
