@@ -1,6 +1,4 @@
-# Jalapeno Services
-
-## Data Processors
+## Jalapeno Data Processors
 Jalapeno's Data Processors are responsible for organizing, parsing, and analysing network topology and performance data. Any Jalapeno Infrastructure component with data is considered a source for a Processor. 
 
 ### Topology Processor
