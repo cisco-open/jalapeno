@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: jalapeno
+  name: ls-performance-collector
+  labels:
+    app: ls-performance-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ls-performance-collector
+  template:
+    metadata:
+      labels:
+        app: ls-performance-collector
+    spec:
+      containers:
+      - name: ls-performance-collector
+        image: iejalapeno/ls-performance-collector:0.1@sha256:
+      imagePullSecrets:
+        - name: regcred  
