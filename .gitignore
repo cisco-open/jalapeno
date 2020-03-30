@@ -1,9 +1,0 @@
-.DS_Store
-*.pyc
-__pycache__/
-.vagrant
-.vagrant/
-venv/
-*/bin
-Pipfile.lock
-.vscode/
