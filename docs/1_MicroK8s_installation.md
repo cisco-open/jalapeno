@@ -101,3 +101,6 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
 
 10. Access Kubernetes Dashboard: `http://<server-ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/`
 
+You may now proceed to install/deploy Jalapeno on your Microk8s cluster:
+
+[2_Jalapeno_installation.md](2_Jalapeno_installation.md)
