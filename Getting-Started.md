@@ -1,8 +1,9 @@
 # Jalapeno Installation Guide
+The following instructions use command line examples when installing/deploying on a Microk8s cluster
 
 ### Installing Jalapeno
 
-1. Clone repo and `cd` into folder: `git clone <repo> && cd jalapeno`
+1. Clone this repo and `cd` into the folder: `git clone <repo> && cd jalapeno`
 
 2. Ensure that you have a Docker login set up via `sudo docker login` command that has access to docker.io/iejalapeno. **Note: You need docker installed for this step**
 
@@ -19,7 +20,7 @@
    }
    ```
 
-### Pre-Installation
+### Pre-Deployment
 
 Jalapeno's Topology processing makes a distinction between Internal (topology, nodes, links, prefixes, ASNs) and External. Thus, prior to deploying, we recommend configuring the Topology processor to identify your Internal BGP ASN(s), and optionally, the ASNs of any direct or transit BGP peers you wish to track.  These settings are found in:
 
@@ -46,7 +47,9 @@ Example from topology_dp.yaml:
    deploy_jalapeno.sh microk8s.kubectl
    ```
 
-4. Check that all services are up using: `microk8s.kubectl get all --all-namespaces`
+4. Check that all containers are up using: `microk8s.kubectl get all --all-namespaces`
+
+
 
 5. Configure the routers to point towards the cluster. The MDT port is 32400 and the BMP port is 30555.
 
