@@ -3,7 +3,8 @@ BINARY ?= bin/$(EXECUTABLE)
 REPO=iejalapeno
 IMAGE=ls-performance-processor
 TAG=0.1
-PROXY=http://proxy.esl.cisco.com:8080
+# If you connect to dockerhub via a proxy: uncomment and edit the following line (and see below docker build lines)
+#PROXY=http://proxy.esl.cisco.com:8080
 
 all: build
 
@@ -14,5 +15,9 @@ run:
 	python3.6 calculate_ls_performance.py
 
 container:
-	docker build --build-arg http_proxy=${PROXY} --build-arg https_proxy=${PROXY} -t ${REPO}/${IMAGE}:${TAG} .
+	# Default docker build without proxy setting:
+	docker build -t ${REPO}/${IMAGE}:${TAG} .	
 
+	# Uncomment this line (and comment out the above line) if you connect to dockerhub via a proxy
+	#docker build --build-arg http_proxy=${PROXY} --build-arg https_proxy=${PROXY} -t ${REPO}/${IMAGE}:${TAG} .
+	
