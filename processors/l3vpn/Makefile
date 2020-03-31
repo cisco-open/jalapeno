@@ -16,9 +16,7 @@ run:
 
 container:
 	# Default docker build without proxy setting:
-	docker build -t ${REPO}/${IMAGE}:${TAG} .	
+	docker build -t ${REPO}/${IMAGE}:${TAG} .
 
 	# Uncomment this line (and comment out the above line) if you connect to dockerhub via a proxy
 	#docker build --build-arg http_proxy=${PROXY} --build-arg https_proxy=${PROXY} -t ${REPO}/${IMAGE}:${TAG} .
-	
-
