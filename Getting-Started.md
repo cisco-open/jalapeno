@@ -170,13 +170,22 @@ Jalapeno can also be destroyed using the script.
 
 ### More info:
 
-[MicroK8s_installation.md](MicroK8s_installation.md)
-[BMP](BMP.md)
-[Kafka](Kafka.md)
-[Topology_processor](Topology_processor.md)
-[Arango-GraphDB](Arango-GraphDB.md)
-[Influx-TSDB](Influx-TSDB.md)
-[Link-State_processor](Link-State_processor.md)
-[L3VPN_processor](L3VPN_processor.md)
-[EPE_processor](EPE_processor.md)
-[Network-performance_processors](Network-performance_processors.md)
+* [MicroK8s_installation.md](MicroK8s_installation.md)
+
+* [BMP](BMP.md)
+
+* [Kafka](Kafka.md)
+
+* [Topology_processor](Topology_processor.md)
+
+* [Arango-GraphDB](Arango-GraphDB.md)
+
+* [Influx-TSDB](Influx-TSDB.md)
+
+* [Link-State_processor](Link-State_processor.md)
+
+* [L3VPN_processor](L3VPN_processor.md)
+
+* [EPE_processor](EPE_processor.md)
+
+* [Network-performance_processors](Network-performance_processors.md)
