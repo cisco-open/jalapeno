@@ -1,1 +1,1 @@
-[sample-testbed.png](sample-testbed.png)
+[sample_testbed.png](sample_testbed.png)
