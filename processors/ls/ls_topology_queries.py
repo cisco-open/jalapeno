@@ -5,7 +5,7 @@ def get_ls_topology_keys(db):
     aql = """ FOR l in LS_Topology return l._key """
     bindVars = {}
     allLSLinks = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
-    return allLSLinks 
+    return allLSLinks
 
 def get_disjoint_keys(db, ls_topology_keys):
     aql = """ FOR l in LSLink filter l._key not in @ls_topology_keys return l._key """
