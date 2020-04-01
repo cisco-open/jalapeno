@@ -1,4 +1,4 @@
-# XR Config, fill out <server_ip> to use!
+# XR OpenBMP Config, fill out <server_ip> to use!
 
 bmp server 1
  host <server_ip> port 30555
