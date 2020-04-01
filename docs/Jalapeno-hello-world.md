@@ -4,7 +4,7 @@
 
 Sample Arango queries to assemble the data needed to program a disjoint-path LSP:
 
-1. Determine shortest-path hop-count from R01 to R05:
+1. Prior to setting up the disjoint query, we'll determine shortest-path hop-count from R01 to R05, and whether we have an ECMP pagths:
 ```
 RETURN LENGTH(
 FOR v IN OUTBOUND 
@@ -18,7 +18,7 @@ Output is 4-hops (including the source node):
   4
 ]
 ```
-2. Optional query for ECMP paths should they exist.  In this case subtract 1 (see the '3..3' notation) from the hop-count result as source node is already accounted for:
+2. Query for ECMP paths should they exist.  In this case subtract 1 (see the '3..3' notation) from the hop-count result as source node is already accounted for:
 ```
 FOR v, e, p IN 3..3 OUTBOUND "LSNode/10.0.0.1" LS_Topology
      FILTER v._id == "LSNode/10.0.0.5"
@@ -31,13 +31,41 @@ Output
   "[\"10.0.0.1\",\"10.0.0.3\",\"10.0.0.4\",\"10.0.0.5\"] -> [\"100001\",\"100003\",\"100004\",\"100005\"]"
 ]
 ```
-3. Query for shortest path which avoids R09
+3. Query for the shortest path which avoids R09
 ```
-query
+FOR v IN OUTBOUND 
+SHORTEST_PATH 'LSNode/10.0.0.1' TO 'LSNode/10.0.0.5' LS_Topology
+ FILTER v.RouterID != "10.0.0.9"
+ Return {"RouterID": v.RouterID, "PrefixSID": v.PrefixSID}
 ```
 Output
 ```
-output
+[
+  {
+    "RouterID": "10.0.0.1",
+    "PrefixSID": "100001"
+  },
+  {
+    "RouterID": "10.0.0.3",
+    "PrefixSID": "100003"
+  },
+  {
+    "RouterID": "10.0.0.4",
+    "PrefixSID": "100004"
+  },
+  {
+    "RouterID": "10.0.0.5",
+    "PrefixSID": "100005"
+  }
+]
 ```
+
+Just for fun, a query showing all paths from R01 to R05 that can be completed in 5 hops or less:
+```
+FOR v, e, p IN 1..6 OUTBOUND "LSNode/10.0.0.1" LS_Topology
+     FILTER v._id == "LSNode/10.0.0.5"
+       RETURN { "RouterID": p.vertices[*].RouterID, "PrefixSID": p.edges[*].RemotePrefixSID, "AdjSID": p.edges[*].AdjacencySID }
+```
+
 
 
