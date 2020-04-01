@@ -1,10 +1,12 @@
+# XR MDT Config, fill out <server_ip> to use!
+
 grpc
  port 57400
  !
 !
 telemetry model-driven
  destination-group jalapeno
-  address-family ipv4 10.0.250.2 port 32400
+  address-family ipv4 <server_ip> port 32400
    encoding self-describing-gpb
    protocol grpc no-tls
   !
@@ -19,5 +21,6 @@ telemetry model-driven
   sensor-group-id openconfig_interfaces sample-interval 30000
   sensor-group-id cisco_models sample-interval 30000
   destination-id jalapeno
+  source-interface Loopback0
  !
 !

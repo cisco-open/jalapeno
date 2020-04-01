@@ -1,19 +1,18 @@
-# Jalapeno Infrastructure: Telemetry
+# Model-Driven Telemetry Utilities
 
-## Deployment
+## Configuring Telemetry
 
 To deploy Jalapeno's telemetry infrastructure, configure `hosts.json` to reflect which devices you would like telemetry data to be streamed from.
+To configure telemetry across multiple devices at once:
+* Fill out `hosts.json` to reflect which devices you would like telemetry data to be streamed from
+* Fill out the `<server_ip>` field in the `mdt_xr_config` file to point to the Jalapeno Cluster
+* Run `python configure_telemetry.py`
 
-Once your hosts file is filled, run:
-```
-python deploy_telemetry.py
-```
-
-That deployment script configures telemetry according to device information and the templates in 'config_xr_template' and 'config_xe_template'
+That script uses netmiko to authenticate against the credentials supplied in `hosts.json` and deploys the config in `mdt_xr_config`.
 
 Note: `hosts.json.example` is included as an example of how `hosts.json` should look.
 
-In the event you need to remove	Pipeline or reassess your telemetry configuration, run:
+The deployed telemetry configuration can also be removed using:
 ```
 python remove_telemetry
 ```
@@ -24,12 +23,6 @@ python remove_telemetry
 SSH onto your network device. Run:
 ```
 show telemetry model-driven subscription
-```
-
-#### To confirm Pipeline is receiving data from your network devices:
-Enter the Pipeline-Ingress pod (through CLI or the OpenShift UI). Run:
-```
-cat pipeline.log
 ```
 
 #### To confirm Kafka is receiving telemetry data: 
