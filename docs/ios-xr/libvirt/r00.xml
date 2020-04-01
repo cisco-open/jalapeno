@@ -25,7 +25,7 @@
 
     <disk type='file' device='disk'>
      <driver name='qemu' type='qcow2'/>
-     <source file='/opt/images/voltron/r00.img'/>
+     <source file='/opt/images/jalapeno/r00.img'/>
      <target dev='vda' bus='virtio'/>
      <alias name='virtio-disk0'/>
     </disk>
@@ -35,7 +35,7 @@
     </controller>
 
     <interface type='bridge'>
-      <source bridge='vlt_mgt_br'/>
+      <source bridge='jalapeno_mgt_br'/>
       <virtualport type='openvswitch'>
       </virtualport>
       <target dev='r00mgt1'/>
@@ -50,7 +50,7 @@
     </interface>
 
     <interface type='bridge'>
-      <source bridge='vlt_mgt_br'/>
+      <source bridge='jalapeno_mgt_br'/>
       <virtualport type='openvswitch'>
       </virtualport>
       <target dev='r00mgt2'/>
@@ -65,7 +65,7 @@
     </interface>
 
     <interface type='bridge'>
-      <source bridge='vlt_mgt_br'/>
+      <source bridge='jalapeno_mgt_br'/>
       <virtualport type='openvswitch'>
       </virtualport>
       <target dev='r00mgt3'/>
@@ -81,7 +81,7 @@
 
     <!-- Data Interface 0 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r00ge0'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
@@ -96,7 +96,7 @@
 
     <!-- Data Interface 1 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r00ge1'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
@@ -111,7 +111,7 @@
 
     <!-- Data Interface 2 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r00ge2'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
@@ -122,99 +122,6 @@
       <driver >
       </driver>
       <alias name='r00ge2'/>
-    </interface>
-
-    <!-- Data Interface 3 -->
-    <interface type='bridge'>
-      <source bridge='vlt_br'/>
-      <target dev='r00ge3'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <vlan>
-        <tag id='103'/>
-      </vlan>
-      <driver >
-      </driver>
-      <alias name='r00ge3'/>
-    </interface>
-
-    <!-- Data Interface 4 -->
-    <interface type='bridge'>
-      <source bridge='vlt_br'/>
-      <target dev='r00ge4'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <vlan>
-        <tag id='104'/>
-      </vlan>
-      <driver >
-      </driver>
-      <alias name='r00ge4'/>
-    </interface>
-
-    <!-- Data Interface 5 -->
-    <interface type='bridge'>
-      <source bridge='vlt_br'/>
-      <target dev='r00ge5'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r00ge5'/>
-    </interface>
-
-    <!-- Data Interface 6 -->
-    <interface type='bridge'>
-      <source bridge='vlt_br'/>
-      <target dev='r00ge6'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r00ge6'/>
-    </interface>
-
-    <!-- Data Interface 7 -->
-    <interface type='bridge'>
-      <source bridge='vlt_br'/>
-      <target dev='r00ge7'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <vlan>
-        <tag id='111'/>
-      </vlan>
-      <driver >
-      </driver>
-      <alias name='r00ge7'/>
-    </interface>
-
-    <!-- Data Interface 8 -->
-    <interface type='bridge'>
-      <source bridge='vlt_br'/>
-      <target dev='r00ge8'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r00ge8'/>
-    </interface>
-
-    <!-- Data Interface 9 -->
-    <interface type='bridge'>
-      <source bridge='vlt_br'/>
-      <target dev='r00ge9'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r00ge9'/>
     </interface>
 
     <!-- SerialPortSection -->
