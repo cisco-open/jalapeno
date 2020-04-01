@@ -14,7 +14,7 @@ echo "Creating Jalapeno Service Account"
 ${KUBE} create -f ${PWD}/${BASEDIR}/service_account.yaml
 
 echo "Setting up secret for docker.io"
-${KUBE} create secret generic regcred --from-file=.dockerconfigjson=${HOME}/.docker/config.json --type=kubernetes.io/dockerconfigjson --namespace=jalapeno
+${KUBE} create secret docker-registry regcred --docker-server="https://index.docker.io/v1/" --docker-username="jalapenoimageaccess" --docker-password="jalapeno2020" --docker-email="jalapeno-team@cisco.com" --namespace=jalapeno
 
 echo "Deploying Kafka"
 ${KUBE} create -f ${PWD}/${BASEDIR}/kafka/.
