@@ -33,30 +33,34 @@ Output
 ```
 3. Query for the shortest path which avoids R09
 ```
-FOR v IN OUTBOUND 
+FOR v, e IN OUTBOUND 
 SHORTEST_PATH 'LSNode/10.0.0.1' TO 'LSNode/10.0.0.5' LS_Topology
  FILTER v.RouterID != "10.0.0.9"
- Return {"RouterID": v.RouterID, "PrefixSID": v.PrefixSID}
+ Return [v.RouterID, e.RemotePrefixSID, e.AdjacencySID]
 ```
-Output
+The following output can be used to create an SR LSP which is disjoint from R09 via label stack 100003, 100005.  The output also includes SR Adjacency SID data should the user wish to force traffic out a specific link:
 ```
 [
-  {
-    "RouterID": "10.0.0.1",
-    "PrefixSID": "100001"
-  },
-  {
-    "RouterID": "10.0.0.3",
-    "PrefixSID": "100003"
-  },
-  {
-    "RouterID": "10.0.0.4",
-    "PrefixSID": "100004"
-  },
-  {
-    "RouterID": "10.0.0.5",
-    "PrefixSID": "100005"
-  }
+  [
+    "10.0.0.1",
+    null,
+    null
+  ],
+  [
+    "10.0.0.3",
+    "100003",
+    "BVL 0 24005, VL 0 24006"
+  ],
+  [
+    "10.0.0.4",
+    "100004",
+    "BVL 0 24007, VL 0 24008"
+  ],
+  [
+    "10.0.0.5",
+    "100005",
+    "BVL 0 24002, VL 0 24003"
+  ]
 ]
 ```
 
