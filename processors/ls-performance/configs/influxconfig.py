@@ -2,7 +2,7 @@
 """Configuration file for InfluxDB connections.
 Specify the values according to environment.
 """
-host = 'influx-np.jalapeno'
+host = 'influxdb-np.jalapeno'
 port = 8086
 user = 'root'
 password = 'jalapeno'
