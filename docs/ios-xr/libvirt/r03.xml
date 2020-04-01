@@ -25,7 +25,7 @@
 
     <disk type='file' device='disk'>
      <driver name='qemu' type='qcow2'/>
-     <source file='/opt/images/voltron/r06.img'/>
+     <source file='/opt/images/jalapeno/r06.img'/>
      <target dev='vda' bus='virtio'/>
      <alias name='virtio-disk0'/>
     </disk>
@@ -35,7 +35,7 @@
     </controller>
 
     <interface type='bridge'>
-      <source bridge='vlt_mgt_br'/>
+      <source bridge='jalapeno_mgt_br'/>
       <virtualport type='openvswitch'>
       </virtualport>
       <target dev='r06mgt1'/>
@@ -50,7 +50,7 @@
     </interface>
 
     <interface type='bridge'>
-      <source bridge='vlt_mgt_br'/>
+      <source bridge='jalapeno_mgt_br'/>
       <virtualport type='openvswitch'>
       </virtualport>
       <target dev='r06mgt2'/>
@@ -65,7 +65,7 @@
     </interface>
 
     <interface type='bridge'>
-      <source bridge='vlt_mgt_br'/>
+      <source bridge='jalapeno_mgt_br'/>
       <virtualport type='openvswitch'>
       </virtualport>
       <target dev='r06mgt3'/>
@@ -81,7 +81,7 @@
 
     <!-- Data Interface 0 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r06ge0'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
@@ -96,7 +96,7 @@
 
     <!-- Data Interface 1 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r06ge1'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
@@ -111,7 +111,7 @@
 
     <!-- Data Interface 2 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r06ge2'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
@@ -126,7 +126,7 @@
 
     <!-- Data Interface 3 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r06ge3'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
@@ -138,7 +138,7 @@
 
     <!-- Data Interface 4 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r06ge4'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
@@ -150,7 +150,7 @@
 
     <!-- Data Interface 5 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r06ge5'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
@@ -162,7 +162,7 @@
 
     <!-- Data Interface 6 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r06ge6'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
@@ -174,7 +174,7 @@
 
     <!-- Data Interface 7 -->
     <interface type='bridge'>
-      <source bridge='vlt_br'/>
+      <source bridge='jalapeno_br'/>
       <target dev='r06ge7'/>
       <model type='e1000'/>
       <virtualport type='openvswitch'>
