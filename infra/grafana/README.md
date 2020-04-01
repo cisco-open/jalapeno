@@ -2,7 +2,7 @@
 
 Grafana is Jalapeno's visual dashboard and metric-visualization tool.
 
-Jalapeno's data-pipeline popualtes the time-series database [InfluxDB](../influxdb) with metrics regarding the state of the network. 
+Jalapeno's data-pipeline populates the time-series database [InfluxDB](../influxdb) with metrics regarding the state of the network. 
 Jalapeno's instance of Grafana loads InfluxDB as its data-source. 
 
 Grafana can have any number of graphical representations of the health of the network, including historical bandwidth usage, historical latency metrics, and more. 
