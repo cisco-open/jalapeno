@@ -1,5 +1,5 @@
 ### The following instructions will create a basic virtual network topology as shown here:
-![jalapeno_base_testbed](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/brmcdoug/docs/jalapeno_base_testbed.png "jalapeno-base-testbed")
+![sample_testbed](sample_testbed.png)
 
 The base topology allows one to create and test Jalapeno virtual topology use cases including:
 * Internal traffic engineering - steering traffic over a non-IGP best path toward an internal or external destination
@@ -28,18 +28,18 @@ Copy
     virsh define r00.xml
     virsh define r01.xml
     virsh define r02.xml
-    virsh define r05.xml
-    virsh define r06.xml
+    virsh define r03.xml
 
     virsh start r00
     virsh start r01
     virsh start r02
-    virsh start r05
-    virsh start r06
+    virsh start r03
 
 #### 5. Router console access:
     r00 -> telnet localhost 20000
-    r05 -> telnet localhost 20050
+    r01 -> telnet localhost 20010
+    r02 -> telnet localhost 20020
+    r03 -> telnet localhost 20030
 
 #### 6. Once the virtual routers are up and running:
 
