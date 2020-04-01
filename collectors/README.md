@@ -14,7 +14,7 @@ To collect performance-related data, Jalapeno uses Telegraf. Devices are configu
 
 Thus, Jalapeno has an Telegraf-Ingress Collector pod running in the cluster that serves as the ingress point for all performance data from the devices. As defined in the `telegraf_ingress_cfg.yaml` file, the data is then outputted to Kafka into the `jalapeno.telemetry` topic, which is queries by Jalapeno's performance processors(see [processors](../processors)). 
 
-Note: This is called Telegraf-Ingress specifically as there is a Telegraf-Egress processor that forwards the data from Kafka to InfluxDB further down Jalapeno's data pipeline. 
+Note: This is called Telegraf-Ingress specifically because there is a Telegraf-Egress processor that forwards the data from Kafka to InfluxDB further down Jalapeno's data pipeline. 
 
 ## Jalapeno Collector Utilities
 ### Telemetry Configuration on Devices
