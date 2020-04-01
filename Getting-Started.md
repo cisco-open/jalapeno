@@ -176,16 +176,16 @@ Jalapeno can also be destroyed using the script.
 
 * [Kafka](Kafka.md)
 
-* [Topology_processor](Topology_processor.md)
+* [Topology processor](Topology_processor.md)
 
-* [Arango-GraphDB](Arango-GraphDB.md)
+* [Arango GraphDB](Arango-GraphDB.md)
 
-* [Influx-TSDB](Influx-TSDB.md)
+* [Influx TSDB](Influx-TSDB.md)
 
-* [Link-State_processor](Link-State_processor.md)
+* [Link-State processor](Link-State_processor.md)
 
-* [L3VPN_processor](L3VPN_processor.md)
+* [L3VPN processor](L3VPN_processor.md)
 
-* [EPE_processor](EPE_processor.md)
+* [EPE processor](EPE_processor.md)
 
-* [Network-performance_processors](Network-performance_processors.md)
+* [Network-performance processors](Network-performance_processors.md)
