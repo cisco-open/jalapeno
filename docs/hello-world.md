@@ -22,13 +22,13 @@ Output is 4-hops (including the source node):
 ```
 FOR v, e, p IN 3..3 OUTBOUND "LSNode/10.0.0.1" LS_Topology
      FILTER v._id == "LSNode/10.0.0.5"
-       RETURN CONCAT_SEPARATOR(" -> ", p.vertices[*]._key)
+       RETURN CONCAT_SEPARATOR(" -> ", p.vertices[*]._key, p.vertices[*].PrefixSID)
 ```
 Output
 ```
 [
-  "10.0.0.1 -> 10.0.0.8 -> 10.0.0.9 -> 10.0.0.5",
-  "10.0.0.1 -> 10.0.0.3 -> 10.0.0.4 -> 10.0.0.5"
+  "[\"10.0.0.1\",\"10.0.0.8\",\"10.0.0.9\",\"10.0.0.5\"] -> [\"100001\",\"100008\",\"100009\",\"100005\"]",
+  "[\"10.0.0.1\",\"10.0.0.3\",\"10.0.0.4\",\"10.0.0.5\"] -> [\"100001\",\"100003\",\"100004\",\"100005\"]"
 ]
 ```
 3. Query for shortest path which avoids R09
