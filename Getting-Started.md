@@ -5,21 +5,6 @@ The following instructions use command line examples when installing/deploying o
 
 1. Clone this repo and `cd` into the folder: `git clone <repo> && cd jalapeno`
 
-2. Ensure that you have a Docker login set up via `sudo docker login` command that has access to docker.io/iejalapeno. **Note: You need docker installed for this step**
-
-   ```bash
-   $ cat $HOME/.docker/config.json
-   {
-    "auths": {
-      "https://index.docker.io/v1/": {
-        "auth": "c2trdW1hcmF2Zqweqwea2FyNzYxNw=="
-      }
-    },
-    "HttpHeaders": {
-      "User-Agent": "Docker-Client/19.03.5 (linux)"
-   }
-   ```
-
 ### Pre-Deployment
 
 Jalapeno's Topology processing makes a distinction between Internal topology: the nodes, links, prefixes, ASNs, etc, that make up the internal network; and External topology: the Internet, or other ASNs that we connect to but are not under our administrative control. Thus, prior to deploying, we recommend configuring the Topology processor to identify your Internal BGP ASN(s), and optionally, the ASNs of any direct or transit BGP peers you wish to track.  These settings are found in:
@@ -39,13 +24,13 @@ Example from topology_dp.yaml:
           - "2906 8075"
 ```
 
-3. Use the `deploy_jalapeno.sh` script. This will start the collectors and all jalapeno infra and services on the single node.
+2. Use the `deploy_jalapeno.sh` script. This will start the collectors and all jalapeno infra and services on the single node.
 
    ```bash
    deploy_jalapeno.sh microk8s.kubectl
    ```
 
-4. Check that all containers are up using: `microk8s.kubectl get all --all-namespaces` or on a per-namespace basis:
+3. Check that all containers are up using: `microk8s.kubectl get all --all-namespaces` or on a per-namespace basis:
 ```
 microk8s.kubectl get all -n jalapeno
 microk8s.kubectl get all -n jalapeno-collectors
@@ -123,7 +108,7 @@ NAME                        READY   AGE
 statefulset.apps/openbmpd   1/1     40h
 ```
 
-5. Configure routers in the network to stream telemetry and BMP data to the Jalapeno cluster. The MDT port is 32400 and the BMP port is 30555.
+4. Configure routers in the network to stream telemetry and BMP data to the Jalapeno cluster. The MDT port is 32400 and the BMP port is 30555.
 
    1. Example destination group for MDT: **Note: you may need to set TPA mgmt**
 
@@ -153,7 +138,7 @@ statefulset.apps/openbmpd   1/1     40h
        bmp-activate server 1
       ```
 
-6. If using Microk8s, navigate to the dashboard and check invidual services as appropriate.
+5. If using Microk8s, navigate to the dashboard and check invidual services as appropriate.
 ```
 http://<server-ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
 ```
