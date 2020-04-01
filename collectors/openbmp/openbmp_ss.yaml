@@ -1,39 +1,22 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: openbmpd-np
-  namespace: jalapeno-collectors
-  labels:
-    app: openbmpd
-spec:
-  type: NodePort
-  ports:
-    - name: 5000-tcp
-      port: 5000
-      nodePort: 30555
-      targetPort: 5000
-  selector:
-    app: openbmpd
----
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: openbmpd
+  name: openbmp
   namespace: jalapeno-collectors
 spec:
   selector:
     matchLabels:
-      app: openbmpd
-  serviceName: "openbmpd"
+      app: openbmp
+  serviceName: "openbmp"
   replicas: 1
   template:
     metadata:
       labels:
-        app: openbmpd
+        app: openbmp
     spec:
       terminationGracePeriodSeconds: 5
       containers:
-      - name: openbmpd
+      - name: openbmp
         image: openbmp/collector:latest
         ports:
         - containerPort: 5000
@@ -48,4 +31,4 @@ spec:
       volumes:
       - name: configmap
         configMap:
-          name: openbmpd-config
+          name: openbmp-config
