@@ -4,15 +4,14 @@
 Given configuration information (database connection parameters, set in arangoconfig)
 the "L3VPN_Topology" collection will be created or joined.
 
-Given configuration information (query parameters, set in queryconfig), all "L3VPN_Topology"
-documents will then be created from existing (seemingly unrelated) data from various 
+All "L3VPN_Topology" documents will then be created from existing (seemingly unrelated) data from various 
 Arango collections. Relevant data will be collected and organized, corresponding 
 "L3VPN_Topology" documents will be created, and finally, the "L3VPN_Topology" documents will be 
 upserted into the "L3VPN_Topology" collection.
 """
 
 from pyArango.connection import *
-from configs import arangoconfig, queryconfig
+from configs import arangoconfig
 from util import connections
 import logging, time, json, sys
 from l3vpn_topology_queries import *
@@ -23,7 +22,8 @@ def main():
     connection = connections.ArangoConn()
     database = connection.connect_arango(arangoconfig.url, arangoconfig.database, arangoconfig.username, arangoconfig.password)
     logging.info('Creating collection in Arango')
-    collection = create_collection(database, queryconfig.collection)  # the collection name is set in queryconfig
+    collection_name = "L3VPN_Topology"
+    collection = create_collection(database, collection_name)  
     while(True):
         print("Creating L3VPN_Topology edges between L3VPNPrefixes and L3VPNNodes")
         create_l3vpnprefix_l3vpnnode_edges(database, collection)
