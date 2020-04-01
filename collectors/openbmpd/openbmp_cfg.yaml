@@ -1,10 +1,10 @@
 kind: ConfigMap
 metadata:
-  name: openbmpd-config
+  name: openbmp-config
   namespace: jalapeno-collectors
 apiVersion: v1
 data:
-  openbmpd.conf: |-   
+  openbmp.conf: |-   
     base:
         # Admin id for this collector - Use "hostname" to use the system hostname
         #    Can be any string value up to 64 bytes
