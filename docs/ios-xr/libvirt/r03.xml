@@ -87,7 +87,7 @@
       <virtualport type='openvswitch'>
       </virtualport>
       <vlan>
-        <tag id='111'/>
+        <tag id='102'/>
       </vlan>
       <driver >
       </driver>
@@ -102,7 +102,7 @@
       <virtualport type='openvswitch'>
       </virtualport>
       <vlan>
-        <tag id='114'/>
+        <tag id='103'/>
       </vlan>
       <driver >
       </driver>
@@ -117,74 +117,11 @@
       <virtualport type='openvswitch'>
       </virtualport>
       <vlan>
-        <tag id='115'/>
+        <tag id='105'/>
       </vlan>
       <driver >
       </driver>
       <alias name='r06ge2'/>
-    </interface>
-
-    <!-- Data Interface 3 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r06ge3'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r06ge3'/>
-    </interface>
-
-    <!-- Data Interface 4 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r06ge4'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r06ge4'/>
-    </interface>
-
-    <!-- Data Interface 5 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r06ge5'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r06ge5'/>
-    </interface>
-
-    <!-- Data Interface 6 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r06ge6'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r06ge6'/>
-    </interface>
-
-    <!-- Data Interface 7 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r06ge7'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <vlan>
-        <tag id='111'/>
-      </vlan>
-      <driver >
-      </driver>
-      <alias name='r06ge7'/>
     </interface>
 
     <!-- SerialPortSection -->
