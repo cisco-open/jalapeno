@@ -1,6 +1,6 @@
 ###  An SDN Hello World App
 
-![hello-world](hello-world.png)
+![example topology](diagrams/example-topology.png)
 
 Sample Arango queries to assemble the data needed to program a disjoint-path LSP:
 
