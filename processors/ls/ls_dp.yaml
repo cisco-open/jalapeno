@@ -20,3 +20,4 @@ spec:
         image: iejalapeno/ls-processor:1.0@sha256:cc0a08f3b0695fe95f1718000836754cc5ffbd11f7f714ec1817e730eb081b41
       imagePullSecrets:
         - name: regcred
+
