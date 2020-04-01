@@ -102,7 +102,7 @@
       <virtualport type='openvswitch'>
       </virtualport>
       <vlan>
-        <tag id='109'/>
+        <tag id='101'/>
       </vlan>
       <driver >
       </driver>
@@ -117,104 +117,11 @@
       <virtualport type='openvswitch'>
       </virtualport>
       <vlan>
-        <tag id='110'/>
+        <tag id='105'/>
       </vlan>
       <driver >
       </driver>
       <alias name='r02ge2'/>
-    </interface>
-
-    <!-- Data Interface 3 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r02ge3'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r02ge3'/>
-    </interface>
-
-    <!-- Data Interface 4 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r02ge4'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r02ge4'/>
-    </interface>
-
-    <!-- Data Interface 5 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r02ge5'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <vlan>
-        <tag id='113'/>
-      </vlan>
-      <driver >
-      </driver>
-      <alias name='r02ge5'/>
-    </interface>
-
-    <!-- Data Interface 6 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r02ge6'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <vlan>
-        <tag id='115'/>
-      </vlan>
-      <driver >
-      </driver>
-      <alias name='r02ge6'/>
-    </interface>
-
-    <!-- Data Interface 7 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r02ge7'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <vlan>
-        <tag id='116'/>
-      </vlan>
-      <driver >
-      </driver>
-      <alias name='r02ge7'/>
-    </interface>
-
-    <!-- Data Interface 8 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r02ge8'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r02ge8'/>
-    </interface>
-
-    <!-- Data Interface 9 -->
-    <interface type='bridge'>
-      <source bridge='jalapeno_br'/>
-      <target dev='r02ge9'/>
-      <model type='e1000'/>
-      <virtualport type='openvswitch'>
-      </virtualport>
-      <driver >
-      </driver>
-      <alias name='r02ge9'/>
     </interface>
 
     <!-- SerialPortSection -->
