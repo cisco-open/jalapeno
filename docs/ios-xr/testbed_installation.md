@@ -1,5 +1,5 @@
 ### The following instructions will create a basic virtual network topology as shown here:
-![jalapeno_base_testbed](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/brmcdoug/docs/jalapeno_base_testbed.png "jalapeno-base-testbed")
+![sample_testbed](sample_testbed.png)
 
 The base topology allows one to create and test Jalapeno virtual topology use cases including:
 * Internal traffic engineering - steering traffic over a non-IGP best path toward an internal or external destination
