@@ -1,7 +1,7 @@
 ## Documentation describing link-state related virtual topology use cases and design
 #### Use cases include: internal traffic engineering, path steering, SRTE, explicit path TE, etc.
 
-### LS Topology Model 
+#### LS Topology Diagram
 ![ls topology](ls_topology.png)
 
 The link-state topology processor (LS_Topology) creates a virtual representation of the network LSDB (the LS_Topology edge collection) by piecing together data from the existing Arango LSNode and LSLink collections.
