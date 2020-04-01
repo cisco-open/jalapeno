@@ -2,4 +2,6 @@
 ### Use cases include: internal traffic engineering, path steering, SRTE, explicit path TE, etc.
 
 ### LS Topology Model 
-![ls topology model](https://wwwin-github.cisco.com/spa-ie/jalapeno/blob/master/docs/link-state/LSTopology_collection.png "ls topology model")
+![ls topology](ls_topology.png)
+
+The link-state topology processor (LS_Topology) collects all LSNode and LSLink data 
