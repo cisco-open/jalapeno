@@ -1,8 +1,8 @@
 ###  AQL queries to build an SDN Hello World App
 
-![example topology](diagrams/example-topology.png)
+#### The goal of this SR-App is to program a disjoint-path SR-LSP, which avoids R09:
 
-Sample Arango queries to assemble the data needed to program a disjoint-path LSP:
+![example topology](diagrams/example-topology.png)
 
 1. Prior to setting up the disjoint query, we'll determine shortest-path hop-count from R01 to R05, and whether we have an ECMP pagths:
 ```
