@@ -181,7 +181,7 @@ Jalapeno can also be destroyed using the script.
 
 * [Influx TSDB](Influx-TSDB.md)
 
-* [Link-State processor](Link-State_processor.md)
+* [Link-State processor](https://github.com/cisco-ie/jalapeno/tree/documentation/docs/link-state)
 
 * [L3VPN processor](L3VPN_processor.md)
 
