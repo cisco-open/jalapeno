@@ -11,7 +11,7 @@ upserted into the "LS_Topology" collection.
 """
 
 from pyArango.connection import *
-from configs import arangoconfig, queryconfig
+from configs import arangoconfig
 from util import connections
 import logging, time, json, sys
 from ls_topology_queries import *
