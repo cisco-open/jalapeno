@@ -11,5 +11,5 @@ Grafana can have any number of graphical representations of the health of the ne
 Grafana is deployed using `kubectl`, as seen in the [deploy_infrastructure script](../deploy_infrastructure.sh) script. The configurations for Grafana's deployment are in the various YAML files in the [jalapeno/infra/grafana/](.) directory.  
 
 ## Accessing Grafana
-To access Grafana's UI, log in at <server_ip>:30300, using credentials `root/jalapeno`.
+To access Grafana's UI, log in at `<server_ip>:30300`, using credentials `root/jalapeno`.
 
