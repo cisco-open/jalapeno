@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: topology
-        image: iejalapeno/topology:0.0.3.3@sha256:85029d092c38cdb076afb764c2fd50605666f1f13f5a9850c0784c750de3eed6
+        image: iejalapeno/topology:1.0@sha256:42296d65cf29ee1ab17690f818bf4242214d8352b56a3acd27712340449b11a3
         args:
           - topology
           - --arango-url
