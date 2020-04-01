@@ -4,7 +4,7 @@
 #### LS Topology Diagram
 ![ls topology](ls_topology.png)
 
-The link-state topology processor (LS_Topology) creates a virtual representation of the network LSDB (the LS_Topology edge collection) by piecing together data from the existing Arango LSNode and LSLink collections.
+The link-state topology processor (LS_Topology) creates a virtual representation of the network LSDB and populates the LS_Topology edge collection by piecing together data from the existing Arango LSNode and LSLink collections.
 
 Additionally, the [LS_Performance processor](ls_performance_processor.md) populates the LS_Topology edge collection with network performance and utilization statistics.
 
@@ -71,6 +71,21 @@ Sample data:
     "Out_Errors": 0,
     "Out_Octets": 0
   },
-  ```
-  
+```
+Example shortest path query which returns Prefix SIDs for all nodes in the path:
+```
+FOR v IN OUTBOUND 
+SHORTEST_PATH 'LSNode/10.0.0.6' TO 'LSNode/10.0.0.9' LS_Topology
+ Return v.PrefixSID
+```
+Output:
+```
+[
+  "100006",
+  "100001",
+  "100008",
+  "100009"
+]
+```
+
 
