@@ -1,7 +1,7 @@
-# Sample config
+# XR OpenBMP Config, fill out <server_ip> to use!
 
 bmp server 1
- host <ip_addr> port 30555
+ host <server_ip> port 30555
  description jalapeno OpenBMP
  update-source Loopback0
  flapping-delay 60
