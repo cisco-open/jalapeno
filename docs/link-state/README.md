@@ -87,5 +87,31 @@ Output:
   "100009"
 ]
 ```
-
+Shortest path hop-count from one node to another:
+```
+RETURN LENGTH(
+FOR v IN OUTBOUND 
+SHORTEST_PATH 'LSNode/10.0.0.6' TO 'LSNode/10.0.0.9' LS_Topology
+ Return v.PrefixSID
+)
+```
+Output:
+```
+[
+  4
+]
+```
+Use the hop-count to create a query for ECMP paths (reference: https://www.arangodb.com/docs/stable/aql/examples-multiple-paths.html)
+```
+FOR v, e, p IN 3..3 OUTBOUND "LSNode/10.0.0.6" LS_Topology
+     FILTER v._id == "LSNode/10.0.0.9"
+       RETURN CONCAT_SEPARATOR(" -> ", p.vertices[*]._key)
+```
+Output:
+```
+[
+  "10.0.0.6 -> 10.0.0.1 -> 10.0.0.8 -> 10.0.0.9",
+  "10.0.0.6 -> 10.0.0.2 -> 10.0.0.8 -> 10.0.0.9"
+]
+```
 
