@@ -168,7 +168,7 @@ Jalapeno can also be destroyed using the script.
    destory_jalapeno.sh microk8s.kubectl
    ```
 
-### More info:
+### More info on Jalapeno components:
 
 * [MicroK8s_installation.md](MicroK8s_installation.md)
 
