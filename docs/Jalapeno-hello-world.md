@@ -1,4 +1,4 @@
-###  An SDN Hello World App
+###  AQL queries to build an SDN Hello World App
 
 ![example topology](diagrams/example-topology.png)
 
