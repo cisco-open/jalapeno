@@ -13,8 +13,8 @@ ${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno-collectors.json
 echo "Deploying Telegraf Ingress"
 ${KUBE} create -f ${PWD}/${BASEDIR}/telegraf-ingress/.
 
-echo "Deploying Openbmpd Collector"
-${KUBE} create -f ${PWD}/${BASEDIR}/openbmpd/.
+echo "Deploying OpenBMP Collector"
+${KUBE} create -f ${PWD}/${BASEDIR}/openbmp/.
 
 echo "Finished deploying telemetry services"
 echo "Next configure routers!"
