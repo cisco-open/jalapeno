@@ -2,7 +2,7 @@ EXECUTABLE ?= jalapeno
 BINARY ?= bin/$(EXECUTABLE)
 REPO=iejalapeno
 IMAGE=ls-performance-processor
-TAG=0.1
+TAG=1.0
 # If you connect to dockerhub via a proxy: uncomment and edit the following line (and see below docker build lines)
 #PROXY=http://proxy.esl.cisco.com:8080
 
@@ -16,8 +16,8 @@ run:
 
 container:
 	# Default docker build without proxy setting:
-	docker build -t ${REPO}/${IMAGE}:${TAG} .	
+	docker build -t ${REPO}/${IMAGE}:${TAG} .
 
 	# Uncomment this line (and comment out the above line) if you connect to dockerhub via a proxy
 	#docker build --build-arg http_proxy=${PROXY} --build-arg https_proxy=${PROXY} -t ${REPO}/${IMAGE}:${TAG} .
-	
+
