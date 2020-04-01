@@ -165,5 +165,26 @@ Jalapeno can also be destroyed using the script.
 1. Use the `destroy_jalapeno.sh` script. Will remove both namespaces jalapeno and jalapeno-collectors and all associated services/pods/deployments/etc. and it will remove all the persistent volumes associated with kafka and arangodb.
 
    ```shell
-   destory_jalapeno.sh microk8s.kubectl
+   destroy_jalapeno.sh microk8s.kubectl
    ```
+### More info on Jalapeno components:
+
+* [MicroK8s_installation.md](MicroK8s_installation.md)
+
+* [BMP](BMP.md)
+
+* [Kafka](Kafka.md)
+
+* [Topology processor](Topology_processor.md)
+
+* [Arango GraphDB](Arango-GraphDB.md)
+
+* [Influx TSDB](Influx-TSDB.md)
+
+* [Link-State processor](Link-State_processor.md)
+
+* [L3VPN processor](L3VPN_processor.md)
+
+* [EPE processor](EPE_processor.md)
+
+* [Network-performance processors](Network-performance_processors.md)
