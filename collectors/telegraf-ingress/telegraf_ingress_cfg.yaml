@@ -5,7 +5,7 @@ metadata:
   namespace: jalapeno-collectors
   selfLink: /api/v1/namespaces/jalapeno/configmaps/telegraf-ingress-config
 data:
-  telegraf.conf: +|
+  telegraf.conf: |
     [agent]
       interval = "10s"
       round_interval = true

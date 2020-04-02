@@ -6,7 +6,7 @@ if [ -z "$1" ]
 fi
 
 echo "Shutting down Jalapeno"
-${KUBE} delete -f ${PWD}/infra/sa.yaml
+${KUBE} delete -f ${PWD}/infra/service_account.yaml
 ${KUBE} delete namespace jalapeno
 ${KUBE} delete namespace jalapeno-collectors
 echo "Deleting Persistent Volumes"
