@@ -2,7 +2,7 @@
 
 If you already have a Kubernetes environment deployed you may skip this document and move on to:
 
-[2_Jalapeno_installation.md](2_Jalapeno_installation.md)
+[Getting-Started: Jalapeno_installation.md](../Getting-Started.md)
 
 If you do not have an existing Kubernetes environment, then the following instructions may be used to install a single-node Microk8s cluster.  Microk8s is great for development and is contained to a single server.
 
