@@ -67,7 +67,7 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
 
 8. Enable skip for login token (only way over http proxy)
 
-   1. `sudo microk8s.kubectl -n kube-system edit deploy kubernetes-dashboard -o yaml`
+   1. `microk8s.kubectl -n kube-system edit deploy kubernetes-dashboard -o yaml`
 
    2. Add the `-enable-skip-login` flag to deployment's specs
 
@@ -103,4 +103,4 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
 
 You may now proceed to install/deploy Jalapeno on your Microk8s cluster:
 
-[2_Jalapeno_installation.md](2_Jalapeno_installation.md)
+[Getting-Started.md](../Getting-Started.md)
