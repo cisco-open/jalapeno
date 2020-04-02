@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: ls-processor
-        image: iejalapeno/ls-processor:1.0@sha256:cc0a08f3b0695fe95f1718000836754cc5ffbd11f7f714ec1817e730eb081b41
+        image: iejalapeno/ls-processor:1.0@sha256:a485216605752d1f3d902bcc2be4ae6048d28bff52a71ba65653f2e979e49580
       imagePullSecrets:
         - name: regcred
 
