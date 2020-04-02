@@ -97,10 +97,14 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
               - --enable-skip-login
       ```
 
-9. Enable Kubernetes proxy in the background to access dashboard from your browser: `microk8s.kubectl proxy --accept-hosts=.* --address=0.0.0.0 &`
+9. Enable Kubernetes proxy in the background to access dashboard from your browser:
 
-10. Access Kubernetes Dashboard: `http://<server-ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/`
+`microk8s.kubectl proxy --accept-hosts=.* --address=0.0.0.0 &`
+
+10. Access Kubernetes Dashboard: 
+
+`http://<server-ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/`
 
 You may now proceed to install/deploy Jalapeno on your Microk8s cluster:
 
-[2_Jalapeno_installation.md](2_Jalapeno_installation.md)
+[Getting-Started.md](../Getting-Started.md)
