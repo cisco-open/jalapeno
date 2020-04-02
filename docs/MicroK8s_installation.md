@@ -98,8 +98,9 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
       ```
 
 9. Enable Kubernetes proxy in the background to access dashboard from your browser:
-
-`microk8s.kubectl proxy --accept-hosts=.* --address=0.0.0.0 &`
+```
+microk8s.kubectl proxy --accept-hosts=.* --address=0.0.0.0 &
+```
 
 10. Access Kubernetes Dashboard: 
 
