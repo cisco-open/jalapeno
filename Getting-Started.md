@@ -168,10 +168,10 @@ Jalapeno can also be destroyed using the script.
 
 * [Influx TSDB](docs/Influx-TSDB.md)
 
-* [Link-State processor](docs/Link-State_processor.md)
+* [Link-State processor](docs/link-state/README.md)
 
-* [L3VPN processor](docs/L3VPN_processor.md)
+* [L3VPN processor](docs/l3vpn/README.md)
 
-* [EPE processor](docs/EPE_processor.md)
+* [EPE processor](docs/epe/README.md)
 
-* [Network-performance processors](docs/Network-performance_processors.md)
+* [Network-performance processors](docs/perf/README.md)
