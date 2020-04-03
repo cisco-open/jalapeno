@@ -172,6 +172,6 @@ Jalapeno can also be destroyed using the script.
 
 * [L3VPN processor](docs/l3vpn)
 
-* [EPE processor](docs/epe/README.md)
+* [EPE processor](docs/epe)
 
-* [Network-performance processors](docs/perf/README.md)
+* [Network-performance processors](docs/perf)
