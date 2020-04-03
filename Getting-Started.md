@@ -10,7 +10,7 @@ See [Installing MicroK8s](docs/MicroK8s_installation.md)
 
 Jalapeno's Topology processing makes a distinction between Internal topology: the nodes, links, prefixes, ASNs, etc, that make up the internal network; and External topology: the Internet, or other ASNs that we connect to but are not under our administrative control. Thus, prior to deploying, we recommend configuring the Topology processor to identify your Internal BGP ASN(s), and optionally, the ASNs of any direct or transit BGP peers you wish to track.  These settings are found in:
 
-https://github.com/cisco-ie/jalapeno/blob/master/processors/topology/topology_dp.yaml
+https://github.com/cisco-ie/jalapeno/processors/topology/topology_dp.yaml
 
 Note, private BGP ASNs are accounted for as Internal by default.  We may include a knob in the future which allows private ASNs to be considered External if needed.
 
@@ -156,22 +156,22 @@ Jalapeno can also be destroyed using the script.
 
 ### More info on Jalapeno components:
 
-* [MicroK8s_installation.md](MicroK8s_installation.md)
+* [MicroK8s_installation.md](docs/MicroK8s_installation.md)
 
-* [BMP](BMP.md)
+* [BMP](docs/BMP.md)
 
-* [Kafka](Kafka.md)
+* [Kafka](docs/Kafka.md)
 
-* [Topology processor](Topology_processor.md)
+* [Topology processor](docs/Topology_processor.md)
 
-* [Arango GraphDB](Arango-GraphDB.md)
+* [Arango GraphDB](docs/Arango-GraphDB.md)
 
-* [Influx TSDB](Influx-TSDB.md)
+* [Influx TSDB](docs/Influx-TSDB.md)
 
-* [Link-State processor](Link-State_processor.md)
+* [Link-State processor](docs/Link-State_processor.md)
 
-* [L3VPN processor](L3VPN_processor.md)
+* [L3VPN processor](docs/L3VPN_processor.md)
 
-* [EPE processor](EPE_processor.md)
+* [EPE processor](docs/EPE_processor.md)
 
-* [Network-performance processors](Network-performance_processors.md)
+* [Network-performance processors](docs/Network-performance_processors.md)
