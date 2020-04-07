@@ -109,3 +109,15 @@ microk8s.kubectl proxy --accept-hosts=.* --address=0.0.0.0 &
 You may now proceed to install/deploy Jalapeno on your Microk8s cluster:
 
 [Getting-Started.md](../Getting-Started.md)
+
+## Removing Microk8s
+
+Simply shutdown the cluster then remove Microk8s with snap:
+```
+microk8s stop
+sudo snap remove microk8s
+# verify the microk8s directory has been removed:
+ls /var/snap 
+```
+
+
