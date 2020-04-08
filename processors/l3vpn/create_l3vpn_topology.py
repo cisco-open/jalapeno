@@ -47,7 +47,7 @@ def create_l3vpnprefix_l3vpnnode_edges(database, collection):
             rd = current_prefix_document["RD"]
             rt = current_prefix_document["ExtComm"][3:]
             ipv4 = False
-            if(current_prefix_document["IPv4"] == 1):
+            if(current_prefix_document["IPv4"] == "1"):
                 ipv4 = True
             prefixSID = get_prefixSID(database, router_id)
             if(len(prefixSID) > 0):
