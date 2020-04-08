@@ -81,7 +81,7 @@ def create_node_to_node_topology_edge_query(db, l3vpn_topology_edge_key, rd, sou
     else:
         print("Something went wrong while creating L3VPN_Topology Edge")
 
-def update_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt):
+def update_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4):
     l3vpn_topology_edge_from = 'L3VPPrefix/'+str(prefix)
     l3vpn_topology_edge_to = 'L3VPNNode/'+str(router_id)
     aql = """ FOR e in L3VPN_Topology
@@ -99,12 +99,13 @@ def update_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefi
                   VPN_Label: @vpn_label,
                   RD: @rd,
                   RT: @rt,
+                  IPv4: @ipv4,
                   Source: @prefix,
                   Destination: @router_id }
               IN L3VPN_Topology RETURN { before: OLD, after: NEW } """
     bindVars = {'l3vpn_topology_edge_key': l3vpn_topology_edge_key, 'l3vpn_topology_edge_from': l3vpn_topology_edge_from,
                 'l3vpn_topology_edge_to': l3vpn_topology_edge_to, 'prefix': prefix, 'prefix_length': prefix_length,
-                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt}
+                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt, 'ipv4': ipv4}
     updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(updated_edge) > 0):
         print("Successfully updated L3VPN_Topology Edge: " + l3vpn_topology_edge_key)
@@ -112,7 +113,7 @@ def update_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefi
     else:
         print("Something went wrong while updating L3VPN_Topology Edge")
 
-def create_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt):
+def create_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4):
     l3vpn_topology_edge_from = 'L3VPNPrefix/'+str(prefix)
     l3vpn_topology_edge_to = 'L3VPNNode/'+str(router_id)
     aql = """ INSERT {
@@ -128,12 +129,13 @@ def create_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefi
                   VPN_Label: @vpn_label,
                   RD: @rd,
                   RT: @rt,
+                  IPv4: @ipv4,
                   Source: @prefix,
                   Destination: @router_id }
               INTO L3VPN_Topology RETURN NEW._key """
     bindVars = {'l3vpn_topology_edge_key': l3vpn_topology_edge_key, 'l3vpn_topology_edge_from': l3vpn_topology_edge_from,
                 'l3vpn_topology_edge_to': l3vpn_topology_edge_to, 'prefix': prefix, 'prefix_length': prefix_length,
-                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt}
+                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt, 'ipv4': ipv4}
     created_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(created_edge) > 0):
         print("Successfully created L3VPN_Topology Edge: " + l3vpn_topology_edge_key)
@@ -141,7 +143,7 @@ def create_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefi
     else:
         print("Something went wrong while creating L3VPN_Topology Edge")
 
-def update_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt):
+def update_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4):
     l3vpn_topology_edge_from = 'L3VPNode/'+str(router_id)
     l3vpn_topology_edge_to = 'L3VPNPrefix/'+str(prefix)
     aql = """ FOR e in L3VPN_Topology
@@ -159,12 +161,13 @@ def update_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefi
                   VPN_Label: @vpn_label,
                   RD: @rd,
                   RT: @rt,
+                  IPv4: @ipv4,
                   Source: @router_id,
                   Destination: @prefix }
               IN L3VPN_Topology RETURN { before: OLD, after: NEW } """
     bindVars = {'l3vpn_topology_edge_key': l3vpn_topology_edge_key, 'l3vpn_topology_edge_from': l3vpn_topology_edge_from,
                 'l3vpn_topology_edge_to': l3vpn_topology_edge_to, 'prefix': prefix, 'prefix_length': prefix_length,
-                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt}
+                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt, 'ipv4': ipv4}
     updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(updated_edge) > 0):
         print("Successfully updated L3VPN_Topology Edge: " + l3vpn_topology_edge_key)
@@ -172,7 +175,7 @@ def update_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefi
     else:
         print("Something went wrong while updating L3VPN_Topology Edge")
 
-def create_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt):
+def create_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4):
     l3vpn_topology_edge_from = 'L3VPNNode/'+str(router_id)
     l3vpn_topology_edge_to = 'L3VPNPrefix/'+str(prefix)
     aql = """ INSERT {
@@ -188,12 +191,13 @@ def create_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefi
                   VPN_Label: @vpn_label,
                   RD: @rd,
                   RT: @rt,
+                  IPv4: @ipv4,
                   Source: @router_id,
                   Destination: @prefix }
               INTO L3VPN_Topology RETURN NEW._key """
     bindVars = {'l3vpn_topology_edge_key': l3vpn_topology_edge_key, 'l3vpn_topology_edge_from': l3vpn_topology_edge_from,
                 'l3vpn_topology_edge_to': l3vpn_topology_edge_to, 'prefix': prefix, 'prefix_length': prefix_length,
-                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt}
+                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt, 'ipv4': ipv4}
     created_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(created_edge) > 0):
         print("Successfully created L3VPN_Topology Edge: " + l3vpn_topology_edge_key)

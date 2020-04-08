@@ -45,10 +45,16 @@ def create_l3vpnprefix_l3vpnnode_edges(database, collection):
             router_id = current_prefix_document["RouterID"]
             vpn_label = current_prefix_document["VPN_Label"]
             rd = current_prefix_document["RD"]
-            rt = current_prefix_document["ExtComm"]
+            rt = current_prefix_document["ExtComm"][3:]
+            ipv4 = False
+            if(current_prefix_document["IPv4"] == 1):
+                ipv4 = True
             prefixSID = get_prefixSID(database, router_id)
-            upsert_l3vpnprefix_l3vpnnode_edge(database, collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt)
-            upsert_l3vpnnode_l3vpnprefix_edge(database, collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt)
+            if(len(prefixSID) > 0):
+                prefixSID = int(prefixSID[0])
+            print(vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4)
+            upsert_l3vpnprefix_l3vpnnode_edge(database, collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4)
+            upsert_l3vpnnode_l3vpnprefix_edge(database, collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4)
             print("===========================================================================")
 
 def create_l3vpnnode_l3vpnnode_edges(database, collection):
@@ -106,21 +112,21 @@ def upsert_l3vpnnode_l3vpnnode_edge(db, collection, rd, source_node, destination
     else:
         create_node_to_node_topology_edge_query(db, l3vpn_topology_edge_key, rd, source_node, destination_node)
 
-def upsert_l3vpnprefix_l3vpnnode_edge(db, collection, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt):
+def upsert_l3vpnprefix_l3vpnnode_edge(db, collection, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4):
     l3vpn_topology_edge_key = prefix + "_" + rd + "_" + router_id
     existing_l3vpn_topology_edge = get_l3vpn_topology_edge_key(db, l3vpn_topology_edge_key)
     if len(existing_l3vpn_topology_edge) > 0:
-        update_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt)
+        update_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4)
     else:
-        create_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt)
+        create_prefix_to_node_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4)
 
-def upsert_l3vpnnode_l3vpnprefix_edge(db, collection, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt):
+def upsert_l3vpnnode_l3vpnprefix_edge(db, collection, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4):
     l3vpn_topology_edge_key = router_id + "_" + rd + "_" + prefix
     existing_l3vpn_topology_edge = get_l3vpn_topology_edge_key(db, l3vpn_topology_edge_key)
     if len(existing_l3vpn_topology_edge) > 0:
-        update_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt)
+        update_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4)
     else:
-        create_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt)
+        create_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4)
 
 
 def setup_logging():
