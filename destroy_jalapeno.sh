@@ -16,7 +16,7 @@ ${KUBE} delete pv arangodb-apps
 ${KUBE} delete pv pvkafka
 ${KUBE} delete pv pvzoo
 
-echo "Deleteing Data Stores"
+echo "Deleting Data Stores"
 sudo rm -rf /var/lib/kafka/data/topics
 sudo rm -rf /var/lib/zookeeper/data
 sudo rm -rf /var/lib/arangodb3-apps/_db
