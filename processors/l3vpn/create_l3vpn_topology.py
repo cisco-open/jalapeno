@@ -23,7 +23,7 @@ def main():
     database = connection.connect_arango(arangoconfig.url, arangoconfig.database, arangoconfig.username, arangoconfig.password)
     logging.info('Creating collection in Arango')
     collection_name = "L3VPN_Topology"
-    collection = create_collection(database, collection_name)  
+    collection = create_collection(database, collection_name)
     while(True):
         print("Creating L3VPN_Topology edges between L3VPNPrefixes and L3VPNNodes")
         create_l3vpnprefix_l3vpnnode_edges(database, collection)
@@ -35,6 +35,9 @@ def main():
 # This function creates the edges from L3VPNPrefixes to L3VNNodes in the L3VPN_Topology collection
 def create_l3vpnprefix_l3vpnnode_edges(database, collection):
         all_prefixes = get_prefix_data(database)
+        if(len(all_prefixes) == 0):
+            print("ALERT: No edge data found -- perhaps the L3VPNPrefix collection is not up or populated?\n")
+            return
         for prefix_index in range(len(all_prefixes)):
             current_prefix_document = all_prefixes[prefix_index]
             vpn_prefix = current_prefix_document["Prefix"]
@@ -52,6 +55,10 @@ def create_l3vpnnode_l3vpnnode_edges(database, collection):
         # parse existing collections for relevant fields that correlate to a potential L3VPN-Topology Edge
         ## get all RDs that exist in the L3VPNNode collection
         all_rds = get_all_rds(database)
+        if(len(all_rds[0]) == 0):
+            print("ALERT: No edge data found -- perhaps the L3VPNNode collection is not up or populated?\n")
+            return
+
         l3vpn_rds = all_rds[0]["RDs"]
         #print("we have l3vpn_rds: " + str(l3vpn_rds))
 
@@ -86,7 +93,7 @@ def create_collection(db, collection_name):
     try:
         collection = database.createCollection(className='Edges', name=collection_name)
     except CreationError:
-        print(collection_name + " collection exists: entering collection.")
+        print(collection_name + " collection exists: entering collection.\n")
         collection = database[collection_name]
     return collection
 
