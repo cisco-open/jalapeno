@@ -23,12 +23,16 @@ def main():
     database = connection.connect_arango(arangoconfig.url, arangoconfig.database, arangoconfig.username, arangoconfig.password)
     logging.info('Creating collection in Arango')
     collection_name = "L3VPN_Topology"
+    fib_collection_name = "L3VPN_FIB"
     collection = create_collection(database, collection_name)
+    fib_collection = create_collection(database, fib_collection_name)
     while(True):
         print("Creating L3VPN_Topology edges between L3VPNPrefixes and L3VPNNodes")
         create_l3vpnprefix_l3vpnnode_edges(database, collection)
         print("Creating L3VPN_Topology edges between L3VPNNodes and L3VPNNodes")
         create_l3vpnnode_l3vpnnode_edges(database, collection)
+        print("Done parsing L3VPN-Topology! Next collection begins in 10 seconds.\n")
+        create_l3vpnnode_l3vpnprefix_edges(database, fib_collection)
         print("Done parsing L3VPN-Topology! Next collection begins in 10 seconds.\n")
         time.sleep(10)
 
@@ -89,6 +93,30 @@ def create_l3vpnnode_l3vpnnode_edges(database, collection):
                     upsert_l3vpnnode_l3vpnnode_edge(database, collection, l3vpn_rd, l3vpn_destination_node, l3vpn_node)
                     print("===========================================================================")
 
+# This function creates the L3VPN_FIB edges from L3VPNNode to Prefix 
+def create_l3vpn_fib_edges(database, fib_collection):
+        all_prefixes = get_prefix_data(database)
+        if(len(all_prefixes) == 0):
+            print("ALERT: No edge data found -- perhaps the L3VPNPrefix collection is not up or populated?\n")
+            return
+        for prefix_index in range(len(all_prefixes)):
+            current_prefix_document = all_prefixes[prefix_index]
+            vpn_prefix = current_prefix_document["Prefix"]
+            vpn_prefix_length = current_prefix_document["Length"]
+            router_id = current_prefix_document["RouterID"]
+            vpn_label = current_prefix_document["VPN_Label"]
+            rd = current_prefix_document["RD"]
+            rt = current_prefix_document["ExtComm"][3:]
+            ipv4 = False
+            if(current_prefix_document["IPv4"] == "1"):
+                ipv4 = True
+            prefixSID = get_prefixSID(database, router_id)
+            if(len(prefixSID) > 0) and (prefixSID[0] != None):
+                prefixSID = int(prefixSID[0])
+            print(vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4)
+            upsert_l3vpn_fib_edge(database, fib_collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4)
+            print("===========================================================================")
+
  
 def create_collection(db, collection_name):
     """Create new collection in ArangoDB.
@@ -102,6 +130,19 @@ def create_collection(db, collection_name):
         print(collection_name + " collection exists: entering collection.\n")
         collection = database[collection_name]
     return collection
+
+def create_fib_collection(db, fib_collection_name):
+    """Create new collection in ArangoDB.
+    If the collection exists, connect to that collection.
+    """
+    database = db
+    print("Creating " + fib_collection_name + " collection in Arango")
+    try:
+        fib_collection = database.createCollection(className='Edges', name=fib_collection_name)
+    except CreationError:
+        print(fib_collection_name + " collection exists: entering collection.\n")
+        fib_collection = database[fib_collection_name]
+    return fib_collection
 
 
 def upsert_l3vpnnode_l3vpnnode_edge(db, collection, rd, source_node, destination_node):
@@ -127,6 +168,14 @@ def upsert_l3vpnnode_l3vpnprefix_edge(db, collection, prefix, prefix_length, rou
         update_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4)
     else:
         create_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4)
+
+def upsert_l3vpn_fib_edge(db, fib_collection, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4):
+    l3vpn_fib_edge_key = router_id + "_" + rd + "_" + prefix
+    existing_l3vpn_fib_edge = get_l3vpn_fib_edge_key(db, l3vpn_fib_edge_key)
+    if len(existing_l3vpn_fib_edge) > 0:
+        update_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4)
+    else:
+        create_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4)
 
 
 def setup_logging():
