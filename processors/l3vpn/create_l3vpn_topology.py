@@ -32,7 +32,7 @@ def main():
         print("Creating L3VPN_Topology edges between L3VPNNodes and L3VPNNodes")
         create_l3vpnnode_l3vpnnode_edges(database, collection)
         print("Done parsing L3VPN-Topology! Next collection begins in 10 seconds.\n")
-        create_l3vpnnode_l3vpnprefix_edges(database, fib_collection)
+        create_l3vpn_fib_edges(database, fib_collection)
         print("Done parsing L3VPN-Topology! Next collection begins in 10 seconds.\n")
         time.sleep(10)
 
