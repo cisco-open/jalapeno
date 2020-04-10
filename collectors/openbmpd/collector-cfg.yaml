@@ -34,7 +34,7 @@ data:
         #        by the collector to dynamically grow based on blocking hits.
         #
         # Default is 5, range is 2 - 384
-        router: 64
+        router: 256
     
         heartbeat:
         # In minutes; Collector heartbeat messages will be generated based on this interval.
