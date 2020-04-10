@@ -50,7 +50,7 @@ def create_l3vpnprefix_l3vpnnode_edges(database, collection):
             if(current_prefix_document["IPv4"] == "1"):
                 ipv4 = True
             prefixSID = get_prefixSID(database, router_id)
-            if(len(prefixSID) > 0):
+            if(len(prefixSID) > 0) and (prefixSID[0] != None):
                 prefixSID = int(prefixSID[0])
             print(vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4)
             upsert_l3vpnprefix_l3vpnnode_edge(database, collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4)
