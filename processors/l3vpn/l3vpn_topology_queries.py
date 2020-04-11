@@ -233,9 +233,7 @@ def update_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, r
                   VPN_Label: @vpn_label,
                   RD: @rd,
                   RT: @rt,
-                  IPv4: @ipv4,
-                  Source: @router_id,
-                  Destination: @prefix }
+                  IPv4: @ipv4 }
               IN L3VPN_FIB RETURN { before: OLD, after: NEW } """
     bindVars = {'l3vpn_fib_edge_key': l3vpn_fib_edge_key, 'l3vpn_fib_edge_from': l3vpn_fib_edge_from,
                 'l3vpn_fib_edge_to': l3vpn_fib_edge_to, 'prefix': prefix, 'prefix_length': prefix_length,
@@ -263,9 +261,7 @@ def create_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, r
                   VPN_Label: @vpn_label,
                   RD: @rd,
                   RT: @rt,
-                  IPv4: @ipv4,
-                  Source: @router_id,
-                  Destination: @prefix }
+                  IPv4: @ipv4 }
               INTO L3VPN_FIB RETURN NEW._key """
     bindVars = {'l3vpn_fib_edge_key': l3vpn_fib_edge_key, 'l3vpn_fib_edge_from': l3vpn_fib_edge_from,
                 'l3vpn_fib_edge_to': l3vpn_fib_edge_to, 'prefix': prefix, 'prefix_length': prefix_length,
