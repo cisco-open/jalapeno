@@ -6,7 +6,7 @@ if [ -z "$1" ]
     KUBE=kubectl
 fi
 
-${KUBE} create -f ${PWD}/${BASEDIR}/topology/topology_dp.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/topology/deployment/topology_dp.yaml
 ${KUBE} create -f ${PWD}/${BASEDIR}/ls/ls_dp.yaml
 ${KUBE} create -f ${PWD}/${BASEDIR}/l3vpn/l3vpn_dp.yaml
 ${KUBE} create -f ${PWD}/${BASEDIR}/ls-performance/ls_performance_dp.yaml
