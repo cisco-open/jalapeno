@@ -1,0 +1,35 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: topology
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: topology
+  template:
+    metadata:
+      labels:
+        app: topology
+    spec:
+      containers:
+        - args:
+          - --v
+          - "5"
+          - --message-server
+          - "broker.jalapeno:9092"
+          - --database-server
+          - "http://arangodb.jalapeno:8529"
+          - --database-name
+          - "jalapeno"
+          - --database-user
+          - "root"
+          - --database-pass
+          - "jalapeno"
+          image: docker.io/iejalapeno/gobmp-topology@sha256:07da82d5691bba7030e6c5f9d563c0732b568b94a3c1067b5440f34206e32287
+          imagePullPolicy: Always
+          name: topology
+metadata:
+  name: topology
+  namespace: jalapeno
