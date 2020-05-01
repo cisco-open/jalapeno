@@ -1,0 +1,5 @@
+FROM scratch
+
+COPY ./bin/topology /topology
+ENTRYPOINT ["/topology"]
+
