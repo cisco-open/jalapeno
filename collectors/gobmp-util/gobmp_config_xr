@@ -1,0 +1,9 @@
+# XR GoBMP Config, fill out <server_ip> to use!
+bmp server 3
+ host <server_ip> port 30511
+ description Jalapeno GoBMP
+ update-source Loopback0
+ flapping-delay 60
+ initial-delay 5
+ stats-reporting-period 60
+ initial-refresh delay 30 spread 2
