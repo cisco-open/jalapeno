@@ -3,14 +3,14 @@ module topology
 go 1.14
 
 replace (
-        github.com/cisco-ie/jalapeno/processors/topology/pkg/arangodb => ../../pkg/arangodb
-        github.com/cisco-ie/jalapeno/processors/topology/pkg/database => ../../pkg/database
+        github.com/cisco-ie/jalapeno/processors/topology/pkg/arangodb => ../pkg/arangodb
+        github.com/cisco-ie/jalapeno/processors/topology/pkg/database => ../pkg/database
 )
 
 require (
         github.com/arangodb/go-driver v0.0.0-20200403100147-ca5dd87ffe93 // indirect
-        github.com/cisco-ie/jalapeno/processors/gobmp-topology/pkg/arangodb v0.0.0-00010101000000-000000000000 // indirect
-        github.com/cisco-ie/jalapeno/processors/gobmp-topology/pkg/database v0.0.0-00010101000000-000000000000 // indirect
+        github.com/cisco-ie/jalapeno/processors/topology/pkg/arangodb v0.0.0-00010101000000-000000000000 // indirect
+        github.com/cisco-ie/jalapeno/processors/topology/pkg/database v0.0.0-00010101000000-000000000000 // indirect
         github.com/sbezverk/gobmp/pkg/base v0.0.0-20200428015650-10acbc383044 // indirect
         github.com/sbezverk/gobmp/pkg/bgp v0.0.0-20200428015650-10acbc383044 // indirect
         github.com/sbezverk/gobmp/pkg/bgpls v0.0.0-20200428015650-10acbc383044 // indirect
