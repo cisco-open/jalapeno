@@ -49,8 +49,8 @@ def updateBaseLSTopologyDocument(db, ls_link_key):
         print("Something went wrong while updated LS_Topology Edge")
 
 def enhance_ls_topology_document(db, ls_topology_key):
-    aql = """ FOR l in LS_Topology filter l._key == @ls_topology_key UPDATE { _key: l._key, "In-Octets": "", "Out-Octets": "",  
-    "In-Discards": "", "Out-Discards": "", "Link-Delay": "", "LocalMaxSIDDepth": "", "RemoteMaxSIDDepth": "", "PQResvBW": "", "AppResvBW": "" } in LS_Topology 
+    aql = """ FOR l in LS_Topology filter l._key == @ls_topology_key UPDATE { _key: l._key, "Link-Delay": "", "LocalMaxSIDDepth": "",
+    "RemoteMaxSIDDepth": "", "PQResvBW": "", "AppResvBW": "" } in LS_Topology
     RETURN { before: OLD, after: NEW }"""
     bindVars = {'ls_topology_key': ls_topology_key }
     updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
@@ -60,31 +60,47 @@ def enhance_ls_topology_document(db, ls_topology_key):
     else:
         print("Something went wrong while enhancing LS_Topology Edge")
 
-def get_prefix_sid(db, ls_node_key):
-    aql = """ FOR l in LSNode filter l._key == @ls_node_key return l.PrefixSID """
+def get_srgb_start(db, ls_node_key):
+    aql = """ FOR l in LSNode filter l._key == @ls_node_key return l.SRGBStart """
     bindVars = {'ls_node_key': ls_node_key }
-    prefix_sid = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
-    return prefix_sid
+    srgb_start = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return srgb_start
 
-def get_local_node(db, ls_topology_key):
-    aql = """ FOR l in LS_Topology filter l._key == @ls_topology_key return l.LocalRouterID """
+def get_sid_indices(db, igp_router_id):
+    aql = """ FOR l in LSPrefix filter l.IGPRouterID == @igp_router_id return {"SIDIndex": l.SIDIndex, "SRFlag": l.SRFlags } """
+    bindVars = {'igp_router_id': igp_router_id }
+    sid_index= db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return sid_index
+
+def get_local_igpid(db, ls_topology_key):
+    aql = """ FOR l in LS_Topology filter l._key == @ls_topology_key return {"LocalIGPID": l.LocalIGPID} """
     bindVars = {'ls_topology_key': ls_topology_key }
     local_node_id = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return local_node_id
 
-def get_remote_node(db, ls_topology_key):
-    aql = """ FOR l in LS_Topology filter l._key == @ls_topology_key return l.RemoteRouterID """
+def get_remote_igpid(db, ls_topology_key):
+    aql = """ FOR l in LS_Topology filter l._key == @ls_topology_key return {"RemoteIGPID": l.RemoteIGPID} """
     bindVars = {'ls_topology_key': ls_topology_key }
     remote_node_id = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return remote_node_id
+
 
 def update_prefix_sid(db, ls_topology_key, local_prefix_sid, remote_prefix_sid):
     aql = """ FOR l in LS_Topology filter l._key == @ls_topology_key UPDATE { _key: l._key, "LocalPrefixSID": @local_prefix_sid, "RemotePrefixSID": @remote_prefix_sid  } in LS_Topology RETURN { before: OLD, after: NEW }"""
     bindVars = {'ls_topology_key': ls_topology_key, 'local_prefix_sid': local_prefix_sid, 'remote_prefix_sid': remote_prefix_sid }
     updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(updated_edge) > 0):
-        print("Successfully enhanced LS_Topology Edge: " + ls_topology_key)
+        print("Successfully updated LS_Topology Edge: " + ls_topology_key + " with LocalPrefixSID " + str(local_prefix_sid) + " and RemotePrefixSID " + str(remote_prefix_sid))
         pass
     else:
-        print("Something went wrong while enhancing LS_Topology Edge")
+        print("Something went wrong while updating LS_Topology Edge with PrefixSIDs")
 
+def update_sid_list(db, ls_topology_key, local_sid_list, remote_sid_list):
+    aql = """ FOR l in LS_Topology filter l._key == @ls_topology_key UPDATE { _key: l._key, "LocalPrefixInfo": @local_sid_list, "RemotePrefixInfo": @remote_sid_list  } in LS_Topology RETURN { before: OLD, after: NEW }"""
+    bindVars = {'ls_topology_key': ls_topology_key, 'local_sid_list': local_sid_list, 'remote_sid_list': remote_sid_list }
+    updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    if(len(updated_edge) > 0):
+        print("Successfully updated LS_Topology Edge: " + ls_topology_key + " with LocalPrefixInfo " + str(local_sid_list) + " and RemotePrefixInfo " + str(remote_sid_list))
+        pass
+    else:
+        print("Something went wrong while updating LS_Topology Edge with PrefixInfo")

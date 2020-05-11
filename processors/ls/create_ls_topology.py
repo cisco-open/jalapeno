@@ -38,13 +38,28 @@ def main():
         for ls_topology_index in range(len(ls_topology_keys)):
             current_ls_topology_key = ls_topology_keys[ls_topology_index]
             enhance_ls_topology_document(database, current_ls_topology_key)
-            local_node = get_local_node(database, current_ls_topology_key)
-            remote_node = get_remote_node(database, current_ls_topology_key)
-            local_prefix_sid = get_prefix_sid(database, str(local_node[0]))
-            remote_prefix_sid = get_prefix_sid(database, str(remote_node[0]))
-            update_prefix_sid(database, current_ls_topology_key, str(local_prefix_sid[0]), str(remote_prefix_sid[0]))
-
+            local_node = get_local_igpid(database, current_ls_topology_key)[0]
+            remote_node = get_remote_igpid(database, current_ls_topology_key)[0]
+            local_igpid, remote_igpid = local_node["LocalIGPID"], remote_node["RemoteIGPID"]
+            local_srgb_start = get_srgb_start(database, local_igpid)[0]
+            remote_srgb_start = get_srgb_start(database, remote_igpid)[0]
+            local_sid_info = get_sid_indices(database, local_igpid)
+            remote_sid_info = get_sid_indices(database, remote_igpid)
+            local_prefix_sid, local_sid_list = parse_sid_info(local_sid_info, local_srgb_start)
+            remote_prefix_sid, remote_sid_list = parse_sid_info(remote_sid_info, remote_srgb_start)
+            update_prefix_sid(database, current_ls_topology_key, local_prefix_sid, remote_prefix_sid)
+            update_sid_list(database, current_ls_topology_key, local_sid_list, remote_sid_list)
         time.sleep(10)
+
+def parse_sid_info(sid_info, srgb_start):
+    sid_list = []
+    for index in range(len(sid_info)):
+        sid_index = sid_info[index]["SIDIndex"][0]
+        if(sid_info[index]["SRFlag"] != None and sid_info[index]["SRFlag"][0] == "n"):
+            prefix_sid = srgb_start + sid_index
+        sid = srgb_start + sid_index
+        sid_list.append(sid)
+    return(prefix_sid, sid_list)
 
 def create_collection(db, collection_name):
     """Create new collection in ArangoDB.
