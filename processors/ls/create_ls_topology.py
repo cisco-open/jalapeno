@@ -43,23 +43,37 @@ def main():
             local_igpid, remote_igpid = local_node["LocalIGPID"], remote_node["RemoteIGPID"]
             local_srgb_start = get_srgb_start(database, local_igpid)[0]
             remote_srgb_start = get_srgb_start(database, remote_igpid)[0]
-            local_sid_info = get_sid_indices(database, local_igpid)
-            remote_sid_info = get_sid_indices(database, remote_igpid)
-            local_prefix_sid, local_sid_list = parse_sid_info(local_sid_info, local_srgb_start)
-            remote_prefix_sid, remote_sid_list = parse_sid_info(remote_sid_info, remote_srgb_start)
-            update_prefix_sid(database, current_ls_topology_key, local_prefix_sid, remote_prefix_sid)
-            update_sid_list(database, current_ls_topology_key, local_sid_list, remote_sid_list)
+            local_msd = get_max_sid_depth(database, local_igpid)
+            remote_msd = get_max_sid_depth(database, remote_igpid)
+            local_max_sid_depth = handle_msd(local_msd)
+            remote_max_sid_depth = handle_msd(remote_msd)
+            local_prefix_info = get_prefix_info(database, local_igpid)
+            remote_prefix_info = get_prefix_info(database, remote_igpid)
+            local_prefix_sid, local_prefixes = parse_prefix_info(local_prefix_info, local_srgb_start)
+            remote_prefix_sid, remote_prefixes = parse_prefix_info(remote_prefix_info, remote_srgb_start)
+            update_ls_topology_document(database, current_ls_topology_key, local_prefix_sid, remote_prefix_sid, local_prefixes, remote_prefixes, local_max_sid_depth, remote_max_sid_depth)
         time.sleep(10)
 
-def parse_sid_info(sid_info, srgb_start):
-    sid_list = []
-    for index in range(len(sid_info)):
-        sid_index = sid_info[index]["SIDIndex"][0]
-        if(sid_info[index]["SRFlag"] != None and sid_info[index]["SRFlag"][0] == "n"):
+def handle_msd(max_sid_depth):
+    msd = ""
+    if(len(max_sid_depth) > 0) and max_sid_depth[0] != None:
+        max_sid_depth_split = max_sid_depth[0].split(":")
+        msd = max_sid_depth_split[1]
+    return msd
+
+def parse_prefix_info(prefix_info, srgb_start):
+    prefix_info_list = []
+    prefix_sid = None
+    for index in range(len(prefix_info)):
+        sid_index = prefix_info[index]["SIDIndex"][0]
+        prefix = prefix_info[index]["Prefix"]
+        length = prefix_info[index]["Length"]
+        if(prefix_info[index]["SRFlag"] != None and prefix_info[index]["SRFlag"][0] == "n"):
             prefix_sid = srgb_start + sid_index
         sid = srgb_start + sid_index
-        sid_list.append(sid)
-    return(prefix_sid, sid_list)
+        prefix_dict = {"Prefix": prefix, "Length": length, "SID": sid}
+        prefix_info_list.append(prefix_dict)
+    return(prefix_sid, prefix_info_list)
 
 def create_collection(db, collection_name):
     """Create new collection in ArangoDB.
