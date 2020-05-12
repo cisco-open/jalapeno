@@ -15,11 +15,11 @@ def main():
         for link_index in range(len(ls_topology)):
             current_ls_link = ls_topology[link_index]
             ls_topology_key = current_ls_link['key']
-            router_ip = current_ls_link['RouterID']
+            router_igp_id = current_ls_link['LocalIGPID']
             router_interface_ip = current_ls_link['InterfaceIP']
-            router_hostname = ls_topology_generator.get_node_hostname(arango_client, router_ip)
+            router_hostname = ls_topology_generator.get_node_hostname(arango_client, router_igp_id)
             interface_name = collect_interface_name(influx_client, router_hostname, router_interface_ip)
-            print("\nCalculating performance metrics for Link-State link out of %s(%s) through %s(%s)" % (router_ip, router_hostname,
+            print("\nCalculating performance metrics for Link-State link out of %s(%s) through %s(%s)" % (router_igp_id, router_hostname,
                                                                                                           router_interface_ip, interface_name))
             calculated_performance_metrics = {}
             for telemetry_value, performance_metric in telemetry_value_mapper.items(): # the extended base-path and the value it represents
@@ -35,6 +35,7 @@ def main():
             calculated_performance_metrics["percent-util-inbound"] = percent_util_inbound
             calculated_performance_metrics["percent-util-outbound"] = percent_util_outbound
             upsert_ls_performance(arango_client, ls_topology_key, calculated_performance_metrics)
+            upsert_ls_interface_name(arango_client, ls_topology_key, interface_name)
             print("============================================================")
         time.sleep(30)
 
@@ -97,6 +98,9 @@ def upsert_ls_performance(arango_client, ls_topology_key, performance_metrics):
                                       in_multicast_pkts, out_multicast_pkts, in_broadcast_pkts, out_broadcast_pkts,
                                       in_discards, out_discards, in_errors, out_errors, in_octets, out_octets, speed,
                                       percent_util_inbound, percent_util_outbound)
+
+def upsert_ls_interface_name(arango_client, ls_topology_key, interface_name):
+    db_upserter.update_ls_interface_name(arango_client, ls_topology_key, interface_name)
 
 if __name__ == '__main__':
     main()
