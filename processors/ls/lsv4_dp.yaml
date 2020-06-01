@@ -2,22 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: jalapeno
-  name: ls-processor
+  name: lsv4-processor
   labels:
-    app: ls-processor
+    app: lsv4-processor
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ls-processor
+      app: lsv4-processor
   template:
     metadata:
       labels:
-        app: ls-processor
+        app: lsv4-processor
     spec:
       containers:
-      - name: ls-processor
-        image: iejalapeno/ls-processor:1.2@sha256:ed87a157c192590bde4d8e41d0b34ae4165f2b83d2560102dbc4b2dda2f7eaab
+      - name: lsv4-processor
+        image: iejalapeno/lsv4-processor:1.0@sha256:
       imagePullSecrets:
         - name: regcred
 

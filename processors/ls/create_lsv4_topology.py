@@ -1,20 +1,20 @@
 #! /usr/bin/env python
-"""This script creates network ls-topology records in an "LS_Topology" collection in ArangoDB.
+"""This script creates network lsv4-topology records in an "LSv4_Topology" collection in ArangoDB.
 
 Given configuration information (database connection parameters, set in arangoconfig)
-the "LS_Topology" collection will be created or joined.
+the "LSv4_Topology" collection will be created or joined.
 
-The "LS_Topology" documents will then be created from existing (seemingly unrelated) data from various
+The "LSv4_Topology" documents will then be created from existing (seemingly unrelated) data from various
 Arango collections. Relevant data will be collected and organized, corresponding
-"LS_Topology" documents will be created, and finally, the "LS_Topology" documents will be
-upserted into the "LS_Topology" collection.
+"LSv4_Topology" documents will be created, and finally, the "LSv4_Topology" documents will be
+upserted into the "LSv4_Topology" collection.
 """
 
 from pyArango.connection import *
 from configs import arangoconfig
 from util import connections
 import logging, time, json, sys
-from ls_topology_queries import *
+from lsv4_topology_queries import *
 
 def main():
     setup_logging()
@@ -22,24 +22,24 @@ def main():
     connection = connections.ArangoConn()
     database = connection.connect_arango(arangoconfig.url, arangoconfig.database, arangoconfig.username, arangoconfig.password)
     logging.info('Creating collection in Arango')
-    collection_name = "LS_Topology"
+    collection_name = "LSv4_Topology"
     collection = create_collection(database, collection_name)
     while(True):
-        ls_link_keys = get_ls_link_keys(database)
-        for ls_link_index in range(len(ls_link_keys)):
-            current_ls_link_key = ls_link_keys[ls_link_index]
-            ls_link_exists = check_exists_ls_topology(database, current_ls_link_key)
+        lsv4_link_keys = get_lsv4_link_keys(database)
+        for lsv4_link_index in range(len(lsv4_link_keys)):
+            current_ls_link_key = lsv4_link_keys[lsv4_link_index]
+            ls_link_exists = check_exists_lsv4_topology(database, current_ls_link_key)
             if(ls_link_exists):
-                updateBaseLSTopologyDocument(database, current_ls_link_key)
+                updateBaseLSv4TopologyDocument(database, current_ls_link_key)
             else:
-                createBaseLSTopologyDocument(database, current_ls_link_key)
+                createBaseLSv4TopologyDocument(database, current_ls_link_key)
 
-        ls_topology_keys = get_ls_topology_keys(database)
-        for ls_topology_index in range(len(ls_topology_keys)):
-            current_ls_topology_key = ls_topology_keys[ls_topology_index]
-            enhance_ls_topology_document(database, current_ls_topology_key)
-            local_node = get_local_igpid(database, current_ls_topology_key)[0]
-            remote_node = get_remote_igpid(database, current_ls_topology_key)[0]
+        lsv4_topology_keys = get_lsv4_topology_keys(database)
+        for lsv4_topology_index in range(len(lsv4_topology_keys)):
+            current_lsv4_topology_key = lsv4_topology_keys[lsv4_topology_index]
+            enhance_lsv4_topology_document(database, current_lsv4_topology_key)
+            local_node = get_local_igpid(database, current_lsv4_topology_key)[0]
+            remote_node = get_remote_igpid(database, current_lsv4_topology_key)[0]
             local_igpid, remote_igpid = local_node["LocalIGPID"], remote_node["RemoteIGPID"]
             local_srgb_start = get_srgb_start(database, local_igpid)[0]
             remote_srgb_start = get_srgb_start(database, remote_igpid)[0]
@@ -51,7 +51,7 @@ def main():
             remote_prefix_info = get_prefix_info(database, remote_igpid)
             local_prefix_sid, local_prefixes = parse_prefix_info(local_prefix_info, local_srgb_start)
             remote_prefix_sid, remote_prefixes = parse_prefix_info(remote_prefix_info, remote_srgb_start)
-            update_ls_topology_document(database, current_ls_topology_key, local_prefix_sid, remote_prefix_sid, local_prefixes, remote_prefixes, local_max_sid_depth, remote_max_sid_depth)
+            update_lsv4_topology_document(database, current_lsv4_topology_key, local_prefix_sid, remote_prefix_sid, local_prefixes, remote_prefixes, local_max_sid_depth, remote_max_sid_depth)
         time.sleep(10)
 
 def handle_msd(max_sid_depth):
