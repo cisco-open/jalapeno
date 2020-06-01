@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: jalapeno
+  name: lsv6-processor
+  labels:
+    app: lsv6-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lsv6-processor
+  template:
+    metadata:
+      labels:
+        app: lsv6-processor
+    spec:
+      containers:
+      - name: lsv6-processor
+        image: iejalapeno/lsv6-processor:1.0@sha256:
+      imagePullSecrets:
+        - name: regcred
+
