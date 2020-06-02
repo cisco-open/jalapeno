@@ -27,7 +27,9 @@ spec:
           - "root"
           - --database-pass
           - "jalapeno"
-          image: docker.io/iejalapeno/gobmp-topology@sha256:07da82d5691bba7030e6c5f9d563c0732b568b94a3c1067b5440f34206e32287
+          - --asn
+          - '100000'
+          image: docker.io/iejalapeno/gobmp-topology@sha256:76e541e41393743249c0c6b3163f09c7579ff81fe1e6ec2606947ca4fb4bfc0b
           imagePullPolicy: Always
           name: topology
 metadata:
