@@ -6,7 +6,7 @@ import (
         "os/signal"
 
         "github.com/golang/glog"
-        "github.com/cisco-ie/jalapeno/processors/topology/pkg/arangodb"
+        "github.com/sbezverk/gobmp/pkg/topology/arangodb"
         "github.com/sbezverk/gobmp/pkg/topology/dbclient"
         "github.com/sbezverk/gobmp/pkg/topology/kafkamessenger"
         "github.com/sbezverk/gobmp/pkg/topology/messenger"
@@ -23,6 +23,7 @@ var (
         dbName     string
         dbUser     string
         dbPass     string
+        asn        int
 )
 
 func init() {
@@ -33,6 +34,7 @@ func init() {
         flag.StringVar(&dbName, "database-name", "", "DB name")
         flag.StringVar(&dbUser, "database-user", "", "DB User name")
         flag.StringVar(&dbPass, "database-pass", "", "DB User's password")
+        flag.IntVar(&asn, "asn", 0, "ASN")
 }
 
 var (
@@ -56,6 +58,7 @@ func setupSignalHandler() (stopCh <-chan struct{}) {
         return stop
 }
 
+
 func main() {
         flag.Parse()
         _ = flag.Set("logtostderr", "true")
@@ -64,7 +67,7 @@ func main() {
         var err error
         // Initializing databse client
         if !mockDB {
-                dbSrv, err = arangodb.NewDBSrvClient(dbSrvAddr, dbUser, dbPass, dbName)
+                dbSrv, err = arangodb.NewDBSrvClient(dbSrvAddr, dbUser, dbPass, dbName, asn)
                 if err != nil {
                         glog.Errorf("failed to initialize databse client with error: %+v", err)
                         os.Exit(1)
@@ -107,4 +110,5 @@ func main() {
 
         os.Exit(0)
 }
+
 

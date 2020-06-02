@@ -13,6 +13,18 @@ def get_prefixSID(db, routerID):
     prefixSID = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return prefixSID
 
+def get_srgb_start(db, ls_node_key):
+    aql = """ FOR l in LSNode filter l._key == @ls_node_key return l.SRGBStart """
+    bindVars = {'ls_node_key': ls_node_key }
+    srgb_start = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return srgb_start
+
+def get_prefix_info(db, igp_router_id):
+    aql = """ FOR l in LSPrefix filter l.IGPRouterID == @igp_router_id return {"SIDIndex": l.SIDIndex} """
+    bindVars = {'igp_router_id': igp_router_id }
+    prefix_info = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return prefix_info
+
 def get_all_rds(db):
     aql = """ RETURN MERGE (For r in L3VPNNode return { ["RDs"]: r.RD}) """
     bindVars = {}
