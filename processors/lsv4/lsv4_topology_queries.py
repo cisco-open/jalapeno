@@ -124,7 +124,7 @@ def update_max_sid_depths(db, lsv4_topology_key, local_max_sid_depth, remote_max
 def update_lsv4_topology_document(db, lsv4_topology_key, local_prefix_sid, remote_prefix_sid, local_prefix_info, remote_prefix_info, local_max_sid_depth, remote_max_sid_depth):
     aql = """ FOR l in LSv4_Topology filter l._key == @lsv4_topology_key UPDATE { _key: l._key, "LocalPrefixSID": @local_prefix_sid, "RemotePrefixSID": @remote_prefix_sid,
               "LocalPrefixInfo": @local_prefix_info, "RemotePrefixInfo": @remote_prefix_info, "LocalMaxSIDDepth": @local_max_sid_depth, "RemoteMaxSIDDepth": @remote_max_sid_depth 
-              } in LS_Topology RETURN { before: OLD, after: NEW }"""
+              } in LSv4_Topology RETURN { before: OLD, after: NEW }"""
     bindVars = {'lsv4_topology_key': lsv4_topology_key, 'local_prefix_sid': local_prefix_sid, 'remote_prefix_sid': remote_prefix_sid, 'local_prefix_info': local_prefix_info, 'remote_prefix_info': remote_prefix_info,
                 'local_max_sid_depth': local_max_sid_depth, 'remote_max_sid_depth': remote_max_sid_depth }
     updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
