@@ -31,3 +31,11 @@ def update_ls_performance(arango_client, key, in_unicast_pkts, out_unicast_pkts,
     arango_client.AQLQuery(aql, rawResults=True, bindVars=bindVars)
 
 
+def update_ls_interface_name(arango_client, key, interface_name):
+    print("Updating existing LS_Topology record " + key + " with source interface name: " + interface_name)
+    aql = """FOR p in LS_Topology
+        FILTER p._key == @key
+        UPDATE p with { FromInterfaceName: @source_interface_name } in LS_Topology"""
+    bindVars = {'key': key, 'source_interface_name': interface_name}
+    arango_client.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+

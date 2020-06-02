@@ -17,16 +17,16 @@ def generate_ls_topology(arango_client):
 def generate_ls_topology_query(arango_client):
     """AQL Query to collect LS_Topology information from the LS_Topology collection in Arango."""
     aql = """FOR e in LS_Topology
-        RETURN { key: e._key, RouterID: e.LocalRouterID, InterfaceIP: e.FromInterfaceIP }"""
+        RETURN { key: e._key, LocalIGPID: e.LocalIGPID, InterfaceIP: e.FromInterfaceIP }"""
     bindVars = {}
     ls_topology = arango_client.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return ls_topology
 
-def get_node_hostname(arango_client, router_ip):
+def get_node_hostname(arango_client, router_igp_id):
     aql = """FOR n in LSNode
         FILTER n._key == @ls_node_key
         RETURN n.Name"""
-    bindVars = {"ls_node_key": router_ip}
+    bindVars = {"ls_node_key": router_igp_id}
     node_hostname = arango_client.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return node_hostname[0]
 

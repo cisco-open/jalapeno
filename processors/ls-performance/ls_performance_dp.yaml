@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: ls-performance-processor
-        image: iejalapeno/ls-performance-processor:1.0@sha256:8abc1d2d6474ddeac6d9f6f41bd6a892ccc0950914b2a8d72dfcbb50788a6cf3
+        image: iejalapeno/ls-performance-processor:1.2@sha256:88dbe6e65f417a1b824b171f7749624f3b892c90486206c997efc8a70a3a0fd4
       imagePullSecrets:
         - name: regcred  
