@@ -1,6 +1,6 @@
 IMAGE_REGISTRY=iejalapeno
 IMAGE_NAME=gobmp-topology
-IMAGE_TAG=1.1
+IMAGE_TAG=1.3
 
 .PHONY: all topology topology-container topology-push
 
@@ -11,7 +11,9 @@ topology:
 	$(MAKE) -C ./cmd compile-topology
 
 topology-container: topology
-	docker build -t $(IMAGE_REGISTRY)/$(IMAGE_NAME):$(IMAGE_TAG) -f ./build/Dockerfile .
+	docker build --no-cache -t $(IMAGE_REGISTRY)/$(IMAGE_NAME):$(IMAGE_TAG) -f ./build/Dockerfile .
 
 topology-push: topology-container
 	docker push $(IMAGE_REGISTRY)/$(IMAGE_NAME):$(IMAGE_TAG)
+
+
