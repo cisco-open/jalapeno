@@ -29,7 +29,7 @@ spec:
           - "jalapeno"
           - --asn
           - '100000'
-          image: docker.io/iejalapeno/gobmp-topology@sha256:595467528247e3770b1b02c059934a30a675c66848d7b6c02d7eff4bd5db5e15
+          image: docker.io/iejalapeno/gobmp-topology@sha256:76e541e41393743249c0c6b3163f09c7579ff81fe1e6ec2606947ca4fb4bfc0b
           imagePullPolicy: Always
           name: topology
 metadata:
