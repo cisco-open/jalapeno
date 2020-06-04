@@ -10,4 +10,5 @@ ${KUBE} create -f ${PWD}/${BASEDIR}/topology/deployment/topology_dp.yaml
 ${KUBE} create -f ${PWD}/${BASEDIR}/lsv4/lsv4_dp.yaml
 ${KUBE} create -f ${PWD}/${BASEDIR}/lsv6/lsv6_dp.yaml
 ${KUBE} create -f ${PWD}/${BASEDIR}/l3vpn/l3vpn_dp.yaml
-${KUBE} create -f ${PWD}/${BASEDIR}/ls-performance/ls_performance_dp.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/lsv4-performance/lsv4_performance_dp.yaml
+${KUBE} create -f ${PWD}/${BASEDIR}/lsv6-performance/lsv6_performance_dp.yaml
