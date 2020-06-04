@@ -1,5 +1,5 @@
 import time
-import ls_topology_generator, upsert_ls_performance as db_upserter
+import lsv4_topology_generator, upsert_lsv4_performance as db_upserter
 from configs import influxconfig, arangoconfig
 from telemetry_values import telemetry_value_mapper
 from util import connections
@@ -11,15 +11,15 @@ def main():
     arango_client = arango_connection.connect_arango(arangoconfig.url, arangoconfig.database, arangoconfig.username, arangoconfig.password)
 
     while(True):
-        ls_topology = ls_topology_generator.generate_ls_topology(arango_client)
-        for link_index in range(len(ls_topology)):
-            current_ls_link = ls_topology[link_index]
-            ls_topology_key = current_ls_link['key']
-            router_igp_id = current_ls_link['LocalIGPID']
-            router_interface_ip = current_ls_link['InterfaceIP']
-            router_hostname = ls_topology_generator.get_node_hostname(arango_client, router_igp_id)
+        lsv4_topology = lsv4_topology_generator.generate_lsv4_topology(arango_client)
+        for link_index in range(len(lsv4_topology)):
+            current_lsv4_link = lsv4_topology[link_index]
+            lsv4_topology_key = current_lsv4_link['key']
+            router_igp_id = current_lsv4_link['LocalIGPID']
+            router_interface_ip = current_lsv4_link['InterfaceIP']
+            router_hostname = lsv4_topology_generator.get_node_hostname(arango_client, router_igp_id)
             interface_name = collect_interface_name(influx_client, router_hostname, router_interface_ip)
-            print("\nCalculating performance metrics for Link-State link out of %s(%s) through %s(%s)" % (router_igp_id, router_hostname,
+            print("\nCalculating performance metrics for Link-State V4 link out of %s(%s) through %s(%s)" % (router_igp_id, router_hostname,
                                                                                                           router_interface_ip, interface_name))
             calculated_performance_metrics = {}
             for telemetry_value, performance_metric in telemetry_value_mapper.items(): # the extended base-path and the value it represents
@@ -34,8 +34,8 @@ def main():
             calculated_performance_metrics["speed"] = current_port_speed_value
             calculated_performance_metrics["percent-util-inbound"] = percent_util_inbound
             calculated_performance_metrics["percent-util-outbound"] = percent_util_outbound
-            upsert_ls_performance(arango_client, ls_topology_key, calculated_performance_metrics)
-            upsert_ls_interface_name(arango_client, ls_topology_key, interface_name)
+            upsert_lsv4_performance(arango_client, lsv4_topology_key, calculated_performance_metrics)
+            upsert_lsv4_interface_name(arango_client, lsv4_topology_key, interface_name)
             print("============================================================")
         time.sleep(30)
 
@@ -85,7 +85,7 @@ def calculate_port_speed_value(port_speed_dataset):
         port_speed = 1
     return port_speed
 
-def upsert_ls_performance(arango_client, ls_topology_key, performance_metrics):
+def upsert_lsv4_performance(arango_client, lsv4_topology_key, performance_metrics):
     in_unicast_pkts, out_unicast_pkts = performance_metrics["in-unicast-pkts"], performance_metrics["out-unicast-pkts"]
     in_multicast_pkts, out_multicast_pkts = performance_metrics["in-multicast-pkts"], performance_metrics["out-multicast-pkts"]
     in_broadcast_pkts, out_broadcast_pkts = performance_metrics["in-broadcast-pkts"], performance_metrics["out-broadcast-pkts"]
@@ -94,13 +94,13 @@ def upsert_ls_performance(arango_client, ls_topology_key, performance_metrics):
     in_octets, out_octets = performance_metrics["in-octets"], performance_metrics["out-octets"]
     percent_util_inbound, percent_util_outbound = performance_metrics["percent-util-inbound"], performance_metrics["percent-util-outbound"]
     speed = performance_metrics["speed"]
-    db_upserter.update_ls_performance(arango_client, ls_topology_key, in_unicast_pkts, out_unicast_pkts,
+    db_upserter.update_lsv4_performance(arango_client, lsv4_topology_key, in_unicast_pkts, out_unicast_pkts,
                                       in_multicast_pkts, out_multicast_pkts, in_broadcast_pkts, out_broadcast_pkts,
                                       in_discards, out_discards, in_errors, out_errors, in_octets, out_octets, speed,
                                       percent_util_inbound, percent_util_outbound)
 
-def upsert_ls_interface_name(arango_client, ls_topology_key, interface_name):
-    db_upserter.update_ls_interface_name(arango_client, ls_topology_key, interface_name)
+def upsert_lsv4_interface_name(arango_client, lsv4_topology_key, interface_name):
+    db_upserter.update_lsv4_interface_name(arango_client, lsv4_topology_key, interface_name)
 
 if __name__ == '__main__':
     main()

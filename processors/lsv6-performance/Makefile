@@ -1,8 +1,8 @@
 EXECUTABLE ?= jalapeno
 BINARY ?= bin/$(EXECUTABLE)
 REPO=iejalapeno
-IMAGE=ls-performance-processor
-TAG=1.2
+IMAGE=lsv6-performance-processor
+TAG=1.0
 # If you connect to dockerhub via a proxy: uncomment and edit the following line (and see below docker build lines)
 #PROXY=http://proxy.esl.cisco.com:8080
 
@@ -12,7 +12,7 @@ build:
 	pip install -r requirements.txt
 
 run:
-	python3.6 calculate_ls_performance.py
+	python3.6 calculate_lsv6_performance.py
 
 container:
 	# Default docker build without proxy setting:
