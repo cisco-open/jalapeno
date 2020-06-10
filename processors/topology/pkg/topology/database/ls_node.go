@@ -1,6 +1,9 @@
 package database
 
-import "fmt"
+import (
+       "fmt"
+       "github.com/sbezverk/gobmp/pkg/sr"
+)
 
 const LSNodeName = "LSNode"
 
@@ -15,7 +18,7 @@ type LSNode struct {
         IGPID             string `json:"IGPID,omitempty"`
         SRv6Capabilities  string `json:"SRv6Capabilities,omitempty"`
         SRAlgorithm       []int  `json:"SRAlgorithm,omitempty"`
-        SRLocalBlock      string `json:"SRLocalBlock,omitempty"`
+        SRLocalBlock      *sr.LocalBlock `json:"SRLocalBlock,omitempty"`
         NodeMaxSIDDepth   string `json:"NodeMaxSIDDepth,omitempty"`
         AreaID            string `json:"AreaID,omitempty"`
         Protocol          string `json:"Protocol,omitempty"`
@@ -40,7 +43,7 @@ func (r *LSNode) SetKey() error {
 func (r *LSNode) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
-	if r.RouterID != "" {
+	if r.IGPID != "" {
 		ret = fmt.Sprintf("%s", r.IGPID)
 		err = nil
 	}

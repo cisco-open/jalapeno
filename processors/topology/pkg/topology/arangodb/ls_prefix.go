@@ -13,23 +13,27 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
         action := obj.Action
         igpRouterID := obj.IGPRouterID
         prefixSID := obj.LSPrefixSID
-        if(prefixSID == nil) {
-                glog.Infof("No PrefixSID found for prefix: %q, skipping parsing of ls_prefix message\n", obj.Prefix)
-                return
-        }
 
-        prefixSIDIndex := parseSIDIndex(prefixSID.SID)
-	lsPrefixKey := obj.IGPRouterID + "_" + obj.Prefix
-        lsPrefixIndexSliceExists := db.CheckExistingLSPrefixIndexSlice(lsPrefixKey)
-        if (lsPrefixIndexSliceExists) {
-                db.UpdateExistingLSPrefixIndexSlice(lsPrefixKey, prefixSIDIndex)
-		//glog.Infof("PrefixIndex exists, updating list for lsPrefix: %q with prefixSIDIndex: %d\n", lsPrefixKey, prefixSIDIndex)
-        } else {
-                db.CreateLSPrefixIndexSlice(lsPrefixKey, prefixSIDIndex)
-		//glog.Infof("PrefixIndex does not exist, creating list for lsPrefix: %q and prefixSIDIndex: %d\n", lsPrefixKey, prefixSIDIndex)
-        }
-	srFlags := parseFlags(prefixSID.Flags)
+        var algorithm *uint8
+        var srFlags []string
+        var sid []byte
+        if(prefixSID != nil) {
+                algorithm = &prefixSID.Algorithm
+                srFlags = parseFlags(prefixSID.Flags)
+                sid = prefixSID.SID
+        } 
 
+        if(sid != nil) {
+                prefixSIDIndex := parseSIDIndex(sid)
+	        lsPrefixKey := obj.IGPRouterID + "_" + obj.Prefix
+                lsPrefixIndexSliceExists := db.CheckExistingLSPrefixIndexSlice(lsPrefixKey)
+                if (lsPrefixIndexSliceExists) {
+                        db.UpdateExistingLSPrefixIndexSlice(lsPrefixKey, prefixSIDIndex)
+                } else {
+                        db.CreateLSPrefixIndexSlice(lsPrefixKey, prefixSIDIndex)
+                }
+        }
+         
         lsPrefixDocument := &database.LSPrefix{
                 IGPRouterID:  igpRouterID,
                 Prefix:       obj.Prefix,
@@ -37,7 +41,7 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
                 Protocol:     obj.Protocol,
                 Timestamp:    obj.Timestamp,
                 SRFlags:      srFlags,
-                Algorithm:    prefixSID.Algorithm,
+                Algorithm:    algorithm,
         }
         if (action == "add") {
                 if err := db.Upsert(lsPrefixDocument); err != nil {
@@ -54,6 +58,7 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
                 }
         }
 }
+
 
 func parseSIDIndex(SID []byte) int {
         var data []byte

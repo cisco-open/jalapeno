@@ -70,6 +70,8 @@ func (p *processor) SendMessage(msgType int, msg []byte) {
 		msgType: msgType,
 		msgData: msg,
 	}
+
+	return
 }
 
 func (p *processor) msgProcessor() {
@@ -145,6 +147,16 @@ func (p *processor) procWorker(m *queueMsg) {
 			glog.Errorf("failed to store message of type: %d in the database with error: %+v", m.msgType, err)
 			return
 		}
+	case bmp.LSSRv6SIDMsg:
+		var o message.LSSRv6SID
+		if err := json.Unmarshal(m.msgData, &o); err != nil {
+			glog.Errorf("failed to unmarshal message of type %d with error: %+v", m.msgType, err)
+			return
+		}
+		if err := p.db.StoreMessage(m.msgType, &o); err != nil {
+			glog.Errorf("failed to store message of type: %d in the database with error: %+v", m.msgType, err)
+			return
+		}
 	case bmp.EVPNMsg:
 		var o message.EVPNPrefix
 		if err := json.Unmarshal(m.msgData, &o); err != nil {
@@ -157,5 +169,5 @@ func (p *processor) procWorker(m *queueMsg) {
 		}
 	}
 
-	glog.V(5).Infof("message of type %d was stored in the database", m.msgType)
+	//glog.V(5).Infof("message of type %d was stored in the database", m.msgType)
 }

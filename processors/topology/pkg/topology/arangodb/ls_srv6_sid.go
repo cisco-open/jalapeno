@@ -15,7 +15,6 @@ func (a *arangoDB) lsSRv6SIDHandler(obj *message.LSSRv6SID) {
         var srv6EndpointBehavior uint16
         var srv6Flag uint8
         var srv6Algorithm uint8
-        glog.Infof("We have endpointBehavior %q\n", endpointBehavior)
         if(endpointBehavior != nil) {        
                 srv6EndpointBehavior = endpointBehavior.EndpointBehavior
                 srv6Flag = endpointBehavior.Flag
@@ -27,7 +26,6 @@ func (a *arangoDB) lsSRv6SIDHandler(obj *message.LSSRv6SID) {
         var srv6BGPPeerNodeSIDWeight uint8
         var srv6BGPPeerNodeSIDPeerASN uint32
         var srv6BGPPeerNodeSIDID []byte
-        glog.Infof("We have srv6BGPPeerNodeSID %q\n", srv6BGPPeerNodeSID)
         if(srv6BGPPeerNodeSID != nil) {
                 srv6BGPPeerNodeSIDFlag = srv6BGPPeerNodeSID.Flag 
                 srv6BGPPeerNodeSIDWeight = srv6BGPPeerNodeSID.Weight
@@ -40,7 +38,6 @@ func (a *arangoDB) lsSRv6SIDHandler(obj *message.LSSRv6SID) {
         var srv6SIDStructureLNLength uint8
 	var srv6SIDStructureFunLength uint8
         var srv6SIDStructureArgLength uint8
-        glog.Infof("We have srv6SIDStructure %q\n", srv6SIDStructure)
         if(srv6BGPPeerNodeSID != nil) {
                 srv6SIDStructureLBLength = srv6SIDStructure.LBLength
                 srv6SIDStructureLNLength = srv6SIDStructure.LNLength 
