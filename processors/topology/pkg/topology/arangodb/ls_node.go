@@ -5,7 +5,6 @@ import (
         "github.com/golang/glog"
         "github.com/sbezverk/gobmp/pkg/message"
         "github.com/sbezverk/gobmp/pkg/topology/database"
-        //"github.com/cisco-ie/jalapeno/processors/topology/pkg/database"
 )
 
 func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {
@@ -35,6 +34,7 @@ func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {
                 AreaID:            obj.ISISAreaID,
                 Protocol:          obj.Protocol,
         }
+
         if (action == "add") {
                 if err := db.Upsert(lsNodeDocument); err != nil {
                         glog.Errorf("Encountered an error while upserting the ls node document: %+v", err)

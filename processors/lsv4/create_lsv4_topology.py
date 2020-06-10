@@ -68,10 +68,11 @@ def parse_prefix_info(prefix_info, srgb_start):
         sid_index = prefix_info[index]["SIDIndex"][0]
         prefix = prefix_info[index]["Prefix"]
         length = prefix_info[index]["Length"]
+        sr_flag = prefix_info[index]["SRFlag"]
         if(prefix_info[index]["SRFlag"] != None and prefix_info[index]["SRFlag"][0] == "n"):
             prefix_sid = srgb_start + sid_index
         sid = srgb_start + sid_index
-        prefix_dict = {"Prefix": prefix, "Length": length, "SID": sid}
+        prefix_dict = {"Prefix": prefix, "Length": length, "SID": sid, "SRFlag": sr_flag}
         prefix_info_list.append(prefix_dict)
     return(prefix_sid, prefix_info_list)
 
