@@ -13,7 +13,7 @@ type LSPrefix struct {
         Length       int32    `json:"Length,omitempty"`
         Protocol     string   `json:"Protocol,omitempty"`
         SRFlags      []string `json:"SRFlags,omitempty"`
-        Algorithm    uint8    `json:"Algorithm"`
+        Algorithm    *uint8   `json:"Algorithm,omitempty"`
         Timestamp    string   `json:"Timestamp,omitempty"`
         SIDIndex     []int    `json:"SIDIndex,omitempty"`
 }
