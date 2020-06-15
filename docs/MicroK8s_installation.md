@@ -12,7 +12,7 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
 
 1. Ensure that `snap` is installed using `snap version` . If snap is not installed `sudo apt install snapd`.
 
-2. Install MicroK8s: `sudo snap install microk8s --classic --edge`
+2. Install MicroK8s: `sudo snap install microk8s --classic --channel=1.17/stable`
 
 3. Add user into microk8s group. `sudo usermod -a -G microk8s $USER` (You will need to reinstantiate shell for this to take effect)
 
@@ -104,9 +104,24 @@ microk8s.kubectl proxy --accept-hosts=.* --address=0.0.0.0 &
 
 10. Access Kubernetes Dashboard: 
 
-`http://<server-ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/`
+```
+To get Dashboard port number:
 
-You may now proceed to install/deploy Jalapeno on your Microk8s cluster:
+kubectl -n kube-system get service kubernetes-dashboard
+
+Then
+
+https://<server_ip>:<port_number>/pod?namespace=_all
+```
+
+11. Optional - if you wish to just use 'kubectl' without needing to type 'microk8s kubectl <command>'
+```
+sudo chown -f -R $USER ~/.kube
+sudo snap install kubectl --classic
+microk8s kubectl config view --raw > $HOME/.kube/config
+```
+
+### You may now proceed to install/deploy Jalapeno on your Microk8s cluster:
 
 [Getting-Started.md](../Getting-Started.md)
 
