@@ -1,6 +1,7 @@
 package database
 
 import "fmt"
+import "github.com/sbezverk/gobmp/pkg/srv6"
 
 const L3VPNPrefixName = "L3VPNPrefix"
 
@@ -13,7 +14,8 @@ type L3VPNPrefix struct {
         ControlPlaneID  string   `json:"ControlPlaneID,omitempty"`
         ASN             int32    `json:"ASN,omitempty"`
         VPN_Label       uint32   `json:"VPN_Label,omitempty"`
-        ExtComm         []string `json:"ExtComm,omitempty"`
+        SRv6_SID        []srv6.SubTLV   `json:SRv6_SID,omitempty"`
+	ExtComm         []string `json:"ExtComm,omitempty"`
         IPv4            bool     `json:"IPv4"`
 }
 
