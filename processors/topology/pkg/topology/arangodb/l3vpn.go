@@ -4,7 +4,8 @@ import (
 	"strings"
         "github.com/golang/glog"
         "github.com/sbezverk/gobmp/pkg/message"
-        "github.com/sbezverk/gobmp/pkg/topology/database"
+        "github.com/sbezverk/gobmp/pkg/srv6"
+	"github.com/sbezverk/gobmp/pkg/topology/database"
 )
 
 func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
@@ -18,6 +19,14 @@ func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
 	vpnLabel := obj.Labels[0]
 	extCommunityList := strings.TrimPrefix(obj.BaseAttributes.ExtCommunityList, "rt=")
 
+        var infoSubTLV []srv6.SubTLV
+        if obj.PrefixSID != nil {
+                if obj.PrefixSID.SRv6L3Service != nil {
+                        infoSubTLV = obj.PrefixSID.SRv6L3Service.SubTLVs[1]
+                        //srv6_locator = obj.PrefixSID.SRv6L3Service.SubTLVs[1].InformationSubTLV.SID
+                }
+        }
+
         l3vpnPrefixDocument := &database.L3VPNPrefix{
                 RD:              obj.VPNRD,
                 Prefix:          obj.Prefix,
@@ -26,7 +35,8 @@ func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
                 ControlPlaneID:  obj.PeerIP,
                 ASN:             obj.PeerASN,
                 VPN_Label:       vpnLabel,
-                ExtComm:         []string{extCommunityList},
+                SRv6_SID:        infoSubTLV,
+		ExtComm:         []string{extCommunityList},
                 IPv4:            obj.IsIPv4,
         }
 
