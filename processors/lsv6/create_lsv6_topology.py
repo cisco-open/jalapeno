@@ -51,7 +51,13 @@ def main():
             remote_prefix_info = get_prefix_info(database, remote_igpid)
             local_prefix_sid, local_prefixes = parse_prefix_info(local_prefix_info, local_srgb_start)
             remote_prefix_sid, remote_prefixes = parse_prefix_info(remote_prefix_info, remote_srgb_start)
-            update_lsv6_topology_document(database, current_lsv6_topology_key, local_prefix_sid, remote_prefix_sid, local_prefixes, remote_prefixes, local_max_sid_depth, remote_max_sid_depth)
+            local_srv6_info = get_srv6_info(database, local_igpid)[0]
+            remote_srv6_info = get_srv6_info(database, remote_igpid)[0]
+            if(len(local_srv6_info) == 0):
+                local_srv6_info = handle_empty_srv6()
+            if(len(remote_srv6_info) == 0):
+                remote_srv6_info = handle_empty_srv6()
+            update_lsv6_topology_document(database, current_lsv6_topology_key, local_prefix_sid, remote_prefix_sid, local_prefixes, remote_prefixes, local_max_sid_depth, remote_max_sid_depth, local_srv6_info, remote_srv6_info)
         time.sleep(10)
 
 def handle_msd(max_sid_depth):
@@ -61,6 +67,10 @@ def handle_msd(max_sid_depth):
         msd = max_sid_depth_split[1]
     return msd
 
+def handle_empty_srv6():
+    srv6_info = {"Protocol": "", "MT_ID": "", "SRv6_SID": "", "SRv6_Endpoint_Behavior": "", "SRv6_SID_Structure": ""}
+    return srv6_info
+
 def parse_prefix_info(prefix_info, srgb_start):
     prefix_info_list = []
     prefix_sid = None
@@ -68,10 +78,11 @@ def parse_prefix_info(prefix_info, srgb_start):
         sid_index = prefix_info[index]["SIDIndex"][0]
         prefix = prefix_info[index]["Prefix"]
         length = prefix_info[index]["Length"]
+        sr_flag = prefix_info[index]["SRFlag"]
         if(prefix_info[index]["SRFlag"] != None and prefix_info[index]["SRFlag"][0] == "n"):
             prefix_sid = srgb_start + sid_index
         sid = srgb_start + sid_index
-        prefix_dict = {"Prefix": prefix, "Length": length, "SID": sid}
+        prefix_dict = {"Prefix": prefix, "Length": length, "SID": sid, "SRFlag": sr_flag}
         prefix_info_list.append(prefix_dict)
     return(prefix_sid, prefix_info_list)
 

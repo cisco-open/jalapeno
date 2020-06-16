@@ -73,7 +73,7 @@ def get_max_sid_depth(db, igp_router_id):
     return max_sid_depth
 
 def get_prefix_info(db, igp_router_id):
-    aql = """ FOR l in LSPrefix filter l.IGPRouterID == @igp_router_id return {"Prefix": l.Prefix, "Length": l.Length, "SIDIndex": l.SIDIndex, "SRFlag": l.SRFlags } """
+    aql = """ FOR l in LSPrefix filter l.IGPRouterID == @igp_router_id and l.SIDIndex != null return {"Prefix": l.Prefix, "Length": l.Length, "SIDIndex": l.SIDIndex, "SRFlag": l.SRFlags } """
     bindVars = {'igp_router_id': igp_router_id }
     prefix_info = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return prefix_info
@@ -90,6 +90,11 @@ def get_remote_igpid(db, lsv6_topology_key):
     remote_igpid = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return remote_igpid
 
+def get_srv6_info(db, igp_router_id):
+    aql = """ FOR l in LSSRv6SID filter l._key == @igp_router_id return {"Protocol": l.Protocol, "MT_ID": l.MT_ID, "SRv6_SID": l.SRv6_SID, "SRv6_Endpoint_Behavior": l.SRv6_Endpoint_Behavior, "SRv6_SID_Structure": l.SRv6_SID_Structure} """
+    bindVars = {'igp_router_id': igp_router_id}
+    srv6_info = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return srv6_info
 
 def update_prefix_sid(db, lsv6_topology_key, local_prefix_sid, remote_prefix_sid):
     aql = """ FOR l in LSv6_Topology filter l._key == @lsv6_topology_key UPDATE { _key: l._key, "LocalPrefixSID": @local_prefix_sid, "RemotePrefixSID": @remote_prefix_sid  } in LSv6_Topology RETURN { before: OLD, after: NEW }"""
@@ -121,12 +126,18 @@ def update_max_sid_depths(db, lsv6_topology_key, local_max_sid_depth, remote_max
     else:
         print("Something went wrong while updating LSv6_Topology Edge with MaxSIDDepths")
 
-def update_lsv6_topology_document(db, lsv6_topology_key, local_prefix_sid, remote_prefix_sid, local_prefix_info, remote_prefix_info, local_max_sid_depth, remote_max_sid_depth):
+def update_lsv6_topology_document(db, lsv6_topology_key, local_prefix_sid, remote_prefix_sid, local_prefix_info, remote_prefix_info, local_max_sid_depth, remote_max_sid_depth, local_srv6_info, remote_srv6_info):
     aql = """ FOR l in LSv6_Topology filter l._key == @lsv6_topology_key UPDATE { _key: l._key, "LocalPrefixSID": @local_prefix_sid, "RemotePrefixSID": @remote_prefix_sid,
-              "LocalPrefixInfo": @local_prefix_info, "RemotePrefixInfo": @remote_prefix_info, "LocalMaxSIDDepth": @local_max_sid_depth, "RemoteMaxSIDDepth": @remote_max_sid_depth
-              } in LSv6_Topology RETURN { before: OLD, after: NEW }"""
+              "LocalPrefixInfo": @local_prefix_info, "RemotePrefixInfo": @remote_prefix_info, "LocalMaxSIDDepth": @local_max_sid_depth, "RemoteMaxSIDDepth": @remote_max_sid_depth,
+              "Local_Protocol": @local_protocol, "Local_MT_ID": @local_mt_id, "Local_SRv6_SID": @local_srv6_sid, "Local_SRv6_SID_Endpoint_Behavior": @local_srv6_sid_endpoint_behavior,
+              "Local_SRv6_SID_Structure": @local_srv6_sid_structure, "Remote_Protocol": @remote_protocol, "Remote_MT_ID": @remote_mt_id, "Remote_SRv6_SID": @remote_srv6_sid,
+              "Remote_SRv6_SID_Endpoint_Behavior": @remote_srv6_sid_endpoint_behavior, "Remote_SRv6_SID_Structure": @remote_srv6_sid_structure}
+              in LSv6_Topology RETURN { before: OLD, after: NEW }"""
     bindVars = {'lsv6_topology_key': lsv6_topology_key, 'local_prefix_sid': local_prefix_sid, 'remote_prefix_sid': remote_prefix_sid, 'local_prefix_info': local_prefix_info, 'remote_prefix_info': remote_prefix_info,
-                'local_max_sid_depth': local_max_sid_depth, 'remote_max_sid_depth': remote_max_sid_depth }
+                'local_max_sid_depth': local_max_sid_depth, 'remote_max_sid_depth': remote_max_sid_depth, 'local_protocol': local_srv6_info["Protocol"],  'local_mt_id': local_srv6_info["MT_ID"],
+                'local_srv6_sid': local_srv6_info["SRv6_SID"], 'local_srv6_sid_endpoint_behavior': local_srv6_info["SRv6_Endpoint_Behavior"], "local_srv6_sid_structure": local_srv6_info["SRv6_SID_Structure"],
+                'remote_protocol': remote_srv6_info["Protocol"], 'remote_mt_id': remote_srv6_info["MT_ID"], 'remote_srv6_sid': remote_srv6_info["SRv6_SID"], 
+                'remote_srv6_sid_endpoint_behavior': remote_srv6_info["SRv6_Endpoint_Behavior"], 'remote_srv6_sid_structure': remote_srv6_info["SRv6_SID_Structure"] }
     updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(updated_edge) > 0):
         print("Successfully updated LSv6_Topology Edge: " + lsv6_topology_key + " with LocalPrefixSID " + str(local_prefix_sid) + " and RemotePrefixSID " + str(remote_prefix_sid))
