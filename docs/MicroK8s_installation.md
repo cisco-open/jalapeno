@@ -107,7 +107,7 @@ microk8s.kubectl proxy --accept-hosts=.* --address=0.0.0.0 &
 ```
 To get Dashboard port number:
 
-kubectl -n kube-system get service kubernetes-dashboard
+microk8s kubectl -n kube-system get service kubernetes-dashboard
 
 Then
 
