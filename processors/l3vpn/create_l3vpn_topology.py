@@ -44,7 +44,6 @@ def create_l3vpnprefix_l3vpnnode_edges(database, collection):
             return
         for prefix_index in range(len(all_prefixes)):
             current_prefix_document = all_prefixes[prefix_index]
-            print(current_prefix_document)
             vpn_prefix = current_prefix_document["Prefix"]
             vpn_prefix_length = current_prefix_document["Length"]
             router_id = current_prefix_document["RouterID"]
@@ -117,7 +116,9 @@ def create_l3vpn_fib_edges(database, fib_collection):
             ipv4 = False
             if(current_prefix_document["IPv4"] == True):
                 ipv4 = True
-            router_igp_id = get_router_igp_id(database, router_id)[0]
+            router_igp_id = get_router_igp_id(database, router_id)
+            if(len(router_igp_id) > 0):
+                router_igp_id = router_igp_id[0]
             srgb_start = get_srgb_start(database, router_igp_id)
             sid_index = get_sid_index(database, router_igp_id)
             prefixSID = None
