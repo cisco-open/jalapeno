@@ -4,6 +4,7 @@ import (
         "encoding/binary"
         "github.com/golang/glog"
         "github.com/sbezverk/gobmp/pkg/message"
+        "github.com/sbezverk/gobmp/pkg/sr"
         "github.com/sbezverk/gobmp/pkg/topology/database"
 )
 
@@ -12,12 +13,24 @@ func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {
         action := obj.Action
 
         srCapabilities := obj.SRCapabilities
-        srCapabilityFlags := srCapabilities.Flags
-        srCapabilitiesTLVSlice := srCapabilities.TLV
-        srCapabilitiesTLV := srCapabilitiesTLVSlice[0]
-        srgbRange := srCapabilitiesTLV.Range
-        srPrefixSIDValue := srCapabilitiesTLV.SID.Value
-        srgbStart := parseSRStart(srPrefixSIDValue)
+        var srCapabilityFlags uint8
+        var srgbStart int
+        var srgbRange uint32
+
+        if(srCapabilities != nil) {
+                srCapabilityFlags = srCapabilities.Flags
+                srCapabilitiesTLVSlice := srCapabilities.TLV
+                if(srCapabilitiesTLVSlice != nil && len(srCapabilitiesTLVSlice) > 0) {
+                        srCapabilitiesTLV := srCapabilitiesTLVSlice[0]
+                        if(sr.CapabilityTLV{} != srCapabilitiesTLV) {
+                                srgbRange = srCapabilitiesTLV.Range
+                                if(srCapabilitiesTLV.SID != nil) {
+                                        srPrefixSIDValue := srCapabilitiesTLV.SID.Value
+                                        srgbStart = parseSRStart(srPrefixSIDValue)
+                                }
+                        }
+                }
+        }
 
         lsNodeDocument := &database.LSNode{
                 Name:              obj.Name,

@@ -6,7 +6,6 @@ import (
         "github.com/sbezverk/gobmp/pkg/topology/database"
         "github.com/sbezverk/gobmp/pkg/sr"
 	"encoding/binary"
-        //"github.com/cisco-ie/jalapeno/processors/topology/pkg/database"
 )
 
 func (a *arangoDB) lsLinkHandler(obj *message.LSLink) {

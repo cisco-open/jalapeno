@@ -13,11 +13,23 @@ def get_prefixSID(db, routerID):
     prefixSID = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return prefixSID
 
-def get_srgb_start(db, ls_node_key):
-    aql = """ FOR l in LSNode filter l._key == @ls_node_key return l.SRGBStart """
-    bindVars = {'ls_node_key': ls_node_key }
+def get_router_igp_id(db, router_id):
+    aql = """ FOR l in LSNode filter l.RouterID == @router_id return l.IGPID """
+    bindVars = {'router_id': router_id }
+    router_igp_id = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return router_igp_id
+
+def get_srgb_start(db, igp_router_id):
+    aql = """ FOR l in LSNode filter l._key == @igp_router_id return l.SRGBStart """
+    bindVars = {'igp_router_id': igp_router_id }
     srgb_start = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return srgb_start
+
+def get_sid_index(db, igp_router_id):
+    aql = """ FOR l in LSPrefix filter l.IGPRouterID == @igp_router_id and l.SIDIndex != null and l.SRFlags != null return l.SIDIndex """
+    bindVars = {'igp_router_id': igp_router_id }
+    sid_index = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return sid_index
 
 def get_prefix_info(db, igp_router_id):
     aql = """ FOR l in LSPrefix filter l.IGPRouterID == @igp_router_id return {"SIDIndex": l.SIDIndex} """

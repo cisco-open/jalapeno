@@ -53,12 +53,12 @@ def create_l3vpnprefix_l3vpnnode_edges(database, collection):
             ipv4 = False
             if(current_prefix_document["IPv4"] == True):
                 ipv4 = True
-            #srgb_start = get_srgb_start(database, router_igpid)
-            #sid_index = get_srgb_start(database, router_igpid)
-            
-            prefixSID = get_prefixSID(database, router_id)
-            if(len(prefixSID) > 0) and (prefixSID[0] != None):
-                prefixSID = int(prefixSID[0])
+            router_igp_id = get_router_igp_id(database, router_id)[0]
+            srgb_start = get_srgb_start(database, router_igp_id)
+            sid_index = get_sid_index(database, router_igp_id)
+            prefixSID = None
+            if(len(srgb_start) > 0 and len(sid_index) > 0):
+                prefixSID = int(srgb_start[0]) + int(sid_index[0])
             srv6_sid = current_prefix_document["SRv6_SID"]
             print(vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4, srv6_sid)
             upsert_l3vpnprefix_l3vpnnode_edge(database, collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4, srv6_sid)
@@ -114,9 +114,12 @@ def create_l3vpn_fib_edges(database, fib_collection):
             ipv4 = False
             if(current_prefix_document["IPv4"] == True):
                 ipv4 = True
-            prefixSID = get_prefixSID(database, router_id)
-            if(len(prefixSID) > 0) and (prefixSID[0] != None):
-                prefixSID = int(prefixSID[0])
+            router_igp_id = get_router_igp_id(database, router_id)[0]
+            srgb_start = get_srgb_start(database, router_igp_id)
+            sid_index = get_sid_index(database, router_igp_id)
+            prefixSID = None
+            if(len(srgb_start) > 0 and len(sid_index) > 0):
+                prefixSID = int(srgb_start[0]) + int(sid_index[0])
             srv6_sid = current_prefix_document["SRv6_SID"]
             print(vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4, srv6_sid)
             upsert_l3vpn_fib_edge(database, fib_collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4, srv6_sid)
