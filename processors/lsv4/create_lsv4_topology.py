@@ -65,7 +65,7 @@ def parse_prefix_info(prefix_info, srgb_start):
     prefix_info_list = []
     prefix_sid = None
     for index in range(len(prefix_info)):
-        sid_index = prefix_info[index]["SIDIndex"][0]
+        sid_index = prefix_info[index]["SIDIndex"]
         prefix = prefix_info[index]["Prefix"]
         length = prefix_info[index]["Length"]
         sr_flag = prefix_info[index]["SRFlag"]
