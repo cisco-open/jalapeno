@@ -17,23 +17,16 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
         var algorithm *uint8
         var srFlags []string
         var sid []byte
+        var prefixSIDIndex int
         if(prefixSID != nil) {
                 algorithm = &prefixSID.Algorithm
                 srFlags = parseFlags(prefixSID.Flags)
                 sid = prefixSID.SID
-        } 
-
-        if(sid != nil) {
-                prefixSIDIndex := parseSIDIndex(sid)
-	        lsPrefixKey := obj.IGPRouterID + "_" + obj.Prefix
-                lsPrefixIndexSliceExists := db.CheckExistingLSPrefixIndexSlice(lsPrefixKey)
-                if (lsPrefixIndexSliceExists) {
-                        db.UpdateExistingLSPrefixIndexSlice(lsPrefixKey, prefixSIDIndex)
-                } else {
-                        db.CreateLSPrefixIndexSlice(lsPrefixKey, prefixSIDIndex)
+                if(sid != nil) {
+                        prefixSIDIndex = parseSIDIndex(sid)
                 }
         }
-         
+
         lsPrefixDocument := &database.LSPrefix{
                 IGPRouterID:  igpRouterID,
                 Prefix:       obj.Prefix,
@@ -42,7 +35,9 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
                 Timestamp:    obj.Timestamp,
                 SRFlags:      srFlags,
                 Algorithm:    algorithm,
+                SIDIndex:     prefixSIDIndex,
         }
+
         if (action == "add") {
                 if err := db.Upsert(lsPrefixDocument); err != nil {
                         glog.Errorf("Encountered an error while upserting the ls prefix document: %+v", err)
@@ -84,7 +79,7 @@ func parseFlags(flags *sr.Flags) []string{
         }
 	for k, v:= range flagMap {
 		if(v == true) {
-			srFlags = append(srFlags, k)		
+			srFlags = append(srFlags, k)
 		}
 	}
 	return srFlags

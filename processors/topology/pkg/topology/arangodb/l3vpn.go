@@ -12,11 +12,10 @@ func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
         action := obj.Action
         db := a.GetArangoDBInterface()
 
-	if(len(obj.Labels) < 1) {
-		glog.Infof("No VPN Label associated with L3VPN_Prefix message, not parsing")
-		return
+        var vpnLabel uint32
+	if(len(obj.Labels) > 0) {
+	        vpnLabel = obj.Labels[0]
 	}
-	vpnLabel := obj.Labels[0]
 	extCommunityList := strings.TrimPrefix(obj.BaseAttributes.ExtCommunityList, "rt=")
 
         var infoSubTLV []srv6.SubTLV

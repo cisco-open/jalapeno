@@ -14,10 +14,7 @@ type LSLink struct {
         LocalIGPID         string `json:"LocalIGPID,omitempty"`
         RemoteRouterID     string `json:"RemoteRouterID,omitempty"`
         RemoteIGPID        string `json:"RemoteIGPID,omitempty"`
-        NodeName           string `json:"NodeName,omitempty"`
         Protocol           string `json:"Protocol,omitempty"`
-        Level              string `json:"Level,omitempty"`
-        RouterID           string `json:"RouterID,omitempty"`
         ASN                uint32 `json:"ASN,omitempty"`
         LocalInterfaceIP   string `json:"FromInterfaceIP,omitempty"`
         RemoteInterfaceIP  string `json:"ToInterfaceIP,omitempty"`
@@ -30,7 +27,13 @@ type LSLink struct {
         LinkProtection     uint16 `json:"LinkProtection,omitempty"`
         LinkName           string `json:"LinkName,omitempty"`
         SRLG               []uint32 `json:"SRLG"`
-        UniDirMinDelay     string `json:"UniDirMinDelay,omitempty"`
+        UnidirLinkDelay        uint32   `json:"unidir_link_delay"`
+	UnidirLinkDelayMinMax  []uint32 `json:"unidir_link_delay_min_max"`
+	UnidirDelayVariation   uint32   `json:"unidir_delay_variation"`
+	UnidirPacketLoss       uint32   `json:"unidir_packet_loss"`
+	UnidirResidualBW       uint32   `json:"unidir_residual_bw"`
+	UnidirAvailableBW      uint32   `json:"unidir_available_bw"`
+	UnidirBWUtilization    uint32   `json:"unidir_bw_utilization"`
         AdjacencySID       []map[string]int `json:"AdjacencySID,omitempty"`
         Timestamp          string `json:"Timestamp"`
 }
