@@ -44,6 +44,7 @@ def create_l3vpnprefix_l3vpnnode_edges(database, collection):
             return
         for prefix_index in range(len(all_prefixes)):
             current_prefix_document = all_prefixes[prefix_index]
+            print(current_prefix_document)
             vpn_prefix = current_prefix_document["Prefix"]
             vpn_prefix_length = current_prefix_document["Length"]
             router_id = current_prefix_document["RouterID"]
