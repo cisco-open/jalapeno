@@ -1,7 +1,7 @@
 # Jalapeno
 ### A cloud-native SDN infrastructure platform
 
-To install Jalapeno and get started, visit the [Getting-Started.md](Getting-Started.md) guide.
+To install Jalapeno and get started, visit the [Getting Started](Getting-Started.md) guide.
 
 ### High level architecture 
 ![jalapeno_architecture](docs/diagrams/jalapeno_architecture.png "jalapeno architecture")
@@ -26,7 +26,7 @@ With the statement "SDN is database problem" we are saying all SDN use cases can
 
 Jalapeno is comprised of a series of microservices which can be summarized as:
 
-* Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.  The collection stack also includes Influx TSDB and Grafana for darta visualization
+* Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.  The collection stack also includes Influx TSDB and Grafana for data visualization
 
 * Data Processors, Graph Database, and Time-Series Database - Jalapeno has two classes of processors: 
   * Base data processors: parse topology and performance data coming off Kafka and populate the Influx TSDB and base data collections in the Arango graph database.  The Topology and Telegraf pods are base processors.
