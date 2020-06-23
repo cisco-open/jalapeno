@@ -10,7 +10,6 @@ type L3VPNNode struct {
         RouterID         string   `json:"RouterID,omitempty"`
         ControlPlaneID   string   `json:"ControlPlaneID,omitempty"`
         ASN              int32    `json:"ASN,omitempty"`
-        Prefix_SID       string   `json:"Prefix_SID,omitempty"`
         ExtComm          []string `json:"ExtComm,omitempty"`
 }
 
