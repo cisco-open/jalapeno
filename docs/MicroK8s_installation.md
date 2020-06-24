@@ -64,8 +64,26 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
    kube-system   replicaset.apps/kubernetes-dashboard-5c848cc544             1         1         1       2d4h
    kube-system   replicaset.apps/monitoring-influxdb-grafana-v4-6d599df6bf   1         1         1       2d4h
    ```
+8. Edit dashboard yaml, change ClusterIP to NodePort:
+```
+kubectl -n kube-system edit service kubernetes-dashboard
+```
+```
+spec:
+  clusterIP: 10.152.183.93
+  externalTrafficPolicy: Cluster
+  ports:
+  - nodePort: 31444
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    k8s-app: kubernetes-dashboard
+  sessionAffinity: None
+  type: NodePort
+  ```
 
-8. Enable skip for login token (only way over http proxy)
+9. Enable skip for login token (only way over http proxy)
 
    1. `microk8s.kubectl -n kube-system edit deploy kubernetes-dashboard -o yaml`
 
@@ -97,12 +115,12 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
               - --enable-skip-login
       ```
 
-9. Enable Kubernetes proxy in the background to access dashboard from your browser:
+10. Enable Kubernetes proxy in the background to access dashboard from your browser:
 ```
 microk8s.kubectl proxy --accept-hosts=.* --address=0.0.0.0 &
 ```
 
-10. Access Kubernetes Dashboard: 
+11. Access Kubernetes Dashboard: 
 
 ```
 To get Dashboard port number:
@@ -114,7 +132,7 @@ Then
 https://<server_ip>:<port_number>/pod?namespace=_all
 ```
 
-11. Optional - if you wish to just use 'kubectl' without needing to type 'microk8s kubectl <command>'
+12. Optional - if you wish to just use 'kubectl' without needing to type 'microk8s kubectl <command>'
 ```
 sudo chown -f -R $USER ~/.kube
 sudo snap install kubectl --classic
