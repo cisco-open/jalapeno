@@ -1,6 +1,7 @@
 # Jalapeno Installation Guide
-The following instructions use command line examples when installing/deploying Jalapeno on a Microk8s cluster.  
-See [Installing MicroK8s](docs/MicroK8s_installation.md)
+Jalapeno has been primarily developed, tested, and operated on Ubuntu 18.04 (bare-metal or VM), and Google Kubernetes Engine. Minimum VM sizing is 2 vCPU, 4GB memory, and 8G of disk.
+
+Users who do not have a full Kubernetes or GKE deployment can get up and running quite quickly with Microk8s [Installing MicroK8s](docs/MicroK8s_installation.md)
 
 ### Installing Jalapeno
 
