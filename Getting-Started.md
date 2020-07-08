@@ -27,18 +27,20 @@ Example from topology_dp.yaml:
 
 2. Use the `deploy_jalapeno.sh` script. This will start the collectors and all jalapeno infra and services on the single node.
 
+Note: if using Microk8s you may need to put a 'microk8s' in front of kubectl in each command referenced below
+
    ```bash
-   deploy_jalapeno.sh microk8s.kubectl
+   deploy_jalapeno.sh kubectl
    ```
 
-3. Check that all containers are up using: `microk8s.kubectl get all --all-namespaces` or on a per-namespace basis:
+3. Check that all containers are up using: `kubectl get all --all-namespaces` or on a per-namespace basis:
 ```
-microk8s.kubectl get all -n jalapeno
-microk8s.kubectl get all -n jalapeno-collectors
+kubectl get all -n jalapeno
+kubectl get all -n jalapeno-collectors
 ```
 Output
 ```
-microk8s.kubectl get all -n jalapeno
+kubectl get all -n jalapeno
 
 NAME                                              READY   STATUS             RESTARTS   AGE
 pod/arangodb-0                                    1/1     Running            1          40h
@@ -151,7 +153,7 @@ Jalapeno can also be destroyed using the script.
 1. Use the `destroy_jalapeno.sh` script. Will remove both namespaces jalapeno and jalapeno-collectors and all associated services/pods/deployments/etc. and it will remove all the persistent volumes associated with kafka and arangodb.
 
    ```shell
-   destroy_jalapeno.sh microk8s.kubectl
+   destroy_jalapeno.sh kubectl
    ```
 
 ### More info on Jalapeno components:
