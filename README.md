@@ -7,7 +7,7 @@ To install Jalapeno and get started, visit the [Getting Started](Getting-Started
 ![jalapeno_architecture](docs/diagrams/jalapeno_architecture.png "jalapeno architecture")
 
 #### Platform Overview: SDN is a database problem
-With the statement "SDN is database problem" we are saying all SDN use cases can be executed via database mappings and their associated encapsulations. With this framework in mind, Jalapeno has the theoretical ability to address any kind of virtual topology use case. Therefore, Jalapeno is a generalized SDN platform, which may be used for:
+At the heart of Jalapeno is the concept that all SDN use cases are really virtual topologies whose type and characteristics are driven by dataplane encapsulations and other meta data. Thus, SDN is database problem.. With this framework in mind, Jalapeno has the theoretical ability to address any kind of virtual topology use case, for example:
 
 * Internal Traffic Engineering - engineered tunnels traversing a network under common management (BGP-LS use cases - see note below**)
 * Egress Peer Engineering - engineered tunnels sending traffic out a specific egress router/interface to an external network
@@ -15,12 +15,13 @@ With the statement "SDN is database problem" we are saying all SDN use cases can
 * Network Slicing - see VPN overlays
 * Service Chaining - engineered tunnels, potentially a series of them, linked together via or seamlessly traversing midpoint service nodes 
 
-#### Some project principles
+#### Some project principles and goals
 * Give applications the ability to choose their service/SLA (path through the network)
+* Enable development of an ecosystem of Network-as-a-Service (NaaS) tools and capabilities
 * The Host may be the control/encapsulation point (linux, VPP, other)
 * Cloud-native microservice architecture from day 1
 * Combine network and application performance data
-* Emphasize the use of APIs over Protocols - greater agility
+* Emphasize the use of APIs over Protocols for greater agility
 
 #### Jalapeno's key components
 
@@ -40,7 +41,7 @@ Jalapeno is comprised of a series of microservices which can be summarized as:
 
 Jalapeno's kubernetes architecture make it inherently extensible, and we imagine the number of Collectors, graphDB virtual topology use cases, and SR-Apps to expand significantly as our community grows.
 
-Jalapeno's initial example Apps are EPE "Latency" and "Bandwidth": a user or application may call the EPE Latency or Bandwidth API requesting lowest-latency-path to External destination X, or least-utilized (most BW available) to destination Y. The App makes a Jalapeno API-GW call for Latency or Bandwidth which in turn mines the EPE virtual topology database and respond with the appropriate SR label stack or SRH.  
+Jalapeno's hello-world sample app is called "LUP" or Least-Utilized-Path. In this example app an end user or application would like to send their backup/background traffic to its destination via the least utilized path, and thus preserve more capacity on the routing protocol's chosen best path. Jalapeno responds to the request with a segment routing label stack that, when appended to outbound packets, will steer traffic over the least utilized path. The app then re-queries Jalapeno every 10 seconds and updates the SR label stack should the least utilized path change.   
 
 #### ** Note on BGP-LS
 
