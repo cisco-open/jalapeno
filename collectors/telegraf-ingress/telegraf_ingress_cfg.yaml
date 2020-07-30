@@ -21,6 +21,7 @@ data:
     [[inputs.cisco_telemetry_mdt]]
       transport = "grpc"
       service_address = ":57400"
+      embedded_tags = ["Cisco-IOS-XR-fib-common-oper:mpls-forwarding/nodes/node/label-fib/forwarding-details/forwarding-detail/label-information/outgoing-interface"]
       [inputs.cisco_telemetry_mdt.aliases]
         ifstats = "ietf-interfaces:interfaces-state/interface/statistics"
 

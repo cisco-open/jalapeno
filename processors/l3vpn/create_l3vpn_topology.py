@@ -112,7 +112,10 @@ def create_l3vpn_fib_edges(database, fib_collection):
             router_id = current_prefix_document["RouterID"]
             vpn_label = current_prefix_document["VPN_Label"]
             rd = current_prefix_document["RD"]
-            rt = current_prefix_document["ExtComm"]
+            rt_db = current_prefix_document["ExtComm"]
+            rt_chars = ([s.replace(' rt=', '') for s in rt_db])
+            rt_string = ' '.join([str(elem) for elem in rt_chars])
+            rt = rt_string.split(",")
             ipv4 = False
             if(current_prefix_document["IPv4"] == True):
                 ipv4 = True
