@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: l3vpn-processor
-        image: iejalapeno/l3vpn-processor:1.2.1@sha256:cbf0c33572ee0b41e3713257c52d73d414c9bccb118eb17d2e4b07e89463697c
+        image: iejalapeno/l3vpn-processor:1.2.1@sha256:a7d867a4234413c211e6a7fea213a2267b7b4a4860612b29df36b65c29d36567
       imagePullSecrets:
         - name: regcred
