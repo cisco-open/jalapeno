@@ -26,6 +26,13 @@ def main():
     collection = create_collection(database, collection_name)
     while(True):
         lsv4_link_keys = get_lsv4_link_keys(database)
+        lsv4_topology_keys = get_lsv4_topology_keys(database)
+
+        for lsv4_topology_index in range(len(lsv4_topology_keys)):
+            current_lsv4_topology_key = lsv4_topology_keys[lsv4_topology_index]
+            if(check_exists_lsv4_link(database, current_lsv4_topology_key) == False):
+                deleteLSv4TopologyDocument(database, current_lsv4_topology_key)
+
         for lsv4_link_index in range(len(lsv4_link_keys)):
             current_ls_link_key = lsv4_link_keys[lsv4_link_index]
             ls_link_exists = check_exists_lsv4_topology(database, current_ls_link_key)
