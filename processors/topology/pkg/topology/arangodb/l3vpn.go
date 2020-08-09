@@ -12,17 +12,16 @@ func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
         action := obj.Action
         db := a.GetArangoDBInterface()
 
-        var vpnLabel uint32
-	if(len(obj.Labels) > 0) {
-	        vpnLabel = obj.Labels[0]
-	}
+        //var vpnLabel uint32
+	//if(len(obj.Labels) > 0) {
+	//        vpnLabel = obj.Labels[0]
+	//}
 	extCommunityList := strings.TrimPrefix(obj.BaseAttributes.ExtCommunityList, "rt=")
 
-        var infoSubTLV []srv6.SubTLV
+        var l3Service *srv6.L3Service
         if obj.PrefixSID != nil {
                 if obj.PrefixSID.SRv6L3Service != nil {
-                        infoSubTLV = obj.PrefixSID.SRv6L3Service.SubTLVs[1]
-                        //srv6_locator = obj.PrefixSID.SRv6L3Service.SubTLVs[1].InformationSubTLV.SID
+                        l3Service = obj.PrefixSID.SRv6L3Service
                 }
         }
 
@@ -33,10 +32,12 @@ func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
                 RouterID:        obj.Nexthop,
                 ControlPlaneID:  obj.PeerIP,
                 ASN:             obj.PeerASN,
-                VPN_Label:       vpnLabel,
-                SRv6_SID:        infoSubTLV,
+		VPN_Label:       obj.Labels,
+		//VPN_Label:       vpnLabel,
+                SRv6_SID:        l3Service,
 		ExtComm:         []string{extCommunityList},
                 IPv4:            obj.IsIPv4,
+		Origin_AS:       obj.OriginAS,
         }
 
         l3vpnNodeDocument := &database.L3VPNNode {
