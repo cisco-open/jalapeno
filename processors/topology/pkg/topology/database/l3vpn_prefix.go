@@ -14,9 +14,10 @@ type L3VPNPrefix struct {
         ControlPlaneID  string   `json:"ControlPlaneID,omitempty"`
         ASN             int32    `json:"ASN,omitempty"`
         VPN_Label       uint32   `json:"VPN_Label,omitempty"`
-        SRv6_SID        []srv6.SubTLV   `json:SRv6_SID,omitempty"`
+        SRv6_SID        *srv6.L3Service   `json:SRv6_SID,omitempty"`
 	ExtComm         []string `json:"ExtComm,omitempty"`
         IPv4            bool     `json:"IPv4"`
+	Origin_AS       string    `json:"Origin_AS,omitempty"`
 }
 
 func (p L3VPNPrefix) GetKey() (string, error) {
