@@ -13,7 +13,8 @@ type L3VPNPrefix struct {
         RouterID        string   `json:"RouterID,omitempty"`
         ControlPlaneID  string   `json:"ControlPlaneID,omitempty"`
         ASN             int32    `json:"ASN,omitempty"`
-        VPN_Label       uint32   `json:"VPN_Label,omitempty"`
+	VPN_Label       []uint32 `json:"VPN_Label,omitempty"`
+	//VPN_Label       []uint32 `json:"VPN_Label,omitempty"`
         SRv6_SID        *srv6.L3Service   `json:SRv6_SID,omitempty"`
 	ExtComm         []string `json:"ExtComm,omitempty"`
         IPv4            bool     `json:"IPv4"`
