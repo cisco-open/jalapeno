@@ -4,7 +4,7 @@ metadata:
    name: arangodb-apps
 spec:
   capacity:
-       storage: 10Gi
+       storage: 20Gi
   accessModes:
        - ReadWriteOnce
   hostPath:
@@ -17,7 +17,7 @@ metadata:
    name: arangodb
 spec:
   capacity:
-       storage: 50Gi
+       storage: 80Gi
   accessModes:
        - ReadWriteOnce
   hostPath:

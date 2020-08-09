@@ -6,7 +6,7 @@ ArangoDB is Jalapeno's graph database that serves as the central data-store for 
 
 Nework devices are configured to send topology and performance data to Kafka. There, Jalapeno Processors parse through this data to create multiple "virtual topologies" that are stored in ArangoDB to represent the current state of the network. 
 
-For example, the [Topology Processor](../../processors/topology) parses OpenBMP messages and builds out collections such as `LSNode` and `L3VPNPrefix` in Jalapeno's ArangoDB instance. 
+For example, the [Topology Processor](../../processors/topology) parses GoBMP messages and builds out collections such as `LSNode` and `L3VPNPrefix` in Jalapeno's ArangoDB instance. 
 
 These collections, in conjunction with ArangoDBs rapid graphical traversals and calculations, make it easy to determine what path is optimal through the network given a specific SLA. For example, a user can request the `lowest-latency path` from point A to point B.
 
