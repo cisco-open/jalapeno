@@ -28,6 +28,20 @@ def check_exists_lsv4_topology(db, ls_link_key):
     else:
         return False
 
+def check_exists_lsv4_link(db, lsv4_topology_key):
+    aql = """ FOR l in LSLink filter l._key == @lsv4_topology_key RETURN { key: l._key } """
+    bindVars = {'lsv4_topology_key': lsv4_topology_key}
+    key_exists = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    if(len(key_exists) > 0):
+        return True
+    else:
+        return False
+
+def deleteLSv4TopologyDocument(db, lsv4_topology_key):
+    aql = """ FOR l in LSv4_Topology filter l._key == @lsv4_topology_key remove l in LSv4_Topology """
+    bindVars = {'lsv4_topology_key': lsv4_topology_key}
+    deleted_document = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+
 def createBaseLSv4TopologyDocument(db, ls_link_key):
     aql = """ FOR l in LSLink filter l._key == @ls_link_key insert l into LSv4_Topology RETURN NEW._key """
     bindVars = {'ls_link_key': ls_link_key}
