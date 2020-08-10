@@ -37,6 +37,12 @@ def get_prefix_info(db, igp_router_id):
     prefix_info = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return prefix_info
 
+#def get_origin_as(db, origin_as):
+#    aql = """ FOR p in L3VPNPrefix filter p.Origin_AS return p.Origin_AS """
+#    bindVars = {'origin_as': origin_as }
+#    origin_as = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+#    return origin_as
+
 def get_all_rds(db):
     aql = """ RETURN MERGE (For r in L3VPNNode return { ["RDs"]: r.RD}) """
     bindVars = {}
@@ -243,7 +249,7 @@ def create_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefi
 
 
 
-def update_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, srv6_sid):
+def update_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, origin_as, srv6_sid):
     l3vpn_fib_edge_from = 'L3VPNode/'+str(router_id)
     l3vpn_fib_edge_to = 'L3VPNPrefix/'+str(prefix)
     aql = """ FOR e in L3VPN_FIB
@@ -262,11 +268,12 @@ def update_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, r
                   RD: @rd,
                   RT: @rt,
                   IPv4: @ipv4,
+                  Origin_AS: @origin_as,
                   SRv6_SID: @srv6_sid }
               IN L3VPN_FIB RETURN { before: OLD, after: NEW } """
     bindVars = {'l3vpn_fib_edge_key': l3vpn_fib_edge_key, 'l3vpn_fib_edge_from': l3vpn_fib_edge_from,
                 'l3vpn_fib_edge_to': l3vpn_fib_edge_to, 'prefix': prefix, 'prefix_length': prefix_length,
-                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt, 'ipv4': ipv4,  'srv6_sid': srv6_sid}
+                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt, 'ipv4': ipv4, 'origin_as': origin_as, 'srv6_sid': srv6_sid}
     updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(updated_edge) > 0):
         print("Successfully updated L3VPN_FIB Edge: " + l3vpn_fib_edge_key)
@@ -274,7 +281,7 @@ def update_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, r
     else:
         print("Something went wrong while updating L3VPN_FIB Edge")
 
-def create_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, srv6_sid):
+def create_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, origin_as, srv6_sid):
     l3vpn_fib_edge_from = 'L3VPNNode/'+str(router_id)
     l3vpn_fib_edge_to = 'L3VPNPrefix/'+str(prefix)
     aql = """ INSERT {
@@ -291,11 +298,12 @@ def create_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, r
                   RD: @rd,
                   RT: @rt,
                   IPv4: @ipv4,
+                  Origin_AS: @origin_as,
                   SRv6_SID: @srv6_sid }
               INTO L3VPN_FIB RETURN NEW._key """
     bindVars = {'l3vpn_fib_edge_key': l3vpn_fib_edge_key, 'l3vpn_fib_edge_from': l3vpn_fib_edge_from,
                 'l3vpn_fib_edge_to': l3vpn_fib_edge_to, 'prefix': prefix, 'prefix_length': prefix_length,
-                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt, 'ipv4': ipv4, 'srv6_sid': srv6_sid}
+                'router_id': router_id, 'prefix_sid': prefix_sid, 'vpn_label': vpn_label, 'rd': rd, 'rt': rt, 'ipv4': ipv4, 'origin_as': origin_as, 'srv6_sid': srv6_sid}
     created_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(created_edge) > 0):
         print("Successfully created L3VPN_FIB Edge: " + l3vpn_fib_edge_key)
