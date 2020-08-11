@@ -8,7 +8,7 @@ import (
         "github.com/golang/glog"
         "github.com/sbezverk/gobmp/pkg/topology/arangodb"
         "github.com/sbezverk/gobmp/pkg/topology/dbclient"
-        "github.com/sbezverk/gobmp/pkg/topology/kafkamessenger"
+        //"github.com/sbezverk/gobmp/pkg/topology/kafkamessenger"
         "github.com/sbezverk/gobmp/pkg/topology/messenger"
         "github.com/sbezverk/gobmp/pkg/topology/mockdb"
         "github.com/sbezverk/gobmp/pkg/topology/mockmessenger"
