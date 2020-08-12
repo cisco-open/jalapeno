@@ -5,6 +5,7 @@ import (
         "github.com/sbezverk/gobmp/pkg/message"
         "github.com/sbezverk/gobmp/pkg/topology/database"
         "github.com/sbezverk/gobmp/pkg/sr"
+	"github.com/sbezverk/gobmp/pkg/srv6"
 	"encoding/binary"
 )
 
@@ -12,31 +13,39 @@ func (a *arangoDB) lsLinkHandler(obj *message.LSLink) {
         db := a.GetArangoDBInterface()
         action := obj.Action
 
+	var SRv6EndXSID *srv6.EndXSIDTLV
+        if obj.SRv6ENDXSID != nil {
+                SRv6EndXSID = obj.SRv6ENDXSID
+                }
+        }
+
         localRouterKey := "LSNode/" + obj.IGPRouterID
         remoteRouterKey := "LSNode/" + obj.RemoteIGPRouterID
         adjacencySIDS := parseAdjacencySIDS(obj.LSAdjacencySID)
         lsLinkDocument := &database.LSLink{
-                LocalRouterKey:    localRouterKey,
-                RemoteRouterKey:   remoteRouterKey,
-                LocalRouterID:     obj.RouterID,
-                RemoteRouterID:    obj.RemoteRouterID,
-                ASN:               obj.LocalNodeASN,
-                LocalInterfaceIP:  obj.InterfaceIP,
-                RemoteInterfaceIP: obj.NeighborIP,
-                Protocol:          obj.Protocol,
-                LocalIGPID:        obj.IGPRouterID,
-                RemoteIGPID:       obj.RemoteIGPRouterID,
-                IGPMetric:         obj.IGPMetric,
-                TEMetric:          obj.TEDefaultMetric,
-                AdminGroup:        obj.AdminGroup,
-                MaxLinkBW:         obj.MaxLinkBW,
-                MaxResvBW:         obj.MaxResvBW,
-                UnResvBW:          obj.UnResvBW,
-                LinkProtection:    obj.LinkProtection,
-                SRLG:              obj.SRLG,
-                LinkName:          obj.LinkName,
-                AdjacencySID:      adjacencySIDS,
-                Timestamp:         obj.Timestamp,
+                LocalRouterKey:     localRouterKey,
+                RemoteRouterKey:    remoteRouterKey,
+                LocalRouterID:      obj.RouterID,
+                RemoteRouterID:     obj.RemoteRouterID,
+                ASN:                obj.LocalNodeASN,
+                LocalInterfaceIP:   obj.InterfaceIP,
+                RemoteInterfaceIP:  obj.NeighborIP,
+                Protocol:           obj.Protocol,
+                LocalIGPID:         obj.IGPRouterID,
+                RemoteIGPID:        obj.RemoteIGPRouterID,
+                IGPMetric:          obj.IGPMetric,
+                TEMetric:           obj.TEDefaultMetric,
+                AdminGroup:         obj.AdminGroup,
+                MaxLinkBW:          obj.MaxLinkBW,
+                MaxResvBW:          obj.MaxResvBW,
+                UnResvBW:           obj.UnResvBW,
+                LinkProtection:     obj.LinkProtection,
+                SRLG:               obj.SRLG,
+                LinkName:           obj.LinkName,
+                AdjacencySID:       adjacencySIDS,
+                SRv6BGPPeerNodeSID: obj.SRv6BGPPeerNodeSID,
+		SRv6EndXSID:        SRv6EndXSID,
+		Timestamp:          obj.Timestamp,
         }
 
         if (action == "add") {

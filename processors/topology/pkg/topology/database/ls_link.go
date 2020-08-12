@@ -35,7 +35,9 @@ type LSLink struct {
 	UnidirAvailableBW      uint32   `json:"unidir_available_bw"`
 	UnidirBWUtilization    uint32   `json:"unidir_bw_utilization"`
         AdjacencySID       []map[string]int `json:"AdjacencySID,omitempty"`
-        Timestamp          string `json:"Timestamp"`
+        SRv6BGPPeerNodeSID string `json:"SRv6BGPPeerNodeSID"`
+	SRv6ENDXSID        *srv6.EndXSIDTLV `json:"SRv6ENDXSID"`
+	Timestamp          string `json:"Timestamp"`
 }
 
 func (l LSLink) GetKey() (string, error) {
