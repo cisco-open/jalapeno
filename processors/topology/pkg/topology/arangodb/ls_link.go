@@ -13,11 +13,10 @@ func (a *arangoDB) lsLinkHandler(obj *message.LSLink) {
         db := a.GetArangoDBInterface()
         action := obj.Action
 
-	var SRv6EndXSID *srv6.EndXSIDTLV
+	var SRv6EndXSID *srv6.ENDXSIDTLV
         if obj.SRv6ENDXSID != nil {
                 SRv6EndXSID = obj.SRv6ENDXSID
                 }
-        }
 
         localRouterKey := "LSNode/" + obj.IGPRouterID
         remoteRouterKey := "LSNode/" + obj.RemoteIGPRouterID
@@ -43,7 +42,7 @@ func (a *arangoDB) lsLinkHandler(obj *message.LSLink) {
                 SRLG:               obj.SRLG,
                 LinkName:           obj.LinkName,
                 AdjacencySID:       adjacencySIDS,
-                SRv6BGPPeerNodeSID: obj.SRv6BGPPeerNodeSID,
+                //SRv6BGPPeerNodeSID: obj.SRv6BGPPeerNodeSID,
 		SRv6EndXSID:        SRv6EndXSID,
 		Timestamp:          obj.Timestamp,
         }

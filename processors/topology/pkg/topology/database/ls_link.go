@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
 const LSLinkName = "LSLink"
@@ -35,8 +36,8 @@ type LSLink struct {
 	UnidirAvailableBW      uint32   `json:"unidir_available_bw"`
 	UnidirBWUtilization    uint32   `json:"unidir_bw_utilization"`
         AdjacencySID       []map[string]int `json:"AdjacencySID,omitempty"`
-        SRv6BGPPeerNodeSID string `json:"SRv6BGPPeerNodeSID"`
-	SRv6ENDXSID        *srv6.EndXSIDTLV `json:"SRv6ENDXSID"`
+        //SRv6BGPPeerNodeSID SRv6BGPPeerNodeSID `json:"SRv6BGPPeerNodeSID"`
+	SRv6EndXSID        *srv6.ENDXSIDTLV `json:"SRv6ENDXSID"`
 	Timestamp          string `json:"Timestamp"`
 }
 
