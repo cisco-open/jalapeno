@@ -37,12 +37,6 @@ def get_prefix_info(db, igp_router_id):
     prefix_info = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return prefix_info
 
-#def get_origin_as(db, origin_as):
-#    aql = """ FOR p in L3VPNPrefix filter p.Origin_AS return p.Origin_AS """
-#    bindVars = {'origin_as': origin_as }
-#    origin_as = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
-#    return origin_as
-
 def get_all_rds(db):
     aql = """ RETURN MERGE (For r in L3VPNNode return { ["RDs"]: r.RD}) """
     bindVars = {}
