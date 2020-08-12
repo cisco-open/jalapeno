@@ -129,7 +129,7 @@ def create_l3vpn_fib_edges(database, fib_collection):
                 prefixSID = int(srgb_start[0]) + int(sid_index[0])
             srv6_sid = current_prefix_document["SRv6_SID"]
             print(vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4, srv6_sid)
-            upsert_l3vpn_fib_edge(database, fib_collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4, origin_as, srv6_sid)
+            upsert_l3vpn_fib_edge(database, fib_collection, vpn_prefix, vpn_prefix_length, router_id, prefixSID, vpn_label, rd, rt, ipv4, srv6_sid, origin_as)
             print("===========================================================================")
 
  
@@ -184,13 +184,13 @@ def upsert_l3vpnnode_l3vpnprefix_edge(db, collection, prefix, prefix_length, rou
     else:
         create_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, srv6_sid)
 
-def upsert_l3vpn_fib_edge(db, fib_collection, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, origin_as, srv6_sid):
+def upsert_l3vpn_fib_edge(db, fib_collection, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, srv6_sid, origin_as):
     l3vpn_fib_edge_key = router_id + "_" + rd + "_" + prefix
     existing_l3vpn_fib_edge = get_l3vpn_fib_edge_key(db, l3vpn_fib_edge_key)
     if len(existing_l3vpn_fib_edge) > 0:
-        update_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, origin_as, srv6_sid)
+        update_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, srv6_sid, origin_as)
     else:
-        create_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, origin_as, srv6_sid)
+        create_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, srv6_sid, origin_as)
 
 
 def setup_logging():
