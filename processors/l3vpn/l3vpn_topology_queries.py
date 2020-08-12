@@ -242,7 +242,6 @@ def create_node_to_prefix_topology_edge_query(db, l3vpn_topology_edge_key, prefi
         print("Something went wrong while creating L3VPN_Topology Edge")
 
 
-
 def update_l3vpn_fib_edge_query(db, l3vpn_fib_edge_key, prefix, prefix_length, router_id, prefix_sid, vpn_label, rd, rt, ipv4, srv6_sid, origin_as):
     l3vpn_fib_edge_from = 'L3VPNode/'+str(router_id)
     l3vpn_fib_edge_to = 'L3VPNPrefix/'+str(prefix)

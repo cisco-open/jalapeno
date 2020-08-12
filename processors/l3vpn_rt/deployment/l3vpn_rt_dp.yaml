@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: l3vpn_rt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: l3vpn_rt
+  template:
+    metadata:
+      labels:
+        app: l3vpn_rt
+    spec:
+      containers:
+        - args:
+          - --v
+          - "5"
+          - --message-server
+          - "broker.jalapeno:9092"
+          - --database-server
+          - "http://arangodb.jalapeno:8529"
+          - --database-name
+          - "jalapeno"
+          - --database-user
+          - "root"
+          - --database-pass
+          - "jalapeno"
+          image: docker.io/iejalapeno/l3vpn_rt@sha256:d75e630ea9491bc8c06e800e3ae1126e13905ea8be4a41c525a75151cf57db10
+          imagePullPolicy: Always
+          name: l3vpn_rt
+metadata:
+  name: l3vpn_rt
+  namespace: jalapeno
