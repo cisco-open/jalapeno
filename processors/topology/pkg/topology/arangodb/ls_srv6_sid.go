@@ -82,7 +82,7 @@ func (a *arangoDB) lsSRv6SIDHandler(obj *message.LSSRv6SID) {
                         glog.Errorf("Encountered an error while upserting the LS_SRv6_SID Document: %+v", err)
                         return
                 }
-                	glog.Infof("Successfully added LS_SRv6_SID Document with IGPRouterID: %q\n", lsSRv6SIDDocument.IGPRouterID)
+		glog.Infof("Successfully added LS_SRv6_SID Document with SID: %q and IGPRouterID: %q\n", lsSRv6SIDDocument.SRv6SID, lsSRv6SIDDocument.IGPRouterID)
         } else {
                 if err := db.Delete(lsSRv6SIDDocument); err != nil {
                         glog.Errorf("Encountered an error while deleting the LS_SRv6_SID Document: %+v", err)
