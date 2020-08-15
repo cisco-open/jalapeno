@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rt-processor
+  namespace: jalapeno
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rt-processor
+  template:
+    metadata:
+      labels:
+        app: rt-processor
+    spec:
+      containers:
+        - args:
+          - --v
+          - "5"
+          - --database-server
+          - "http://arangodb.jalapeno:8529"
+          - --database-name
+          - "jalapeno"
+          - --database-user
+          - "root"
+          - --database-pass
+          - "jalapeno"
+          image: docker.io/iejalapeno/rt-processor@sha256:7fafd8fbfc604fb9dfe5f64edef31f733b7da9fbf4f55bea7b4650cb4f53c4e0
+          imagePullPolicy: Always
+          name: rt-processor

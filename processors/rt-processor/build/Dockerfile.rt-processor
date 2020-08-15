@@ -1,0 +1,4 @@
+FROM scratch
+
+COPY ./bin/rt-processor /rt-processor
+ENTRYPOINT ["/rt-processor"]
