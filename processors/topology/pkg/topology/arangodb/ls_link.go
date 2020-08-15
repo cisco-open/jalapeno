@@ -13,7 +13,7 @@ func (a *arangoDB) lsLinkHandler(obj *message.LSLink) {
         db := a.GetArangoDBInterface()
         action := obj.Action
 
-	var SRv6EndXSID *srv6.ENDXSIDTLV
+	var SRv6EndXSID *srv6.EndXSIDTLV
         if obj.SRv6ENDXSID != nil {
                 SRv6EndXSID = obj.SRv6ENDXSID
                 }

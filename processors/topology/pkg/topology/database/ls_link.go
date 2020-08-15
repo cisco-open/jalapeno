@@ -37,7 +37,7 @@ type LSLink struct {
 	UnidirBWUtilization    uint32   `json:"unidir_bw_utilization"`
         AdjacencySID       []map[string]int `json:"AdjacencySID,omitempty"`
         //SRv6BGPPeerNodeSID SRv6BGPPeerNodeSID `json:"SRv6BGPPeerNodeSID"`
-	SRv6EndXSID        *srv6.ENDXSIDTLV `json:"SRv6ENDXSID"`
+	SRv6EndXSID        *srv6.EndXSIDTLV `json:"SRv6ENDXSID"`
 	Timestamp          string `json:"Timestamp"`
 }
 

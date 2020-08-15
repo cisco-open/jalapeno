@@ -43,8 +43,15 @@ func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
                 ExtComm:         extCommunityList,
         }
 
+        //l3vpnRtDocument := &database.L3VPNRT {
+	//        ExtComm:         extCommunityList,
+        //        Prefix:          obj.Prefix,
+        //        Length:          obj.PrefixLen,
+	//}
+
        handleL3VPNPrefixDocument(l3vpnPrefixDocument, action, db)
        handleL3VPNNodeDocument(l3vpnNodeDocument, action, db)
+       //handleL3VPNRTDocument(l3vpnRtDocument, action, db)
 }
 
 func handleL3VPNPrefixDocument(l3vpnPrefixDocument *database.L3VPNPrefix, action string, db *database.ArangoConn) {
@@ -88,4 +95,20 @@ func handleL3VPNNodeDocument(l3vpnNodeDocument *database.L3VPNNode, action strin
         }
 }
 
+//func handleL3VPNRTDocument(l3vpnRtDocument *database.L3VPNRT, action string, db *database.ArangoConn) {
+//        if (action == "add") {
+//                if err := db.Upsert(l3vpnRtDocument); err != nil {
+//                        glog.Errorf("Encountered an error while upserting the l3vpn RT document: %+v", err)
+//                        return
+//                }
+//                glog.Infof("Successfully added l3vpn RT document with RT: %q with Prefix: %q\n", l3vpnRtDocument.ExtComm, l3vpnRtDocument.Prefix)
 
+//        } else {
+//                if err := db.Delete(l3vpnRtDocument); err != nil {
+//                        glog.Errorf("Encountered an error while deleting the l3vpn RT document: %+v", err)
+//                        return
+//                } else {
+//                        glog.Infof("Successfully deleted l3vpn RT document with RT: %q with Prefix: %q\n", l3vpnRtDocument.ExtComm, l3vpnRtDocument.Prefix)
+//                }
+//        }
+//}
