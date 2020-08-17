@@ -97,14 +97,6 @@ spec:
             exec:
              command: ["sh", "-ce", "kill -s TERM 1; while $(kill -0 1 2>/dev/null); do sleep 1; done"]
         resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
-          limits:
-            # This limit was intentionally set low as a reminder that
-            # the entire Yolean/kubernetes-kafka is meant to be tweaked
-            # before you run production workloads
-            memory: 1.5Gi
         readinessProbe:
           tcpSocket:
             port: 9092
