@@ -25,7 +25,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&srvAddr, "server", "http://localhost:8529", "{dns name}:port or X.X.X.X:port of the graph database")
+	//flag.StringVar(&srvAddr, "server", "http://localhost:8529", "{dns name}:port or X.X.X.X:port of the graph database")
+	flag.StringVar(&srvAddr, "server", "http://arangodb.jalapeno:8529", "{dns name}:port or X.X.X.X:port of the graph database")
 	flag.StringVar(&dbname, "db-name", "jalapeno", "DB name")
 	flag.StringVar(&dbuser, "db-user", "root", "DB User name")
 	flag.StringVar(&dbpass, "db-pass", "jalapeno", "DB User's password")
