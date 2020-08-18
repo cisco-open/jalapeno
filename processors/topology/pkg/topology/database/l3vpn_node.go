@@ -5,12 +5,12 @@ import "fmt"
 const L3VPNNodeName = "L3VPNNode"
 
 type L3VPNNode struct {
-        Key              string   `json:"_key,omitempty"`
-        RD               []string `json:"RD,omitempty"`
-        RouterID         string   `json:"RouterID,omitempty"`
-        ControlPlaneID   string   `json:"ControlPlaneID,omitempty"`
-        ASN              int32    `json:"ASN,omitempty"`
-        ExtComm          []string `json:"ExtComm,omitempty"`
+	Key            string   `json:"_key,omitempty"`
+	RD             []string `json:"RD,omitempty"`
+	RouterID       string   `json:"RouterID,omitempty"`
+	ControlPlaneID string   `json:"ControlPlaneID,omitempty"`
+	ASN            int32    `json:"ASN,omitempty"`
+	ExtComm        []string `json:"ExtComm,omitempty"`
 }
 
 func (r L3VPNNode) GetKey() (string, error) {
