@@ -6,7 +6,7 @@ import (
         "os/signal"
 
         "github.com/golang/glog"
-        "github.com/sbezverk/gobmp/pkg/topology/arangodb"
+        "github.com/jalapeno-sdn/jalapeno/pkg/topology/arangodb"
         "github.com/sbezverk/gobmp/pkg/topology/dbclient"
         "github.com/sbezverk/gobmp/pkg/topology/kafkamessenger"
         "github.com/sbezverk/gobmp/pkg/topology/messenger"

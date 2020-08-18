@@ -8,8 +8,9 @@ import (
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/tools"
-	"github.com/sbezverk/gobmp/pkg/topology/database"
-	"github.com/sbezverk/gobmp/pkg/topology/dbclient"
+//	"github.com/sbezverk/gobmp/pkg/topology/database"
+"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
+"github.com/sbezverk/gobmp/pkg/topology/dbclient"
 )
 
 var (

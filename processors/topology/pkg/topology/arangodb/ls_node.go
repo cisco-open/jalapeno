@@ -5,7 +5,8 @@ import (
         "github.com/golang/glog"
         "github.com/sbezverk/gobmp/pkg/message"
         "github.com/sbezverk/gobmp/pkg/sr"
-        "github.com/sbezverk/gobmp/pkg/topology/database"
+//        "github.com/sbezverk/gobmp/pkg/topology/database"
+        "github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 )
 
 func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {

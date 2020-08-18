@@ -17,7 +17,7 @@ type L3VPNPrefix struct {
         SRv6_SID        *srv6.L3Service   `json:SRv6_SID,omitempty"`
         ExtComm         []string   `json:"ExtComm,omitempty"`
 	IPv4            bool     `json:"IPv4"`
-	Origin_AS       string   `json:"Origin_AS,omitempty"`
+	Origin_AS       int32   `json:"Origin_AS,omitempty"`
 }
 
 func (p L3VPNPrefix) GetKey() (string, error) {

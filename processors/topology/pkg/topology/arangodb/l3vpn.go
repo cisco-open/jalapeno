@@ -1,19 +1,20 @@
 package arangodb
 
 import (
-	"strings"
         "github.com/golang/glog"
         "github.com/sbezverk/gobmp/pkg/message"
         "github.com/sbezverk/gobmp/pkg/srv6"
-	"github.com/sbezverk/gobmp/pkg/topology/database"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 )
 
 func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
         action := obj.Action
         db := a.GetArangoDBInterface()
 
-	extCommunityList := strings.Split(obj.BaseAttributes.ExtCommunityList, ", ")
-
+        var extCommunityList []string
+	if obj.BaseAttributes != nil {
+	extCommunityList = obj.BaseAttributes.ExtCommunityList
+}
         var l3Service *srv6.L3Service
         if obj.PrefixSID != nil {
                 if obj.PrefixSID.SRv6L3Service != nil {

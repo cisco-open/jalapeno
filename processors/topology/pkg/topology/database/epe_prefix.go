@@ -11,13 +11,13 @@ type EPEPrefix struct {
         PeerIP        string   `json:"PeerIP,omitempty"`
         PeerASN       int32    `json:"PeerASN,omitempty"`
         Nexthop       string   `json:"Nexthop,omitempty"`
-        OriginASN     string   `json:"OriginASN,omitempty"`
+        OriginASN     int32   `json:"OriginASN,omitempty"`
         ASPath        []uint32 `json:"ASPath,omitempty"`
         ASPathCount   int32    `json:"ASPathCount,omitempty"`
         MED           uint32   `json:"MED"`
         LocalPref     uint32   `json:"LocalPref"`
         CommunityList string   `json:"CommunityList,omitempty"`
-        ExtComm       string   `json:"ExtComm,omitempty"`
+        ExtComm       []string   `json:"ExtComm,omitempty"`
         IsIPv4        bool     `json:"IsIPv4,omitempty"`
         IsNexthopIPv4 bool     `json:"IsNexthopIPv4,omitempty"`
         Labels        []uint32 `json:"Labels,omitempty"`

@@ -3,18 +3,18 @@ package arangodb
 import (
         "github.com/golang/glog"
         "github.com/sbezverk/gobmp/pkg/message"
-        "github.com/sbezverk/gobmp/pkg/topology/database"
+        "github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
+	//        "github.com/sbezverk/gobmp/pkg/topology/database"
         //"github.com/cisco-ie/jalapeno/processors/topology/pkg/database"
-	"strconv"
 )
 
 func (a *arangoDB) unicastPrefixHandler(obj *message.UnicastPrefix) {
         db := a.GetArangoDBInterface()
         action := obj.Action
 
-	originAS, _ := strconv.Atoi(obj.OriginAS)
+	originAS := obj.OriginAS
         is_internal_asn := checkASNLocation(int32(originAS))
-	if originAS == db.ASN || int(obj.PeerASN) == db.ASN || is_internal_asn {
+	if int(originAS) == db.ASN || int(obj.PeerASN) == db.ASN || is_internal_asn {
 		glog.Infof("Not an External Origin or Peer ASN, not parsing unicast-prefix message as EPE-Prefix")	
 		return
 	}
