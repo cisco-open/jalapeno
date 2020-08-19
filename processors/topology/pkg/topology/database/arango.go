@@ -26,7 +26,7 @@ type ArangoConfig struct {
 	User     string `desc:"Arangodb server username"`
 	Password string `desc:"Arangodb server user password"`
 	Database string `desc:"Arangodb database name"`
-	ASN      int `desc:"ASN"`
+	ASN      int    `desc:"ASN"`
 }
 
 func NewConfig() ArangoConfig {
@@ -37,7 +37,7 @@ type ArangoConn struct {
 	db   driver.Database
 	g    driver.Graph
 	cols map[string]driver.Collection
-	ASN int
+	ASN  int
 }
 
 var (
@@ -319,10 +319,10 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		get = &LSNode{
 			Key: key,
 		}
-        case LSSRv6SIDName:
-                get = &LSSRv6SID{
-                        Key: key,
-                }
+	case LSSRv6SIDName:
+		get = &LSSRv6SID{
+			Key: key,
+		}
 	case LSPrefixName:
 		get = &LSPrefix{
 			Key: key,

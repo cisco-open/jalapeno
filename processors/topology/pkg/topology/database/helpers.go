@@ -2,7 +2,7 @@ package database
 
 import (
 	"fmt"
-        "github.com/golang/glog"
+	"github.com/golang/glog"
 )
 
 func (a *ArangoConn) GetSIDIndex(ip string) string {
@@ -126,38 +126,35 @@ func (a *ArangoConn) CreateAdjacencyList(key string, adjacency_sid string, flags
 	}
 }
 
-
 func (a *ArangoConn) CheckExistingLSPrefixIndexSlice(lsPrefixKey string) bool {
-        var r string
-        q := fmt.Sprintf("FOR v in LSPrefix filter v.SIDIndex AND v._key == %q return v.SIDIndex", lsPrefixKey)
-        results, _ := a.Query(q, nil, r)
-        if len(results) > 0 {
-                return true
-        } else {
-                return false
-        }
+	var r string
+	q := fmt.Sprintf("FOR v in LSPrefix filter v.SIDIndex AND v._key == %q return v.SIDIndex", lsPrefixKey)
+	results, _ := a.Query(q, nil, r)
+	if len(results) > 0 {
+		return true
+	} else {
+		return false
+	}
 }
 
 func (a *ArangoConn) CreateLSPrefixIndexSlice(lsPrefixKey string, prefix_sid_index int) {
-        var r string
-        q := fmt.Sprintf("INSERT { _key: %q, SIDIndex: [%d] } in LSPrefix RETURN { after: NEW }", lsPrefixKey, prefix_sid_index)
-        results, _ := a.Query(q, nil, r)
-        if len(results) > 0 {
-                glog.Infof("Successfully created LSPrefix prefix-sid-index list with %d for LSPrefix %q\n", prefix_sid_index, lsPrefixKey)
-        } else {
-                glog.Infof("Something went wrong -- failed to create prefix-sid-index list with %d for LSPrefix %q\n", prefix_sid_index, lsPrefixKey)
-        }
+	var r string
+	q := fmt.Sprintf("INSERT { _key: %q, SIDIndex: [%d] } in LSPrefix RETURN { after: NEW }", lsPrefixKey, prefix_sid_index)
+	results, _ := a.Query(q, nil, r)
+	if len(results) > 0 {
+		glog.Infof("Successfully created LSPrefix prefix-sid-index list with %d for LSPrefix %q\n", prefix_sid_index, lsPrefixKey)
+	} else {
+		glog.Infof("Something went wrong -- failed to create prefix-sid-index list with %d for LSPrefix %q\n", prefix_sid_index, lsPrefixKey)
+	}
 }
 
 func (a *ArangoConn) UpdateExistingLSPrefixIndexSlice(lsPrefixKey string, prefix_sid_index int) {
-        var r string
-        q := fmt.Sprintf("For l in LSPrefix Filter l._key == %q LET s = l.SIDIndex UPDATE { _key: l._key, SIDIndex: APPEND(s, %d, True) } IN LSPrefix RETURN { before: OLD, after: NEW }", lsPrefixKey, prefix_sid_index)
-        results, _ := a.Query(q, nil, r)
-        if len(results) > 0 {
-                glog.Infof("Successfully updated LSPrefix prefix-sid-index list with %d for LSPrefix %q\n", prefix_sid_index, lsPrefixKey)
-        } else {
-                glog.Infof("Something went wrong -- failed to update prefix-sid-index list with %d for LSPrefix %q\n", prefix_sid_index, lsPrefixKey)
-        }
+	var r string
+	q := fmt.Sprintf("For l in LSPrefix Filter l._key == %q LET s = l.SIDIndex UPDATE { _key: l._key, SIDIndex: APPEND(s, %d, True) } IN LSPrefix RETURN { before: OLD, after: NEW }", lsPrefixKey, prefix_sid_index)
+	results, _ := a.Query(q, nil, r)
+	if len(results) > 0 {
+		glog.Infof("Successfully updated LSPrefix prefix-sid-index list with %d for LSPrefix %q\n", prefix_sid_index, lsPrefixKey)
+	} else {
+		glog.Infof("Something went wrong -- failed to update prefix-sid-index list with %d for LSPrefix %q\n", prefix_sid_index, lsPrefixKey)
+	}
 }
-
-

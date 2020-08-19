@@ -8,7 +8,8 @@ import (
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/tools"
-	"github.com/sbezverk/gobmp/pkg/topology/database"
+	//	"github.com/sbezverk/gobmp/pkg/topology/database"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 	"github.com/sbezverk/gobmp/pkg/topology/dbclient"
 )
 
@@ -32,7 +33,7 @@ func NewDBSrvClient(arangoSrv, user, pass, dbname string, asn int) (dbclient.Srv
 		User:     user,
 		Password: pass,
 		Database: dbname,
-		ASN: asn,
+		ASN:      asn,
 	})
 	if err != nil {
 		return nil, err
@@ -69,56 +70,56 @@ func (a *arangoDB) GetArangoDBInterface() *database.ArangoConn {
 
 func (a *arangoDB) StoreMessage(msgType int, msg interface{}) error {
 	switch msgType {
-        case bmp.PeerStateChangeMsg:
-                p, ok := msg.(*message.PeerStateChange)
-                if !ok {
-                        return fmt.Errorf("malformed PeerStateChange message")
-                }
-                //glog.Infof("Object: %+v", p)
-                go a.peerChangeHandler(p)
-        case bmp.UnicastPrefixMsg:
-                un, ok := msg.(*message.UnicastPrefix)
-                if !ok {
-                        return fmt.Errorf("malformed UnicastPrefix message")
-                }
-                //glog.Infof("Object: %+v", un)
-               go a.unicastPrefixHandler(un)
-        case bmp.LSNodeMsg:
-                ln, ok := msg.(*message.LSNode)
-                if !ok {
-                        return fmt.Errorf("malformed LSNode message")
-                }
-                //glog.Infof("Object: %+v", ln)
-                go a.lsNodeHandler(ln)
-        case bmp.LSPrefixMsg:
-                lp, ok := msg.(*message.LSPrefix)
-                if !ok {
-                        return fmt.Errorf("malformed LSPrefix message")
-                }
-                //glog.Infof("Object: %+v", lp)
-                go a.lsPrefixHandler(lp)
-        case bmp.LSLinkMsg:
-                ll, ok := msg.(*message.LSLink)
-                if !ok {
-                        return fmt.Errorf("malformed LSLink message")
-                }
-                //glog.Infof("Object: %+v", ll)
-                go a.lsLinkHandler(ll)
-        case bmp.L3VPNMsg:
-                l3, ok := msg.(*message.L3VPNPrefix)
-                if !ok {
-                        return fmt.Errorf("malformed L3VPN message")
-                }
-                //glog.Infof("Object: %+v", l3)
-                go a.l3vpnHandler(l3)
-        case bmp.LSSRv6SIDMsg:
-                lssrv6, ok := msg.(*message.LSSRv6SID)
-                if !ok {
-                        return fmt.Errorf("malformed LSSRv6SID message")
-                }
-                //glog.Infof("Object: %+v", lssrv6)
-                go a.lsSRv6SIDHandler(lssrv6)
-        }
+	case bmp.PeerStateChangeMsg:
+		p, ok := msg.(*message.PeerStateChange)
+		if !ok {
+			return fmt.Errorf("malformed PeerStateChange message")
+		}
+		//glog.Infof("Object: %+v", p)
+		go a.peerChangeHandler(p)
+	case bmp.UnicastPrefixMsg:
+		un, ok := msg.(*message.UnicastPrefix)
+		if !ok {
+			return fmt.Errorf("malformed UnicastPrefix message")
+		}
+		//glog.Infof("Object: %+v", un)
+		go a.unicastPrefixHandler(un)
+	case bmp.LSNodeMsg:
+		ln, ok := msg.(*message.LSNode)
+		if !ok {
+			return fmt.Errorf("malformed LSNode message")
+		}
+		//glog.Infof("Object: %+v", ln)
+		go a.lsNodeHandler(ln)
+	case bmp.LSPrefixMsg:
+		lp, ok := msg.(*message.LSPrefix)
+		if !ok {
+			return fmt.Errorf("malformed LSPrefix message")
+		}
+		//glog.Infof("Object: %+v", lp)
+		go a.lsPrefixHandler(lp)
+	case bmp.LSLinkMsg:
+		ll, ok := msg.(*message.LSLink)
+		if !ok {
+			return fmt.Errorf("malformed LSLink message")
+		}
+		//glog.Infof("Object: %+v", ll)
+		go a.lsLinkHandler(ll)
+	case bmp.L3VPNMsg:
+		l3, ok := msg.(*message.L3VPNPrefix)
+		if !ok {
+			return fmt.Errorf("malformed L3VPN message")
+		}
+		//glog.Infof("Object: %+v", l3)
+		go a.l3vpnHandler(l3)
+	case bmp.LSSRv6SIDMsg:
+		lssrv6, ok := msg.(*message.LSSRv6SID)
+		if !ok {
+			return fmt.Errorf("malformed LSSRv6SID message")
+		}
+		//glog.Infof("Object: %+v", lssrv6)
+		go a.lsSRv6SIDHandler(lssrv6)
+	}
 	return nil
 }
 
