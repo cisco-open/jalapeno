@@ -16,8 +16,8 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	//prefixSID := obj.LSPrefixSID
 
 	var prefixSID []*sr.PrefixSIDTLV
-	if obj.PrefixSIDTLV != nil {
-		prefixSID = obj.PrefixSIDTLV
+	if obj.LSPrefixSID != nil {
+		prefixSID = obj.LSPrefixSID
 		}
 
 	//var algorithm *uint8
