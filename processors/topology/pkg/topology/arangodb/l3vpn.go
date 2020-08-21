@@ -44,6 +44,9 @@ func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
 		ExtComm:        extCommunityList,
 	}
 
+	l3vpnRTDocument := &database.L3VPNRT{
+		ExtComm:
+
 	handleL3VPNPrefixDocument(l3vpnPrefixDocument, action, db)
 	handleL3VPNNodeDocument(l3vpnNodeDocument, action, db)
 }
