@@ -6,10 +6,10 @@ import "fmt"
 const L3VPNRTName = "L3VPNRT"
 
 type L3VPNRT struct {
-	ID       string            `json:"_id,omitempty"`
-	Key      string            `json:"_key,omitempty"`
-	RT       string            `json:"RT,omitempty"`
-	Prefixes map[string]string `json:"Prefixes,omitempty"`
+	ID       string   `json:"_id,omitempty"`
+	Key      string   `json:"_key,omitempty"`
+	RT       string   `json:"RT,omitempty"`
+	Prefix []string `json:"Prefix,omitempty"`
 }
 
 func (p L3VPNRT) GetKey() (string, error) {
