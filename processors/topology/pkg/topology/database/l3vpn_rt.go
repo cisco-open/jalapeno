@@ -32,7 +32,7 @@ func (p *L3VPNRT) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if p.RT != "" {
-		ret = fmt.Sprintf(p.RT)
+		ret = fmt.Sprintf("%s",p.RT)
 		err = nil
 	}
 	return ret, err
