@@ -20,14 +20,14 @@ func (a *ArangoConn) GetSIDIndex(ip string) string {
 }
 
 func (a *ArangoConn) CheckExistingEPENode(local_bgp_id string) bool {
-	var r string
-	q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r", local_bgp_id)
-	results, _ := a.Query(q, nil, r)
-	if len(results) > 0 {
-		return true
-	} else {
-		return false
-	}
+        var r string
+        q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r", local_bgp_id)
+        results, _ := a.Query(q, nil, r)
+        if len(results) > 0 {
+                return true
+        } else {
+                return false
+        }
 }
 
 func (a *ArangoConn) GetExistingPeerIP(local_bgp_id string) []string {
@@ -158,3 +158,7 @@ func (a *ArangoConn) UpdateExistingLSPrefixIndexSlice(lsPrefixKey string, prefix
 		glog.Infof("Something went wrong -- failed to update prefix-sid-index list with %d for LSPrefix %q\n", prefix_sid_index, lsPrefixKey)
 	}
 }
+
+
+
+

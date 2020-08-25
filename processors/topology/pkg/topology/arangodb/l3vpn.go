@@ -45,7 +45,7 @@ func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
 	}
 
 	handleL3VPNPrefixDocument(l3vpnPrefixDocument, action, db)
-	handleL3VPNNodeDocument(l3vpnNodeDocument, action, db)
+        handleL3VPNNodeDocument(l3vpnNodeDocument, action, db)
 }
 
 func handleL3VPNPrefixDocument(l3vpnPrefixDocument *database.L3VPNPrefix, action string, db *database.ArangoConn) {
@@ -88,3 +88,4 @@ func handleL3VPNNodeDocument(l3vpnNodeDocument *database.L3VPNNode, action strin
 		}
 	}
 }
+
