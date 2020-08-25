@@ -160,26 +160,5 @@ func (a *ArangoConn) UpdateExistingLSPrefixIndexSlice(lsPrefixKey string, prefix
 }
 
 
-func (a *ArangoConn) CheckExistingL3VPNRT(rt string) bool {
-        var r string
-        q := fmt.Sprintf("FOR r in L3VPNRT filter r._key == %q return r", rt)
-        results, _ := a.Query(q, nil, r)
-        if len(results) > 0 {
-                return true
-        } else {
-                return false
-        }
-}
-
-func (a *ArangoConn) UpdateExistingL3VPNRT(rt string, prefix string) {
-        var r string
-        q := fmt.Sprintf("For e in L3VPNRT Filter e._key == %q LET p = e.RT UPDATE { _key: e._key, RT: APPEND(p, %q, True) } IN L3VPNRT RETURN { before: OLD, after: NEW }", rt, prefix)
-        results, _ := a.Query(q, nil, r)
-        if len(results) > 0 {
-                fmt.Printf("Successfully updated l3vpn_rt prefix list with %q for RT %q\n", prefix, rt)
-        } else {
-                fmt.Println("Something went wrong -- failed to update RT")
-        }
-}
 
 

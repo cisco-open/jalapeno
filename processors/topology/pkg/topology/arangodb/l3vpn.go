@@ -5,7 +5,6 @@ import (
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/srv6"
-        "strings"
 )
 
 func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
@@ -43,32 +42,6 @@ func (a *arangoDB) l3vpnHandler(obj *message.L3VPNPrefix) {
 		ControlPlaneID: obj.PeerIP,
 		ASN:            obj.PeerASN,
 		ExtComm:        extCommunityList,
-	}
-
-        // Processing for L3VPN RT collection
-	extComm := obj.BaseAttributes.ExtCommunityList
-        prefix := obj.Prefix
-
-	for _, ext := range extComm {
-               if !strings.HasPrefix(ext, "rt=") {
-                       continue
-                }
-                rt := strings.TrimPrefix(ext, "rt=")
-                // glog.Infof("for prefix key: %s found route target: %s", key, rt)
-
-		rtExists := db.CheckExistingL3VPNRT(rt)
-		if rtExists {
-			db.UpdateExistingL3VPNRT(rt, prefix)
-		} else {
-
-			l3vpnRtDocument := &database.L3VPNRT{
-				RT:       rt,
-				Prefix: []string{obj.Prefix},
-				//Length: length,
-			}
-
-			handleL3VPNRTDocument(l3vpnRtDocument, action, db)
-		}
 	}
 
 	handleL3VPNPrefixDocument(l3vpnPrefixDocument, action, db)
@@ -116,25 +89,3 @@ func handleL3VPNNodeDocument(l3vpnNodeDocument *database.L3VPNNode, action strin
 	}
 }
 
-func handleL3VPNRTDocument(l3vpnRtDocument *database.L3VPNRT, action string, db *database.ArangoConn) {
-        if action == "add" {
-                l3vpnRtExists := db.CheckExistingL3VPNRT(l3vpnRtDocument.RT)
-                if l3vpnRtExists {
-                        db.UpdateExistingL3VPNRT(l3vpnRtDocument.RT, l3vpnRtDocument.Prefix[0])
-                } else {
-                        if err := db.Upsert(l3vpnRtDocument); err != nil {
-                                glog.Errorf("Encountered an error while upserting the l3vpn rt document: %+v", err)
-                                return
-                        }
-                        glog.Infof("Successfully added l3vpn rt document for RT: %q with Prefix: %q\n", l3vpnRtDocument.RT, l3vpnRtDocument.Prefix)
-                }
-
-        } else {
-                if err := db.Delete(l3vpnRtDocument); err != nil {
-                        glog.Errorf("Encountered an error while deleting the l3vpn rt document: %+v", err)
-                        return
-                } else {
-                        glog.Infof("Successfully deleted l3vpn rt document for RT: %q with Prefix: %q\n", l3vpnRtDocument.RT, l3vpnRtDocument.Prefix)
-                }
-        }
-}
