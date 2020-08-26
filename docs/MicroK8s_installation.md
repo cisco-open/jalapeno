@@ -66,7 +66,7 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
    ```
 8. Edit dashboard yaml, change ClusterIP to NodePort:
 ```
-kubectl -n kube-system edit service kubernetes-dashboard
+microk8s.kubectl -n kube-system edit service kubernetes-dashboard
 ```
 ```
 spec:
