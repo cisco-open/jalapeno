@@ -4,8 +4,7 @@ import (
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/sr"
-	//        "github.com/sbezverk/gobmp/pkg/topology/database"
-	//"encoding/binary"
+	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 )
 
@@ -13,11 +12,15 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	db := a.GetArangoDBInterface()
 	action := obj.Action
 	igpRouterID := obj.IGPRouterID
-	//prefixSID := obj.LSPrefixSID
 
 	var prefixSID []*sr.PrefixSIDTLV
 	if obj.LSPrefixSID != nil {
 		prefixSID = obj.LSPrefixSID
+		}
+
+	var prefixAttrFlags base.PrefixAttrFlags
+	if obj.PrefixAttrFlags != nil {
+		prefixAttrFlags = obj.PrefixAttrFlags
 		}
 
 	//var algorithm *uint8
@@ -39,10 +42,8 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 		Length:      obj.PrefixLen,
 		Protocol:    obj.Protocol,
 		Timestamp:   obj.Timestamp,
-		//SRFlags:     srFlags,
-		//Algorithm:   algorithm,
-		//SIDIndex:    prefixSIDIndex,
 		PrefixSID:   prefixSID,
+		PrefixAttrFlags: prefixAttrFlags,
 	}
 
 	if action == "add" {

@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"github.com/sbezverk/gobmp/pkg/sr"
+	"github.com/sbezverk/gobmp/pkg/base"
 )
 
 const LSPrefixName = "LSPrefix"
@@ -13,11 +14,9 @@ type LSPrefix struct {
 	Prefix      string   `json:"Prefix,omitempty"`
 	Length      int32    `json:"Length,omitempty"`
 	Protocol    string   `json:"Protocol,omitempty"`
-	//SRFlags     []string `json:"SRFlags"`
-	//Algorithm   *uint8   `json:"Algorithm,omitempty"`
 	Timestamp   string   `json:"Timestamp,omitempty"`
-	//SIDIndex    int      `json:"SIDIndex,omitempty"`
 	PrefixSID   []*sr.PrefixSIDTLV `json:"PrefixSID,omitempty"`
+	PrefixAttrFlags base.PrefixAttrFlags `json:"PrefixAttrFlags,omitempty"`
 }
 
 func (r LSPrefix) GetKey() (string, error) {
