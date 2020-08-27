@@ -28,6 +28,8 @@ github.com/sbezverk/gobmp v0.0.0-20200818200441-5bf1c3fcb4cc h1:mPMDVQhn780t3SXa
 github.com/sbezverk/gobmp v0.0.0-20200818200441-5bf1c3fcb4cc/go.mod h1:61lGP0VPOxM7M07qyUhJ3gUjS0XjfMqEeffLtj3sbHQ=
 github.com/sbezverk/gobmp v0.0.0-20200819204452-0546f349ce2a h1:aC3witPmida7dy4xJgdhH5OyNBpN0wXoS9CJIflxMns=
 github.com/sbezverk/gobmp v0.0.0-20200819204452-0546f349ce2a/go.mod h1:61lGP0VPOxM7M07qyUhJ3gUjS0XjfMqEeffLtj3sbHQ=
+github.com/sbezverk/gobmp v0.0.0-20200827095834-93361485c9a5 h1:wwoJzSQCeY0Ro41k9/FvLuLucxOyr+57miTYAdjqUSA=
+github.com/sbezverk/gobmp v0.0.0-20200827095834-93361485c9a5/go.mod h1:k4p544Irl3Lqww+rmzrvF6gbHrPxdc9983GszRTHkRs=
 github.com/segmentio/kafka-go v0.3.6 h1:+JauPDvHurc4XSJVGniNwFuv4NmRLr1CxWvhWkRAtXA=
 github.com/segmentio/kafka-go v0.3.6/go.mod h1:8rEphJEczp+yDE/R5vwmaqZgF1wllrl4ioQcNKB8wVA=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
@@ -42,6 +44,7 @@ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn
 golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/net v0.0.0-20191004110552-13f9640d40b9/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
