@@ -34,19 +34,19 @@ func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {
 	}
 
 	lsNodeDocument := &database.LSNode{
-		Name:              obj.Name,
-		IGPID:             obj.IGPRouterID,
-		RouterID:          obj.RouterID,
-		ASN:               obj.PeerASN,
-		SRGBStart:         srgbStart,
-		SRGBRange:         srgbRange,
-		SRCapabilityFlags: srCapabilityFlags,
-		SRv6Capabilities:  obj.SRv6CapabilitiesTLV,
-		SRLocalBlock:      obj.SRLocalBlock,
-		SRAlgorithm:       obj.SRAlgorithm,
-		NodeMaxSIDDepth:   obj.NodeMSD,
-		AreaID:            obj.ISISAreaID,
-		Protocol:          obj.Protocol,
+		Name:                 obj.Name,
+		IGPID:                obj.IGPRouterID,
+		RouterID:             obj.RouterID,
+		ASN:                  obj.PeerASN,
+		SRGBStart:            srgbStart,
+		SRGBRange:            srgbRange,
+		SRCapabilityFlags:    srCapabilityFlags,
+		SRv6CapabilitiesTLV:  obj.SRv6CapabilitiesTLV,
+		SRLocalBlock:         obj.SRLocalBlock,
+		SRAlgorithm:          obj.SRAlgorithm,
+		NodeMSD:              obj.NodeMSD,
+		AreaID:               obj.ISISAreaID,
+		Protocol:             obj.Protocol,
 	}
 
 	if action == "add" {

@@ -4,7 +4,6 @@ import (
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/sr"
-	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 )
 
@@ -18,23 +17,10 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 		prefixSID = obj.LSPrefixSID
 		}
 
-	var prefixAttrFlags base.PrefixAttrFlags
-	if obj.PrefixAttrFlags != nil {
-		prefixAttrFlags = obj.PrefixAttrFlags
-		}
-
-	//var algorithm *uint8
-	//var srFlags []string
-	//var sid []byte
-	//var prefixSIDIndex int
-	//if prefixSID != nil {
-	//	algorithm = &prefixSID.Algorithm
-	//	srFlags = parseFlags(prefixSID.Flags)
-	//	sid = prefixSID.SID
-	//	if sid != nil {
-	//		prefixSIDIndex = parseSIDIndex(sid)
+	//var prefixAttrFlags base.PrefixAttrFlags
+	//if obj.PrefixAttrFlags != nil {
+	//	prefixAttrFlags = obj.PrefixAttrFlags
 	//	}
-	//}
 
 	lsPrefixDocument := &database.LSPrefix{
 		IGPRouterID: igpRouterID,
@@ -43,7 +29,8 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 		Protocol:    obj.Protocol,
 		Timestamp:   obj.Timestamp,
 		PrefixSID:   prefixSID,
-		PrefixAttrFlags: prefixAttrFlags,
+		PrefixAttrFlags: obj.PrefixAttrFlags,
+		FlexAlgoPrefixMetric: obj.FlexAlgoPrefixMetric,
 	}
 
 	if action == "add" {
