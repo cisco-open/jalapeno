@@ -9,13 +9,13 @@ import (
 const LSPrefixName = "LSPrefix"
 
 type LSPrefix struct {
-	Key         string   `json:"_key,omitempty"`
-	IGPRouterID string   `json:"IGPRouterID,omitempty"`
-	Prefix      string   `json:"Prefix,omitempty"`
-	Length      int32    `json:"Length,omitempty"`
-	Protocol    string   `json:"Protocol,omitempty"`
-	Timestamp   string   `json:"Timestamp,omitempty"`
-	PrefixSID   []*sr.PrefixSIDTLV `json:"PrefixSID,omitempty"`
+	Key             string              `json:"_key,omitempty"`
+	IGPRouterID     string              `json:"IGPRouterID,omitempty"`
+	Prefix          string              `json:"Prefix,omitempty"`
+	Length          int32               `json:"Length,omitempty"`
+	Protocol        string              `json:"Protocol,omitempty"`
+	Timestamp       string              `json:"Timestamp,omitempty"`
+	LSPrefixSID     []*sr.PrefixSIDTLV  `json:"PrefixSID,omitempty"`
 	PrefixAttrFlags uint8 `json:"PrefixAttrFlags,omitempty"`
         FlexAlgoPrefixMetric *bgpls.FlexAlgoPrefixMetric `json:"FlexAlgoPrefixMetric,omitempty"`
 }

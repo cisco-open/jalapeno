@@ -12,10 +12,10 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	action := obj.Action
 	igpRouterID := obj.IGPRouterID
 
-	var prefixSID []*sr.PrefixSIDTLV
-	if obj.LSPrefixSID != nil {
-		prefixSID = obj.LSPrefixSID
-		}
+	//var prefixSID []*sr.PrefixSIDTLV
+	//if obj.LSPrefixSID != nil {
+	//	prefixSID = obj.LSPrefixSID
+	//	}
 
 	//var prefixAttrFlags base.PrefixAttrFlags
 	//if obj.PrefixAttrFlags != nil {
@@ -24,12 +24,12 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 
 	lsPrefixDocument := &database.LSPrefix{
 		IGPRouterID: igpRouterID,
-		Prefix:      obj.Prefix,
-		Length:      obj.PrefixLen,
-		Protocol:    obj.Protocol,
-		Timestamp:   obj.Timestamp,
-		PrefixSID:   prefixSID,
-		PrefixAttrFlags: obj.PrefixAttrFlags,
+		Prefix:		      obj.Prefix,
+		Length:		      obj.PrefixLen,
+		Protocol:	      obj.Protocol,
+		Timestamp:	      obj.Timestamp,
+		PrefixSID:            obj.LSPrefixSID,
+		PrefixAttrFlags:      obj.PrefixAttrFlags,
 		FlexAlgoPrefixMetric: obj.FlexAlgoPrefixMetric,
 	}
 
