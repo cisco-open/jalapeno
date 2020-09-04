@@ -13,6 +13,7 @@ const LSNodeName = "LSNode"
 type LSNode struct {
 	Key                  string                    `json:"_key,omitempty"`
 	Name                 string                    `json:"Name,omitempty"`
+	Timestamp       	 string                    `json:"timestamp,omitempty"`
 	IGPRouterID          string                    `json:"igp_router_id,omitempty"`
 	RouterID             string                    `json:"router_id,omitempty"`
 	ASN                  int32                     `json:"asn,omitempty"`

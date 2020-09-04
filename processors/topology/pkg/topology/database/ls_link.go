@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"github.com/sbezverk/gobmp/pkg/srv6"
+	"github.com/sbezverk/gobmp/pkg/base"
 )
 
 const LSLinkName = "LSLink"
@@ -11,23 +12,33 @@ type LSLink struct {
 	LocalRouterKey        string           `json:"_from,omitempty"`
 	RemoteRouterKey       string           `json:"_to,omitempty"`
 	Key                   string           `json:"_key,omitempty"`
-	LocalRouterID         string           `json:"LocalRouterID,omitempty"`
-	LocalIGPID            string           `json:"LocalIGPID,omitempty"`
-	RemoteRouterID        string           `json:"RemoteRouterID,omitempty"`
-	RemoteIGPID           string           `json:"RemoteIGPID,omitempty"`
-	Protocol              string           `json:"Protocol,omitempty"`
-	ASN                   uint32           `json:"ASN,omitempty"`
-	LocalInterfaceIP      string           `json:"FromInterfaceIP,omitempty"`
-	RemoteInterfaceIP     string           `json:"ToInterfaceIP,omitempty"`
-	IGPMetric             uint32           `json:"IGPMetric,omitempty"`
-	TEMetric              uint32           `json:"TEMetric,omitempty"`
-	AdminGroup            uint32           `json:"AdminGroup,omitempty"`
-	MaxLinkBW             uint32           `json:"MaxLinkBW,omitempty"`
-	MaxResvBW             uint32           `json:"MaxResvBW,omitempty"`
-	UnResvBW              []uint32         `json:"UnResvBW,omitempty"`
-	LinkProtection        uint16           `json:"LinkProtection,omitempty"`
-	LinkName              string           `json:"LinkName,omitempty"`
-	SRLG                  []uint32         `json:"SRLG"`
+	Timestamp       	  string           `json:"timestamp,omitempty"`
+	LocalRouterID         string           `json:"local_router_id,omitempty"`
+	RemoteRouterID        string           `json:"remote_router_id,omitempty"`
+	LocalInterfaceIP      string           `json:"local_interface_ip,omitempty"`
+	RemoteInterfaceIP     string           `json:"remote_interface_ip,omitempty"`
+	LocalLinkID           string           `json:"local_link_id,omitempty"`
+	RemoteLinkID          string           `json:"remote_link_id,omitempty"`
+	LocalIGPID            string           `json:"local_igp_id,omitempty"`
+	RemoteIGPID           string           `json:"remote_igp_id,omitempty"`
+	LocalNodeASN          uint32           `json:"local_node_asn,omitempty"`
+	RemoteNodeASN         uint32           `json:"remote_node_asn,omitempty"`
+	Protocol              string           `json:"protocol,omitempty"`
+	ProtocolID            base.ProtoID     `json:"protocol_id,omitempty"`
+	MTID                  []uint16         `json:"mtid,omitempty"`
+	IGPMetric             uint32           `json:"igp_metric,omitempty"`
+	TEMetric              uint32           `json:"te_metric,omitempty"`
+	AdminGroup            uint32           `json:"admin_group,omitempty"`
+	MaxLinkBW             uint32           `json:"max_link_BW,omitempty"`
+	MaxResvBW             uint32           `json:"max_resv_bw,omitempty"`
+	UnResvBW              []uint32         `json:"unresv_bw,omitempty"`
+	LinkProtection        uint16           `json:"link_protection,omitempty"`
+	MPLSProtoMask         uint8            `json:"mpls_proto_mask,omitempty"`
+	SRLG                  []uint32         `json:"srlg"`
+	LinkName              string           `json:"link_name,omitempty"`
+	AdjacencySID          []map[string]int `json:"adjacency_sid,omitempty"`
+	SRv6EndXSID           *srv6.EndXSIDTLV `json:"srv6_end_x_sid,omitempty"`
+	LinkMSD               []*base.MSDTV    `json:"link_msd,omitempty"`
 	UnidirLinkDelay       uint32           `json:"unidir_link_delay"`
 	UnidirLinkDelayMinMax []uint32         `json:"unidir_link_delay_min_max"`
 	UnidirDelayVariation  uint32           `json:"unidir_delay_variation"`
@@ -35,10 +46,6 @@ type LSLink struct {
 	UnidirResidualBW      uint32           `json:"unidir_residual_bw"`
 	UnidirAvailableBW     uint32           `json:"unidir_available_bw"`
 	UnidirBWUtilization   uint32           `json:"unidir_bw_utilization"`
-	AdjacencySID          []map[string]int `json:"AdjacencySID,omitempty"`
-	//SRv6BGPPeerNodeSID SRv6BGPPeerNodeSID `json:"SRv6BGPPeerNodeSID"`
-	SRv6EndXSID *srv6.EndXSIDTLV `json:"SRv6ENDXSID"`
-	Timestamp   string           `json:"Timestamp"`
 }
 
 func (l LSLink) GetKey() (string, error) {

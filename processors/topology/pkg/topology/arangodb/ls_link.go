@@ -21,35 +21,49 @@ func (a *arangoDB) lsLinkHandler(obj *message.LSLink) {
 	localRouterKey := "LSNode/" + obj.IGPRouterID
 	remoteRouterKey := "LSNode/" + obj.RemoteIGPRouterID
 	adjacencySIDS := parseAdjacencySIDS(obj.LSAdjacencySID)
+
 	lsLinkDocument := &database.LSLink{
-		LocalRouterKey:    localRouterKey,
-		RemoteRouterKey:   remoteRouterKey,
-		LocalRouterID:     obj.RouterID,
-		RemoteRouterID:    obj.RemoteRouterID,
-		ASN:               obj.LocalNodeASN,
-		LocalInterfaceIP:  obj.InterfaceIP,
-		RemoteInterfaceIP: obj.NeighborIP,
-		Protocol:          obj.Protocol,
-		LocalIGPID:        obj.IGPRouterID,
-		RemoteIGPID:       obj.RemoteIGPRouterID,
-		IGPMetric:         obj.IGPMetric,
-		TEMetric:          obj.TEDefaultMetric,
-		AdminGroup:        obj.AdminGroup,
-		MaxLinkBW:         obj.MaxLinkBW,
-		MaxResvBW:         obj.MaxResvBW,
-		UnResvBW:          obj.UnResvBW,
-		LinkProtection:    obj.LinkProtection,
-		SRLG:              obj.SRLG,
-		LinkName:          obj.LinkName,
-		AdjacencySID:      adjacencySIDS,
-		//SRv6BGPPeerNodeSID: obj.SRv6BGPPeerNodeSID,
-		SRv6EndXSID: SRv6EndXSID,
-		Timestamp:   obj.Timestamp,
+		LocalRouterKey:    		localRouterKey,
+		RemoteRouterKey:   		remoteRouterKey,
+		Timestamp:         		obj.Timestamp,
+		LocalRouterID:     		obj.RouterID,
+		RemoteRouterID:    		obj.RemoteRouterID,
+		LocalInterfaceIP:  		obj.InterfaceIP,
+		RemoteInterfaceIP: 		obj.NeighborIP,
+		LocalLinkID:			obj.LocalLinkID,
+		RemoteLinkID:			obj.RemoteLinkID,
+		LocalIGPID:        		obj.IGPRouterID,
+		RemoteIGPID:       		obj.RemoteIGPRouterID,
+		Protocol:          		obj.Protocol,
+		ProtocolID:        		obj.ProtocolID,
+		MTID:              		obj.MTID,
+		IGPMetric:         		obj.IGPMetric,
+		TEMetric:          		obj.TEDefaultMetric,
+		AdminGroup:        		obj.AdminGroup,
+		MaxLinkBW:         		obj.MaxLinkBW,
+		MaxResvBW:         		obj.MaxResvBW,
+		UnResvBW:          		obj.UnResvBW,
+		LinkProtection:    		obj.LinkProtection,
+		MPLSProtoMask:     		obj.MPLSProtoMask,
+		SRLG:              		obj.SRLG,
+		LinkName:          		obj.LinkName,
+		LocalNodeASN:      		obj.LocalNodeASN,
+        RemoteNodeASN:     		obj.RemoteNodeASN,
+		AdjacencySID:      		adjacencySIDS,
+		SRv6EndXSID:       		SRv6EndXSID,
+		LinkMSD:           		obj.LinkMSD,
+		UnidirLinkDelay:    	obj.UnidirLinkDelay,
+		UnidirLinkDelayMinMax:	obj.UnidirLinkDelayMinMax,
+		UnidirDelayVariation:	obj.UnidirDelayVariation,
+		UnidirPacketLoss:		obj.UnidirPacketLoss,
+		UnidirResidualBW:		obj.UnidirResidualBW,
+		UnidirAvailableBW:		obj.UnidirAvailableBW,
+		UnidirBWUtilization:	obj.UnidirBWUtilization,
 	}
 
 	if action == "add" {
 		if err := db.Upsert(lsLinkDocument); err != nil {
-			glog.Errorf("Encountered an error while upserting the ls link document: %+v", err)
+			glog.Errorf("Encountered an error while upserting the ls link document with local IP: %q %+v", lsLinkDocument.LocalInterfaceIP, err)
 			return
 		}
 		glog.Infof("Successfully added ls link document from Router: %q through Interface: %q "+

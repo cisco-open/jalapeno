@@ -10,19 +10,19 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	db := a.GetArangoDBInterface()
 	action := obj.Action
 
-	prefixSID := obj.LSPrefixSID
+	//prefixSID := obj.LSPrefixSID
 
-	var srFlags []string
-	var sid []byte
-	var prefixSIDIndex int
-	if prefixSID != nil {
+	//var srFlags []string
+	//var sid []byte
+	//var prefixSIDIndex int
+	//if prefixSID != nil {
 	//	algorithm = &prefixSID.Algorithm
 	//	srFlags = parseFlags(prefixSID.Flags)
-		sid = prefixSID.SID
-		if sid != nil {
-			prefixSIDIndex = parseSIDIndex(sid)
-		}
-	}
+	//	sid = prefixSID.SID
+	//	if sid != nil {
+	//		prefixSIDIndex = parseSIDIndex(sid)
+	//	}
+	//}
 
 	lsPrefixDocument := &database.LSPrefix{
 		Timestamp:	      	  obj.Timestamp,
@@ -40,7 +40,7 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 		OSPFFwdAddr:          obj.OSPFFwdAddr,
 		IGPMetric:            obj.IGPMetric,
 		PrefixSID:            obj.LSPrefixSID,
-		SIDIndex:             sidIndex,
+		//SIDIndex:             sidIndex,
 		PrefixAttrFlags:      obj.PrefixAttrFlags,
 		FlexAlgoPrefixMetric: obj.FlexAlgoPrefixMetric,
 	}
@@ -61,17 +61,17 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	}
 }
 
-func parseSIDIndex(SID []byte) int {
-	var data []byte
-	if len(SID) != 4 {
-		data = make([]byte, 4)
-		copy(data[4-len(SID):], SID)
-	} else {
-		data = SID
-	}
-	sidIndex := binary.BigEndian.Uint32(data)
-	return int(sidIndex)
-}
+//func parseSIDIndex(SID []byte) int {
+//	var data []byte
+//	if len(SID) != 4 {
+//		data = make([]byte, 4)
+//		copy(data[4-len(SID):], SID)
+//	} else {
+//		data = SID
+//	}
+//	sidIndex := binary.BigEndian.Uint32(data)
+//	return int(sidIndex)
+//}
 
 //func parseFlags(flags *sr.Flags) []string {
 //	var srFlags []string
