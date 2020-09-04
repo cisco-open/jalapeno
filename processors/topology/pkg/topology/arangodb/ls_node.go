@@ -35,18 +35,23 @@ func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {
 
 	lsNodeDocument := &database.LSNode{
 		Name:                 obj.Name,
-		IGPID:                obj.IGPRouterID,
+		IGPRouterID:          obj.IGPRouterID,
 		RouterID:             obj.RouterID,
 		ASN:                  obj.PeerASN,
+		MTID:	              obj.MTID,
+		OSPFAreaID:           obj.OSPFAreaID,
+		ISISAreaID:           obj.ISISAreaID,
+		Protocol:             obj.Protocol,
+		ProtocolID:           obj.ProtocolID,
+		Flags:	              obj.Flags,
 		SRGBStart:            srgbStart,
 		SRGBRange:            srgbRange,
 		SRCapabilityFlags:    srCapabilityFlags,
-		SRv6CapabilitiesTLV:  obj.SRv6CapabilitiesTLV,
-		SRLocalBlock:         obj.SRLocalBlock,
 		SRAlgorithm:          obj.SRAlgorithm,
+		SRLocalBlock:         obj.SRLocalBlock,
+		SRv6CapabilitiesTLV:  obj.SRv6CapabilitiesTLV,
 		NodeMSD:              obj.NodeMSD,
-		AreaID:               obj.ISISAreaID,
-		Protocol:             obj.Protocol,
+		FlexAlgoDefinition:   obj.FlexAlgoDefinition,
 	}
 
 	if action == "add" {
@@ -54,13 +59,13 @@ func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {
 			glog.Errorf("Encountered an error while upserting the ls node document: %+v", err)
 			return
 		}
-		glog.Infof("Successfully added ls node document with IGPRouterID: %q, SRGBStart: %d, and name: %q\n", lsNodeDocument.IGPID, lsNodeDocument.SRGBStart, lsNodeDocument.Name)
+		glog.Infof("Successfully added ls node document with IGPRouterID: %q, SRGBStart: %d, and name: %q\n", lsNodeDocument.IGPRouterID, lsNodeDocument.SRGBStart, lsNodeDocument.Name)
 	} else {
 		if err := db.Delete(lsNodeDocument); err != nil {
 			glog.Errorf("Encountered an error while deleting the ls node document: %+v", err)
 			return
 		} else {
-			glog.Infof("Successfully deleted ls node document with IGPRouterID: %q, SRGBStart: %d, and name: %q\n", lsNodeDocument.IGPID, lsNodeDocument.SRGBStart, lsNodeDocument.Name)
+			glog.Infof("Successfully deleted ls node document with IGPRouterID: %q, SRGBStart: %d, and name: %q\n", lsNodeDocument.IGPRouterID, lsNodeDocument.SRGBStart, lsNodeDocument.Name)
 		}
 	}
 }

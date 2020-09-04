@@ -3,32 +3,44 @@ package arangodb
 import (
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/message"
-	"github.com/sbezverk/gobmp/pkg/sr"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 )
 
 func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	db := a.GetArangoDBInterface()
 	action := obj.Action
-	igpRouterID := obj.IGPRouterID
 
-	//var prefixSID []*sr.PrefixSIDTLV
-	//if obj.LSPrefixSID != nil {
-	//	prefixSID = obj.LSPrefixSID
-	//	}
+	prefixSID := obj.LSPrefixSID
 
-	//var prefixAttrFlags base.PrefixAttrFlags
-	//if obj.PrefixAttrFlags != nil {
-	//	prefixAttrFlags = obj.PrefixAttrFlags
-	//	}
+	var srFlags []string
+	var sid []byte
+	var prefixSIDIndex int
+	if prefixSID != nil {
+	//	algorithm = &prefixSID.Algorithm
+	//	srFlags = parseFlags(prefixSID.Flags)
+		sid = prefixSID.SID
+		if sid != nil {
+			prefixSIDIndex = parseSIDIndex(sid)
+		}
+	}
 
 	lsPrefixDocument := &database.LSPrefix{
-		IGPRouterID: igpRouterID,
-		Prefix:		      obj.Prefix,
-		Length:		      obj.PrefixLen,
-		Protocol:	      obj.Protocol,
-		Timestamp:	      obj.Timestamp,
+		Timestamp:	      	  obj.Timestamp,
+		IGPRouterID:          obj.IGPRouterID,
+		RouterID:             obj.RouterID,
+		Prefix:		          obj.Prefix,
+		Length:		      	  obj.PrefixLen,
+		Protocol:	      	  obj.Protocol,
+		ProtocolID:           obj.ProtocolID,
+		MTID:                 obj.MTID,
+		OSPFRouteType:        obj.OSPFRouteType,
+		IGPFlags:             obj.IGPFlags,
+		RouteTag:             obj.RouteTag,
+		ExtRouteTag:          obj.ExtRouteTag,
+		OSPFFwdAddr:          obj.OSPFFwdAddr,
+		IGPMetric:            obj.IGPMetric,
 		PrefixSID:            obj.LSPrefixSID,
+		SIDIndex:             sidIndex,
 		PrefixAttrFlags:      obj.PrefixAttrFlags,
 		FlexAlgoPrefixMetric: obj.FlexAlgoPrefixMetric,
 	}
@@ -49,17 +61,17 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	}
 }
 
-//func parseSIDIndex(SID []byte) int {
-//	var data []byte
-//	if len(SID) != 4 {
-//		data = make([]byte, 4)
-//		copy(data[4-len(SID):], SID)
-//	} else {
-//		data = SID
-//	}
-//	sidIndex := binary.BigEndian.Uint32(data)
-//	return int(sidIndex)
-//}
+func parseSIDIndex(SID []byte) int {
+	var data []byte
+	if len(SID) != 4 {
+		data = make([]byte, 4)
+		copy(data[4-len(SID):], SID)
+	} else {
+		data = SID
+	}
+	sidIndex := binary.BigEndian.Uint32(data)
+	return int(sidIndex)
+}
 
 //func parseFlags(flags *sr.Flags) []string {
 //	var srFlags []string
