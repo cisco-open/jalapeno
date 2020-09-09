@@ -43,7 +43,7 @@ func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {
 		ISISAreaID:           obj.ISISAreaID,
 		Protocol:             obj.Protocol,
 		ProtocolID:           obj.ProtocolID,
-		Flags:	              obj.Flags,
+		NodeFlags:	          obj.NodeFlags,
 		SRGBStart:            srgbStart,
 		SRGBRange:            srgbRange,
 		SRCapabilityFlags:    srCapabilityFlags,
