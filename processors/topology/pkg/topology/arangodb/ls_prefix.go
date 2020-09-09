@@ -43,6 +43,7 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 		//SIDIndex:             sidIndex,
 		PrefixAttrFlags:      obj.PrefixAttrFlags,
 		FlexAlgoPrefixMetric: obj.FlexAlgoPrefixMetric,
+		IsIPv4:               obj.IsIPv4,
 	}
 
 	if action == "add" {

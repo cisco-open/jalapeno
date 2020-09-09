@@ -1,7 +1,8 @@
 package database
 
 import (
-	"fmt"
+	//"fmt"
+	"strconv"
 	"github.com/sbezverk/gobmp/pkg/srv6"
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/bgpls"
@@ -20,6 +21,7 @@ type LSLink struct {
 	RemoteLinkID          uint32           			`json:"remote_link_id,omitempty"`
 	LocalLinkIP           []string           		`json:"local_interface_ip,omitempty"`
 	RemoteLinkIP          []string           		`json:"remote_interface_ip,omitempty"`
+	IsIPv4                bool                      `json:"is_ipv4"`
 	IGPRouterID           string           			`json:"local_igp_id,omitempty"`
 	RemoteIGPRouterID     string           			`json:"remote_igp_id,omitempty"`
 	LocalNodeASN          uint32           			`json:"local_node_asn,omitempty"`
@@ -66,14 +68,41 @@ func (l *LSLink) SetKey() error {
 	return nil
 }
 
-func (l *LSLink) makeKey() (string, error) {
-	err := ErrKeyInvalid
-	ret := ""
+//func (l *LSLink) makeKey() (string, error) {
+//	err := ErrKeyInvalid
+//	ret := ""
 	//if l.LocalInterfaceIP != "" && l.RemoteInterfaceIP != "" {
-	ret = fmt.Sprintf("%s_%s_%s_%s", l.IGPRouterID, l.LocalLinkIP, l.RemoteLinkIP, l.RemoteIGPRouterID)
-	err = nil
+//	ret = fmt.Sprintf("%s_%s_%s_%s", l.IGPRouterID, l.LocalLinkIP[], l.LocalLinkID, l.RemoteLinkIP[], l.RemoteLinkID, l.RemoteIGPRouterID)
+//	err = nil
 	//}
-	return ret, err
+//	return ret, err
+//}
+
+func (l *LSLink) makeKey() (string, error) {
+	var localIP, remoteIP, localID, remoteID string
+	localID = "0"
+	remoteID = "0"
+	switch obj.MTID {
+	case 0:
+		localIP = "127.0.0.1"
+		remoteIP = "127.0.0.1"
+	case 2:
+		localIP = "::1"
+		remoteIP = "::1"
+	default:
+		localIP = "unknown-mt-id"
+		remoteIP = "unknown-mt-id"
+	}
+	if len(obj.LocalLinkIP) != 0 {
+		localIP = obj.LocalLinkIP[0]
+	}
+	if len(obj.RemoteLinkIP) != 0 {
+		remoteIP = obj.RemoteLinkIP[0]
+	}
+	localID = strconv.Itoa(int(obj.LocalLinkID))
+	remoteID = strconv.Itoa(int(obj.RemoteLinkID))
+
+	return l.IGPRouterID + "_" + localIP + "_" + localID + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID, nil
 }
 
 func (l LSLink) GetType() string {
