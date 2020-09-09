@@ -18,7 +18,7 @@ type LSSRv6SID struct {
 	Protocol                  string                 `json:"Protocol,omitempty"`
 	RouterID                  string                 `json:"RouterID,omitempty"`
 	IGPFlags                  uint8                  `json:"IGPFlags,omitempty"`
-	MTID                      []uint16               `json:"MT_ID,omitempty"`
+	MTID                      uint16               `json:"MT_ID,omitempty"`
 	Nexthop                   string                 `json:"Nexthop,omitempty"`
 	SRv6SID                   []string               `json:"SRv6_SID,omitempty"`
 	SRv6EndpointBehaviorRaw   *srv6.EndpointBehavior `json:"SRv6_Endpoint_Behavior,omitempty"`

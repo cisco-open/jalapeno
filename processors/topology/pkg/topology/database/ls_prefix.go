@@ -18,7 +18,7 @@ type LSPrefix struct {
 	Length          	  int32                         `json:"length,omitempty"`	
 	Protocol         	  string                        `json:"protocol,omitempty"`
 	ProtocolID            base.ProtoID                  `json:"protocol_id,omitempty"`
-	MTID                  []uint16			            `json:"mtid,omitempty"`
+	MTID                  uint16			            `json:"mtid,omitempty"`
 	OSPFRouteType         uint8                         `json:"ospf_route_type,omitempty"`
 	IGPFlags              uint8                         `json:"igp_flags,omitempty"`
 	IGPRouteTag           []uint32                      `json:"route_tag,omitempty"`

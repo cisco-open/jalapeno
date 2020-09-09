@@ -32,7 +32,6 @@ func (a *arangoDB) lsLinkHandler(obj *message.LSLink) {
 		RemoteLinkIP:	 		obj.RemoteLinkIP,
 		LocalLinkID:			obj.LocalLinkID,
 		RemoteLinkID:			obj.RemoteLinkID,
-		IsIPv4:                 obj.IsIPv4,
 		IGPRouterID:        	obj.IGPRouterID,
 		RemoteIGPRouterID: 		obj.RemoteIGPRouterID,
 		Protocol:          		obj.Protocol,

@@ -21,14 +21,13 @@ type LSLink struct {
 	RemoteLinkID          uint32           			`json:"remote_link_id,omitempty"`
 	LocalLinkIP           []string           		`json:"local_interface_ip,omitempty"`
 	RemoteLinkIP          []string           		`json:"remote_interface_ip,omitempty"`
-	IsIPv4                bool                      `json:"is_ipv4"`
 	IGPRouterID           string           			`json:"local_igp_id,omitempty"`
 	RemoteIGPRouterID     string           			`json:"remote_igp_id,omitempty"`
 	LocalNodeASN          uint32           			`json:"local_node_asn,omitempty"`
 	RemoteNodeASN         uint32           			`json:"remote_node_asn,omitempty"`
 	Protocol              string           			`json:"protocol,omitempty"`
 	ProtocolID            base.ProtoID     			`json:"protocol_id,omitempty"`
-	MTID                  []uint16         			`json:"mtid,omitempty"`
+	MTID                  uint16         			`json:"mtid,omitempty"`
 	IGPMetric             uint32           			`json:"igp_metric,omitempty"`
 	AdminGroup            uint32           			`json:"admin_group,omitempty"`
 	MaxLinkBW             uint32           			`json:"max_link_BW,omitempty"`
@@ -82,7 +81,7 @@ func (l *LSLink) makeKey() (string, error) {
 	var localIP, remoteIP, localID, remoteID string
 	localID = "0"
 	remoteID = "0"
-	switch obj.MTID {
+	switch l.MTID {
 	case 0:
 		localIP = "127.0.0.1"
 		remoteIP = "127.0.0.1"
@@ -93,14 +92,14 @@ func (l *LSLink) makeKey() (string, error) {
 		localIP = "unknown-mt-id"
 		remoteIP = "unknown-mt-id"
 	}
-	if len(obj.LocalLinkIP) != 0 {
-		localIP = obj.LocalLinkIP[0]
+	if len(l.LocalLinkIP) != 0 {
+		localIP = l.LocalLinkIP[0]
 	}
-	if len(obj.RemoteLinkIP) != 0 {
-		remoteIP = obj.RemoteLinkIP[0]
+	if len(l.RemoteLinkIP) != 0 {
+		remoteIP = l.RemoteLinkIP[0]
 	}
-	localID = strconv.Itoa(int(obj.LocalLinkID))
-	remoteID = strconv.Itoa(int(obj.RemoteLinkID))
+	localID = strconv.Itoa(int(l.LocalLinkID))
+	remoteID = strconv.Itoa(int(l.RemoteLinkID))
 
 	return l.IGPRouterID + "_" + localIP + "_" + localID + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID, nil
 }
