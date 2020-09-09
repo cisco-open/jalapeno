@@ -29,7 +29,6 @@ type LSPrefix struct {
 	//SIDIndex              uint32                      `json:"sid_index,omitempty"`
 	PrefixAttrFlags 	  uint8 			            `json:"prefix_attr_flags,omitempty"`
 	FlexAlgoPrefixMetric  []*bgpls.FlexAlgoPrefixMetric `json:"FlexAlgoPrefixMetric,omitempty"`
-	IsIPv4                bool                          `json:"is_ipv4"`
 }
 
 func (r LSPrefix) GetKey() (string, error) {

@@ -9,17 +9,26 @@ const LSSRv6SIDName = "LSSRv6SID"
 
 type LSSRv6SID struct {
 	Key                       string                 `json:"_key,omitempty"`
-	RouterIP                  string                 `json:"RouterIP,omitempty"`
-	PeerIP                    string                 `json:"PeerIP,omitempty"`
-	PeerASN                   int32                  `json:"PeerASN,omitempty"`
+	RouterIP                  string                 `json:"router_ip,omitempty"`
+	PeerIP                    string                 `json:"peer_ip,omitempty"`
+	PeerASN                   int32                  `json:"peer_asn,omitempty"`
 	Timestamp                 string                 `json:"timestamp,omitempty"`
-	IGPRouterID               string                 `json:"IGPRouterID,omitempty"`
-	LocalASN                  uint32                 `json:"LocalASN,omitempty"`
+	IGPRouterID               string                 `json:"igp_router_id,omitempty"`
+	LocalNodeASN              uint32                 `json:"local_asn,omitempty"`
+	RouterID                  string                 `json:"router_id,omitempty"`
+	OSPFAreaID                string                 `json:"ospf_area_id,omitempty"`
+	ISISAreaID                string                 `json:"isis_area_id,omitempty"`
 	Protocol                  string                 `json:"Protocol,omitempty"`
-	RouterID                  string                 `json:"RouterID,omitempty"`
-	IGPFlags                  uint8                  `json:"IGPFlags,omitempty"`
-	MTID                      uint16               `json:"MT_ID,omitempty"`
 	Nexthop                   string                 `json:"Nexthop,omitempty"`
+	IGPFlags                  uint8                  `json:"IGPFlags,omitempty"`
+	MTID                      uint16                 `json:"MT_ID,omitempty"`
+	OSPFRouteType             uint8                  `json:"ospf_route_type,omitempty"`
+	IGPRouteTag               uint8                  `json:"route_tag,omitempty"`
+	IGPExtRouteTag            uint8                  `json:"ext_route_tag,omitempty"`
+	OSPFFwdAddr               string                 `json:"ospf_fwd_addr,omitempty"`
+	IGPMetric                 uint32                 `json:"igp_metric,omitempty"`
+	Prefix                    string                 `json:"prefix,omitempty"`
+	PrefixLen                 int32                  `json:"prefix_len,omitempty"`
 	SRv6SID                   []string               `json:"SRv6_SID,omitempty"`
 	SRv6EndpointBehaviorRaw   *srv6.EndpointBehavior `json:"SRv6_Endpoint_Behavior,omitempty"`
 	SRv6BGPPeerNodeSIDRaw     *srv6.BGPPeerNodeSID   `json:"SRv6_BGP_Peer_Node_SID,omitempty"`

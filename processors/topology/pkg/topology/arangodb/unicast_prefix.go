@@ -4,8 +4,6 @@ import (
 	"github.com/golang/glog"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 	"github.com/sbezverk/gobmp/pkg/message"
-	//        "github.com/sbezverk/gobmp/pkg/topology/database"
-	//"github.com/cisco-ie/jalapeno/processors/topology/pkg/database"
 )
 
 func (a *arangoDB) unicastPrefixHandler(obj *message.UnicastPrefix) {
