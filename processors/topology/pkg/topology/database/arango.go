@@ -101,6 +101,18 @@ func NewArango(cfg ArangoConfig) (*ArangoConn, error) {
 		return nil, err
 	}
 
+	cols[UnicastPrefixName], err = ensureVertexCollection(g, UnicastPrefixName)
+	if err != nil {
+		glog.Errorf("Failed to connect to collection %q", UnicastPrefixName)
+		return nil, err
+	}
+
+	cols[EPEPeerName], err = ensureVertexCollection(g, EPEPeerName)
+	if err != nil {
+		glog.Errorf("Failed to connect to collection %q", EPEPeerName)
+		return nil, err
+	}
+
 	cols[EPELinkName], err = ensureVertexCollection(g, EPELinkName)
 	if err != nil {
 		glog.Errorf("Failed to connect to collection %q", EPELinkName)
@@ -301,6 +313,14 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		}
 	case EPEPrefixName:
 		get = &EPEPrefix{
+			Key: key,
+		}
+	case UnicastPrefixName:
+		get = &UnicastPrefix{
+			Key: key,
+		}
+	case EPEPeerName:
+		get = &EPEPeer{
 			Key: key,
 		}
 	case EPELinkName:

@@ -81,7 +81,7 @@ func (a *arangoDB) StoreMessage(msgType int, msg interface{}) error {
 		if !ok {
 			return fmt.Errorf("malformed UnicastPrefix message")
 		}
-		//glog.Infof("Object: %+v", un)
+		glog.Infof("Object: %+v", un)
 		go a.unicastPrefixHandler(un)
 	case bmp.LSNodeMsg:
 		ln, ok := msg.(*message.LSNode)
