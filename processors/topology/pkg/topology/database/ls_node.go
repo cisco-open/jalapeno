@@ -27,7 +27,7 @@ type LSNode struct {
 	SRGBRange            uint32                    `json:"srgb_range,omitempty"`
 	SRCapabilityFlags    uint8                     `json:"sr_capability_flags,omitempty"`
 	SRAlgorithm          []int                     `json:"sr_algorithm,omitempty"`
-	SRLocalBlock         *sr.LocalBlock            `json:"sr_localBlock,omitempty"`
+	SRLocalBlock         *sr.LocalBlock            `json:"sr_local_block,omitempty"`
 	SRv6CapabilitiesTLV  *srv6.CapabilityTLV       `json:"srv6_capabilities_tlv,omitempty"`	
 	NodeMSD              []*base.MSDTV        	   `json:"node_msd,omitempty"`
 	FlexAlgoDefinition   []*bgpls.FlexAlgoDefinition `json:"flex_algo_definition,omitempty"`

@@ -19,9 +19,9 @@ type LSSRv6SID struct {
 	OSPFAreaID                string                 `json:"ospf_area_id,omitempty"`
 	ISISAreaID                string                 `json:"isis_area_id,omitempty"`
 	Protocol                  string                 `json:"Protocol,omitempty"`
-	Nexthop                   string                 `json:"Nexthop,omitempty"`
-	IGPFlags                  uint8                  `json:"IGPFlags,omitempty"`
-	MTID                      uint16                 `json:"MT_ID,omitempty"`
+	Nexthop                   string                 `json:"nexthop,omitempty"`
+	IGPFlags                  uint8                  `json:"igp_flags,omitempty"`
+	MTID                      uint16                 `json:"mtid,omitempty"`
 	OSPFRouteType             uint8                  `json:"ospf_route_type,omitempty"`
 	IGPRouteTag               uint8                  `json:"route_tag,omitempty"`
 	IGPExtRouteTag            uint8                  `json:"ext_route_tag,omitempty"`
@@ -29,21 +29,24 @@ type LSSRv6SID struct {
 	IGPMetric                 uint32                 `json:"igp_metric,omitempty"`
 	Prefix                    string                 `json:"prefix,omitempty"`
 	PrefixLen                 int32                  `json:"prefix_len,omitempty"`
-	SRv6SID                   []string               `json:"SRv6_SID,omitempty"`
-	SRv6EndpointBehaviorRaw   *srv6.EndpointBehavior `json:"SRv6_Endpoint_Behavior,omitempty"`
-	SRv6BGPPeerNodeSIDRaw     *srv6.BGPPeerNodeSID   `json:"SRv6_BGP_Peer_Node_SID,omitempty"`
-	SRv6SIDStructureRaw       *srv6.SIDStructure     `json:"SRv6_SID_Structure,omitempty"`
-	SRv6EndpointBehavior      uint16                 `json:"SRv6EndpointBehavior,omitempty"`
-	SRv6Flag                  uint8                  `json:"SRv6Flag,omitempty"`
-	SRv6Algorithm             uint8                  `json:"SRv6Algorithm,omitempty"`
-	SRv6BGPPeerNodeSIDFlag    uint8                  `json:"SRv6BGPPeerNodeSIDFlag,omitempty"`
-	SRv6BGPPeerNodeSIDWeight  uint8                  `json:"SRv6BGPPeerNodeSIDWeight,omitempty"`
-	SRv6BGPPeerNodeSIDPeerASN uint32                 `json:"SRv6BGPPeerNodeSIDPeerASN,omitempty"`
-	SRv6BGPPeerNodeSIDID      []byte                 `json:"SRv6BGPPeerNodeSIDID,omitempty"`
-	SRv6SIDStructureLBLength  uint8                  `json:"SRv6SIDStructureLBLength,omitempty"`
-	SRv6SIDStructureLNLength  uint8                  `json:"SRv6SIDStructureLNLength,omitempty"`
-	SRv6SIDStructureFunLength uint8                  `json:"SRv6SIDStructureFunLength,omitempty"`
-	SRv6SIDStructureArgLength uint8                  `json:"SRv6SIDStructureArgLength,omitempty"`
+	SRv6SID                   []string               `json:"srv6_sid,omitempty"`
+	SRv6EndpointBehavior      *srv6.EndpointBehavior `json:"srv6_endpoint_Behavior,omitempty"`
+	SRv6BGPPeerNodeSID        *srv6.BGPPeerNodeSID   `json:"srv6_bgo_peer_node_sid,omitempty"`
+	SRv6SIDStructure          *srv6.SIDStructure     `json:"srv6_sid_structure,omitempty"`
+	//SRv6EndpointBehaviorRaw   *srv6.EndpointBehavior `json:"srv6_endpoint_Behavior,omitempty"`
+	//SRv6BGPPeerNodeSIDRaw     *srv6.BGPPeerNodeSID   `json:"SRv6_BGP_Peer_Node_SID,omitempty"`
+	//SRv6SIDStructureRaw       *srv6.SIDStructure     `json:"srv6_sid_structure,omitempty"`
+	//SRv6EndpointBehavior      uint16                 `json:"srv6_endpoint_behavior,omitempty"`
+	//SRv6Flag                  uint8                  `json:"srv6_flag,omitempty"`
+	//SRv6Algorithm             uint8                  `json:"srv6_algorithm,omitempty"`
+	//SRv6BGPPeerNodeSIDFlag    uint8                  `json:"SRv6BGPPeerNodeSIDFlag,omitempty"`
+	//SRv6BGPPeerNodeSIDWeight  uint8                  `json:"SRv6BGPPeerNodeSIDWeight,omitempty"`
+	//SRv6BGPPeerNodeSIDPeerASN uint32                 `json:"SRv6BGPPeerNodeSIDPeerASN,omitempty"`
+	//SRv6BGPPeerNodeSIDID      []byte                 `json:"SRv6BGPPeerNodeSIDID,omitempty"`
+	//SRv6SIDStructureLBLength  uint8                  `json:"SRv6SIDStructureLBLength,omitempty"`
+	//SRv6SIDStructureLNLength  uint8                  `json:"SRv6SIDStructureLNLength,omitempty"`
+	//SRv6SIDStructureFunLength uint8                  `json:"SRv6SIDStructureFunLength,omitempty"`
+	//SRv6SIDStructureArgLength uint8                  `json:"SRv6SIDStructureArgLength,omitempty"`
 }
 
 func (r LSSRv6SID) GetKey() (string, error) {
