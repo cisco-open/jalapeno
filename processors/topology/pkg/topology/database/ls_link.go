@@ -30,7 +30,7 @@ type LSLink struct {
 	MTID                  uint16         			`json:"mtid,omitempty"`
 	IGPMetric             uint32           			`json:"igp_metric,omitempty"`
 	AdminGroup            uint32           			`json:"admin_group,omitempty"`
-	MaxLinkBW             uint32           			`json:"max_link_BW,omitempty"`
+	MaxLinkBW             uint32           			`json:"max_link_bw,omitempty"`
 	MaxResvBW             uint32           			`json:"max_resv_bw,omitempty"`
 	UnResvBW              []uint32         			`json:"unresv_bw,omitempty"`
 	TEDefaultMetric       uint32           			`json:"te_metric,omitempty"`
@@ -83,11 +83,11 @@ func (l *LSLink) makeKey() (string, error) {
 	remoteID = "0"
 	switch l.MTID {
 	case 0:
-		localIP = "127.0.0.1"
-		remoteIP = "127.0.0.1"
+		localIP = "0.0.0.0"
+		remoteIP = "0.0.0.0"
 	case 2:
-		localIP = "::1"
-		remoteIP = "::1"
+		localIP = "::"
+		remoteIP = "::"
 	default:
 		localIP = "unknown-mt-id"
 		remoteIP = "unknown-mt-id"
@@ -101,7 +101,7 @@ func (l *LSLink) makeKey() (string, error) {
 	localID = strconv.Itoa(int(l.LocalLinkID))
 	remoteID = strconv.Itoa(int(l.RemoteLinkID))
 
-	return l.IGPRouterID + "_" + localIP + "_" + localID + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID, nil
+	return l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID, nil
 }
 
 func (l LSLink) GetType() string {
