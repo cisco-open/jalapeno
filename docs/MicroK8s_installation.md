@@ -31,7 +31,7 @@ HTTPS_PROXY=http://<your_proxy>
 NO_PROXY=10.0.0.0/8
 ```
 
-    Then restart containerd `sudo systemctl restart snap.microk8s.daemon-containerd.service`
+Then restart containerd `sudo systemctl restart snap.microk8s.daemon-containerd.service`
 
 6. Enable dashboard helm and dns: `microk8s.enable dashboard dns`
 
