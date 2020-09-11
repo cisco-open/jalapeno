@@ -137,7 +137,7 @@ Then
 https://<server_ip>:<port_number>/pod?namespace=_all
 ```
 
-12. Optional - if you wish to just use 'kubectl' without needing to type 'microk8s kubectl <command>'
+12. Recommended - to use 'kubectl' without needing to type 'microk8s kubectl <command>'
 ```
 sudo chown -f -R $USER ~/.kube
 sudo snap install kubectl --classic
