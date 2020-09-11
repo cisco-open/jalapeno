@@ -25,8 +25,11 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
    ```
    
 5. If your cluster is behind a proxy add the following to `/var/snap/microk8s/current/args/containerd-env`:
-   `HTTPS_PROXY=http://<your_proxy>`
-   `NO_PROXY=10.0.0.0/8`
+
+```
+HTTPS_PROXY=http://<your_proxy>
+NO_PROXY=10.0.0.0/8
+```
 
     Then restart containerd `sudo systemctl restart snap.microk8s.daemon-containerd.service`
 
