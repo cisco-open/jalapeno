@@ -24,7 +24,7 @@ We will leverge this guide: [https://tutorials.ubuntu.com/tutorial/install-a-loc
    sudo ufw default allow routed
    ```
    
-5. If you are in a Cisco Lab w/ Proxies, configure the proxies by adding `HTTPS_PROXY=http://proxy.esl.cisco.com:8080` to `/var/snap/microk8s/current/args/containerd-env`.
+5. If you are in a Cisco Lab w/ Proxies, configure the proxies by adding `HTTPS_PROXY=http://<your_proxy>` to `/var/snap/microk8s/current/args/containerd-env`.
 
     Then restart containerd `sudo systemctl restart snap.microk8s.daemon-containerd.service`
 
