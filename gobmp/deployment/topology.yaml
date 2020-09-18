@@ -1,27 +1,7 @@
----
-apiVersion: v1
-kind: Service
-spec:
-  ports:
-    - name: perf
-      port: 56768
-      protocol: TCP
-      targetPort: 56768
-    - name: stats
-      port: 56769
-      protocol: TCP
-      targetPort: 56769
-  selector:
-    app: topology
-  type: ClusterIP
-  externalIPs:
-    - 10.1.1.100
-metadata:
-  name: topology
-  namespace: default
----
 apiVersion: apps/v1
 kind: Deployment
+metadata:
+  name: topology
 spec:
   replicas: 1
   selector:
@@ -34,30 +14,23 @@ spec:
     spec:
       containers:
         - args:
-            - --mock-database
-            - "false"
-            - --v
-            - "5"
-            - --message-server
-            - "kafka:9092"
-            - --database-server
-            - "http://arangodb.arangodb:28529"
-            - --database-name
-            - "jalapeno"
-            - --database-user
-            - "root"
-            - --database-pass
-            - "jalapeno"
-          image: docker.io/sbezverk/topology:wip
+          - --v
+          - "5"
+          - --message-server
+          - "broker.jalapeno:9092"
+          - --database-server
+          - "http://arangodb.jalapeno:8529"
+          - --database-name
+          - "jalapeno"
+          - --database-user
+          - "root"
+          - --database-pass
+          - "jalapeno"
+          - --asn
+          - '65000'
+          image: docker.io/iejalapeno/topology@sha256:b50ed6563455788b6b053d4a379a3c19430a4c1262ae7bb654b4e768f7cd6308
           imagePullPolicy: Always
           name: topology
-          ports:
-            - containerPort: 56769
-              protocol: TCP
-              name: stats
-            - containerPort: 56768
-              protocol: TCP
-              name: perf
 metadata:
   name: topology
-  namespace: default
+  namespace: jalapeno

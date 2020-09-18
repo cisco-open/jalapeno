@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	peerChangeCollectionName = "Node_Test"
+	peerChangeCollectionName = "Node"
 )
 
 func (a *arangoDB) peerChangeHandler(obj *message.PeerStateChange) {

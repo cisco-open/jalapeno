@@ -2,6 +2,7 @@ package arangodb
 
 import (
 	"context"
+	"strconv"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
@@ -9,7 +10,7 @@ import (
 )
 
 const (
-	lsNodeCollectionName = "LSNode_Test"
+	lsNodeCollectionName = "LSNode"
 )
 
 func (a *arangoDB) lsnodeHandler(obj *message.LSNode) {
@@ -18,7 +19,10 @@ func (a *arangoDB) lsnodeHandler(obj *message.LSNode) {
 		glog.Warning("LSNode object is nil")
 		return
 	}
-	k := obj.RouterIP + "_" + obj.PeerIP
+	var n int64 = obj.DomainID
+	domainId := strconv.FormatInt(n, 10)
+
+	k := domainId + "_" + obj.IGPRouterID
 	// Locking the key "k" to prevent race over the same key value
 	a.lckr.Lock(k)
 	defer a.lckr.Unlock(k)
@@ -28,6 +32,7 @@ func (a *arangoDB) lsnodeHandler(obj *message.LSNode) {
 		Sequence:            obj.Sequence,
 		Hash:                obj.Hash,
 		RouterHash:          obj.RouterHash,
+		DomainID:            obj.DomainID,
 		RouterIP:            obj.RouterIP,
 		PeerHash:            obj.PeerHash,
 		PeerIP:              obj.PeerIP,

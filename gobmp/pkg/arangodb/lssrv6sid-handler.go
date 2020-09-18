@@ -2,6 +2,7 @@ package arangodb
 
 import (
 	"context"
+	"strconv"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
@@ -9,7 +10,7 @@ import (
 )
 
 const (
-	lsSRv6SIDLSCollectionName = "LSSRv6SID_Test"
+	lsSRv6SIDLSCollectionName = "LSSRv6SID"
 )
 
 func (a *arangoDB) lsSRV6SIDHandler(obj *message.LSSRv6SID) {
@@ -18,7 +19,10 @@ func (a *arangoDB) lsSRV6SIDHandler(obj *message.LSSRv6SID) {
 		glog.Warning("srv6LS object is nil")
 		return
 	}
-	k := obj.IGPRouterID
+	var n int64 = obj.DomainID
+	domainId := strconv.FormatInt(n, 10)
+	k := domainId + "_" + obj.IGPRouterID
+
 	// Locking the key "k" to prevent race over the same key value
 	a.lckr.Lock(k)
 	defer a.lckr.Unlock(k)
@@ -31,6 +35,7 @@ func (a *arangoDB) lsSRV6SIDHandler(obj *message.LSSRv6SID) {
 		Hash:                 obj.Hash,
 		RouterHash:           obj.RouterHash,
 		RouterIP:             obj.RouterIP,
+		DomainID:             obj.DomainID,
 		PeerHash:             obj.PeerHash,
 		PeerIP:               obj.PeerIP,
 		PeerASN:              obj.PeerASN,

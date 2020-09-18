@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	unicastCollectionName = "UnicastPrefix_Test"
+	unicastCollectionName = "UnicastPrefix"
 )
 
 func (a *arangoDB) unicastPrefixHandler(obj *message.UnicastPrefix) {

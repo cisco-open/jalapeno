@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	lsPrefixCollectionName = "LSPrefix_Test"
+	lsPrefixCollectionName = "LSPrefix"
 )
 
 func (a *arangoDB) lsprefixHandler(obj *message.LSPrefix) {
@@ -19,7 +19,10 @@ func (a *arangoDB) lsprefixHandler(obj *message.LSPrefix) {
 		glog.Warning("LSPrefix object is nil")
 		return
 	}
-	k := obj.Prefix + "_" + strconv.Itoa(int(obj.PrefixLen)) + "_" + obj.IGPRouterID
+	var n int64 = obj.DomainID
+	domainId := strconv.FormatInt(n, 10)
+
+	k := domainId + "_" + obj.Prefix + "_" + strconv.Itoa(int(obj.PrefixLen)) + "_" + obj.IGPRouterID
 	// Locking the key "k" to prevent race over the same key value
 	a.lckr.Lock(k)
 	defer a.lckr.Unlock(k)
@@ -27,6 +30,7 @@ func (a *arangoDB) lsprefixHandler(obj *message.LSPrefix) {
 		Key:                  k,
 		ID:                   lsPrefixCollectionName + "/" + k,
 		RouterIP:             obj.RouterIP,
+		DomainID:             obj.DomainID,
 		PeerIP:               obj.PeerIP,
 		PeerASN:              obj.PeerASN,
 		Timestamp:            obj.Timestamp,

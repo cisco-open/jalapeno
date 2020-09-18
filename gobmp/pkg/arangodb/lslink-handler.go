@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	lsLinkCollectionName = "LSLink_Test"
+	lsLinkCollectionName = "LSLink"
 )
 
 func (a *arangoDB) lslinkHandler(obj *message.LSLink) {
@@ -39,7 +39,11 @@ func (a *arangoDB) lslinkHandler(obj *message.LSLink) {
 	}
 	localID = strconv.Itoa(int(obj.LocalLinkID))
 	remoteID = strconv.Itoa(int(obj.RemoteLinkID))
-	k := obj.IGPRouterID + "_" + localIP + "_" + localID + "_" + obj.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID
+
+	var n int64 = obj.DomainID
+	domainId := strconv.FormatInt(n, 10)
+
+	k := domainId + "_" + obj.IGPRouterID + "_" + localIP + "_" + localID + "_" + obj.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID
 	// Locking the key "k" to prevent race over the same key value
 	a.lckr.Lock(k)
 	defer a.lckr.Unlock(k)
@@ -47,6 +51,7 @@ func (a *arangoDB) lslinkHandler(obj *message.LSLink) {
 		Key:                   k,
 		ID:                    lsLinkCollectionName + "/" + k,
 		RouterIP:              obj.RouterIP,
+		DomainID:              obj.DomainID,
 		PeerHash:              obj.PeerHash,
 		PeerIP:                obj.PeerIP,
 		PeerASN:               obj.PeerASN,
@@ -55,6 +60,7 @@ func (a *arangoDB) lslinkHandler(obj *message.LSLink) {
 		RouterID:              obj.RouterID,
 		LSID:                  obj.LSID,
 		Protocol:              obj.Protocol,
+		ProtocolID:            obj.ProtocolID,
 		Nexthop:               obj.Nexthop,
 		MTID:                  obj.MTID,
 		LocalLinkID:           obj.LocalLinkID,

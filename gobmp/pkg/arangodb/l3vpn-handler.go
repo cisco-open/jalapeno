@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	l3vpnPrefixCollectionName = "L3VPN_Prefix_Test"
-	l3vpnRTCollectionName     = "L3VPN_RT_Test"
+	l3vpnPrefixCollectionName = "L3VPN_Prefix"
+	l3vpnRTCollectionName     = "L3VPN_RT"
 )
 
 var mtx = sync.Mutex{}
