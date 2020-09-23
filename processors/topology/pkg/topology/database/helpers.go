@@ -5,20 +5,6 @@ import (
 	"github.com/golang/glog"
 )
 
-func (a *ArangoConn) GetSIDIndex(ip string) string {
-	if len(ip) == 0 {
-		return ""
-	}
-	var r string
-	q := fmt.Sprintf("FOR r in Routers FILTER r.BGPID == %q AND r.NodeSIDIndex != null RETURN r.NodeSIDIndex", ip)
-	results, _ := a.Query(q, nil, r)
-	if len(results) > 0 {
-		sid_index := results[len(results)-1].(string)
-		return sid_index
-	}
-	return ""
-}
-
 func (a *ArangoConn) CheckExistingEPENode(local_bgp_id string) bool {
         var r string
         q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r", local_bgp_id)

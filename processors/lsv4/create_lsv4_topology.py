@@ -47,7 +47,7 @@ def main():
             enhance_lsv4_topology_document(database, current_lsv4_topology_key)
             local_node = get_local_igpid(database, current_lsv4_topology_key)[0]
             remote_node = get_remote_igpid(database, current_lsv4_topology_key)[0]
-            local_igpid, remote_igpid = local_node["LocalIGPID"], remote_node["RemoteIGPID"]
+            local_igpid, remote_igpid = local_node["local_igp_id"], remote_node["remote_igp_id"]
             local_srgb_start = get_srgb_start(database, local_igpid)[0]
             remote_srgb_start = get_srgb_start(database, remote_igpid)[0]
             local_msd = get_max_sid_depth(database, local_igpid)
@@ -68,20 +68,20 @@ def handle_msd(max_sid_depth):
         msd = max_sid_depth_split[1]
     return msd
 
-def parse_prefix_info(prefix_info, srgb_start):
-    prefix_info_list = []
-    prefix_sid = None
-    for index in range(len(prefix_info)):
-        sid_index = prefix_info[index]["SIDIndex"]
-        prefix = prefix_info[index]["Prefix"]
-        length = prefix_info[index]["Length"]
-        sr_flag = prefix_info[index]["SRFlag"]
-        if(prefix_info[index]["SRFlag"] != None and prefix_info[index]["SRFlag"][0] == "n"):
-            prefix_sid = srgb_start + sid_index
-        sid = srgb_start + sid_index
-        prefix_dict = {"Prefix": prefix, "Length": length, "SID": sid, "SRFlag": sr_flag}
-        prefix_info_list.append(prefix_dict)
-    return(prefix_sid, prefix_info_list)
+#def parse_prefix_info(prefix_info, srgb_start):
+#    prefix_info_list = []
+#    prefix_sid = None
+#    for index in range(len(prefix_info)):
+#        #sid_index = prefix_info[index]["SIDIndex"]
+#        prefix = prefix_info[index]["Prefix"]
+#        length = prefix_info[index]["Length"]
+        #sr_flag = prefix_info[index]["SRFlag"]
+#        if(prefix_info[index]["SRFlag"] != None and prefix_info[index]["SRFlag"][0] == "n"):
+#            prefix_sid = srgb_start + sid_index
+#        sid = srgb_start + sid_index
+#        prefix_dict = {"Prefix": prefix, "Length": length, "SID": sid, "SRFlag": sr_flag}
+#        prefix_info_list.append(prefix_dict)
+#    return(prefix_sid, prefix_info_list)
 
 def create_collection(db, collection_name):
     """Create new collection in ArangoDB.

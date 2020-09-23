@@ -8,7 +8,6 @@ import (
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/tools"
-	//	"github.com/sbezverk/gobmp/pkg/topology/database"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 	"github.com/sbezverk/gobmp/pkg/topology/dbclient"
 )
@@ -82,15 +81,16 @@ func (a *arangoDB) StoreMessage(msgType int, msg interface{}) error {
 		if !ok {
 			return fmt.Errorf("malformed UnicastPrefix message")
 		}
-		//glog.Infof("Object: %+v", un)
+		glog.Infof("Object: %+v", un)
 		go a.unicastPrefixHandler(un)
 	case bmp.LSNodeMsg:
 		ln, ok := msg.(*message.LSNode)
 		if !ok {
 			return fmt.Errorf("malformed LSNode message")
 		}
-		//glog.Infof("Object: %+v", ln)
+		glog.Infof("Object: %+v", ln)
 		go a.lsNodeHandler(ln)
+	
 	case bmp.LSPrefixMsg:
 		lp, ok := msg.(*message.LSPrefix)
 		if !ok {
@@ -117,7 +117,7 @@ func (a *arangoDB) StoreMessage(msgType int, msg interface{}) error {
 		if !ok {
 			return fmt.Errorf("malformed LSSRv6SID message")
 		}
-		//glog.Infof("Object: %+v", lssrv6)
+		glog.Infof("Object: %+v", lssrv6)
 		go a.lsSRv6SIDHandler(lssrv6)
 	}
 	return nil

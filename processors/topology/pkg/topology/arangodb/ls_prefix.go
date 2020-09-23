@@ -3,24 +3,15 @@ package arangodb
 import (
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/message"
-	"github.com/sbezverk/gobmp/pkg/sr"
-	//        "github.com/sbezverk/gobmp/pkg/topology/database"
-	//"encoding/binary"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 )
 
 func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	db := a.GetArangoDBInterface()
 	action := obj.Action
-	igpRouterID := obj.IGPRouterID
+
 	//prefixSID := obj.LSPrefixSID
 
-	var prefixSID []*sr.PrefixSIDTLV
-	if obj.LSPrefixSID != nil {
-		prefixSID = obj.LSPrefixSID
-		}
-
-	//var algorithm *uint8
 	//var srFlags []string
 	//var sid []byte
 	//var prefixSIDIndex int
@@ -34,15 +25,24 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	//}
 
 	lsPrefixDocument := &database.LSPrefix{
-		IGPRouterID: igpRouterID,
-		Prefix:      obj.Prefix,
-		Length:      obj.PrefixLen,
-		Protocol:    obj.Protocol,
-		Timestamp:   obj.Timestamp,
-		//SRFlags:     srFlags,
-		//Algorithm:   algorithm,
-		//SIDIndex:    prefixSIDIndex,
-		PrefixSID:   prefixSID,
+		Timestamp:	      	  obj.Timestamp,
+		IGPRouterID:          obj.IGPRouterID,
+		RouterID:             obj.RouterID,
+		Prefix:		          obj.Prefix,
+		Length:		      	  obj.PrefixLen,
+		Protocol:	      	  obj.Protocol,
+		ProtocolID:           obj.ProtocolID,
+		MTID:                 obj.MTID,
+		OSPFRouteType:        obj.OSPFRouteType,
+		IGPFlags:             obj.IGPFlags,
+		IGPRouteTag:          obj.IGPRouteTag,
+		IGPExtRouteTag:       obj.IGPExtRouteTag,
+		OSPFFwdAddr:          obj.OSPFFwdAddr,
+		IGPMetric:            obj.IGPMetric,
+		PrefixSID:            obj.LSPrefixSID,
+		//SIDIndex:             sidIndex,
+		PrefixAttrFlags:      obj.PrefixAttrFlags,
+		FlexAlgoPrefixMetric: obj.FlexAlgoPrefixMetric,
 	}
 
 	if action == "add" {

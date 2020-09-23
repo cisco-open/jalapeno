@@ -6,61 +6,76 @@ import (
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/sr"
-	"github.com/sbezverk/gobmp/pkg/srv6"
+	//"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
 func (a *arangoDB) lsLinkHandler(obj *message.LSLink) {
 	db := a.GetArangoDBInterface()
 	action := obj.Action
 
-	var SRv6EndXSID *srv6.EndXSIDTLV
-	if obj.SRv6ENDXSID != nil {
-		SRv6EndXSID = obj.SRv6ENDXSID
-	}
+	//var SRv6EndXSID *srv6.EndXSIDTLV
+	//if obj.SRv6ENDXSID != nil {
+	//	SRv6EndXSID = obj.SRv6ENDXSID
+	//}
 
 	localRouterKey := "LSNode/" + obj.IGPRouterID
 	remoteRouterKey := "LSNode/" + obj.RemoteIGPRouterID
 	adjacencySIDS := parseAdjacencySIDS(obj.LSAdjacencySID)
+
 	lsLinkDocument := &database.LSLink{
-		LocalRouterKey:    localRouterKey,
-		RemoteRouterKey:   remoteRouterKey,
-		LocalRouterID:     obj.RouterID,
-		RemoteRouterID:    obj.RemoteRouterID,
-		ASN:               obj.LocalNodeASN,
-		LocalInterfaceIP:  obj.InterfaceIP,
-		RemoteInterfaceIP: obj.NeighborIP,
-		Protocol:          obj.Protocol,
-		LocalIGPID:        obj.IGPRouterID,
-		RemoteIGPID:       obj.RemoteIGPRouterID,
-		IGPMetric:         obj.IGPMetric,
-		TEMetric:          obj.TEDefaultMetric,
-		AdminGroup:        obj.AdminGroup,
-		MaxLinkBW:         obj.MaxLinkBW,
-		MaxResvBW:         obj.MaxResvBW,
-		UnResvBW:          obj.UnResvBW,
-		LinkProtection:    obj.LinkProtection,
-		SRLG:              obj.SRLG,
-		LinkName:          obj.LinkName,
-		AdjacencySID:      adjacencySIDS,
-		//SRv6BGPPeerNodeSID: obj.SRv6BGPPeerNodeSID,
-		SRv6EndXSID: SRv6EndXSID,
-		Timestamp:   obj.Timestamp,
+		LocalRouterKey:    		localRouterKey,
+		RemoteRouterKey:   		remoteRouterKey,
+		Timestamp:         		obj.Timestamp,
+		LocalRouterID:     		obj.RouterID,
+		RemoteRouterID:    		obj.RemoteRouterID,
+		LocalLinkIP:  			obj.LocalLinkIP,
+		RemoteLinkIP:	 		obj.RemoteLinkIP,
+		LocalLinkID:			obj.LocalLinkID,
+		RemoteLinkID:			obj.RemoteLinkID,
+		IGPRouterID:        	obj.IGPRouterID,
+		RemoteIGPRouterID: 		obj.RemoteIGPRouterID,
+		Protocol:          		obj.Protocol,
+		ProtocolID:        		obj.ProtocolID,
+		MTID:              		obj.MTID,
+		IGPMetric:         		obj.IGPMetric,
+		AdminGroup:        		obj.AdminGroup,
+		MaxLinkBW:         		obj.MaxLinkBW,
+		MaxResvBW:         		obj.MaxResvBW,
+		UnResvBW:          		obj.UnResvBW,
+		TEDefaultMetric:  		obj.TEDefaultMetric,
+		LinkProtection:    		obj.LinkProtection,
+		MPLSProtoMask:     		obj.MPLSProtoMask,
+		SRLG:              		obj.SRLG,
+		LinkName:          		obj.LinkName,
+		LocalNodeASN:      		obj.LocalNodeASN,
+        RemoteNodeASN:     		obj.RemoteNodeASN,
+		LSAdjacencySID:    		adjacencySIDS,
+		SRv6EndXSID:       		obj.SRv6ENDXSID,
+		LinkMSD:           		obj.LinkMSD,
+		AppSpecLinkAttr:        obj.AppSpecLinkAttr,
+		UnidirLinkDelay:    	obj.UnidirLinkDelay,
+		UnidirLinkDelayMinMax:	obj.UnidirLinkDelayMinMax,
+		UnidirDelayVariation:	obj.UnidirDelayVariation,
+		UnidirPacketLoss:		obj.UnidirPacketLoss,
+		UnidirResidualBW:		obj.UnidirResidualBW,
+		UnidirAvailableBW:		obj.UnidirAvailableBW,
+		UnidirBWUtilization:	obj.UnidirBWUtilization,
 	}
 
 	if action == "add" {
 		if err := db.Upsert(lsLinkDocument); err != nil {
-			glog.Errorf("Encountered an error while upserting the ls link document: %+v", err)
+			glog.Errorf("Encountered an error while upserting the ls link document with local IP: %q %+v", lsLinkDocument.LocalLinkIP, err)
 			return
 		}
 		glog.Infof("Successfully added ls link document from Router: %q through Interface: %q "+
-			"to Router: %q through Interface: %q\n", lsLinkDocument.LocalIGPID, lsLinkDocument.LocalInterfaceIP, lsLinkDocument.RemoteIGPID, lsLinkDocument.RemoteInterfaceIP)
+			"to Router: %q through Interface: %q\n", lsLinkDocument.IGPRouterID, lsLinkDocument.LocalLinkIP, lsLinkDocument.RemoteIGPRouterID, lsLinkDocument.RemoteLinkIP)
 	} else {
 		if err := db.Delete(lsLinkDocument); err != nil {
 			glog.Errorf("Encountered an error while deleting the ls link document: %+v", err)
 			return
 		} else {
 			glog.Infof("Successfully deleted ls link document from Router: %q through Interface: %q "+
-				"to Router: %q through Interface: %q\n", lsLinkDocument.LocalIGPID, lsLinkDocument.LocalInterfaceIP, lsLinkDocument.RemoteIGPID, lsLinkDocument.RemoteInterfaceIP)
+				"to Router: %q through Interface: %q\n", lsLinkDocument.IGPRouterID, lsLinkDocument.LocalLinkIP, lsLinkDocument.RemoteIGPRouterID, lsLinkDocument.RemoteLinkIP)
 		}
 	}
 }
