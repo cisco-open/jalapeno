@@ -1,6 +1,9 @@
 package arangodb
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/sbezverk/gobmp/pkg/message"
 )
 
@@ -9,5 +12,8 @@ type lsNodeArangoMessage struct {
 }
 
 func (n *lsNodeArangoMessage) MakeKey() string {
-	return n.RouterIP + "_" + n.PeerIP
+
+	protoIDStr := fmt.Sprintf("%d", n.ProtocolID)
+
+	return protoIDStr + "_" + strconv.Itoa(int(n.DomainID)) + "_" + n.ISISAreaID + "_" + n.OSPFAreaID + "_" + n.IGPRouterID
 }

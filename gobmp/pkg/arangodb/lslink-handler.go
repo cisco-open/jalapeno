@@ -1,6 +1,7 @@
 package arangodb
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/sbezverk/gobmp/pkg/message"
@@ -32,6 +33,8 @@ func (l *lsLinkArangoMessage) MakeKey() string {
 	localID = strconv.Itoa(int(l.LocalLinkID))
 	remoteID = strconv.Itoa(int(l.RemoteLinkID))
 
-	return l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID
+	protoIDStr := fmt.Sprintf("%d", l.ProtocolID)
+
+	return protoIDStr + "_" + strconv.Itoa(int(l.DomainID)) + "_" + strconv.Itoa(int(l.MTID)) + "_" + l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID
 
 }
