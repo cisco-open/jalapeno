@@ -1,12 +1,9 @@
 package mockdb
 
 import (
-	"fmt"
-
 	"github.com/golang/glog"
-	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/message"
-	"github.com/sbezverk/topology/pkg/dbclient"
+	"github.com/jalapeno-sdn/topology/pkg/dbclient"
 )
 
 type mockDB struct {
@@ -39,39 +36,39 @@ func (m *mockDB) GetInterface() dbclient.DB {
 	return m.DB
 }
 
-func (m *mockDB) StoreMessage(msgType int, msg interface{}) error {
-	switch msgType {
-	case bmp.PeerStateChangeMsg:
-		p, ok := msg.(*message.PeerStateChange)
-		if !ok {
-			return fmt.Errorf("malformed PeerStateChange message")
-		}
-		m.peerChangeHandler(p)
-	case bmp.UnicastPrefixMsg:
-		un, ok := msg.(*message.UnicastPrefix)
-		if !ok {
-			return fmt.Errorf("malformed UnicastPrefix message")
-		}
-		m.unicastPrefixHandler(un)
-	case bmp.LSNodeMsg:
-		ln, ok := msg.(*message.LSNode)
-		if !ok {
-			return fmt.Errorf("malformed LSNode message")
-		}
-		m.lsNodeHandler(ln)
-	case bmp.LSLinkMsg:
-		ll, ok := msg.(*message.LSLink)
-		if !ok {
-			return fmt.Errorf("malformed LSLink message")
-		}
-		m.lsLinkHandler(ll)
-	case bmp.L3VPNMsg:
-		l3, ok := msg.(*message.L3VPNPrefix)
-		if !ok {
-			return fmt.Errorf("malformed L3VPN message")
-		}
-		m.l3vpnPrefixHandler(l3)
-	}
+func (m *mockDB) StoreMessage(msgType int, msg []byte) error {
+	// switch msgType {
+	// case bmp.PeerStateChangeMsg:
+	// 	p, ok := msg.(*message.PeerStateChange)
+	// 	if !ok {
+	// 		return fmt.Errorf("malformed PeerStateChange message")
+	// 	}
+	// 	m.peerChangeHandler(p)
+	// case bmp.UnicastPrefixMsg:
+	// 	un, ok := msg.(*message.UnicastPrefix)
+	// 	if !ok {
+	// 		return fmt.Errorf("malformed UnicastPrefix message")
+	// 	}
+	// 	m.unicastPrefixHandler(un)
+	// case bmp.LSNodeMsg:
+	// 	ln, ok := msg.(*message.LSNode)
+	// 	if !ok {
+	// 		return fmt.Errorf("malformed LSNode message")
+	// 	}
+	// 	m.lsNodeHandler(ln)
+	// case bmp.LSLinkMsg:
+	// 	ll, ok := msg.(*message.LSLink)
+	// 	if !ok {
+	// 		return fmt.Errorf("malformed LSLink message")
+	// 	}
+	// 	m.lsLinkHandler(ll)
+	// case bmp.L3VPNMsg:
+	// 	l3, ok := msg.(*message.L3VPNPrefix)
+	// 	if !ok {
+	// 		return fmt.Errorf("malformed L3VPN message")
+	// 	}
+	// 	m.l3vpnPrefixHandler(l3)
+	// }
 
 	return nil
 }
