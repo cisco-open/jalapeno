@@ -9,27 +9,27 @@ import (
 	"strconv"
 
 	"github.com/golang/glog"
-	"github.com/sbezverk/topology/pkg/arangodb"
-	"github.com/sbezverk/topology/pkg/dbclient"
-	"github.com/sbezverk/topology/pkg/kafkamessenger"
-	"github.com/sbezverk/topology/pkg/messenger"
-	"github.com/sbezverk/topology/pkg/mockdb"
-	"github.com/sbezverk/topology/pkg/mockmessenger"
-	"github.com/sbezverk/topology/pkg/processor"
+	"github.com/jalapeno-sdn/topology/pkg/arangodb"
+	"github.com/jalapeno-sdn/topology/pkg/dbclient"
+	"github.com/jalapeno-sdn/topology/pkg/kafkamessenger"
+	"github.com/jalapeno-sdn/topology/pkg/kafkanotifier"
+	"github.com/jalapeno-sdn/topology/pkg/messenger"
+	"github.com/jalapeno-sdn/topology/pkg/mockdb"
 
 	"net/http"
 	_ "net/http/pprof"
 )
 
 var (
-	msgSrvAddr string
-	dbSrvAddr  string
-	mockDB     string
-	mockMsg    string
-	dbName     string
-	dbUser     string
-	dbPass     string
-	perfPort   = 56768
+	msgSrvAddr  string
+	dbSrvAddr   string
+	mockDB      string
+	mockMsg     string
+	dbName      string
+	dbUser      string
+	dbPass      string
+	notifyEvent string
+	perfPort    = 56768
 )
 
 func init() {
@@ -41,6 +41,7 @@ func init() {
 	flag.StringVar(&dbName, "database-name", "", "DB name")
 	flag.StringVar(&dbUser, "database-user", "", "DB User name")
 	flag.StringVar(&dbPass, "database-pass", "", "DB User's password")
+	flag.StringVar(&notifyEvent, "notify-event", "false", "when true, a completion message is sent to kafka, indicating and end of processing of the topic's message")
 }
 
 var (
@@ -73,9 +74,21 @@ func main() {
 		glog.Infof("Starting performance debugging server on %d", perfPort)
 		glog.Info(http.ListenAndServe(fmt.Sprintf(":%d", perfPort), nil))
 	}()
-
-	var dbSrv dbclient.Srv
 	var err error
+	isNotify, err := strconv.ParseBool(notifyEvent)
+	if err != nil {
+		glog.Errorf("invalid mock-database parameter: %s", mockDB)
+		os.Exit(1)
+	}
+	var notifier kafkanotifier.Event
+	if isNotify {
+		notifier, err = kafkanotifier.NewKafkaNotifier(msgSrvAddr)
+		if err != nil {
+			glog.Errorf("failed to initialize events notifier with error: %+v", err)
+			os.Exit(1)
+		}
+	}
+	var dbSrv dbclient.Srv
 	// Initializing databse client
 	isMockDB, err := strconv.ParseBool(mockDB)
 	if err != nil {
@@ -83,7 +96,7 @@ func main() {
 		os.Exit(1)
 	}
 	if !isMockDB {
-		dbSrv, err = arangodb.NewDBSrvClient(dbSrvAddr, dbUser, dbPass, dbName)
+		dbSrv, err = arangodb.NewDBSrvClient(dbSrvAddr, dbUser, dbPass, dbName, notifier)
 		if err != nil {
 			glog.Errorf("failed to initialize databse client with error: %+v", err)
 			os.Exit(1)
@@ -99,11 +112,6 @@ func main() {
 		}
 	}
 
-	// Initializing new processor process
-	processorSrv := processor.NewProcessorSrv(dbSrv.GetInterface())
-	// Starting topology server
-	processorSrv.Start()
-
 	// Initializing messenger process
 	isMockMsg, err := strconv.ParseBool(mockMsg)
 	if err != nil {
@@ -112,13 +120,13 @@ func main() {
 	}
 	var msgSrv messenger.Srv
 	if !isMockMsg {
-		msgSrv, err = kafkamessenger.NewKafkaMessenger(msgSrvAddr, processorSrv.GetInterface())
+		msgSrv, err = kafkamessenger.NewKafkaMessenger(msgSrvAddr, dbSrv.GetInterface())
 		if err != nil {
 			glog.Errorf("failed to initialize message server with error: %+v", err)
 			os.Exit(1)
 		}
 	} else {
-		msgSrv, _ = mockmessenger.NewMockMessenger(processorSrv.GetInterface())
+		// msgSrv, _ = mockmessenger.NewMockMessenger(dbSrv.GetInterface())
 	}
 
 	msgSrv.Start()
@@ -127,7 +135,6 @@ func main() {
 	<-stopCh
 
 	msgSrv.Stop()
-	//	processorSrv.Stop()
 	dbSrv.Stop()
 
 	os.Exit(0)

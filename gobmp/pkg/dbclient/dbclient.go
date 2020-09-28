@@ -2,7 +2,7 @@ package dbclient
 
 // DB defines required methods for a database client to support
 type DB interface {
-	StoreMessage(msgType int, msg interface{}) error
+	StoreMessage(msgType int, msg []byte) error
 }
 
 // Srv defines required method of a database server

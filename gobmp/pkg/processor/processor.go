@@ -7,7 +7,7 @@ import (
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/tools"
-	"github.com/sbezverk/topology/pkg/dbclient"
+	"github.com/jalapeno-sdn/topology/pkg/dbclient"
 )
 
 const (

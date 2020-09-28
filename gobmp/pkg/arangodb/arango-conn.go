@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"sync"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
@@ -32,52 +31,8 @@ func NewConfig() ArangoConfig {
 	return ArangoConfig{}
 }
 
-type Collection interface {
-	Add(string, driver.Collection)
-	Delete(string)
-	Check(string) (driver.Collection, bool)
-}
-
-var _ Collection = &collections{}
-
-type collections struct {
-	sync.Mutex
-	store map[string]driver.Collection
-}
-
-func (c *collections) Add(name string, d driver.Collection) {
-	c.Lock()
-	defer c.Unlock()
-	if _, ok := c.store[name]; !ok {
-		c.store[name] = d
-	}
-	return
-}
-func (c *collections) Delete(name string) {
-	c.Lock()
-	defer c.Unlock()
-	if _, ok := c.store[name]; ok {
-		delete(c.store, name)
-	}
-	return
-}
-func (c *collections) Check(name string) (driver.Collection, bool) {
-	c.Lock()
-	defer c.Unlock()
-	d, ok := c.store[name]
-	return d, ok
-}
-
-func NewCollection() Collection {
-	return &collections{
-		store: make(map[string]driver.Collection),
-	}
-}
-
 type ArangoConn struct {
 	db driver.Database
-	sync.Mutex
-	collections Collection
 }
 
 var (
@@ -121,7 +76,7 @@ func NewArango(cfg ArangoConfig) (*ArangoConn, error) {
 		return nil, err
 	}
 
-	return &ArangoConn{db: db, collections: NewCollection()}, nil
+	return &ArangoConn{db: db}, nil
 }
 
 func ensureDatabase(c driver.Client, cfg ArangoConfig) (driver.Database, error) {
@@ -145,52 +100,4 @@ func ensureDatabase(c driver.Client, cfg ArangoConfig) (driver.Database, error) 
 		}
 	}
 	return db, nil
-}
-
-func (a *ArangoConn) checkCollection(name string) (driver.Collection, error) {
-	a.Lock()
-	defer a.Unlock()
-	// Check if collection exists in the local store
-	if d, ok := a.collections.Check(name); ok {
-		// Collection exists in the local store, check if database has this collection
-
-		//		ok, err := a.db.CollectionExists(context.TODO(), name)
-		//		if err == nil && ok {
-		// Collection also exists in the database, returning drvier's Collection interface
-		return d, nil
-		//		}
-		// In case of an error or the collection does not exist in return, removing collection for the local store
-		// for consistency
-
-		//		a.collections.Delete(name)
-		//		return nil, err
-	}
-
-	return nil, ErrCollectionNotFound
-}
-
-func (a *ArangoConn) ensureCollection(name string) (driver.Collection, error) {
-	a.Lock()
-	defer a.Unlock()
-	// Check if Collection exists in the database
-	ctx := context.TODO()
-	var d driver.Collection
-	var err error
-	ok, err := a.db.CollectionExists(ctx, name)
-	if err != nil {
-		return nil, err
-	}
-	if !ok {
-		_, err = a.db.CreateCollection(ctx, name, &driver.CreateCollectionOptions{})
-		if err != nil {
-			return nil, err
-		}
-	}
-	if d, err = a.db.Collection(ctx, name); err != nil {
-		return nil, err
-	}
-	// Add Collection into the local store
-	a.collections.Add(name, d)
-
-	return d, nil
 }

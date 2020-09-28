@@ -5,7 +5,7 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/sbezverk/topology/pkg/processor"
+	"github.com/jalapeno-sdn/topology/pkg/dbclient"
 )
 
 // Srv defines required method of a processor server
@@ -22,13 +22,13 @@ type mockMsg struct {
 type mockMessenger struct {
 	store map[int]*mockMsg
 	stop  chan struct{}
-	proc  processor.Messenger
+	db    dbclient.DB
 }
 
 // NewMockMessenger returns an instance of a mock messenger acting as a messenger server
-func NewMockMessenger(p processor.Messenger) (Srv, error) {
+func NewMockMessenger(db dbclient.DB) (Srv, error) {
 	return &mockMessenger{
-		proc: p,
+		db:   db,
 		stop: make(chan struct{}),
 		store: map[int]*mockMsg{
 			bmp.PeerStateChangeMsg: {
@@ -85,39 +85,39 @@ func (m *mockMessenger) messenger() {
 		case <-peer.C:
 			if m.store[bmp.PeerStateChangeMsg].added {
 				glog.V(5).Infof("peer delete")
-				m.proc.SendMessage(bmp.PeerStateChangeMsg, m.store[bmp.PeerStateChangeMsg].msgs[1])
+				m.db.StoreMessage(bmp.PeerStateChangeMsg, m.store[bmp.PeerStateChangeMsg].msgs[1])
 				m.store[bmp.PeerStateChangeMsg].added = false
 			} else {
 				glog.V(5).Infof("peer add")
-				m.proc.SendMessage(bmp.PeerStateChangeMsg, m.store[bmp.PeerStateChangeMsg].msgs[0])
+				m.db.StoreMessage(bmp.PeerStateChangeMsg, m.store[bmp.PeerStateChangeMsg].msgs[0])
 				m.store[bmp.PeerStateChangeMsg].added = true
 			}
 		case <-lsNode.C:
 			if m.store[bmp.LSNodeMsg].added {
 				glog.V(5).Infof("ls node delete")
-				m.proc.SendMessage(bmp.LSNodeMsg, m.store[bmp.LSNodeMsg].msgs[1])
+				m.db.StoreMessage(bmp.LSNodeMsg, m.store[bmp.LSNodeMsg].msgs[1])
 				m.store[bmp.LSNodeMsg].added = false
 			} else {
 				glog.V(5).Infof("ls node add")
-				m.proc.SendMessage(bmp.LSNodeMsg, m.store[bmp.LSNodeMsg].msgs[0])
+				m.db.StoreMessage(bmp.LSNodeMsg, m.store[bmp.LSNodeMsg].msgs[0])
 				m.store[bmp.LSNodeMsg].added = true
 			}
 		case <-lsLink.C:
 			if m.store[bmp.LSLinkMsg].added {
 				glog.V(5).Infof("ls link delete")
-				m.proc.SendMessage(bmp.LSLinkMsg, m.store[bmp.LSLinkMsg].msgs[1])
+				m.db.StoreMessage(bmp.LSLinkMsg, m.store[bmp.LSLinkMsg].msgs[1])
 				m.store[bmp.LSLinkMsg].added = false
 			} else {
 				glog.V(5).Infof("ls link add")
-				m.proc.SendMessage(bmp.LSLinkMsg, m.store[bmp.LSLinkMsg].msgs[0])
+				m.db.StoreMessage(bmp.LSLinkMsg, m.store[bmp.LSLinkMsg].msgs[0])
 				m.store[bmp.LSLinkMsg].added = true
 			}
 		// case <-unicastPrefix.C:
 		// 	if m.store[bmp.UnicastPrefixMsg].added {
-		// 		m.proc.SendMessage(bmp.UnicastPrefixMsg, m.store[bmp.UnicastPrefixMsg].msgs[1])
+		// 		m.db.StoreMessage(bmp.UnicastPrefixMsg, m.store[bmp.UnicastPrefixMsg].msgs[1])
 		// 		m.store[bmp.UnicastPrefixMsg].added = false
 		// 	} else {
-		// 		m.proc.SendMessage(bmp.UnicastPrefixMsg, m.store[bmp.UnicastPrefixMsg].msgs[0])
+		// 		m.db.StoreMessage(bmp.UnicastPrefixMsg, m.store[bmp.UnicastPrefixMsg].msgs[0])
 		// 		m.store[bmp.UnicastPrefixMsg].added = true
 		// 	}
 		case <-m.stop:
