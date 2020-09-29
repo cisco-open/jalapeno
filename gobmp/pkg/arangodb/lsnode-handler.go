@@ -1,7 +1,6 @@
 package arangodb
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/sbezverk/gobmp/pkg/message"
@@ -13,7 +12,7 @@ type lsNodeArangoMessage struct {
 
 func (n *lsNodeArangoMessage) MakeKey() string {
 
-	protoIDStr := fmt.Sprintf("%d", n.ProtocolID)
-
-	return protoIDStr + "_" + strconv.Itoa(int(n.DomainID)) + "_" + n.ISISAreaID + "_" + n.OSPFAreaID + "_" + n.IGPRouterID
+	// The LSNode Key uses ProtocolID, DomainID, and IGP Area ID
+	// to create unique Keys for DB entries in multi-area / multi-topology scenarios
+	return strconv.Itoa(int(n.ProtocolID)) + "_" + strconv.Itoa(int(n.DomainID)) + "_" + n.ISISAreaID + "_" + n.OSPFAreaID + "_" + n.IGPRouterID
 }
