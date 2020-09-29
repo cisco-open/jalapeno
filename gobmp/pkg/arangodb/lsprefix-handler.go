@@ -1,7 +1,6 @@
 package arangodb
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/sbezverk/gobmp/pkg/message"
@@ -13,7 +12,7 @@ type lsPrefixArangoMessage struct {
 
 func (p *lsPrefixArangoMessage) MakeKey() string {
 
-	protoIDStr := fmt.Sprintf("%d", p.ProtocolID)
-
-	return protoIDStr + "_" + strconv.Itoa(int(p.DomainID)) + "_" + strconv.Itoa(int(p.MTID)) + "_" + p.Prefix + "_" + strconv.Itoa(int(p.PrefixLen)) + "_" + p.IGPRouterID
+	// The LSPrefix Key uses ProtocolID, DomainID, and Multi-Topology ID
+	// to create unique Keys for DB entries in multi-area / multi-topology scenarios
+	return strconv.Itoa(int(p.ProtocolID)) + "_" + strconv.Itoa(int(p.DomainID)) + "_" + strconv.Itoa(int(p.MTID)) + "_" + p.Prefix + "_" + strconv.Itoa(int(p.PrefixLen)) + "_" + p.IGPRouterID
 }
