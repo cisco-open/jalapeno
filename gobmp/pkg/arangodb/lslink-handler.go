@@ -32,6 +32,8 @@ func (l *lsLinkArangoMessage) MakeKey() string {
 	localID = strconv.Itoa(int(l.LocalLinkID))
 	remoteID = strconv.Itoa(int(l.RemoteLinkID))
 
-	return l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID
+	// The LSLink Key uses ProtocolID, DomainID, and Multi-Topology ID
+	// to create unique Keys for DB entries in multi-area / multi-topology scenarios
+	return strconv.Itoa(int(l.ProtocolID)) + "_" + strconv.Itoa(int(l.DomainID)) + "_" + strconv.Itoa(int(l.MTID)) + "_" + l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID
 
 }

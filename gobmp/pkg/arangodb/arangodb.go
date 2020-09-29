@@ -6,10 +6,10 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
-	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/sbezverk/gobmp/pkg/tools"
 	"github.com/jalapeno-sdn/topology/pkg/dbclient"
 	"github.com/jalapeno-sdn/topology/pkg/kafkanotifier"
+	"github.com/sbezverk/gobmp/pkg/bmp"
+	"github.com/sbezverk/gobmp/pkg/tools"
 )
 
 const (
@@ -18,13 +18,13 @@ const (
 
 var (
 	collections = map[int]string{
-		bmp.PeerStateChangeMsg: "Node_Test",
-		bmp.LSLinkMsg:          "LSLink_Test",
-		bmp.LSNodeMsg:          "LSNode_Test",
-		bmp.LSPrefixMsg:        "LSPrefix_Test",
-		bmp.LSSRv6SIDMsg:       "LSSRv6SID_Test",
-		bmp.L3VPNMsg:           "L3VPN_Prefix_Test",
-		bmp.UnicastPrefixMsg:   "UnicastPrefix_Test",
+		bmp.PeerStateChangeMsg: "Node",
+		bmp.LSLinkMsg:          "LSLink",
+		bmp.LSNodeMsg:          "LSNode",
+		bmp.LSPrefixMsg:        "LSPrefix",
+		bmp.LSSRv6SIDMsg:       "LSSRv6SID",
+		bmp.L3VPNMsg:           "L3VPN_Prefix",
+		bmp.UnicastPrefixMsg:   "UnicastPrefix",
 	}
 )
 
