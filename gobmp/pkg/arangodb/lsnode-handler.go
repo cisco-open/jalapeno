@@ -12,7 +12,7 @@ type lsNodeArangoMessage struct {
 
 func (n *lsNodeArangoMessage) MakeKey() string {
 
-	// The LSNode Key uses ProtocolID, DomainID, and IGP Area ID
+	// The LSNode Key uses ProtocolID, DomainID, and OSPF Area ID (if OSPF is running)
 	// to create unique Keys for DB entries in multi-area / multi-topology scenarios
-	return strconv.Itoa(int(n.ProtocolID)) + "_" + strconv.Itoa(int(n.DomainID)) + "_" + n.ISISAreaID + "_" + n.OSPFAreaID + "_" + n.IGPRouterID
+	return strconv.Itoa(int(n.ProtocolID)) + "_" + strconv.Itoa(int(n.DomainID)) + "_" + n.OSPFAreaID + "_" + n.IGPRouterID
 }
