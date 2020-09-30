@@ -1,44 +1,54 @@
 package database
 
 import (
-	"fmt"
+	//"fmt"
+	"strconv"
 	"github.com/sbezverk/gobmp/pkg/srv6"
+	"github.com/sbezverk/gobmp/pkg/base"
+	"github.com/sbezverk/gobmp/pkg/bgpls"
 )
 
 const LSLinkName = "LSLink"
 
 type LSLink struct {
-	LocalRouterKey        string           `json:"_from,omitempty"`
-	RemoteRouterKey       string           `json:"_to,omitempty"`
-	Key                   string           `json:"_key,omitempty"`
-	LocalRouterID         string           `json:"LocalRouterID,omitempty"`
-	LocalIGPID            string           `json:"LocalIGPID,omitempty"`
-	RemoteRouterID        string           `json:"RemoteRouterID,omitempty"`
-	RemoteIGPID           string           `json:"RemoteIGPID,omitempty"`
-	Protocol              string           `json:"Protocol,omitempty"`
-	ASN                   uint32           `json:"ASN,omitempty"`
-	LocalInterfaceIP      string           `json:"FromInterfaceIP,omitempty"`
-	RemoteInterfaceIP     string           `json:"ToInterfaceIP,omitempty"`
-	IGPMetric             uint32           `json:"IGPMetric,omitempty"`
-	TEMetric              uint32           `json:"TEMetric,omitempty"`
-	AdminGroup            uint32           `json:"AdminGroup,omitempty"`
-	MaxLinkBW             uint32           `json:"MaxLinkBW,omitempty"`
-	MaxResvBW             uint32           `json:"MaxResvBW,omitempty"`
-	UnResvBW              []uint32         `json:"UnResvBW,omitempty"`
-	LinkProtection        uint16           `json:"LinkProtection,omitempty"`
-	LinkName              string           `json:"LinkName,omitempty"`
-	SRLG                  []uint32         `json:"SRLG"`
-	UnidirLinkDelay       uint32           `json:"unidir_link_delay"`
-	UnidirLinkDelayMinMax []uint32         `json:"unidir_link_delay_min_max"`
-	UnidirDelayVariation  uint32           `json:"unidir_delay_variation"`
-	UnidirPacketLoss      uint32           `json:"unidir_packet_loss"`
-	UnidirResidualBW      uint32           `json:"unidir_residual_bw"`
-	UnidirAvailableBW     uint32           `json:"unidir_available_bw"`
-	UnidirBWUtilization   uint32           `json:"unidir_bw_utilization"`
-	AdjacencySID          []map[string]int `json:"AdjacencySID,omitempty"`
-	//SRv6BGPPeerNodeSID SRv6BGPPeerNodeSID `json:"SRv6BGPPeerNodeSID"`
-	SRv6EndXSID *srv6.EndXSIDTLV `json:"SRv6ENDXSID"`
-	Timestamp   string           `json:"Timestamp"`
+	LocalRouterKey        string           			`json:"_from,omitempty"`
+	RemoteRouterKey       string           			`json:"_to,omitempty"`
+	Key                   string           			`json:"_key,omitempty"`
+	Timestamp       	  string           			`json:"timestamp,omitempty"`
+	LocalRouterID         string           			`json:"local_router_id,omitempty"`
+	RemoteRouterID        string           			`json:"remote_router_id,omitempty"`
+	LocalLinkID           uint32           			`json:"local_link_id,omitempty"`
+	RemoteLinkID          uint32           			`json:"remote_link_id,omitempty"`
+	LocalLinkIP           []string           		`json:"local_interface_ip,omitempty"`
+	RemoteLinkIP          []string           		`json:"remote_interface_ip,omitempty"`
+	IGPRouterID           string           			`json:"local_igp_id,omitempty"`
+	RemoteIGPRouterID     string           			`json:"remote_igp_id,omitempty"`
+	LocalNodeASN          uint32           			`json:"local_node_asn,omitempty"`
+	RemoteNodeASN         uint32           			`json:"remote_node_asn,omitempty"`
+	Protocol              string           			`json:"protocol,omitempty"`
+	ProtocolID            base.ProtoID     			`json:"protocol_id,omitempty"`
+	MTID                  uint16         			`json:"mtid,omitempty"`
+	IGPMetric             uint32           			`json:"igp_metric,omitempty"`
+	AdminGroup            uint32           			`json:"admin_group,omitempty"`
+	MaxLinkBW             uint32           			`json:"max_link_bw,omitempty"`
+	MaxResvBW             uint32           			`json:"max_resv_bw,omitempty"`
+	UnResvBW              []uint32         			`json:"unresv_bw,omitempty"`
+	TEDefaultMetric       uint32           			`json:"te_metric,omitempty"`
+	LinkProtection        uint16           			`json:"link_protection,omitempty"`
+	MPLSProtoMask         uint8            			`json:"mpls_proto_mask,omitempty"`
+	SRLG                  []uint32         			`json:"srlg"`
+	LinkName              string           			`json:"link_name,omitempty"`
+	LSAdjacencySID        []map[string]int 			`json:"adjacency_sid,omitempty"`
+	SRv6EndXSID           []*srv6.EndXSIDTLV 		`json:"srv6_end_x_sid,omitempty"`
+	LinkMSD               []*base.MSDTV    			`json:"link_msd,omitempty"`
+	AppSpecLinkAttr       []*bgpls.AppSpecLinkAttr  `json:"app_spec_link_attr,omitempty"`
+	UnidirLinkDelay       uint32           			`json:"unidir_link_delay"`
+	UnidirLinkDelayMinMax []uint32         			`json:"unidir_link_delay_min_max"`
+	UnidirDelayVariation  uint32           			`json:"unidir_delay_variation"`
+	UnidirPacketLoss      uint32           			`json:"unidir_packet_loss"`
+	UnidirResidualBW      uint32           			`json:"unidir_residual_bw"`
+	UnidirAvailableBW     uint32           			`json:"unidir_available_bw"`
+	UnidirBWUtilization   uint32           			`json:"unidir_bw_utilization"`
 }
 
 func (l LSLink) GetKey() (string, error) {
@@ -57,14 +67,41 @@ func (l *LSLink) SetKey() error {
 	return nil
 }
 
+//func (l *LSLink) makeKey() (string, error) {
+//	err := ErrKeyInvalid
+//	ret := ""
+	//if l.LocalInterfaceIP != "" && l.RemoteInterfaceIP != "" {
+//	ret = fmt.Sprintf("%s_%s_%s_%s", l.IGPRouterID, l.LocalLinkIP[], l.LocalLinkID, l.RemoteLinkIP[], l.RemoteLinkID, l.RemoteIGPRouterID)
+//	err = nil
+	//}
+//	return ret, err
+//}
+
 func (l *LSLink) makeKey() (string, error) {
-	err := ErrKeyInvalid
-	ret := ""
-	if l.LocalInterfaceIP != "" && l.RemoteInterfaceIP != "" {
-		ret = fmt.Sprintf("%s_%s_%s_%s", l.LocalIGPID, l.LocalInterfaceIP, l.RemoteInterfaceIP, l.RemoteIGPID)
-		err = nil
+	var localIP, remoteIP, localID, remoteID string
+	localID = "0"
+	remoteID = "0"
+	switch l.MTID {
+	case 0:
+		localIP = "0.0.0.0"
+		remoteIP = "0.0.0.0"
+	case 2:
+		localIP = "::"
+		remoteIP = "::"
+	default:
+		localIP = "unknown-mt-id"
+		remoteIP = "unknown-mt-id"
 	}
-	return ret, err
+	if len(l.LocalLinkIP) != 0 {
+		localIP = l.LocalLinkIP[0]
+	}
+	if len(l.RemoteLinkIP) != 0 {
+		remoteIP = l.RemoteLinkIP[0]
+	}
+	localID = strconv.Itoa(int(l.LocalLinkID))
+	remoteID = strconv.Itoa(int(l.RemoteLinkID))
+
+	return l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID, nil
 }
 
 func (l LSLink) GetType() string {
