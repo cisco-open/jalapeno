@@ -87,7 +87,7 @@ def get_max_sid_depth(db, igp_router_id):
     return max_sid_depth
 
 def get_prefix_info(db, igp_router_id):
-    aql = """ FOR l in LSPrefix filter l.igp_router_id == @igp_router_id and l.prefix_sid != null return {"prefix": l.prefix, "Length": l.length, "prefix_sid": l.prefix_sid} """
+    aql = """ FOR l in LSPrefix filter l.igp_router_id == @igp_router_id and l.prefix_sid != null for z in l.prefix_sid filter z.algo == 0 return {"prefix": l.prefix, "length": l.length, "flags": z.flags, "sid_index":  z.prefix_sid}"""
     bindVars = {'igp_router_id': igp_router_id }
     prefix_info = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return prefix_info
@@ -140,12 +140,11 @@ def update_max_sid_depths(db, lsv4_topology_key, local_max_sid_depth, remote_max
     else:
         print("Something went wrong while updating LSv4_Topology Edge with MaxSIDDepths")
 
-def update_lsv4_topology_document(db, lsv4_topology_key, local_prefix_sid, remote_prefix_sid, local_prefix_info, remote_prefix_info, local_max_sid_depth, remote_max_sid_depth):
+def update_lsv4_topology_document(db, lsv4_topology_key, local_prefix_sid, remote_prefix_sid, local_prefix_info, remote_prefix_info, local_msd, remote_msd):
     aql = """ FOR l in LSv4_Topology filter l._key == @lsv4_topology_key UPDATE { _key: l._key, "local_prefix_sid": @local_prefix_sid, "remote_prefix_sid": @remote_prefix_sid,
-              "LocalPrefixInfo": @local_prefix_info, "remote_prefix_info": @remote_prefix_info, "local_msd": @local_max_sid_depth, "remote_msd": @remote_max_sid_depth 
+              "LocalPrefixInfo": @local_prefix_info, "remote_prefix_info": @remote_prefix_info, "local_msd": @local_msd, "remote_msd": @remote_msd 
               } in LSv4_Topology RETURN { before: OLD, after: NEW }"""
-    bindVars = {'lsv4_topology_key': lsv4_topology_key, 'local_prefix_sid': local_prefix_sid, 'remote_prefix_sid': remote_prefix_sid, 'local_prefix_info': local_prefix_info, 'remote_prefix_info': remote_prefix_info,
-                'local_msd': local_msd, 'remote_msd': remote_msd }
+    bindVars = {'lsv4_topology_key': lsv4_topology_key, 'local_prefix_sid': local_prefix_sid, 'remote_prefix_sid': remote_prefix_sid, 'local_prefix_info': local_prefix_info, 'remote_prefix_info': remote_prefix_info, 'local_msd': local_msd, 'remote_msd': remote_msd }
     updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(updated_edge) > 0):
         print("Successfully updated LSv4_Topology Edge: " + lsv4_topology_key + " with local_prefix_sid " + str(local_prefix_sid) + " and remote_prefix_sid " + str(remote_prefix_sid))

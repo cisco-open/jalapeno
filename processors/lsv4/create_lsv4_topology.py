@@ -15,6 +15,8 @@ from configs import arangoconfig
 from util import connections
 import logging, time, json, sys
 from lsv4_topology_queries import *
+from base64 import b64decode
+
 
 def main():
     setup_logging()
@@ -52,13 +54,11 @@ def main():
             remote_srgb_start = get_srgb_start(database, remote_igpid)[0]
             local_msd = get_max_sid_depth(database, local_igpid)
             remote_msd = get_max_sid_depth(database, remote_igpid)
-            local_max_sid_depth = handle_msd(local_msd)
-            remote_max_sid_depth = handle_msd(remote_msd)
             local_prefix_info = get_prefix_info(database, local_igpid)
             remote_prefix_info = get_prefix_info(database, remote_igpid)
             local_prefix_sid, local_prefixes = parse_prefix_info(local_prefix_info, local_srgb_start)
             remote_prefix_sid, remote_prefixes = parse_prefix_info(remote_prefix_info, remote_srgb_start)
-            update_lsv4_topology_document(database, current_lsv4_topology_key, local_prefix_sid, remote_prefix_sid, local_prefixes, remote_prefixes, local_max_sid_depth, remote_max_sid_depth)
+            update_lsv4_topology_document(database, current_lsv4_topology_key, local_prefix_sid, remote_prefix_sid, local_prefixes, remote_prefixes, local_msd, remote_msd)
         time.sleep(10)
 
 def handle_msd(max_sid_depth):
@@ -68,20 +68,25 @@ def handle_msd(max_sid_depth):
         msd = max_sid_depth_split[1]
     return msd
 
-#def parse_prefix_info(prefix_info, srgb_start):
-#    prefix_info_list = []
-#    prefix_sid = None
-#    for index in range(len(prefix_info)):
-#        #sid_index = prefix_info[index]["SIDIndex"]
-#        prefix = prefix_info[index]["Prefix"]
-#        length = prefix_info[index]["Length"]
-        #sr_flag = prefix_info[index]["SRFlag"]
-#        if(prefix_info[index]["SRFlag"] != None and prefix_info[index]["SRFlag"][0] == "n"):
-#            prefix_sid = srgb_start + sid_index
-#        sid = srgb_start + sid_index
-#        prefix_dict = {"Prefix": prefix, "Length": length, "SID": sid, "SRFlag": sr_flag}
-#        prefix_info_list.append(prefix_dict)
-#    return(prefix_sid, prefix_info_list)
+def parse_prefix_info(prefix_info, srgb_start):
+    prefix_info_list = []
+    prefix_sid = None
+    for index in range(len(prefix_info)):
+        sid_index = prefix_info[index]["sid_index"]
+        prefix = prefix_info[index]["prefix"]
+        length = prefix_info[index]["length"]
+        sr_flag = map_sr_flag(prefix_info[index]["flags"])
+        sid_index = int.from_bytes(b64decode(sid_index), 'big')
+        if(prefix_info[index]["flags"] != None and sr_flag == "N"):
+            prefix_sid = srgb_start + sid_index
+        sid = srgb_start + sid_index
+        prefix_dict = {"Prefix": prefix, "Length": length, "SID": sid, "SRFlag": sr_flag}
+        prefix_info_list.append(prefix_dict)
+    return(prefix_sid, prefix_info_list)
+
+def map_sr_flag(sr_flag_number):
+    sr_flag_map = { 4: "L", 8: "V", 16: "E", 32: "P", 64: "N", 128: "R" }
+    return sr_flag_map.get(sr_flag_number)
 
 def create_collection(db, collection_name):
     """Create new collection in ArangoDB.
