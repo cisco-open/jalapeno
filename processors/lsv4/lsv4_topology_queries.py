@@ -14,7 +14,7 @@ def get_disjoint_keys(db, ls_topology_keys):
     return uncreated_ls_link_keys
 
 def get_lsv4_link_keys(db):
-    aql = """ FOR l in LSLink filter NOT CONTAINS(l.local_interface_ip, ":") and NOT CONTAINS(l.remote_interface_ip, ":") return l._key """
+    aql = """ FOR l in LSLink filter NOT CONTAINS(l._key, ":") and NOT CONTAINS (l.protocol_id, "3")  return l._key """
     bindVars = {}
     ls_link_keys = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return ls_link_keys
