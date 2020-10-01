@@ -13,6 +13,6 @@ require (
 )
 
 replace (
-	github.com/sbezverk/gobmp => ../gobmp
-	github.com/jalapeno-sdn/topology => ../topology
+//	github.com/sbezverk/gobmp => ../gobmp
+//	github.com/jalapeno-sdn/topology => ../topology
 )
