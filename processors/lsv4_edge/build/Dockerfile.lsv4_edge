@@ -1,0 +1,4 @@
+FROM scratch
+
+COPY ./bin/lsv4_edge /lsv4_edge
+ENTRYPOINT ["/lsv4_edge"]
