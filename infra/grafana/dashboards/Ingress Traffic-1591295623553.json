@@ -59,8 +59,8 @@
       "scopedVars": {
         "Devices": {
           "selected": false,
-          "text": "IE-5011-2",
-          "value": "IE-5011-2"
+          "text": "R10",
+          "value": "R10"
         }
       },
       "seriesOverrides": [],
@@ -213,8 +213,8 @@
       "scopedVars": {
         "Devices": {
           "selected": false,
-          "text": "IE-5011-3",
-          "value": "IE-5011-3"
+          "text": "R12",
+          "value": "R12"
         }
       },
       "seriesOverrides": [],
@@ -367,8 +367,8 @@
       "scopedVars": {
         "Devices": {
           "selected": false,
-          "text": "IE-5011-4",
-          "value": "IE-5011-4"
+          "text": "R13",
+          "value": "R13"
         }
       },
       "seriesOverrides": [],
@@ -521,8 +521,8 @@
       "scopedVars": {
         "Devices": {
           "selected": false,
-          "text": "IE-5011-5",
-          "value": "IE-5011-5"
+          "text": "R14",
+          "value": "R14"
         }
       },
       "seriesOverrides": [],
@@ -675,8 +675,8 @@
       "scopedVars": {
         "Devices": {
           "selected": false,
-          "text": "IE-5508-1",
-          "value": "IE-5508-1"
+          "text": "R16",
+          "value": "R16"
         }
       },
       "seriesOverrides": [],
@@ -829,8 +829,8 @@
       "scopedVars": {
         "Devices": {
           "selected": false,
-          "text": "IE-5508-2",
-          "value": "IE-5508-2"
+          "text": "R09",
+          "value": "R09"
         }
       },
       "seriesOverrides": [],
@@ -970,33 +970,33 @@
           },
           {
             "selected": false,
-            "text": "IE-5011-2",
-            "value": "IE-5011-2"
+            "text": "R09",
+            "value": "R09"
           },
           {
             "selected": false,
-            "text": "IE-5011-3",
-            "value": "IE-5011-3"
+            "text": "R10",
+            "value": "R10"
           },
           {
             "selected": false,
-            "text": "IE-5011-4",
-            "value": "IE-5011-4"
+            "text": "R12",
+            "value": "R12"
           },
           {
             "selected": false,
-            "text": "IE-5011-5",
-            "value": "IE-5011-5"
+            "text": "R13",
+            "value": "R13"
           },
           {
             "selected": false,
-            "text": "IE-5508-1",
-            "value": "IE-5508-1"
+            "text": "R14",
+            "value": "R14"
           },
           {
             "selected": false,
-            "text": "IE-5508-2",
-            "value": "IE-5508-2"
+            "text": "R16",
+            "value": "R16"
           }
         ],
         "query": "SHOW TAG VALUES WITH KEY=\"source\"",
