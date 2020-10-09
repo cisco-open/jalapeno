@@ -15,17 +15,8 @@ To access Grafana's UI, log in at `<server_ip>:30300`, using credentials `root/j
 
 ## Creating Grafana Dashboards for Jalapeno Telemetry Data
 
-Dashboards are not automatically loaded. Follow these steps to get some dashboards up and running:
+Dashboards are not automatically loaded by Jalapeno's installation script. Follow these steps to get some dashboards up and running:
 
-1.	Connect to Grafana:  Http://<jalapeno_ip>:30300
-2.	User/pw = root/jalapeno 
-3.	Add InfluxDB as a data source
+https://github.com/jalapeno-sdn/jalapeno-lab/tree/master/grafana
 
-URL: http://influxdb:8086
-Database: mdt_db
-Basic Auth: root/jalapeno
-Http method GET
-Save and Test
-
-4.	Hover over Dashboard icon (4 squares on the left)
 
