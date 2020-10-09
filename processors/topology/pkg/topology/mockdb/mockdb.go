@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/golang/glog"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/dbclient"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/message"
-	"github.com/sbezverk/gobmp/pkg/topology/dbclient"
 )
 
 type mockDB struct {

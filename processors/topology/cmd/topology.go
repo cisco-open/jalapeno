@@ -7,12 +7,12 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/arangodb"
-	"github.com/sbezverk/gobmp/pkg/topology/dbclient"
-	"github.com/sbezverk/gobmp/pkg/topology/kafkamessenger"
-	"github.com/sbezverk/gobmp/pkg/topology/messenger"
-	"github.com/sbezverk/gobmp/pkg/topology/mockdb"
-	"github.com/sbezverk/gobmp/pkg/topology/mockmessenger"
-	"github.com/sbezverk/gobmp/pkg/topology/processor"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/dbclient"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/kafkamessenger"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/messenger"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/mockdb"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/mockmessenger"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/processor"
 )
 
 var (

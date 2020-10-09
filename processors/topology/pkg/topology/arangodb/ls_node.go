@@ -2,9 +2,11 @@ package arangodb
 
 import (
 	"encoding/binary"
+
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/sr"
+
 	//        "github.com/sbezverk/gobmp/pkg/topology/database"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 )
@@ -34,24 +36,24 @@ func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {
 	}
 
 	lsNodeDocument := &database.LSNode{
-		Name:                 obj.Name,
-		IGPRouterID:          obj.IGPRouterID,
-		RouterID:             obj.RouterID,
-		ASN:                  obj.PeerASN,
-		MTID:	              obj.MTID,
-		OSPFAreaID:           obj.OSPFAreaID,
-		ISISAreaID:           obj.ISISAreaID,
-		Protocol:             obj.Protocol,
-		ProtocolID:           obj.ProtocolID,
-		NodeFlags:	          obj.NodeFlags,
-		SRGBStart:            srgbStart,
-		SRGBRange:            srgbRange,
-		SRCapabilityFlags:    srCapabilityFlags,
-		SRAlgorithm:          obj.SRAlgorithm,
-		SRLocalBlock:         obj.SRLocalBlock,
-		SRv6CapabilitiesTLV:  obj.SRv6CapabilitiesTLV,
-		NodeMSD:              obj.NodeMSD,
-		FlexAlgoDefinition:   obj.FlexAlgoDefinition,
+		Name:                obj.Name,
+		IGPRouterID:         obj.IGPRouterID,
+		RouterID:            obj.RouterID,
+		ASN:                 obj.PeerASN,
+		MTID:                obj.MTID,
+		OSPFAreaID:          obj.OSPFAreaID,
+		ISISAreaID:          obj.ISISAreaID,
+		Protocol:            obj.Protocol,
+		ProtocolID:          obj.ProtocolID,
+		NodeFlags:           obj.NodeFlags,
+		SRGBStart:           srgbStart,
+		SRGBRange:           srgbRange,
+		SRCapabilityFlags:   srCapabilityFlags,
+		SRAlgorithm:         obj.SRAlgorithm,
+		SRLocalBlock:        obj.SRLocalBlock,
+		SRv6CapabilitiesTLV: obj.SRv6CapabilitiesTLV,
+		NodeMSD:             obj.NodeMSD,
+		FlexAlgoDefinition:  obj.FlexAlgoDefinition,
 	}
 
 	if action == "add" {

@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/golang/glog"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/dbclient"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/tools"
-	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
-	"github.com/sbezverk/gobmp/pkg/topology/dbclient"
 )
 
 var (
@@ -90,7 +90,7 @@ func (a *arangoDB) StoreMessage(msgType int, msg interface{}) error {
 		}
 		glog.Infof("Object: %+v", ln)
 		go a.lsNodeHandler(ln)
-	
+
 	case bmp.LSPrefixMsg:
 		lp, ok := msg.(*message.LSPrefix)
 		if !ok {

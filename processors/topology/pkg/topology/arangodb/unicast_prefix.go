@@ -18,22 +18,18 @@ func (a *arangoDB) unicastPrefixHandler(obj *message.UnicastPrefix) {
 	}
 
 	epePrefixDocument := &database.EPEPrefix{
-		PeerIP:        obj.PeerIP,
-		PeerASN:       obj.PeerASN,
-		Prefix:        obj.Prefix,
-		Length:        obj.PrefixLen,
-		Nexthop:       obj.Nexthop,
-		ASPath:        obj.BaseAttributes.ASPath,
-		OriginASN:     obj.OriginAS,
-		ASPathCount:   obj.BaseAttributes.ASPathCount,
-		MED:           obj.BaseAttributes.MED,
-		LocalPref:     obj.BaseAttributes.LocalPref,
-		CommunityList: obj.BaseAttributes.CommunityList,
-		ExtComm:       obj.BaseAttributes.ExtCommunityList,
-		IsIPv4:        obj.IsIPv4,
-		IsNexthopIPv4: obj.IsNexthopIPv4,
-		Labels:        obj.Labels,
-		Timestamp:     obj.Timestamp,
+		PeerIP:         obj.PeerIP,
+		PeerASN:        obj.PeerASN,
+		Prefix:         obj.Prefix,
+		Length:         obj.PrefixLen,
+		Nexthop:        obj.Nexthop,
+		BaseAttributes: obj.BaseAttributes,
+		OriginASN:      obj.OriginAS,
+		IsIPv4:         obj.IsIPv4,
+		IsNexthopIPv4:  obj.IsNexthopIPv4,
+		Labels:         obj.Labels,
+		PrefixSID:      obj.PrefixSID,
+		Timestamp:      obj.Timestamp,
 	}
 
 	if action == "add" {
@@ -52,24 +48,18 @@ func (a *arangoDB) unicastPrefixHandler(obj *message.UnicastPrefix) {
 	}
 
 	UnicastPrefixDocument := &database.UnicastPrefix{
-		PeerIP:        obj.PeerIP,
-		PeerASN:       obj.PeerASN,
-		Prefix:        obj.Prefix,
-		Length:        obj.PrefixLen,
-		Nexthop:       obj.Nexthop,
-		RouterIP:      obj.RouterIP,
-		ASPath:        obj.BaseAttributes.ASPath,
-		OriginAS:      obj.OriginAS,
-		ASPathCount:   obj.BaseAttributes.ASPathCount,
-		MED:           obj.BaseAttributes.MED,
-		LocalPref:     obj.BaseAttributes.LocalPref,
-		CommunityList: obj.BaseAttributes.CommunityList,
-		ExtComm:       obj.BaseAttributes.ExtCommunityList,
-		IsIPv4:        obj.IsIPv4,
-		IsNexthopIPv4: obj.IsNexthopIPv4,
-		PathID:        obj.PathID,
-		Labels:        obj.Labels,
-		Timestamp:     obj.Timestamp,
+		PeerIP:         obj.PeerIP,
+		PeerASN:        obj.PeerASN,
+		Prefix:         obj.Prefix,
+		Length:         obj.PrefixLen,
+		Nexthop:        obj.Nexthop,
+		BaseAttributes: obj.BaseAttributes,
+		OriginASN:      obj.OriginAS,
+		IsIPv4:         obj.IsIPv4,
+		IsNexthopIPv4:  obj.IsNexthopIPv4,
+		Labels:         obj.Labels,
+		PrefixSID:      obj.PrefixSID,
+		Timestamp:      obj.Timestamp,
 	}
 
 	if action == "add" {
