@@ -518,8 +518,8 @@
       {
         "allValue": null,
         "current": {
-          "text": "IE-5508-2",
-          "value": "IE-5508-2"
+          "text": "R10",
+          "value": "R10"
         },
         "datasource": "InfluxDB",
         "definition": "SHOW TAG VALUES WITH KEY=\"source\"",
@@ -536,33 +536,88 @@
           },
           {
             "selected": false,
-            "text": "IE-5011-2",
-            "value": "IE-5011-2"
+            "text": "R00",
+            "value": "R00"
           },
           {
             "selected": false,
-            "text": "IE-5011-3",
-            "value": "IE-5011-3"
+            "text": "R01",
+            "value": "R01"
           },
           {
             "selected": false,
-            "text": "IE-5011-4",
-            "value": "IE-5011-4"
+            "text": "R02",
+            "value": "R02"
           },
           {
             "selected": false,
-            "text": "IE-5011-5",
-            "value": "IE-5011-5"
+            "text": "R03",
+            "value": "R03"
+          },
+                    {
+            "selected": false,
+            "text": "R04",
+            "value": "R04"
           },
           {
             "selected": false,
-            "text": "IE-5508-1",
-            "value": "IE-5508-1"
+            "text": "R05",
+            "value": "R05"
+          },
+                    {
+            "selected": false,
+            "text": "R06",
+            "value": "R06"
           },
           {
             "selected": false,
-            "text": "IE-5508-2",
-            "value": "IE-5508-2"
+            "text": "R07",
+            "value": "R07"
+          },
+                    {
+            "selected": false,
+            "text": "R08",
+            "value": "R08"
+          },
+          {
+            "selected": false,
+            "text": "R09",
+            "value": "R09"
+          },
+                    {
+            "selected": false,
+            "text": "R10",
+            "value": "R10"
+          },
+          {
+            "selected": false,
+            "text": "R11",
+            "value": "R11"
+          },
+          {
+            "selected": false,
+            "text": "R12",
+            "value": "R12"
+          },
+          {
+            "selected": false,
+            "text": "R13",
+            "value": "R13"
+          },
+          {
+            "selected": false,
+            "text": "R14",
+            "value": "R14"
+          },
+          {
+            "selected": false,
+            "text": "R15",
+            "value": "R15"
+          },
+          {
+            "selected": false,
+            "text": "R16",
+            "value": "R16"
           }
         ],
         "query": "SHOW TAG VALUES WITH KEY=\"source\"",
