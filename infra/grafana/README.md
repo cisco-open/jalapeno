@@ -13,3 +13,10 @@ Grafana is deployed using `kubectl`, as seen in the [deploy_infrastructure scrip
 ## Accessing Grafana
 To access Grafana's UI, log in at `<server_ip>:30300`, using credentials `root/jalapeno`.
 
+## Creating Grafana Dashboards for Jalapeno Telemetry Data
+
+Dashboards are not automatically loaded by Jalapeno's installation script. Follow these steps to get some dashboards up and running:
+
+https://github.com/jalapeno-sdn/jalapeno-lab/tree/master/grafana
+
+
