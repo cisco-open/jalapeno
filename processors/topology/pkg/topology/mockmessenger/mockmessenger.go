@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/golang/glog"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/processor"
 	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/sbezverk/gobmp/pkg/topology/processor"
 )
 
 // Srv defines required method of a processor server
