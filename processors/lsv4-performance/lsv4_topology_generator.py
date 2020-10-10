@@ -17,7 +17,7 @@ def generate_lsv4_topology(arango_client):
 def generate_lsv4_topology_query(arango_client):
     """AQL Query to collect LSv4_Topology information from the LSv4_Topology collection in Arango."""
     aql = """FOR e in LSv4_Topology
-        RETURN { key: e._key, LocalIGPID: e.LocalIGPID, InterfaceIP: e.FromInterfaceIP }"""
+        RETURN { key: e._key, local_igp_id: e.local_igp_id, local_interface_ip: e.local_interface_ip, local_link_id: e.local_link_id }"""
     bindVars = {}
     lsv4_topology = arango_client.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return lsv4_topology
@@ -25,7 +25,7 @@ def generate_lsv4_topology_query(arango_client):
 def get_node_hostname(arango_client, router_igp_id):
     aql = """FOR n in LSNode
         FILTER n._key == @ls_node_key
-        RETURN n.Name"""
+        RETURN n.name"""
     bindVars = {"ls_node_key": router_igp_id}
     node_hostname = arango_client.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return node_hostname[0]

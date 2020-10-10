@@ -15,12 +15,17 @@ def main():
         for link_index in range(len(lsv4_topology)):
             current_lsv4_link = lsv4_topology[link_index]
             lsv4_topology_key = current_lsv4_link['key']
-            router_igp_id = current_lsv4_link['LocalIGPID']
-            router_interface_ip = current_lsv4_link['InterfaceIP']
+            router_igp_id = current_lsv4_link['local_igp_id']
+            router_interface_ip = current_lsv4_link['local_interface_ip']
+            local_link_id = current_lsv4_link['local_link_id']
             router_hostname = lsv4_topology_generator.get_node_hostname(arango_client, router_igp_id)
-            interface_name = collect_interface_name(influx_client, router_hostname, router_interface_ip)
-            print("\nCalculating performance metrics for Link-State V4 link out of %s(%s) through %s(%s)" % (router_igp_id, router_hostname,
-                                                                                                          router_interface_ip, interface_name))
+            if(router_interface_ip == None):
+                interface_name = collect_interface_name_via_link_id(influx_client, router_hostname, local_link_id)
+            else:
+                interface_name = collect_interface_name_via_interface_ip(influx_client, router_hostname, router_interface_ip[0])
+
+            print("\nCalculating performance metrics for Link-State V4 link out of %s(%s) through %s" % (router_igp_id, router_hostname,
+                                                                                                          interface_name))
             calculated_performance_metrics = {}
             for telemetry_value, performance_metric in telemetry_value_mapper.items(): # the extended base-path and the value it represents
                 current_performance_metric_dataset = collect_performance_dataset(influx_client, router_hostname, interface_name, telemetry_value)
@@ -56,7 +61,7 @@ def calculate_performance_metric_value(performance_metric_dataset):
         return 0
     return int(round(current_performance_metric_value))
 
-def collect_interface_name(influx_client, source, interface_ip):
+def collect_interface_name_via_interface_ip(influx_client, source, interface_ip):
     map_query = """SELECT last(\"ip_information/ip_address\") AS \"interface_ip\", \"interface_name\"
     FROM \"Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface\"
     WHERE (\"source\" = '""" + source + """') GROUP BY \"interface_name\";"""
@@ -67,6 +72,19 @@ def collect_interface_name(influx_client, source, interface_ip):
         if((map_list[index]["interface_ip"] == interface_ip)):
             interface_name = map_list[index]["interface_name"]
     return interface_name
+
+def collect_interface_name_via_link_id(influx_client, source, link_id):
+    map_query = """SELECT last(\"if_index\") AS \"link_id\", \"interface_name\"
+    FROM \"Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface\"
+    WHERE (\"source\" = '""" + source + """') GROUP BY \"interface_name\";"""
+    map = influx_client.query(map_query)
+    map_list = list(map.get_points())
+    interface_name = ""
+    for index in range(len(map_list)):
+        if((map_list[index]["link_id"] == link_id)):
+            interface_name = map_list[index]["interface_name"]
+    return interface_name
+
 
 def collect_port_speed_dataset(influx_client, source, interface_name):
     port_speed_query = """SELECT last(\"speed\") AS \"speed\"
