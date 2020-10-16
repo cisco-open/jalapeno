@@ -2,8 +2,8 @@ package arangodb
 
 import (
 	"github.com/golang/glog"
-	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
+	"github.com/sbezverk/gobmp/pkg/message"
 )
 
 func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
@@ -25,23 +25,24 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	//}
 
 	lsPrefixDocument := &database.LSPrefix{
-		Timestamp:	      	  obj.Timestamp,
-		IGPRouterID:          obj.IGPRouterID,
-		RouterID:             obj.RouterID,
-		Prefix:		          obj.Prefix,
-		Length:		      	  obj.PrefixLen,
-		Protocol:	      	  obj.Protocol,
-		ProtocolID:           obj.ProtocolID,
-		MTID:                 obj.MTID,
-		OSPFRouteType:        obj.OSPFRouteType,
-		IGPFlags:             obj.IGPFlags,
-		IGPRouteTag:          obj.IGPRouteTag,
-		IGPExtRouteTag:       obj.IGPExtRouteTag,
-		OSPFFwdAddr:          obj.OSPFFwdAddr,
-		IGPMetric:            obj.IGPMetric,
-		PrefixSID:            obj.LSPrefixSID,
+		Timestamp:      obj.Timestamp,
+		IGPRouterID:    obj.IGPRouterID,
+		RouterID:       obj.RouterID,
+		Prefix:         obj.Prefix,
+		Length:         obj.PrefixLen,
+		Protocol:       obj.Protocol,
+		ProtocolID:     obj.ProtocolID,
+		MTID:           obj.MTID,
+		OSPFRouteType:  obj.OSPFRouteType,
+		IGPFlags:       obj.IGPFlags,
+		IGPRouteTag:    obj.IGPRouteTag,
+		IGPExtRouteTag: obj.IGPExtRouteTag,
+		OSPFFwdAddr:    obj.OSPFFwdAddr,
+		IGPMetric:      obj.IGPMetric,
+		PrefixSID:      obj.LSPrefixSID,
 		//SIDIndex:             sidIndex,
 		PrefixAttrFlags:      obj.PrefixAttrFlags,
+		SRv6Locator:          obj.SRv6Locator,
 		FlexAlgoPrefixMetric: obj.FlexAlgoPrefixMetric,
 	}
 
