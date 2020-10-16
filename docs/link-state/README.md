@@ -12,7 +12,7 @@ Additionally, the [LS_Performance processor](ls_performance_processor.md) popula
 
 Entire link-state topology
 ```
-for l in LS_Topology return l
+for l in LSv4_Topology return l
 ```
 Sample data:
 ```
