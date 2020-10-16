@@ -11,7 +11,7 @@ Users who do not have a full Kubernetes or GKE deployment can get up and running
 
 Jalapeno's Topology processing makes a distinction between Internal topology: the nodes, links, prefixes, ASNs, etc, that make up the internal network; and External topology: the Internet, or other ASNs that we connect to but are not under our administrative control. Thus, prior to deploying, we recommend configuring the Topology processor to identify your Internal BGP ASN(s), and optionally, the ASNs of any direct or transit BGP peers you wish to track.  These settings are found in:
 
-[topology_dp.yaml](processors/topology/topology_dp.yaml)
+[topology_dp.yaml](processors/topology/deployment/topology_dp.yaml)
 
 Note, private BGP ASNs are accounted for as Internal by default.  We may include a knob in the future which allows private ASNs to be considered External if needed.
 
