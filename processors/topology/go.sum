@@ -47,6 +47,7 @@ github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
+github.com/sbezverk/gobmp v0.0.1-beta h1:2Yj0FTBus9C9r6wRuQpGVRU4ZDzjsakDEncStNnOLlc=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20201007175306-cf9ef16c9068 h1:wY16yLGmm5sxgJVMsVD7trxlnV04bL3exse3jh/76bA=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20201007175306-cf9ef16c9068/go.mod h1:7S7e5+Cmy/i149EvzTj/isonxjOzan1rAP2lu3xC2NM=
 github.com/segmentio/kafka-go v0.4.2 h1:QXZ6q9Bu1JkAJQ/CQBb2Av8pFRG8LQ0kWCrLXgQyL8c=
