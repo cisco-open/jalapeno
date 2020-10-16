@@ -6,10 +6,10 @@ const EPENodeName = "EPENode"
 
 type EPENode struct {
 	Key      string   `json:"_key,omitempty"`
-	Name     string   `json:"Name,omitempty"`
-	RouterID string   `json:"RouterID,omitempty"`
-	PeerIP   []string `json:"PeerIP,omitempty"`
-	ASN      int32    `json:"ASN,omitempty"`
+	Name     string   `json:"name,omitempty"`
+	RouterID string   `json:"router_id,omitempty"`
+	PeerIP   []string `json:"peer_ip,omitempty"`
+	ASN      int32    `json:"asn,omitempty"`
 }
 
 func (r EPENode) GetKey() (string, error) {

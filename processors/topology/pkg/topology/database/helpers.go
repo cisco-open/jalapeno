@@ -2,18 +2,19 @@ package database
 
 import (
 	"fmt"
+
 	"github.com/golang/glog"
 )
 
 func (a *ArangoConn) CheckExistingEPENode(local_bgp_id string) bool {
-        var r string
-        q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r", local_bgp_id)
-        results, _ := a.Query(q, nil, r)
-        if len(results) > 0 {
-                return true
-        } else {
-                return false
-        }
+	var r string
+	q := fmt.Sprintf("FOR r in EPENode filter r._key == %q return r", local_bgp_id)
+	results, _ := a.Query(q, nil, r)
+	if len(results) > 0 {
+		return true
+	} else {
+		return false
+	}
 }
 
 func (a *ArangoConn) GetExistingPeerIP(local_bgp_id string) []string {
@@ -37,23 +38,11 @@ func (a *ArangoConn) GetExistingPeerIP(local_bgp_id string) []string {
 func (a *ArangoConn) UpdateExistingPeerIP(local_bgp_id string, peer_ip string) {
 	var r string
 	q := fmt.Sprintf("For e in EPENode Filter e._key == %q LET p = e.PeerIP UPDATE { _key: e._key, PeerIP: APPEND(p, %q, True) } IN EPENode RETURN { before: OLD, after: NEW }", local_bgp_id, peer_ip)
-	//q := fmt.Sprintf("LET doc = DOCUMENT(%q) UPDATE doc WITH { RD: PUSH(doc.RD, %q)} IN EPENode", router_id, peer_ip)
 	results, _ := a.Query(q, nil, r)
 	if len(results) > 0 {
 		fmt.Printf("Successfully updated EPENode peer list with %q for Router %q\n", peer_ip, local_bgp_id)
 	} else {
 		fmt.Println("Something went wrong -- failed to update peer ip")
-	}
-}
-
-func (a *ArangoConn) CheckExistingL3VPNRouter(router_ip string) bool {
-	var r string
-	q := fmt.Sprintf("FOR r in L3VPN_Routers filter r._key == %q return r", router_ip)
-	results, _ := a.Query(q, nil, r)
-	if len(results) > 0 {
-		return true
-	} else {
-		return false
 	}
 }
 
@@ -89,7 +78,6 @@ func (a *ArangoConn) GetExistingVPNRDS(router_ip string) []string {
 func (a *ArangoConn) UpdateExistingVPNRDS(router_ip string, vpn_rd string) {
 	var r string
 	q := fmt.Sprintf("For e in L3VPNNode Filter e._key == %q LET p = e.RD UPDATE { _key: e._key, RD: APPEND(p, %q, True) } IN L3VPNNode RETURN { before: OLD, after: NEW }", router_ip, vpn_rd)
-	//q := fmt.Sprintf("LET doc = DOCUMENT(%q) UPDATE doc WITH { RD: PUSH(doc.RD, %q)} IN L3VPN_Routers", router_ip, vpn_rd)
 	results, _ := a.Query(q, nil, r)
 	if len(results) > 0 {
 		fmt.Printf("Successfully updated VPN RD list with %q for Router %q\n", vpn_rd, router_ip)
@@ -144,7 +132,3 @@ func (a *ArangoConn) UpdateExistingLSPrefixIndexSlice(lsPrefixKey string, prefix
 		glog.Infof("Something went wrong -- failed to update prefix-sid-index list with %d for LSPrefix %q\n", prefix_sid_index, lsPrefixKey)
 	}
 }
-
-
-
-

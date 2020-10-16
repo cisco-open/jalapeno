@@ -17,7 +17,7 @@ type UnicastPrefix struct {
 	RouterIP       string              `json:"router_ip,omitempty"`
 	PeerASN        int32               `json:"peer_asn,omitempty"`
 	Nexthop        string              `json:"nexthop,omitempty"`
-	OriginASN      int32               `json:"OriginASN,omitempty"`
+	OriginASN      int32               `json:"origin_as,omitempty"`
 	BaseAttributes *bgp.BaseAttributes `json:"base_attrs,omitempty"`
 	IsIPv4         bool                `json:"is_ipv4,omitempty"`
 	IsNexthopIPv4  bool                `json:"is_nexthop_ipv4,omitempty"`
