@@ -17,59 +17,100 @@ for l in LSv4_Topology return l
 Sample data:
 ```
   {
-    "_key": "10.0.0.10_10.1.1.29_10.1.1.28_10.0.0.1",
-    "_id": "LS_Topology/10.0.0.10_10.1.1.29_10.1.1.28_10.0.0.1",
-    "_from": "LSNode/10.0.0.10",
-    "_to": "LSNode/10.0.0.1",
-    "_rev": "_aRYG1w---_",
-    "LocalRouterID": "10.0.0.10",
-    "RemoteRouterID": "10.0.0.1",
-    "Protocol": "IS-IS_L2",
-    "IGPID": "0000.0000.0010.0000",
-    "ASN": "100000",
-    "FromInterfaceIP": "10.1.1.29",
-    "ToInterfaceIP": "10.1.1.28",
-    "IGPMetric": "1",
-    "TEMetric": "1",
-    "AdminGroup": "0",
-    "MaxLinkBW": "1000000",
-    "MaxResvBW": "0",
-    "UnResvBW": "0, 0, 0, 0, 0, 0, 0, 0",
-    "AdjacencySID": "VL 0 24001",
-    "AppResvBW": "",
-    "PQResvBW": "",
-    "LocalMaxSIDDepth": "",
-    "Out-Octets": "",
-    "In-Discards": "",
-    "Out-Discards": "",
-    "RemoteMaxSIDDepth": "",
-    "In-Octets": "",
-    "Link-Delay": "",
-    "RemotePrefixSID": "100001",
-    "LocalPrefixSID": "100010",
-    "SRLG": "",
-    "Adjacencies": [
+    "_key": "0000.0000.0000_10.1.1.0_0_0000.0000.0001_10.1.1.1_0",
+    "_id": "LSv4_Topology/0000.0000.0000_10.1.1.0_0_0000.0000.0001_10.1.1.1_0",
+    "_from": "LSNode/0000.0000.0000",
+    "_to": "LSNode/0000.0000.0001",
+    "_rev": "_bRJz1fG---",
+    "timestamp": "Oct 16 19:50:07.000071",
+    "local_interface_ip": [
+      "10.1.1.0"
+    ],
+    "remote_interface_ip": [
+      "10.1.1.1"
+    ],
+    "local_igp_id": "0000.0000.0000",
+    "remote_igp_id": "0000.0000.0001",
+    "local_node_asn": 100000,
+    "remote_node_asn": 100000,
+    "protocol": "IS-IS Level 2",
+    "protocol_id": 2,
+    "igp_metric": 1,
+    "max_link_bw": 1000000000,
+    "unresv_bw": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "te_metric": 1,
+    "srlg": null,
+    "adjacency_sid": [
       {
-        "adjacency_sid": "24001",
-        "flags": "VL",
-        "weight": "0"
+        "flags": 112,
+        "sid": 24012,
+        "weight": 0
+      },
+      {
+        "flags": 48,
+        "sid": 24013,
+        "weight": 0
       }
     ],
-    "Percent_Util_Outbound": 0,
-    "Percent_Util_Inbound": 0,
-    "In_Multicast_Pkts": 0,
-    "In_Broadcast_Pkts": 0,
-    "In_Errors": 0,
-    "In_Discards": 0,
-    "Speed": 1,
-    "In_Octets": 0,
-    "Out_Discards": 0,
-    "Out_Unicast_Pkts": 0,
-    "Out_Broadcast_Pkts": 0,
-    "In_Unicast_Pkts": 0,
-    "Out_Multicast_Pkts": 0,
-    "Out_Errors": 0,
-    "Out_Octets": 0
+    "link_msd": [
+      {
+        "msd_type": 1,
+        "msd_value": 10
+      }
+    ],
+    "unidir_link_delay": 0,
+    "unidir_link_delay_min_max": null,
+    "unidir_delay_variation": 0,
+    "unidir_packet_loss": 0,
+    "unidir_residual_bw": 0,
+    "unidir_available_bw": 0,
+    "unidir_bw_utilization": 0,
+    "app_resv_bw": "",
+    "pq_resv_bw": "",
+    "remote_msd": "[[{'msd_type': 1, 'msd_value': 10}]]",
+    "link_delay": "",
+    "local_msd": "[[{'msd_type': 1, 'msd_value': 10}]]",
+    "remote_prefix_sid": 100001,
+    "local_prefix_sid": 100000,
+    "LocalPrefixInfo": [
+      {
+        "Prefix": "10.0.1.0",
+        "Length": 32,
+        "SID": 110000,
+        "SRFlag": "N"
+      },
+      {
+        "Prefix": "10.0.0.0",
+        "Length": 32,
+        "SID": 100000,
+        "SRFlag": "N"
+      }
+    ],
+    "remote_prefix_info": [
+      {
+        "Prefix": "10.0.0.1",
+        "Length": 32,
+        "SID": 100001,
+        "SRFlag": "N"
+      }
+    ]
   },
 ```
 Example shortest path query which returns Prefix SIDs for all nodes in the path:
