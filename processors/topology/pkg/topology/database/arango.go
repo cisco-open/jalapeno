@@ -113,12 +113,6 @@ func NewArango(cfg ArangoConfig) (*ArangoConn, error) {
 		return nil, err
 	}
 
-	cols[EPELinkName], err = ensureVertexCollection(g, EPELinkName)
-	if err != nil {
-		glog.Errorf("Failed to connect to collection %q", EPELinkName)
-		return nil, err
-	}
-
 	cols[L3VPNNodeName], err = ensureVertexCollection(g, L3VPNNodeName)
 	if err != nil {
 		glog.Errorf("Failed to connect to collection %q", L3VPNNodeName)
@@ -323,10 +317,7 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		get = &EPEPeer{
 			Key: key,
 		}
-	case EPELinkName:
-		get = &EPELink{
-			Key: key,
-		}
+
 	case L3VPNNodeName:
 		get = &L3VPNNode{
 			Key: key,

@@ -1,7 +1,10 @@
 package database
 
-import "fmt"
-import "github.com/sbezverk/gobmp/pkg/srv6"
+import (
+	"fmt"
+
+	"github.com/sbezverk/gobmp/pkg/srv6"
+)
 
 const L3VPNPrefixName = "L3VPNPrefix"
 

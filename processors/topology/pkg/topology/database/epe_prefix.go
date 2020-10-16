@@ -11,18 +11,18 @@ const EPEPrefixName = "EPEPrefix"
 
 type EPEPrefix struct {
 	Key            string              `json:"_key,omitempty"`
-	Prefix         string              `json:"Prefix,omitempty"`
-	Length         int32               `json:"Length,omitempty"`
-	PeerIP         string              `json:"PeerIP,omitempty"`
-	PeerASN        int32               `json:"PeerASN,omitempty"`
-	Nexthop        string              `json:"Nexthop,omitempty"`
-	OriginASN      int32               `json:"OriginASN,omitempty"`
+	Prefix         string              `json:"prefix,omitempty"`
+	Length         int32               `json:"length,omitempty"`
+	PeerIP         string              `json:"peer_ip,omitempty"`
+	PeerASN        int32               `json:"peer_asn,omitempty"`
+	Nexthop        string              `json:"nexthop,omitempty"`
+	OriginASN      int32               `json:"origin_as,omitempty"`
 	BaseAttributes *bgp.BaseAttributes `json:"base_attrs,omitempty"`
-	IsIPv4         bool                `json:"IsIPv4,omitempty"`
-	IsNexthopIPv4  bool                `json:"IsNexthopIPv4,omitempty"`
-	Labels         []uint32            `json:"Labels,omitempty"`
+	IsIPv4         bool                `json:"is_ipv4,omitempty"`
+	IsNexthopIPv4  bool                `json:"is_nexthop_ipv4,omitempty"`
+	Labels         []uint32            `json:"labels,omitempty"`
 	PrefixSID      *prefixsid.PSid     `json:"prefix_sid,omitempty"`
-	Timestamp      string              `json:"Timestamp,omitempty"`
+	Timestamp      string              `json:"timestamp,omitempty"`
 }
 
 func (r EPEPrefix) GetKey() (string, error) {
