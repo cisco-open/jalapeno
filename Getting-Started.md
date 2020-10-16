@@ -161,15 +161,15 @@ Jalapeno can also be destroyed using the script.
 
 * [MicroK8s_installation.md](docs/MicroK8s_installation.md)
 
-* [BMP](docs/BMP.md)
+* [BMP](docs/BMP.md) - coming soon
 
-* [Kafka](docs/Kafka.md)
+* [Kafka](docs/Kafka.md) - coming soon
 
-* [Topology processor](docs/Topology_processor.md)
+* [Topology processor](docs/Topology_processor.md) - coming soon
 
-* [Arango GraphDB](docs/Arango-GraphDB.md)
+* [Arango GraphDB](docs/Arango-GraphDB.md) - coming soon
 
-* [Influx TSDB](docs/Influx-TSDB.md)
+* [Influx TSDB](docs/Influx-TSDB.md) - coming soon
 
 * [Link-State processor](docs/link-state)
 
@@ -177,4 +177,4 @@ Jalapeno can also be destroyed using the script.
 
 * [EPE processor](docs/epe)
 
-* [Network-performance processors](docs/perf)
+* [Network-performance processors](docs/perf) - coming soon
