@@ -47,51 +47,29 @@ def main():
             enhance_lsv6_topology_document(database, current_lsv6_topology_key)
             local_node = get_local_igpid(database, current_lsv6_topology_key)[0]
             remote_node = get_remote_igpid(database, current_lsv6_topology_key)[0]
-            local_igpid, remote_igpid = local_node["LocalIGPID"], remote_node["RemoteIGPID"]
-            local_srgb_start = get_srgb_start(database, local_igpid)[0]
-            remote_srgb_start = get_srgb_start(database, remote_igpid)[0]
-            local_msd = get_max_sid_depth(database, local_igpid)
-            remote_msd = get_max_sid_depth(database, remote_igpid)
-            local_max_sid_depth = handle_msd(local_msd)
-            remote_max_sid_depth = handle_msd(remote_msd)
-            local_prefix_info = get_prefix_info(database, local_igpid)
-            remote_prefix_info = get_prefix_info(database, remote_igpid)
-            local_prefix_sid, local_prefixes = parse_prefix_info(local_prefix_info, local_srgb_start)
-            remote_prefix_sid, remote_prefixes = parse_prefix_info(remote_prefix_info, remote_srgb_start)
-            local_srv6_info = get_srv6_info(database, local_igpid)[0]
-            remote_srv6_info = get_srv6_info(database, remote_igpid)[0]
+            local_igp_id, remote_igp_id = local_node["local_igp_id"], remote_node["remote_igp_id"]
+            #local_srgb_start = get_srgb_start(database, local_igp_id)[0]
+            #remote_srgb_start = get_srgb_start(database, remote_igp_id)[0]
+            #local_msd = get_max_sid_depth(database, local_igp_id)
+            #remote_msd = get_max_sid_depth(database, remote_igp_id)
+            #local_max_sid_depth = handle_msd(local_msd)
+            #remote_max_sid_depth = handle_msd(remote_msd)
+            #local_prefix_info = get_prefix_info(database, local_igpid)
+            #remote_prefix_info = get_prefix_info(database, remote_igpid)
+            #local_prefix_sid, local_prefixes = parse_prefix_info(local_prefix_info, local_srgb_start)
+            #remote_prefix_sid, remote_prefixes = parse_prefix_info(remote_prefix_info, remote_srgb_start)
+            local_srv6_info = get_srv6_info(database, local_igp_id)[0]
+            remote_srv6_info = get_srv6_info(database, remote_igp_id)[0]
             if(len(local_srv6_info) == 0):
                 local_srv6_info = handle_empty_srv6()
             if(len(remote_srv6_info) == 0):
                 remote_srv6_info = handle_empty_srv6()
-            update_lsv6_topology_document(database, current_lsv6_topology_key, local_prefix_sid, remote_prefix_sid, local_prefixes, remote_prefixes, local_max_sid_depth, remote_max_sid_depth, local_srv6_info, remote_srv6_info)
+            update_lsv6_topology_document(database, current_lsv6_topology_key, local_srv6_info, remote_srv6_info)
         time.sleep(10)
 
-def handle_msd(max_sid_depth):
-    msd = ""
-    if(len(max_sid_depth) > 0) and max_sid_depth[0] != None:
-        max_sid_depth_split = max_sid_depth[0].split(":")
-        msd = max_sid_depth_split[1]
-    return msd
-
 def handle_empty_srv6():
-    srv6_info = {"Protocol": "", "MT_ID": "", "SRv6_SID": "", "SRv6_Endpoint_Behavior": "", "SRv6_SID_Structure": ""}
+    srv6_info = {"protocol": "", "mt_id": "", "srv6_isd": "", "srv6_endpoint_behavior": "", "srv6_sid_structure": ""}
     return srv6_info
-
-def parse_prefix_info(prefix_info, srgb_start):
-    prefix_info_list = []
-    prefix_sid = None
-    for index in range(len(prefix_info)):
-        sid_index = prefix_info[index]["SIDIndex"]
-        prefix = prefix_info[index]["Prefix"]
-        length = prefix_info[index]["Length"]
-        sr_flag = prefix_info[index]["SRFlag"]
-        if(prefix_info[index]["SRFlag"] != None and prefix_info[index]["SRFlag"][0] == "n"):
-            prefix_sid = srgb_start + sid_index
-        sid = srgb_start + sid_index
-        prefix_dict = {"Prefix": prefix, "Length": length, "SID": sid, "SRFlag": sr_flag}
-        prefix_info_list.append(prefix_dict)
-    return(prefix_sid, prefix_info_list)
 
 def create_collection(db, collection_name):
     """Create new collection in ArangoDB.

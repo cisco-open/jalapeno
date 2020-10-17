@@ -2,7 +2,7 @@ EXECUTABLE ?= jalapeno
 BINARY ?= bin/$(EXECUTABLE)
 REPO=iejalapeno
 IMAGE=lsv4-processor
-TAG=1.2.2
+TAG=1.2.3
 # If you connect to dockerhub via a proxy: uncomment and edit the following line (and see below docker build lines)
 #PROXY=http://proxy.esl.cisco.com:8080
 
