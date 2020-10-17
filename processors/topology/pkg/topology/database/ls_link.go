@@ -9,7 +9,7 @@ import (
 	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
-const LSLinkName = "LSLinkEdge"
+const LSLinkEdgeName = "LSLinkEdge"
 
 type LSLink struct {
 	LocalRouterKey        string                   `json:"_from,omitempty"`
@@ -106,7 +106,7 @@ func (l *LSLink) makeKey() (string, error) {
 }
 
 func (l LSLink) GetType() string {
-	return LSLinkName
+	return LSLinkEdgeName
 }
 
 func (l *LSLink) SetEdge(to DBObject, from DBObject) error {
