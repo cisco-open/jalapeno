@@ -8,13 +8,13 @@ def get_lsv4_topology_keys(db):
     return allLSLinks
 
 def get_disjoint_keys(db, ls_topology_keys):
-    aql = """ FOR l in LSLink filter l._key not in @lsv4_topology_keys return l._key """
+    aql = """ FOR l in LSLinkEdge filter l._key not in @lsv4_topology_keys return l._key """
     bindVars = {'lsv4_topology_keys': ls_topology_keys }
     uncreated_ls_link_keys = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return uncreated_ls_link_keys
 
 def get_lsv4_link_keys(db):
-    aql = """ FOR l in LSLink filter NOT CONTAINS(l.local_interface_ip, ":") and NOT CONTAINS(l.remote_interface_ip, ":") return l._key """
+    aql = """ FOR l in LSLinkEdge filter NOT CONTAINS(l.local_interface_ip, ":") and NOT CONTAINS(l.remote_interface_ip, ":") return l._key """
     bindVars = {}
     ls_link_keys = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return ls_link_keys
@@ -29,7 +29,7 @@ def check_exists_lsv4_topology(db, ls_link_key):
         return False
 
 def check_exists_lsv4_link(db, lsv4_topology_key):
-    aql = """ FOR l in LSLink filter l._key == @lsv4_topology_key RETURN { key: l._key } """
+    aql = """ FOR l in LSLinkEdge filter l._key == @lsv4_topology_key RETURN { key: l._key } """
     bindVars = {'lsv4_topology_key': lsv4_topology_key}
     key_exists = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(key_exists) > 0):
@@ -43,7 +43,7 @@ def deleteLSv4TopologyDocument(db, lsv4_topology_key):
     deleted_document = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
 
 def createBaseLSv4TopologyDocument(db, ls_link_key):
-    aql = """ FOR l in LSLink filter l._key == @ls_link_key insert l into LSv4_Topology RETURN NEW._key """
+    aql = """ FOR l in LSLinkEdge filter l._key == @ls_link_key insert l into LSv4_Topology RETURN NEW._key """
     bindVars = {'ls_link_key': ls_link_key}
     created_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(created_edge) > 0):
@@ -53,7 +53,7 @@ def createBaseLSv4TopologyDocument(db, ls_link_key):
         print("Something went wrong while creating LSv4_Topology Edge")
 
 def updateBaseLSv4TopologyDocument(db, ls_link_key):
-    aql = """ FOR l in LSLink filter l._key == @ls_link_key update l into LSv4_Topology RETURN { before: OLD, after: NEW }"""
+    aql = """ FOR l in LSLinkEdge filter l._key == @ls_link_key update l into LSv4_Topology RETURN { before: OLD, after: NEW }"""
     bindVars = {'ls_link_key': ls_link_key }
     updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(updated_edge) > 0):
