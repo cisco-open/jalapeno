@@ -141,9 +141,9 @@ func NewArango(cfg ArangoConfig) (*ArangoConn, error) {
 		return nil, err
 	}
 
-	cols[LSLinkName], err = ensureEdgeCollection(g, LSLinkName, []string{LSNodeName}, []string{LSNodeName})
+	cols[LSLinkEdgeName], err = ensureEdgeCollection(g, LSLinkEdgeName, []string{LSNodeName}, []string{LSNodeName})
 	if err != nil {
-		glog.Errorf("Failed to connect to collection %q", LSLinkName)
+		glog.Errorf("Failed to connect to collection %q", LSLinkEdgeName)
 		return nil, err
 	}
 
@@ -338,7 +338,7 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		get = &LSPrefix{
 			Key: key,
 		}
-	case LSLinkName:
+	case LSLinkEdgeName:
 		get = &LSLink{
 			Key: key,
 		}
