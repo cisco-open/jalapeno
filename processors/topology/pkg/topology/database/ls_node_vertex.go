@@ -10,9 +10,9 @@ import (
 	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
-const LSNodeName = "LSNode"
+const LSNodeVertexName = "LSNodeVertex"
 
-type LSNode struct {
+type LSNodeVertex struct {
 	Key                 string                      `json:"_key,omitempty"`
 	Name                string                      `json:"name,omitempty"`
 	Timestamp           string                      `json:"timestamp,omitempty"`
@@ -36,14 +36,14 @@ type LSNode struct {
 	FlexAlgoDefinition  []*bgpls.FlexAlgoDefinition `json:"flex_algo_definition,omitempty"`
 }
 
-func (r LSNode) GetKey() (string, error) {
+func (r LSNodeVertex) GetKey() (string, error) {
 	if r.Key == "" {
 		return r.makeKey()
 	}
 	return r.Key, nil
 }
 
-func (r *LSNode) SetKey() error {
+func (r *LSNodeVertex) SetKey() error {
 	k, err := r.makeKey()
 	if err != nil {
 		return err
@@ -52,18 +52,17 @@ func (r *LSNode) SetKey() error {
 	return nil
 }
 
-func (r *LSNode) makeKey() (string, error) {
+func (r *LSNodeVertex) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if r.IGPRouterID != "" {
-		//ret = fmt.Sprintf("%s_%s_%s_%s", strconv.Itoa(int(r.ProtocolID)), strconv.Itoa(int(r.DomainID)), r.OSPFAreaID, r.IGPRouterID)
+		//ret = fmt.Sprintf("%s_%s_%s_%s", strconv.Itoa(int(r.ProtocolID)), strconv.Itoa(int(r.DomainID)), r.IGPRouterID)
 		ret = fmt.Sprintf("%s_%s_%s", strconv.Itoa(int(r.ProtocolID)), strconv.Itoa(int(r.DomainID)), r.IGPRouterID)
-
 		err = nil
 	}
 	return ret, err
 }
 
-func (r LSNode) GetType() string {
-	return LSNodeName
+func (r LSNodeVertex) GetType() string {
+	return LSNodeVertexName
 }

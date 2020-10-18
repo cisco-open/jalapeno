@@ -28,7 +28,9 @@ type LSLink struct {
 	RemoteNodeASN         uint32                   `json:"remote_node_asn,omitempty"`
 	Protocol              string                   `json:"protocol,omitempty"`
 	ProtocolID            base.ProtoID             `json:"protocol_id,omitempty"`
+	DomainID              int64                    `json:"domain_id"`
 	MTID                  uint16                   `json:"mtid,omitempty"`
+	AreaID                string                   `json:"area_id"`
 	IGPMetric             uint32                   `json:"igp_metric,omitempty"`
 	AdminGroup            uint32                   `json:"admin_group,omitempty"`
 	MaxLinkBW             uint32                   `json:"max_link_bw,omitempty"`
@@ -68,16 +70,6 @@ func (l *LSLink) SetKey() error {
 	return nil
 }
 
-//func (l *LSLink) makeKey() (string, error) {
-//	err := ErrKeyInvalid
-//	ret := ""
-//if l.LocalInterfaceIP != "" && l.RemoteInterfaceIP != "" {
-//	ret = fmt.Sprintf("%s_%s_%s_%s", l.IGPRouterID, l.LocalLinkIP[], l.LocalLinkID, l.RemoteLinkIP[], l.RemoteLinkID, l.RemoteIGPRouterID)
-//	err = nil
-//}
-//	return ret, err
-//}
-
 func (l *LSLink) makeKey() (string, error) {
 	var localIP, remoteIP, localID, remoteID string
 	localID = "0"
@@ -102,7 +94,7 @@ func (l *LSLink) makeKey() (string, error) {
 	localID = strconv.Itoa(int(l.LocalLinkID))
 	remoteID = strconv.Itoa(int(l.RemoteLinkID))
 
-	return l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID, nil
+	return strconv.Itoa(int(l.ProtocolID)) + "_" + strconv.Itoa(int(l.DomainID)) + "_" + l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID, nil
 }
 
 func (l LSLink) GetType() string {
