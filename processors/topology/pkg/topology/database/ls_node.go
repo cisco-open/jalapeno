@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/bgpls"
@@ -15,6 +16,7 @@ type LSNode struct {
 	Key                 string                      `json:"_key,omitempty"`
 	Name                string                      `json:"name,omitempty"`
 	Timestamp           string                      `json:"timestamp,omitempty"`
+	DomainID            int64                       `json:"domain_id"`
 	IGPRouterID         string                      `json:"igp_router_id,omitempty"`
 	RouterID            string                      `json:"router_id,omitempty"`
 	ASN                 int32                       `json:"asn,omitempty"`
@@ -54,7 +56,9 @@ func (r *LSNode) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if r.IGPRouterID != "" {
-		ret = fmt.Sprintf("%s", r.IGPRouterID)
+		//ret = fmt.Sprintf("%s_%s_%s_%s", strconv.Itoa(int(r.ProtocolID)), strconv.Itoa(int(r.DomainID)), r.OSPFAreaID, r.IGPRouterID)
+		ret = fmt.Sprintf("%s_%s_%s", strconv.Itoa(int(r.ProtocolID)), strconv.Itoa(int(r.DomainID)), r.IGPRouterID)
+
 		err = nil
 	}
 	return ret, err
