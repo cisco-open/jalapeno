@@ -1,6 +1,6 @@
 IMAGE_REGISTRY=iejalapeno
 IMAGE_NAME=gobmp-topology
-IMAGE_TAG=1.6.2
+IMAGE_TAG=1.6.3
 
 .PHONY: all topology topology-container topology-push
 
