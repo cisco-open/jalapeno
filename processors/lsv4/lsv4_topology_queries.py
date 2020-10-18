@@ -104,11 +104,11 @@ def get_remote_igpid(db, lsv4_topology_key):
     remote_igpid = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return remote_igpid
 
-#def get_sr_flags(db, igp_id):
-#    aql = """ FOR l in LSPrefix filter l.SRFlags != null and l.IGPRouterID == @igp_id return l.SRFlags[0] """
-#    bindVars = {'igp_id': igp_id}
-#    sr_flags = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
-#    return sr_flags
+def get_sr_flags(db, igp_id):
+    aql = """ FOR l in LSPrefix filter l.SRFlags != null and l.IGPRouterID == @igp_id return l.SRFlags[0] """
+    bindVars = {'igp_id': igp_id}
+    sr_flags = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
+    return sr_flags
 
 def update_prefix_sid(db, lsv4_topology_key, local_prefix_sid, remote_prefix_sid):
     aql = """ FOR l in LSv4_Topology filter l._key == @lsv4_topology_key UPDATE { _key: l._key, "local_prefix_sid": @local_prefix_sid, "remote_prefix_sid": @remote_prefix_sid  } in LSv4_Topology RETURN { before: OLD, after: NEW }"""

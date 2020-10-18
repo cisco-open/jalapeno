@@ -125,12 +125,6 @@ func NewArango(cfg ArangoConfig) (*ArangoConn, error) {
 		return nil, err
 	}
 
-	cols[LSNodeName], err = ensureVertexCollection(g, LSNodeName)
-	if err != nil {
-		glog.Errorf("Failed to connect to collection %q", LSNodeName)
-		return nil, err
-	}
-
 	cols[LSSRv6SIDName], err = ensureVertexCollection(g, LSSRv6SIDName)
 	if err != nil {
 		glog.Errorf("Failed to connect to collection %q", LSSRv6SIDName)
@@ -325,10 +319,6 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		}
 	case L3VPNPrefixName:
 		get = &L3VPNPrefix{
-			Key: key,
-		}
-	case LSNodeName:
-		get = &LSNode{
 			Key: key,
 		}
 
