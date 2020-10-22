@@ -47,28 +47,28 @@ func (a *arangoDB) unicastPrefixHandler(obj *message.UnicastPrefix) {
 		}
 	}
 
-	epePeerDocument := &database.EPEPeer{
-		PeerIP:        obj.PeerIP,
-		PeerASN:       obj.PeerASN,
-		Nexthop:       obj.Nexthop,
-		RouterIP:      obj.RouterIP,
-		IsNexthopIPv4: obj.IsNexthopIPv4,
-		Labels:        obj.Labels,
-		Timestamp:     obj.Timestamp,
-	}
+	/* 	epePeerDocument := &database.EPEPeer{
+	   		PeerIP:        obj.PeerIP,
+	   		PeerASN:       obj.PeerASN,
+	   		Nexthop:       obj.Nexthop,
+	   		RouterIP:      obj.RouterIP,
+	   		IsNexthopIPv4: obj.IsNexthopIPv4,
+	   		Labels:        obj.Labels,
+	   		Timestamp:     obj.Timestamp,
+	   	}
 
-	if action == "add" {
-		if err := db.Upsert(epePeerDocument); err != nil {
-			glog.Errorf("Encountered an error while upserting the epe peer document: %+v", err)
-			return
-		}
-		glog.Infof("Successfully added epe peer document with peer IP: %q and egress IP: %q\n", obj.PeerIP, obj.RouterIP)
-	} else {
-		if err := db.Delete(UnicastPrefixDocument); err != nil {
-			glog.Errorf("Encountered an error while deleting the epe prefix document: %+v", err)
-			return
-		} else {
-			glog.Infof("Successfully deleted epe peer document with peer IP: %q and egress IP %q\n", obj.PeerIP, obj.RouterIP)
-		}
-	}
+	   	if action == "add" {
+	   		if err := db.Upsert(epePeerDocument); err != nil {
+	   			glog.Errorf("Encountered an error while upserting the epe peer document: %+v", err)
+	   			return
+	   		}
+	   		glog.Infof("Successfully added epe peer document with peer IP: %q and egress IP: %q\n", obj.PeerIP, obj.RouterIP)
+	   	} else {
+	   		if err := db.Delete(UnicastPrefixDocument); err != nil {
+	   			glog.Errorf("Encountered an error while deleting the epe prefix document: %+v", err)
+	   			return
+	   		} else {
+	   			glog.Infof("Successfully deleted epe peer document with peer IP: %q and egress IP %q\n", obj.PeerIP, obj.RouterIP)
+	   		}
+	   	} */
 }
