@@ -4,47 +4,11 @@ import (
 	"github.com/golang/glog"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 	"github.com/sbezverk/gobmp/pkg/message"
-	//        "github.com/sbezverk/gobmp/pkg/topology/database"
-	//"github.com/cisco-ie/jalapeno/processors/topology/pkg/database"
 )
 
 func (a *arangoDB) lsSRv6SIDHandler(obj *message.LSSRv6SID) {
 	db := a.GetArangoDBInterface()
 	action := obj.Action
-
-	//endpointBehavior := obj.SRv6EndpointBehavior
-	//var srv6EndpointBehavior uint16
-	//var srv6Flag uint8
-	//var srv6Algorithm uint8
-	//if endpointBehavior != nil {
-	//	srv6EndpointBehavior = endpointBehavior.EndpointBehavior
-	//	srv6Flag = endpointBehavior.Flag
-	//	srv6Algorithm = endpointBehavior.Algorithm
-	//}
-
-	//srv6BGPPeerNodeSID := obj.SRv6BGPPeerNodeSID
-	//var srv6BGPPeerNodeSIDFlag uint8
-	//var srv6BGPPeerNodeSIDWeight uint8
-	//var srv6BGPPeerNodeSIDPeerASN uint32
-	//var srv6BGPPeerNodeSIDID []byte
-	//if srv6BGPPeerNodeSID != nil {
-	//	srv6BGPPeerNodeSIDFlag = srv6BGPPeerNodeSID.Flag
-	//	srv6BGPPeerNodeSIDWeight = srv6BGPPeerNodeSID.Weight
-	//	srv6BGPPeerNodeSIDPeerASN = srv6BGPPeerNodeSID.PeerASN
-	//	srv6BGPPeerNodeSIDID = srv6BGPPeerNodeSID.PeerID
-	//}
-
-	//srv6SIDStructure := obj.SRv6SIDStructure
-	//var srv6SIDStructureLBLength uint8
-	//var srv6SIDStructureLNLength uint8
-	//var srv6SIDStructureFunLength uint8
-	//var srv6SIDStructureArgLength uint8
-	//if srv6BGPPeerNodeSID != nil {
-	//	srv6SIDStructureLBLength = srv6SIDStructure.LBLength
-	//	srv6SIDStructureLNLength = srv6SIDStructure.LNLength
-	//	srv6SIDStructureFunLength = srv6SIDStructure.FunLength
-	//	srv6SIDStructureArgLength = srv6SIDStructure.ArgLength
-	//}
 
 	lsSRv6SIDDocument := &database.LSSRv6SID{
 		RouterIP:             obj.RouterIP,

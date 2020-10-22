@@ -6,7 +6,7 @@ import (
 	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
-const LSSRv6SIDName = "LSSRv6SID"
+const LSSRv6SIDName = "Demo-LSSRv6SID"
 
 type LSSRv6SID struct {
 	Key                  string                 `json:"_key,omitempty"`

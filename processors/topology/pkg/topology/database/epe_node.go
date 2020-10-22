@@ -2,7 +2,7 @@ package database
 
 import "fmt"
 
-const EPENodeName = "EPENode"
+const EPENodeName = "Demo-EPENode"
 
 type EPENode struct {
 	Key      string   `json:"_key,omitempty"`

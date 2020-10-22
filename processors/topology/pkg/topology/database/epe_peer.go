@@ -2,7 +2,7 @@ package database
 
 import "fmt"
 
-const EPEPeerName = "EPEPeer"
+const EPEPeerName = "Demo-EPEPeer"
 
 type EPEPeer struct {
 	Key           string   `json:"_key,omitempty"`

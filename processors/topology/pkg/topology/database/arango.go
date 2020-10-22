@@ -95,12 +95,6 @@ func NewArango(cfg ArangoConfig) (*ArangoConn, error) {
 		return nil, err
 	}
 
-	cols[EPEPrefixName], err = ensureVertexCollection(g, EPEPrefixName)
-	if err != nil {
-		glog.Errorf("Failed to connect to collection %q", EPEPrefixName)
-		return nil, err
-	}
-
 	cols[UnicastPrefixName], err = ensureVertexCollection(g, UnicastPrefixName)
 	if err != nil {
 		glog.Errorf("Failed to connect to collection %q", UnicastPrefixName)
@@ -130,15 +124,22 @@ func NewArango(cfg ArangoConfig) (*ArangoConn, error) {
 		glog.Errorf("Failed to connect to collection %q", LSSRv6SIDName)
 		return nil, err
 	}
+
 	cols[LSPrefixName], err = ensureVertexCollection(g, LSPrefixName)
 	if err != nil {
 		glog.Errorf("Failed to connect to collection %q", LSPrefixName)
 		return nil, err
 	}
 
-	cols[LSLinkEdgeName], err = ensureEdgeCollection(g, LSLinkEdgeName, []string{LSNodeName}, []string{LSNodeName})
+	cols[LSNodeName], err = ensureVertexCollection(g, LSNodeName)
 	if err != nil {
-		glog.Errorf("Failed to connect to collection %q", LSLinkEdgeName)
+		glog.Errorf("Failed to connect to collection %q", LSNodeName)
+		return nil, err
+	}
+
+	cols[LSLinkName], err = ensureEdgeCollection(g, LSLinkName, []string{LSNodeName}, []string{LSNodeName})
+	if err != nil {
+		glog.Errorf("Failed to connect to collection %q", LSLinkName)
 		return nil, err
 	}
 
@@ -300,10 +301,6 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		get = &EPENode{
 			Key: key,
 		}
-	case EPEPrefixName:
-		get = &EPEPrefix{
-			Key: key,
-		}
 	case UnicastPrefixName:
 		get = &UnicastPrefix{
 			Key: key,
@@ -321,7 +318,6 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		get = &L3VPNPrefix{
 			Key: key,
 		}
-
 	case LSSRv6SIDName:
 		get = &LSSRv6SID{
 			Key: key,
@@ -330,7 +326,11 @@ func (a *ArangoConn) UpsertSafe(i DBObject) error {
 		get = &LSPrefix{
 			Key: key,
 		}
-	case LSLinkEdgeName:
+	case LSNodeName:
+		get = &LSNode{
+			Key: key,
+		}
+	case LSLinkName:
 		get = &LSLink{
 			Key: key,
 		}

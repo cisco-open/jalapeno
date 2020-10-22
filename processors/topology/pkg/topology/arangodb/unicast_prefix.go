@@ -17,36 +17,6 @@ func (a *arangoDB) unicastPrefixHandler(obj *message.UnicastPrefix) {
 		return
 	}
 
-	epePrefixDocument := &database.EPEPrefix{
-		PeerIP:         obj.PeerIP,
-		PeerASN:        obj.PeerASN,
-		Prefix:         obj.Prefix,
-		Length:         obj.PrefixLen,
-		Nexthop:        obj.Nexthop,
-		BaseAttributes: obj.BaseAttributes,
-		OriginASN:      obj.OriginAS,
-		IsIPv4:         obj.IsIPv4,
-		IsNexthopIPv4:  obj.IsNexthopIPv4,
-		Labels:         obj.Labels,
-		PrefixSID:      obj.PrefixSID,
-		Timestamp:      obj.Timestamp,
-	}
-
-	if action == "add" {
-		if err := db.Upsert(epePrefixDocument); err != nil {
-			glog.Errorf("Encountered an error while upserting the epe prefix document: %+v", err)
-			return
-		}
-		glog.Infof("Successfully added epe prefix document with peer IP: %q and prefix: %q\n", obj.PeerIP, obj.Prefix)
-	} else {
-		if err := db.Delete(epePrefixDocument); err != nil {
-			glog.Errorf("Encountered an error while deleting the epe prefix document: %+v", err)
-			return
-		} else {
-			glog.Infof("Successfully deleted epe prefix document with peer IP: %q and prefix %q\n", obj.PeerIP, obj.Prefix)
-		}
-	}
-
 	UnicastPrefixDocument := &database.UnicastPrefix{
 		PeerIP:         obj.PeerIP,
 		PeerASN:        obj.PeerASN,

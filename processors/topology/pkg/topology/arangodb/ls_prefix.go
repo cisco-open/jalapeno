@@ -10,20 +10,6 @@ func (a *arangoDB) lsPrefixHandler(obj *message.LSPrefix) {
 	db := a.GetArangoDBInterface()
 	action := obj.Action
 
-	//prefixSID := obj.LSPrefixSID
-
-	//var srFlags []string
-	//var sid []byte
-	//var prefixSIDIndex int
-	//if prefixSID != nil {
-	//	algorithm = &prefixSID.Algorithm
-	//	srFlags = parseFlags(prefixSID.Flags)
-	//	sid = prefixSID.SID
-	//	if sid != nil {
-	//		prefixSIDIndex = parseSIDIndex(sid)
-	//	}
-	//}
-
 	lsPrefixDocument := &database.LSPrefix{
 		Timestamp:      obj.Timestamp,
 		IGPRouterID:    obj.IGPRouterID,
