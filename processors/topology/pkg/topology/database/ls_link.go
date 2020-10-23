@@ -9,7 +9,7 @@ import (
 	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
-const LSLinkName = "Demo-LSLink"
+const LSLinkName = "LSLinkDemo"
 
 type LSLink struct {
 	LocalRouterKey        string                   `json:"_from,omitempty"`

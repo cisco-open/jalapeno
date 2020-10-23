@@ -2,7 +2,7 @@ package database
 
 import "fmt"
 
-const L3VPNNodeName = "Demo-L3VPNNode"
+const L3VPNNodeName = "L3VPNNodeDemo"
 
 type L3VPNNode struct {
 	Key            string   `json:"_key,omitempty"`

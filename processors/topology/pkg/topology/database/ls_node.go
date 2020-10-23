@@ -9,7 +9,7 @@ import (
 	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
-const LSNodeName = "Demo-LSNode"
+const LSNodeName = "LSNodeDemo"
 
 type LSNode struct {
 	Key                 string                      `json:"_key,omitempty"`

@@ -14,8 +14,8 @@ func (a *arangoDB) lsLinkHandler(obj *message.LSLink) {
 	db := a.GetArangoDBInterface()
 	action := obj.Action
 
-	localRouterKey := "Demo-LSNode/" + obj.IGPRouterID
-	remoteRouterKey := "Demo-LSNode/" + obj.RemoteIGPRouterID
+	localRouterKey := "LSNodeDemo/" + obj.IGPRouterID
+	remoteRouterKey := "LSNodeDemo/" + obj.RemoteIGPRouterID
 	adjacencySIDS := parseAdjacencySIDS(obj.LSAdjacencySID)
 
 	lsLinkDocument := &database.LSLink{
