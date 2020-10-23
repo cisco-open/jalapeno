@@ -94,7 +94,7 @@ func (l *LSLink) makeKey() (string, error) {
 	localID = strconv.Itoa(int(l.LocalLinkID))
 	remoteID = strconv.Itoa(int(l.RemoteLinkID))
 
-	return strconv.Itoa(int(l.ProtocolID)) + "_" + strconv.Itoa(int(l.DomainID)) + "_" + l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID, nil
+	return l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID, nil
 }
 
 func (l LSLink) GetType() string {
