@@ -1,16 +1,20 @@
-###  AQL queries to build an SDN Hello World App
+###  AQL queries to build a Hello World SR-App
 
-#### The goal of this SR-App is to program a disjoint-path SR-LSP, which avoids R09:
-
-![example topology](diagrams/example-topology.png)
+#### The goal of this SR-App is to get the SR label stack for the least utilized path between Node 0007 and Node 0019:
 
 #### Prior to setting up the disjoint query, we'll run a few other queries to gather data on the topology
 
-1. Query to determine shortest-path hop-count from R01 to R05, and whether we have an ECMP pagths:
+1. Query to get the full link-state topology
+```
+for l in LSv4_Topology return l
+```
+![example topology](diagrams/example-topology.png)
+
+2. Query to determine shortest-path hop-count from R01 to R05, and whether we have an ECMP pagths:
 ```
 RETURN LENGTH(
 FOR v IN OUTBOUND 
-SHORTEST_PATH 'LSNode/10.0.0.1' TO 'LSNode/10.0.0.5' LS_Topology
+SHORTEST_PATH 'LSNodeDemo/0000.0000.0007' TO 'LSNodeDemo/0000.0000.0019' LSv4_Topology
  Return v
 )
 ```
