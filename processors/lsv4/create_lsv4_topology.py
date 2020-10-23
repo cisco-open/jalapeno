@@ -58,7 +58,6 @@ def main():
             remote_prefix_info = get_prefix_info(database, remote_igpid)
             local_prefix_sid, local_prefixes = parse_prefix_info(local_prefix_info, local_srgb_start)
             remote_prefix_sid, remote_prefixes = parse_prefix_info(remote_prefix_info, remote_srgb_start)
-            #update_lsv4_topology_document(database, current_lsv4_topology_key)
             update_lsv4_topology_document(database, current_lsv4_topology_key, local_prefix_sid, remote_prefix_sid, local_prefixes, remote_prefixes, local_msd, remote_msd)
         time.sleep(10)
 
