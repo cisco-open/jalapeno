@@ -2,7 +2,6 @@ package arangodb
 
 import (
 	"encoding/binary"
-	"strconv"
 
 	"github.com/golang/glog"
 	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
@@ -15,8 +14,8 @@ func (a *arangoDB) lsLinkHandler(obj *message.LSLink) {
 	db := a.GetArangoDBInterface()
 	action := obj.Action
 
-	localRouterKey := "Demo-LSNode/" + strconv.Itoa(int(obj.ProtocolID)) + "_" + strconv.Itoa(int(obj.DomainID)) + "_" + obj.IGPRouterID
-	remoteRouterKey := "Demo-LSNode/" + strconv.Itoa(int(obj.ProtocolID)) + "_" + strconv.Itoa(int(obj.DomainID)) + "_" + obj.RemoteIGPRouterID
+	localRouterKey := "Demo-LSNode/" + obj.IGPRouterID
+	remoteRouterKey := "Demo-LSNode/" + obj.RemoteIGPRouterID
 	adjacencySIDS := parseAdjacencySIDS(obj.LSAdjacencySID)
 
 	lsLinkDocument := &database.LSLink{
