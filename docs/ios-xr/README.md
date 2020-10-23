@@ -1,1 +1,3 @@
-![sample_testbed.png](sample_testbed.png)
+Some scripts and configurations to create a virtual router topology:
+https://github.com/jalapeno/jalapeno-lab
+
