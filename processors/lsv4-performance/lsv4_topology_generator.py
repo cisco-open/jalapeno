@@ -23,7 +23,7 @@ def generate_lsv4_topology_query(arango_client):
     return lsv4_topology
 
 def get_node_hostname(arango_client, router_igp_id):
-    aql = """FOR n in LSNode
+    aql = """FOR n in LSNodeDemo
         FILTER n._key == @ls_node_key
         RETURN n.name"""
     bindVars = {"ls_node_key": router_igp_id}

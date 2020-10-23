@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: lsv4-performance-processor
-        image: iejalapeno/lsv4-performance-processor:1.0@sha256:fe214b1058f9cc49bfcb584492a261b71e2ca5675187ea535fa72706e4576d2d
+        image: iejalapeno/lsv4-performance-processor:1.0@sha256:fb5a31494f294099eb2aa5bc857f44b29622ddc54fdb911cb02fd398073ea55d
       imagePullSecrets:
         - name: regcred  
