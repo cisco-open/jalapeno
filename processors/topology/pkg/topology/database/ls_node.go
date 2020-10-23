@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/bgpls"
@@ -10,7 +9,7 @@ import (
 	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
-const LSNodeName = "LSNode"
+const LSNodeName = "LSNodeDemo"
 
 type LSNode struct {
 	Key                 string                      `json:"_key,omitempty"`
@@ -56,8 +55,7 @@ func (r *LSNode) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if r.IGPRouterID != "" {
-		//ret = fmt.Sprintf("%s_%s_%s_%s", strconv.Itoa(int(r.ProtocolID)), strconv.Itoa(int(r.DomainID)), r.OSPFAreaID, r.IGPRouterID)
-		ret = fmt.Sprintf("%s_%s_%s", strconv.Itoa(int(r.ProtocolID)), strconv.Itoa(int(r.DomainID)), r.IGPRouterID)
+		ret = fmt.Sprintf("%s", r.IGPRouterID)
 
 		err = nil
 	}

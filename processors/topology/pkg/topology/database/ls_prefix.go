@@ -9,7 +9,7 @@ import (
 	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
-const LSPrefixName = "LSPrefix"
+const LSPrefixName = "LSPrefixDemo"
 
 type LSPrefix struct {
 	Key                  string                        `json:"_key,omitempty"`
@@ -53,7 +53,7 @@ func (r *LSPrefix) makeKey() (string, error) {
 	err := ErrKeyInvalid
 	ret := ""
 	if r.IGPRouterID != "" {
-		ret = fmt.Sprintf("%s_%s", r.IGPRouterID, r.Prefix)
+		ret = fmt.Sprintf("%s_%s_%d", r.IGPRouterID, r.Prefix, r.Length)
 		err = nil
 	}
 	return ret, err

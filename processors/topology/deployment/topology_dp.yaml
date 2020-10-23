@@ -2,16 +2,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: topology1
+  name: demo-topology
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: topology1
+      app: demo-topology
   template:
     metadata:
       labels:
-        app: topology1
+        app: demo-topology
     spec:
       containers:
         - args:
@@ -29,9 +29,9 @@ spec:
           - "jalapeno"
           - --asn
           - '65000'
-          image: docker.io/iejalapeno/gobmp-topology@sha256:c663ec8676d5a9be4c508dc2a7cec3c7d70892c23dfd9ba11c2e4f1de93a523c
+          image: docker.io/iejalapeno/gobmp-topology@sha256:ae0510decc8ebea358795c215eea74623c706821bc0ce73143ef13a94005ff4d
           imagePullPolicy: Always
-          name: topology1
+          name: demo-topology
 metadata:
-  name: topology1
+  name: demo-topology
   namespace: jalapeno

@@ -6,7 +6,7 @@ import (
 	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
-const L3VPNPrefixName = "L3VPNPrefix"
+const L3VPNPrefixName = "L3VPNPrefixDemo"
 
 type L3VPNPrefix struct {
 	Key            string          `json:"_key,omitempty"`

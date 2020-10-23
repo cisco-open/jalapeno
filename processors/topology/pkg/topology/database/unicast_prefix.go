@@ -7,7 +7,7 @@ import (
 	"github.com/sbezverk/gobmp/pkg/prefixsid"
 )
 
-const UnicastPrefixName = "UnicastPrefix"
+const UnicastPrefixName = "UnicastPrefixDemo"
 
 type UnicastPrefix struct {
 	Key            string              `json:"_key,omitempty"`

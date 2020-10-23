@@ -4,11 +4,9 @@ import (
 	"encoding/binary"
 
 	"github.com/golang/glog"
+	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 	"github.com/sbezverk/gobmp/pkg/message"
 	"github.com/sbezverk/gobmp/pkg/sr"
-
-	//        "github.com/sbezverk/gobmp/pkg/topology/database"
-	"github.com/jalapeno-sdn/jalapeno/pkg/topology/database"
 )
 
 func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {
@@ -72,42 +70,6 @@ func (a *arangoDB) lsNodeHandler(obj *message.LSNode) {
 		}
 	}
 
-	lsNodeVertexDocument := &database.LSNodeVertex{
-		Name:                obj.Name,
-		DomainID:            obj.DomainID,
-		IGPRouterID:         obj.IGPRouterID,
-		RouterID:            obj.RouterID,
-		ASN:                 obj.PeerASN,
-		MTID:                obj.MTID,
-		OSPFAreaID:          obj.OSPFAreaID,
-		ISISAreaID:          obj.ISISAreaID,
-		Protocol:            obj.Protocol,
-		ProtocolID:          obj.ProtocolID,
-		NodeFlags:           obj.NodeFlags,
-		SRGBStart:           srgbStart,
-		SRGBRange:           srgbRange,
-		SRCapabilityFlags:   srCapabilityFlags,
-		SRAlgorithm:         obj.SRAlgorithm,
-		SRLocalBlock:        obj.SRLocalBlock,
-		SRv6CapabilitiesTLV: obj.SRv6CapabilitiesTLV,
-		NodeMSD:             obj.NodeMSD,
-		FlexAlgoDefinition:  obj.FlexAlgoDefinition,
-	}
-
-	if action == "add" {
-		if err := db.Upsert(lsNodeVertexDocument); err != nil {
-			glog.Errorf("Encountered an error while upserting the ls node vertex document: %+v", err)
-			return
-		}
-		glog.Infof("Successfully added ls node Vertex document with IGPRouterID: %q, SRGBStart: %d, and name: %q\n", lsNodeVertexDocument.IGPRouterID, lsNodeVertexDocument.SRGBStart, lsNodeVertexDocument.Name)
-	} else {
-		if err := db.Delete(lsNodeVertexDocument); err != nil {
-			glog.Errorf("Encountered an error while deleting the ls node document: %+v", err)
-			return
-		} else {
-			glog.Infof("Successfully deleted ls node document with IGPRouterID: %q, SRGBStart: %d, and name: %q\n", lsNodeVertexDocument.IGPRouterID, lsNodeVertexDocument.SRGBStart, lsNodeVertexDocument.Name)
-		}
-	}
 }
 
 func parseSRStart(SID []byte) int {

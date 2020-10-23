@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-"""AQL Queries executed by the LSv4_Topology Service."""
+"""AQL Queries executed by the LSv4_Topology processor"""
 
 def get_lsv4_topology_keys(db):
     aql = """ FOR l in LSv4_Topology return l._key """
@@ -8,13 +8,13 @@ def get_lsv4_topology_keys(db):
     return allLSLinks
 
 def get_disjoint_keys(db, ls_topology_keys):
-    aql = """ FOR l in LSLinkEdge filter l._key not in @lsv4_topology_keys return l._key """
+    aql = """ FOR l in LSLinkDemo filter l._key not in @lsv4_topology_keys return l._key """
     bindVars = {'lsv4_topology_keys': ls_topology_keys }
     uncreated_ls_link_keys = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return uncreated_ls_link_keys
 
 def get_lsv4_link_keys(db):
-    aql = """ FOR l in LSLinkEdge filter NOT CONTAINS(l.local_interface_ip, ":") and NOT CONTAINS(l.remote_interface_ip, ":") return l._key """
+    aql = """ FOR l in LSLinkDemo filter NOT CONTAINS(l.local_interface_ip, ":") and NOT CONTAINS(l.remote_interface_ip, ":") return l._key """
     bindVars = {}
     ls_link_keys = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return ls_link_keys
@@ -29,7 +29,7 @@ def check_exists_lsv4_topology(db, ls_link_key):
         return False
 
 def check_exists_lsv4_link(db, lsv4_topology_key):
-    aql = """ FOR l in LSLinkEdge filter l._key == @lsv4_topology_key RETURN { key: l._key } """
+    aql = """ FOR l in LSLinkDemo filter l._key == @lsv4_topology_key RETURN { key: l._key } """
     bindVars = {'lsv4_topology_key': lsv4_topology_key}
     key_exists = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(key_exists) > 0):
@@ -43,7 +43,7 @@ def deleteLSv4TopologyDocument(db, lsv4_topology_key):
     deleted_document = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
 
 def createBaseLSv4TopologyDocument(db, ls_link_key):
-    aql = """ FOR l in LSLinkEdge filter l._key == @ls_link_key insert l into LSv4_Topology RETURN NEW._key """
+    aql = """ FOR l in LSLinkDemo filter l._key == @ls_link_key insert l into LSv4_Topology RETURN NEW._key """
     bindVars = {'ls_link_key': ls_link_key}
     created_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(created_edge) > 0):
@@ -53,7 +53,7 @@ def createBaseLSv4TopologyDocument(db, ls_link_key):
         print("Something went wrong while creating LSv4_Topology Edge")
 
 def updateBaseLSv4TopologyDocument(db, ls_link_key):
-    aql = """ FOR l in LSLinkEdge filter l._key == @ls_link_key update l into LSv4_Topology RETURN { before: OLD, after: NEW }"""
+    aql = """ FOR l in LSLinkDemo filter l._key == @ls_link_key update l into LSv4_Topology RETURN { before: OLD, after: NEW }"""
     bindVars = {'ls_link_key': ls_link_key }
     updated_edge = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     if(len(updated_edge) > 0):
@@ -75,19 +75,19 @@ def enhance_lsv4_topology_document(db, lsv4_topology_key):
         print("Something went wrong while enhancing LSv4_Topology Edge")
 
 def get_srgb_start(db, ls_node_key):
-    aql = """ FOR l in LSNode filter l._key == @ls_node_key return l.srgb_start """
+    aql = """ FOR l in LSNodeDemo filter l._key == @ls_node_key return l.srgb_start """
     bindVars = {'ls_node_key': ls_node_key }
     srgb_start = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return srgb_start
 
 def get_max_sid_depth(db, igp_router_id):
-    aql = """ FOR l in LSNode filter l._key == @igp_router_id return l.node_msd """
+    aql = """ FOR l in LSNodeDemo filter l._key == @igp_router_id return l.node_msd """
     bindVars = {'igp_router_id': igp_router_id }
     max_sid_depth = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return max_sid_depth
 
 def get_prefix_info(db, igp_router_id):
-    aql = """ FOR l in LSPrefix filter l.igp_router_id == @igp_router_id and l.prefix_sid != null for z in l.prefix_sid filter z.algo == 0 return {"prefix": l.prefix, "length": l.length, "flags": z.flags, "sid_index":  z.prefix_sid}"""
+    aql = """ FOR l in LSPrefixDemo filter l.igp_router_id == @igp_router_id and l.prefix_sid != null for z in l.prefix_sid filter z.algo == 0 return {"prefix": l.prefix, "length": l.length, "flags": z.flags, "sid_index":  z.prefix_sid}"""
     bindVars = {'igp_router_id': igp_router_id }
     prefix_info = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return prefix_info
@@ -105,7 +105,7 @@ def get_remote_igpid(db, lsv4_topology_key):
     return remote_igpid
 
 def get_sr_flags(db, igp_id):
-    aql = """ FOR l in LSPrefix filter l.SRFlags != null and l.IGPRouterID == @igp_id return l.SRFlags[0] """
+    aql = """ FOR l in LSPrefixDemo filter l.SRFlags != null and l.IGPRouterID == @igp_id return l.SRFlags[0] """
     bindVars = {'igp_id': igp_id}
     sr_flags = db.AQLQuery(aql, rawResults=True, bindVars=bindVars)
     return sr_flags
