@@ -3,11 +3,11 @@ Jalapeno's Data Processors are responsible for organizing, parsing, and analysin
 
 ### Topology Processor
 BGP speakers send BMP data feeds to GoBMP, which then passes the data to Kafka.  The Topology Processor subscribes to Kafka's BMP topics in order to create topology representations in ArangoDB.
-Collections created using this service are considered base-collections. These base-collections have no inference of relationships between network elements, or of any metrics -- they are organized collections of individual OpenBMP messages.
-For example, the Topology vService creates the LSNode collection and the LSLink collection directly from OpenBMP BGP-LS message data.
-However, the inference that an LSNode can reach another LSNode via some set of LSLinks is made using the separate link-state topology processor.
+Collections created using this service are considered base-collections. These base-collections have no inference of relationships between network elements, or of any metrics -- they are organized collections of individual GoBMP messages.
+For example, the Topology processor creates the LSNode collection and the LSLink collection directly from GoBMP BGP-LS message data.
  
 The configuration for Topology's deployment is in "topology_dp.yaml" in the topology directory.
+
 ## Demo Processors
 
 https://github.com/jalapeno/demo-processors
@@ -24,11 +24,4 @@ Each document will derive link utiliation metrics from telemetry data in InfluxD
 
 The configuration for LSLink Performance's deployment is in "lslink_performance_dp.yaml" in the lslinks-performance directory.
 
-### EPELink Performance Processor
-The EPELink Performance Processor calculates and correlates performance metrics on EPELinks and populates metric data in the EPE_Topology edge collection.
-Each document will derive link utiliation metrics from telemetry data in InfluxDB. 
 
-The configuration for EPELink Performance's deployment is in "epeink_performance_dp.yaml" in the epelink-performance directory.
-
-## API
-The API is deployed using Swagger and enables the client to make a variety of requests for optomized paths through the network. 
