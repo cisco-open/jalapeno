@@ -24,57 +24,49 @@ Output
 ```
 kubectl get all -n jalapeno
 
-NAME                                              READY   STATUS             RESTARTS   AGE
-pod/arangodb-0                                    1/1     Running            1          40h
-pod/grafana-deployment-5f44494444-d8smc           1/1     Running            1          40h
-pod/influxdb-0                                    1/1     Running            1          40h
-pod/kafka-0                                       1/1     Running            2          40h
-pod/l3vpn-processor-574d6c6d78-xpqd6              1/1     Running            70         40h
-pod/ls-performance-processor-5b4865464b-zck7w     1/1     Running            36         35h
-pod/ls-processor-667b548b46-ch4pp                 1/1     Running            20         34h
-pod/telegraf-egress-deployment-544b5c757c-rkvg5   1/1     Running            3          39h
-pod/topology-75bfcb977-c85z9                      1/1     Running            3          40h
-pod/zookeeper-0                                   1/1     Running            1          40h
+NAME                                              READY   STATUS        RESTARTS   AGE
+pod/arangodb-0                                    1/1     Running       0          9d
+pod/demo-l3vpn-processor-675b658cb7-np2kk         1/1     Terminating   3          31m
+pod/demo-lsv4-perf-processor-78c5bfc5fb-vch7r     1/1     Terminating   3          31m
+pod/demo-lsv4-processor-78dc64c9f5-xjn2q          1/1     Terminating   5          31m
+pod/demo-lsv6-processor-7df649ff6f-gj2j6          1/1     Terminating   2          31m
+pod/grafana-deployment-579c5f75bb-j6zwr           1/1     Running       0          9d
+pod/influxdb-0                                    1/1     Running       0          9d
+pod/kafka-0                                       1/1     Running       0          9d
+pod/telegraf-egress-deployment-55cbff896c-7mqlh   1/1     Running       5          9d
+pod/topology-6db7dc4fc4-rj5p5                     1/1     Running       0          33m
+pod/zookeeper-0                                   1/1     Running       1          9d
 
 NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-service/arango-np     NodePort    10.152.183.22    <none>        8529:30852/TCP               40h
-service/arangodb      ClusterIP   10.152.183.68    <none>        8529/TCP                     40h
-service/broker        ClusterIP   10.152.183.206   <none>        9092/TCP                     40h
-service/grafana       ClusterIP   10.152.183.176   <none>        3000/TCP                     40h
-service/grafana-np    NodePort    10.152.183.80    <none>        3000:30300/TCP               40h
-service/influxdb      ClusterIP   10.152.183.81    <none>        8086/TCP                     40h
-service/influxdb-np   NodePort    10.152.183.231   <none>        8086:30308/TCP               40h
-service/kafka         NodePort    10.152.183.232   <none>        9092:30092/TCP               40h
-service/zookeeper     ClusterIP   10.152.183.105   <none>        2888/TCP,3888/TCP,2181/TCP   40h
+service/arango-np     NodePort    10.152.183.34    <none>        8529:30852/TCP               9d
+service/arangodb      ClusterIP   10.152.183.103   <none>        8529/TCP                     9d
+service/broker        ClusterIP   10.152.183.11    <none>        9092/TCP                     9d
+service/grafana       ClusterIP   10.152.183.186   <none>        3000/TCP                     9d
+service/grafana-np    NodePort    10.152.183.83    <none>        3000:30300/TCP               9d
+service/influxdb      ClusterIP   10.152.183.9     <none>        8086/TCP                     9d
+service/influxdb-np   NodePort    10.152.183.176   <none>        8086:30308/TCP               9d
+service/kafka         NodePort    10.152.183.109   <none>        9092:30092/TCP               9d
+service/zookeeper     ClusterIP   10.152.183.93    <none>        2888/TCP,3888/TCP,2181/TCP   9d
 
 NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/grafana-deployment           1/1     1            1           40h
-deployment.apps/l3vpn-processor              1/1     1            1           40h
-deployment.apps/ls-performance-processor     1/1     1            1           40h
-deployment.apps/ls-processor                 1/1     1            1           40h
-deployment.apps/telegraf-egress-deployment   1/1     1            1           40h
-deployment.apps/topology                     1/1     1            1           40h
+deployment.apps/grafana-deployment           1/1     1            1           9d
+deployment.apps/telegraf-egress-deployment   1/1     1            1           9d
+deployment.apps/topology                     1/1     1            1           33m
 
 NAME                                                    DESIRED   CURRENT   READY   AGE
-replicaset.apps/grafana-deployment-5f44494444           1         1         1       40h
-replicaset.apps/l3vpn-processor-574d6c6d78              1         1         1       40h
-replicaset.apps/ls-performance-processor-5b4865464b     1         1         1       40h
-replicaset.apps/ls-processor-56dbcbd8d7                 1         1         0       22h
-replicaset.apps/ls-processor-667b548b46                 1         1         1       34h
-replicaset.apps/ls-processor-7d6d4c7554                 0         0         0       40h
-replicaset.apps/ls-processor-7db9dc445                  0         0         0       22h
-replicaset.apps/telegraf-egress-deployment-544b5c757c   1         1         1       40h
-replicaset.apps/topology-75bfcb977                      1         1         1       40h
+replicaset.apps/grafana-deployment-579c5f75bb           1         1         1       9d
+replicaset.apps/telegraf-egress-deployment-55cbff896c   1         1         1       9d
+replicaset.apps/topology-6db7dc4fc4                     1         1         1       33m
 
 NAME                         READY   AGE
-statefulset.apps/arangodb    1/1     40h
-statefulset.apps/influxdb    1/1     40h
-statefulset.apps/kafka       1/1     40h
-statefulset.apps/zookeeper   1/1     40h
+statefulset.apps/arangodb    1/1     9d
+statefulset.apps/influxdb    1/1     9d
+statefulset.apps/kafka       1/1     9d
+statefulset.apps/zookeeper   1/1     9d
 ```
 Collectors
 ```
-microk8s.kubectl get all -n jalapeno-collectors
+kubectl get all -n jalapeno-collectors
 NAME                                              READY   STATUS    RESTARTS   AGE
 pod/openbmpd-0                                    1/1     Running   1          40h
 pod/telegraf-ingress-deployment-ddfc8ff47-66n9j   1/1     Running   2          40h
