@@ -9,10 +9,12 @@ Users who do not have a full Kubernetes or GKE deployment can get up and running
 
 2. Use the `deploy_jalapeno.sh` script. This will start the collectors and all jalapeno infra and the Topology processor on the single node.
 
-Note: if using Microk8s you may need to put a 'microk8s' in front of kubectl in each command referenced below
+Note: if using Microk8s you may need to put a 'microk8s.kubectl' the commands referenced below
 
    ```bash
-   deploy_jalapeno.sh kubectl
+   ./deploy_jalapeno.sh
+   or
+   ./deploy_jalapeno.sh microk8s.kubectl
    ```
 
 3. Check that all containers are up using: `kubectl get all --all-namespaces` or on a per-namespace basis:
@@ -22,7 +24,7 @@ kubectl get all -n jalapeno-collectors
 ```
 Output
 ```
-kubectl get all -n jalapeno
+kubectl get all -n jalapeno 
 
 NAME                                              READY   STATUS        RESTARTS   AGE
 pod/arangodb-0                                    1/1     Running       0          9d
