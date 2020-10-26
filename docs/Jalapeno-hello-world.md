@@ -1,10 +1,12 @@
 ###  AQL queries to build a Hello World SR-App
 
+#### This hello-world app uses Jalapeno's demo-processors (https://github.com/jalapeno/demo-processors), which create the Arango collections shown in the sample queries below.
+
 #### The goal of this SR-App is to get the SR label stack for the least utilized path between Node 0007 and Node 0019:
 
 1. Query to get the full link-state topology
 ```
-for l in LSv4_Topology return l
+for l in LSv4TopologyDemo return l
 ```
 ![example topology](diagrams/example-topology.png)
 
@@ -14,7 +16,7 @@ for l in LSv4_Topology return l
 ```
 RETURN LENGTH(
 FOR v IN OUTBOUND 
-SHORTEST_PATH 'LSNodeDemo/0000.0000.0007' TO 'LSNodeDemo/0000.0000.0019' LSv4_Topology
+SHORTEST_PATH 'LSNodeDemo/0000.0000.0007' TO 'LSNodeDemo/0000.0000.0019' LSv4TopologyDemo
  Return v
 )
 ```
@@ -28,7 +30,7 @@ The AQL Output of 4 includes the source node.  From a routing perspective the so
 
 2. Query for ECMP paths should they exist.  The '3..3' notation gives us the hop count:
 ```
-FOR v, e, p IN 3..3 OUTBOUND "LSNodeDemo/0000.0000.0007" LSv4_Topology
+FOR v, e, p IN 3..3 OUTBOUND "LSNodeDemo/0000.0000.0007" LSv4TopologyDemo
      FILTER v._id == "LSNodeDemo/0000.0000.0019"
        RETURN CONCAT_SEPARATOR(" -> ", p.vertices[*].router_id)
 ```
@@ -43,7 +45,7 @@ Output
 
 3. With that bit of background information we now Query for the shortest path based on interface utilization:
 ```
-FOR v, e IN OUTBOUND SHORTEST_PATH 'LSNodeDemo/0000.0000.0007' TO 'LSNodeDemo/0000.0000.0019' LSv4_Topology
+FOR v, e IN OUTBOUND SHORTEST_PATH 'LSNodeDemo/0000.0000.0007' TO 'LSNodeDemo/0000.0000.0019' LSv4TopologyDemo
     OPTIONS {weightAttribute: 'Percent_Util_Outbound'}
     FILTER e != null
     RETURN [v.router_id, e.remote_prefix_sid]
@@ -69,7 +71,7 @@ The above query output can be used to create an SR-policy or label-stack which c
 
 Just for fun, a query showing all paths from Node 7 to Node 19 that can be completed in 5 hops or less:
 ```
-FOR v, e, p IN 1..5 OUTBOUND "LSNodeDemo/0000.0000.0007" LSv4_Topology
+FOR v, e, p IN 1..5 OUTBOUND "LSNodeDemo/0000.0000.0007" LSv4TopologyDemo
      FILTER v._id == "LSNodeDemo/0000.0000.0019"
        RETURN { "RouterID": p.vertices[*].router_id, "PrefixSID": p.edges[*].remote_prefix_sid }
 ```
