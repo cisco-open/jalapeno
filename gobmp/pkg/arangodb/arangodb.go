@@ -6,10 +6,10 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
-	"github.com/jalapeno-sdn/topology/pkg/dbclient"
-	"github.com/jalapeno-sdn/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/tools"
+	"github.com/jalapeno/topology/pkg/dbclient"
+	"github.com/jalapeno/topology/pkg/kafkanotifier"
 )
 
 const (
@@ -17,22 +17,34 @@ const (
 )
 
 var (
-	collections = map[int]string{
-		bmp.PeerStateChangeMsg: "Node",
-		bmp.LSLinkMsg:          "LSLink",
-		bmp.LSNodeMsg:          "LSNode",
-		bmp.LSPrefixMsg:        "LSPrefix",
-		bmp.LSSRv6SIDMsg:       "LSSRv6SID",
-		bmp.L3VPNMsg:           "L3VPN_Prefix",
-		bmp.UnicastPrefixMsg:   "UnicastPrefix",
+	collections = map[dbclient.CollectionType]*collectionProperties{
+		dbclient.PeerStateChange: {name: "Node_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSLink:          {name: "LSLink_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSNode:          {name: "LSNode_Test", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSPrefix:        {name: "LSPrefix_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSSRv6SID:       {name: "LSSRv6SID_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.L3VPN:           {name: "L3VPN_Prefix_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.L3VPNV4:         {name: "L3VPNV4_Prefix_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.L3VPNV6:         {name: "L3VPNV6_Prefix_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefix:   {name: "UnicastPrefix_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefixV4: {name: "UnicastPrefixV4_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefixV6: {name: "UnicastPrefixV6_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
 	}
 )
+
+// collectionProperties defines a collection specific properties
+// TODO this information should be configurable without recompiling code.
+type collectionProperties struct {
+	name     string
+	isVertex bool
+	options  *driver.CreateCollectionOptions
+}
 
 type arangoDB struct {
 	dbclient.DB
 	*ArangoConn
 	stop             chan struct{}
-	collections      map[int]*collection
+	collections      map[dbclient.CollectionType]*collection
 	notifyCompletion bool
 	notifier         kafkanotifier.Event
 }
@@ -53,7 +65,7 @@ func NewDBSrvClient(arangoSrv, user, pass, dbname string, notifier kafkanotifier
 	}
 	arango := &arangoDB{
 		stop:        make(chan struct{}),
-		collections: make(map[int]*collection),
+		collections: make(map[dbclient.CollectionType]*collection),
 	}
 	arango.DB = arango
 	arango.ArangoConn = arangoConn
@@ -71,15 +83,15 @@ func NewDBSrvClient(arangoSrv, user, pass, dbname string, notifier kafkanotifier
 	return arango, nil
 }
 
-func (a *arangoDB) ensureCollection(name string, collectionType int) error {
+func (a *arangoDB) ensureCollection(p *collectionProperties, collectionType dbclient.CollectionType) error {
 	if _, ok := a.collections[collectionType]; !ok {
 		a.collections[collectionType] = &collection{
 			queue:          make(chan *queueMsg),
-			name:           name,
 			stats:          &stats{},
 			stop:           a.stop,
 			arango:         a,
 			collectionType: collectionType,
+			properties:     p,
 		}
 		switch collectionType {
 		case bmp.PeerStateChangeMsg:
@@ -94,22 +106,67 @@ func (a *arangoDB) ensureCollection(name string, collectionType int) error {
 			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
 		case bmp.L3VPNMsg:
 			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
+		case bmp.L3VPNV4Msg:
+			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
+		case bmp.L3VPNV6Msg:
+			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
 		case bmp.UnicastPrefixMsg:
+			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
+		case bmp.UnicastPrefixV4Msg:
+			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
+		case bmp.UnicastPrefixV6Msg:
 			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
 		default:
 			return fmt.Errorf("unknown collection type %d", collectionType)
 		}
 	}
-	ci, err := a.db.Collection(context.TODO(), a.collections[collectionType].name)
-	if err != nil {
-		if !driver.IsArangoErrorWithErrorNum(err, driver.ErrArangoDataSourceNotFound) {
+	var ci driver.Collection
+	var err error
+	// There are two possible collection types, base type and vertex type
+	if !a.collections[collectionType].properties.isVertex {
+		ci, err = a.db.Collection(context.TODO(), a.collections[collectionType].properties.name)
+		if err != nil {
+			if !driver.IsArangoErrorWithErrorNum(err, driver.ErrArangoDataSourceNotFound) {
+				return err
+			}
+			ci, err = a.db.CreateCollection(context.TODO(), a.collections[collectionType].properties.name, a.collections[collectionType].properties.options)
+		}
+	} else {
+		graph, err := a.ensureGraph(a.collections[collectionType].properties.name)
+		if err != nil {
 			return err
 		}
-		ci, err = a.db.CreateCollection(context.TODO(), a.collections[collectionType].name, &driver.CreateCollectionOptions{})
+		ci, err = graph.VertexCollection(context.TODO(), a.collections[collectionType].properties.name)
+		if err != nil {
+			if !driver.IsArangoErrorWithErrorNum(err, driver.ErrArangoDataSourceNotFound) {
+				return err
+			}
+			ci, err = graph.CreateVertexCollection(context.TODO(), a.collections[collectionType].properties.name)
+		}
 	}
 	a.collections[collectionType].topicCollection = ci
 
 	return nil
+}
+
+func (a *arangoDB) ensureGraph(name string) (driver.Graph, error) {
+	var edgeDefinition driver.EdgeDefinition
+	edgeDefinition.Collection = name + "_Edge"
+	edgeDefinition.From = []string{name}
+	edgeDefinition.To = []string{name}
+
+	var options driver.CreateGraphOptions
+	options.EdgeDefinitions = []driver.EdgeDefinition{edgeDefinition}
+	graph, err := a.db.Graph(context.TODO(), name)
+	if err == nil {
+		graph.Remove(context.TODO())
+		return a.db.CreateGraph(context.TODO(), name, &options)
+	}
+	if !driver.IsArangoErrorWithErrorNum(err, 1924) {
+		return nil, err
+	}
+
+	return a.db.CreateGraph(context.TODO(), name, &options)
 }
 
 func (a *arangoDB) Start() error {
@@ -135,7 +192,7 @@ func (a *arangoDB) GetArangoDBInterface() *ArangoConn {
 	return a.ArangoConn
 }
 
-func (a *arangoDB) StoreMessage(msgType int, msg []byte) error {
+func (a *arangoDB) StoreMessage(msgType dbclient.CollectionType, msg []byte) error {
 	if t, ok := a.collections[msgType]; ok {
 		t.queue <- &queueMsg{
 			msgType: msgType,
