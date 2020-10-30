@@ -47,7 +47,7 @@ spec:
           - "6"
           - --kafka-server
           - broker.jalapeno:9092
-          image: docker.io/sbezverk/gobmp:wip_af
+          image: docker.io/sbezverk/gobmp:latest
           imagePullPolicy: Always
           name: gobmp
           ports:
