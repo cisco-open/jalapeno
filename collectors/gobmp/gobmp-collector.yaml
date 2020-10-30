@@ -44,10 +44,10 @@ spec:
       containers:
         - args:
           - --v
-          - "5"
+          - "6"
           - --kafka-server
           - broker.jalapeno:9092
-          image: docker.io/sbezverk/gobmp:latest
+          image: docker.io/sbezverk/gobmp:wip_af
           imagePullPolicy: Always
           name: gobmp
           ports:
