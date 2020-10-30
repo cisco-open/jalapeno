@@ -38,9 +38,7 @@ type collection struct {
 	stats           *stats
 	stop            chan struct{}
 	topicCollection driver.Collection
-	//	name            string
 	collectionType dbclient.CollectionType
-	//	isVertex        bool // If set to true the collection is created as a vertex collection, required to be able to build edge topologies
 	handler    func()
 	arango     *arangoDB
 	properties *collectionProperties
