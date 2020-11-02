@@ -3,7 +3,7 @@ package mockdb
 import (
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/message"
-	"github.com/jalapeno-sdn/topology/pkg/dbclient"
+	"github.com/jalapeno/topology/pkg/dbclient"
 )
 
 type mockDB struct {
@@ -36,7 +36,7 @@ func (m *mockDB) GetInterface() dbclient.DB {
 	return m.DB
 }
 
-func (m *mockDB) StoreMessage(msgType int, msg []byte) error {
+func (m *mockDB) StoreMessage(msgType dbclient.CollectionType, msg []byte) error {
 	// switch msgType {
 	// case bmp.PeerStateChangeMsg:
 	// 	p, ok := msg.(*message.PeerStateChange)

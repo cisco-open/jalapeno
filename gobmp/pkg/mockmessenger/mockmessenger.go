@@ -5,7 +5,7 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/jalapeno-sdn/topology/pkg/dbclient"
+	"github.com/jalapeno/topology/pkg/dbclient"
 )
 
 // Srv defines required method of a processor server

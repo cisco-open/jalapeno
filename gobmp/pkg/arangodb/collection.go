@@ -8,7 +8,8 @@ import (
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/jalapeno-sdn/topology/pkg/kafkanotifier"
+	"github.com/jalapeno/topology/pkg/dbclient"
+	"github.com/jalapeno/topology/pkg/kafkanotifier"
 	"go.uber.org/atomic"
 )
 
@@ -23,7 +24,7 @@ type result struct {
 }
 
 type queueMsg struct {
-	msgType int
+	msgType dbclient.CollectionType
 	msgData []byte
 }
 
@@ -37,17 +38,17 @@ type collection struct {
 	stats           *stats
 	stop            chan struct{}
 	topicCollection driver.Collection
-	name            string
-	collectionType  int
-	handler         func()
-	arango          *arangoDB
+	collectionType dbclient.CollectionType
+	handler    func()
+	arango     *arangoDB
+	properties *collectionProperties
 }
 
 func (c *collection) processError(r *result) bool {
 	switch {
 	// Condition when a collection was deleted while the topology was running
 	case driver.IsArangoErrorWithErrorNum(r.err, driver.ErrArangoDataSourceNotFound):
-		if err := c.arango.ensureCollection(c.name, c.collectionType); err != nil {
+		if err := c.arango.ensureCollection(c.properties, c.collectionType); err != nil {
 			return true
 		}
 		return false
@@ -108,7 +109,7 @@ func (c *collection) genericHandler() {
 				if err := c.arango.notifier.EventNotification(&kafkanotifier.EventMessage{
 					TopicType: c.collectionType,
 					Key:       r.key,
-					ID:        c.name + "/" + r.key,
+					ID:        c.properties.name + "/" + r.key,
 					Action:    r.action,
 				}); err != nil {
 					glog.Errorf("genericWorker for key: %s failed to send notification with error: %+v", r.key, r.err)
@@ -158,7 +159,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 			return
 		}
 		obj.(*peerStateChangeArangoMessage).Key = k
-		obj.(*peerStateChangeArangoMessage).ID = c.name + "/" + k
+		obj.(*peerStateChangeArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*peerStateChangeArangoMessage).Action
 	case bmp.LSLinkMsg:
 		obj, ok = o.(*lsLinkArangoMessage)
@@ -167,7 +168,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 			return
 		}
 		obj.(*lsLinkArangoMessage).Key = k
-		obj.(*lsLinkArangoMessage).ID = c.name + "/" + k
+		obj.(*lsLinkArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*lsLinkArangoMessage).Action
 	case bmp.LSNodeMsg:
 		obj, ok = o.(*lsNodeArangoMessage)
@@ -176,7 +177,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 			return
 		}
 		obj.(*lsNodeArangoMessage).Key = k
-		obj.(*lsNodeArangoMessage).ID = c.name + "/" + k
+		obj.(*lsNodeArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*lsNodeArangoMessage).Action
 	case bmp.LSPrefixMsg:
 		obj, ok = o.(*lsPrefixArangoMessage)
@@ -185,7 +186,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 			return
 		}
 		obj.(*lsPrefixArangoMessage).Key = k
-		obj.(*lsPrefixArangoMessage).ID = c.name + "/" + k
+		obj.(*lsPrefixArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*lsPrefixArangoMessage).Action
 	case bmp.LSSRv6SIDMsg:
 		obj, ok = o.(*lsSRv6SIDArangoMessage)
@@ -194,25 +195,33 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 			return
 		}
 		obj.(*lsSRv6SIDArangoMessage).Key = k
-		obj.(*lsSRv6SIDArangoMessage).ID = c.name + "/" + k
+		obj.(*lsSRv6SIDArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*lsSRv6SIDArangoMessage).Action
 	case bmp.L3VPNMsg:
+		fallthrough
+	case bmp.L3VPNV4Msg:
+		fallthrough
+	case bmp.L3VPNV6Msg:
 		obj, ok = o.(*l3VPNArangoMessage)
 		if !ok {
 			err = fmt.Errorf("failed to recover l3VPNArangoMessage from DBRecord interface")
 			return
 		}
 		obj.(*l3VPNArangoMessage).Key = k
-		obj.(*l3VPNArangoMessage).ID = c.name + "/" + k
+		obj.(*l3VPNArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*l3VPNArangoMessage).Action
 	case bmp.UnicastPrefixMsg:
+		fallthrough
+	case bmp.UnicastPrefixV4Msg:
+		fallthrough
+	case bmp.UnicastPrefixV6Msg:
 		obj, ok = o.(*unicastPrefixArangoMessage)
 		if !ok {
 			err = fmt.Errorf("failed to recover unicastPrefixArangoMessage from DBRecord interface")
 			return
 		}
 		obj.(*unicastPrefixArangoMessage).Key = k
-		obj.(*unicastPrefixArangoMessage).ID = c.name + "/" + k
+		obj.(*unicastPrefixArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*unicastPrefixArangoMessage).Action
 	default:
 		err = fmt.Errorf("unknown collection type %d", c.collectionType)
@@ -248,7 +257,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 	return
 }
 
-func newDBRecord(msgData []byte, collectionType int) (DBRecord, error) {
+func newDBRecord(msgData []byte, collectionType dbclient.CollectionType) (DBRecord, error) {
 	switch collectionType {
 	case bmp.PeerStateChangeMsg:
 		var o peerStateChangeArangoMessage
@@ -281,12 +290,20 @@ func newDBRecord(msgData []byte, collectionType int) (DBRecord, error) {
 		}
 		return &o, nil
 	case bmp.L3VPNMsg:
+		fallthrough
+	case bmp.L3VPNV4Msg:
+		fallthrough
+	case bmp.L3VPNV6Msg:
 		var o l3VPNArangoMessage
 		if err := json.Unmarshal(msgData, &o); err != nil {
 			return nil, err
 		}
 		return &o, nil
 	case bmp.UnicastPrefixMsg:
+		fallthrough
+	case bmp.UnicastPrefixV4Msg:
+		fallthrough
+	case bmp.UnicastPrefixV6Msg:
 		var o unicastPrefixArangoMessage
 		if err := json.Unmarshal(msgData, &o); err != nil {
 			return nil, err
