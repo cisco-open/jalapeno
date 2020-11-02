@@ -27,8 +27,7 @@ spec:
           - "root"
           - --database-pass
           - "jalapeno"
-          image: docker.io/sbezverk/topology:wip_af
-            #image: docker.io/iejalapeno/topology@sha256:93a92a442a7d5fc7dfbeda5a54d50203e5cc1cdc8585ee0d86cf9ce808f9e11e 
+          image: docker.io/iejalapeno/topology@sha256:961949d32a65cd9729d0e2d01f16a68298964640b2cc47d83f41a2d45d095d35
           imagePullPolicy: Always
           name: topology
 metadata:
