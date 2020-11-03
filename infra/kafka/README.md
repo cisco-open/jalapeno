@@ -24,7 +24,8 @@ unset JMX_PORT
 
 etc.
 ```
-If the topic provides json output similar to the below sample that means GoBMP is successfully writing BMP messages to Kafka.
+If the topic provides json output similar to the below sample we know that GoBMP is successfully writing BMP messages to Kafka.  Note, there may not be active messages in Kafka's buffer at any given time.  BMP messages can be triggered by either clearing BGP link-state or shut/no-shut on the router's BMP server.
+
 Sample output:
 ```
 {
