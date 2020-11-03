@@ -17,6 +17,6 @@ To access Grafana's UI, log in at `<server_ip>:30300`, using credentials `root/j
 
 Dashboards are not automatically loaded by Jalapeno's installation script. Follow these steps to get some dashboards up and running:
 
-https://github.com/jalapeno-sdn/jalapeno-lab/tree/master/grafana
+https://github.com/jalapeno/jalapeno-lab/tree/master/grafana
 
 
