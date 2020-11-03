@@ -17,5 +17,19 @@ To access InfluxDB via Kubernetes, enter the pod's terminal and run:
 influx
 auth root jalapeno
 use mdt_db
-show series
+show series  // provides a list of all time-series in the mdt_db
 ```
+
+Sample Queries:
+```
+// Provide all of Router 16's interface names and IPv4 addresses:
+
+SELECT last("ip_information/ip_address") FROM "Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface" WHERE ("source" = 'R16-LSR') GROUP BY "interface_name"
+
+// Provide Router 16's interface IDs or indexes:
+
+SELECT last("if_index") FROM "Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface" WHERE ("source" = 'R16-LSR') GROUP BY "interface_name"
+
+// Provide transmit and receive bytes collected for a given router interface over the last hour (30 second collection interval):
+
+SELECT last("state/counters/out_octets"), last("state/counters/in_octets") FROM "openconfig-interfaces:interfaces/interface" WHERE ("name" = 'GigabitEthernet0/0/0/0' AND "source" = 'R12-LSR') AND time >= now() - 30m  GROUP BY time(30s) fill(null)
