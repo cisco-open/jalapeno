@@ -9,12 +9,12 @@ import (
 	"strconv"
 
 	"github.com/golang/glog"
-	"github.com/jalapeno-sdn/topology/pkg/arangodb"
-	"github.com/jalapeno-sdn/topology/pkg/dbclient"
-	"github.com/jalapeno-sdn/topology/pkg/kafkamessenger"
-	"github.com/jalapeno-sdn/topology/pkg/kafkanotifier"
-	"github.com/jalapeno-sdn/topology/pkg/messenger"
-	"github.com/jalapeno-sdn/topology/pkg/mockdb"
+	"github.com/jalapeno/topology/pkg/arangodb"
+	"github.com/jalapeno/topology/pkg/dbclient"
+	"github.com/jalapeno/topology/pkg/kafkamessenger"
+	"github.com/jalapeno/topology/pkg/kafkanotifier"
+	"github.com/jalapeno/topology/pkg/messenger"
+	"github.com/jalapeno/topology/pkg/mockdb"
 
 	"net/http"
 	_ "net/http/pprof"
