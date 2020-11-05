@@ -6,10 +6,10 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
-	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/sbezverk/gobmp/pkg/tools"
 	"github.com/jalapeno/topology/pkg/dbclient"
 	"github.com/jalapeno/topology/pkg/kafkanotifier"
+	"github.com/sbezverk/gobmp/pkg/bmp"
+	"github.com/sbezverk/gobmp/pkg/tools"
 )
 
 const (
@@ -18,17 +18,17 @@ const (
 
 var (
 	collections = map[dbclient.CollectionType]*collectionProperties{
-		dbclient.PeerStateChange: {name: "Node_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSLink:          {name: "LSLink_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSNode:          {name: "LSNode_Test", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSPrefix:        {name: "LSPrefix_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSSRv6SID:       {name: "LSSRv6SID_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.L3VPN:           {name: "L3VPN_Prefix_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.L3VPNV4:         {name: "L3VPNV4_Prefix_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.L3VPNV6:         {name: "L3VPNV6_Prefix_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.UnicastPrefix:   {name: "UnicastPrefix_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.UnicastPrefixV4: {name: "UnicastPrefixV4_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.UnicastPrefixV6: {name: "UnicastPrefixV6_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.PeerStateChange: {name: "Node", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSLink:          {name: "LSLink", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSNode:          {name: "LSNode", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSPrefix:        {name: "LSPrefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSSRv6SID:       {name: "LSSRv6SID", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.L3VPN:           {name: "L3VPN_Prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.L3VPNV4:         {name: "L3VPNV4_Prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.L3VPNV6:         {name: "L3VPNV6_Prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefix:   {name: "UnicastPrefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefixV4: {name: "UnicastPrefixV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefixV6: {name: "UnicastPrefixV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
 	}
 )
 
