@@ -12,7 +12,11 @@ type lsLinkArangoMessage struct {
 
 func (l *lsLinkArangoMessage) MakeKey() string {
 	var localIP, remoteIP, localID, remoteID string
-	switch l.MTID {
+	mtid := 0
+	if l.MTID != nil {
+		mtid = int(l.MTID.MTID)
+	}
+	switch mtid {
 	case 0:
 		localIP = "0.0.0.0"
 		remoteIP = "0.0.0.0"
@@ -34,5 +38,5 @@ func (l *lsLinkArangoMessage) MakeKey() string {
 
 	// The LSLink Key uses ProtocolID, DomainID, and Multi-Topology ID
 	// to create unique Keys for DB entries in multi-area / multi-topology scenarios
-	return strconv.Itoa(int(l.ProtocolID)) + "_" + strconv.Itoa(int(l.DomainID)) + "_" + strconv.Itoa(int(l.MTID)) + "_" + l.AreaID + "_" + l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID
+	return strconv.Itoa(int(l.ProtocolID)) + "_" + strconv.Itoa(int(l.DomainID)) + "_" + strconv.Itoa(mtid) + "_" + l.AreaID + "_" + l.IGPRouterID + "_" + localIP + "_" + localID + "_" + l.RemoteIGPRouterID + "_" + remoteIP + "_" + remoteID
 }
