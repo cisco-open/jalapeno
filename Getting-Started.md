@@ -28,10 +28,6 @@ kubectl get all -n jalapeno
 
 NAME                                              READY   STATUS        RESTARTS   AGE
 pod/arangodb-0                                    1/1     Running       0          9d
-pod/demo-l3vpn-processor-675b658cb7-np2kk         1/1     Terminating   3          31m
-pod/demo-lsv4-perf-processor-78c5bfc5fb-vch7r     1/1     Terminating   3          31m
-pod/demo-lsv4-processor-78dc64c9f5-xjn2q          1/1     Terminating   5          31m
-pod/demo-lsv6-processor-7df649ff6f-gj2j6          1/1     Terminating   2          31m
 pod/grafana-deployment-579c5f75bb-j6zwr           1/1     Running       0          9d
 pod/influxdb-0                                    1/1     Running       0          9d
 pod/kafka-0                                       1/1     Running       0          9d
@@ -83,8 +79,6 @@ deployment.apps/telegraf-ingress-deployment   1/1     1            1           4
 NAME                                                    DESIRED   CURRENT   READY   AGE
 replicaset.apps/telegraf-ingress-deployment-ddfc8ff47   1         1         1       40h
 
-NAME                        READY   AGE
-statefulset.apps/openbmpd   1/1     40h
 ```
 
 4. Configure routers in the network to stream telemetry and BMP data to the Jalapeno cluster. The MDT port is 32400 and the BMP port is 30555.
@@ -105,7 +99,7 @@ statefulset.apps/openbmpd   1/1     40h
       ```shell
       bmp server 1
        host <server-ip> port 30555
-       description jalapeno OpenBMP
+       description jalapeno GoBMP
        update-source MgmtEth0/RP0/CPU0/0
        flapping-delay 60
        initial-delay 5
@@ -132,24 +126,4 @@ Jalapeno can also be destroyed using the script.
    destroy_jalapeno.sh kubectl
    ```
 
-### More info on Jalapeno components:
 
-* [MicroK8s_installation.md](docs/MicroK8s_installation.md)
-
-* [Link-State processor](docs/link-state)
-
-* [L3VPN processor](docs/l3vpn)
-
-* [EPE processor](docs/epe)
-
-* [BMP](docs/BMP.md) - coming soon
-
-* [Kafka](docs/Kafka.md) - coming soon
-
-* [Topology processor](docs/Topology_processor.md) - coming soon
-
-* [Arango GraphDB](docs/Arango-GraphDB.md) - coming soon
-
-* [Influx TSDB](docs/Influx-TSDB.md) - coming soon
-
-* [Network-performance processors](docs/perf) - coming soon

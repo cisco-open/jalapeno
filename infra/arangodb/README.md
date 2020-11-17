@@ -12,8 +12,14 @@ These collections, in conjunction with ArangoDBs rapid graphical traversals and 
 
 ## Types of ArangoDB Interactions
 * Parsing data from Kafka and storing in ArangoDB (i.e. Topology Processor)
-* Parsing data from InfluxDB and storing in ArangoDB (i.e. LS-Performance Processor)
-* Parsing data from ArangoDB and storing in ArangoDB (i.e. LS-Topology Processor)
+    https://github.com/jalapeno/topology
+
+* Parsing data from InfluxDB and storing in ArangoDB (i.e. Demo LS-Performance Processor)
+    https://github.com/jalapeno/demo-processors/tree/main/lsv4-perf
+
+* Parsing data from ArangoDB and storing in ArangoDB (i.e. Demo LS-Topology Processor)
+    https://github.com/jalapeno/demo-processors/tree/main/lsv4-proc
+
 * Parsing data from ArangoDB and returning insights to client (i.e. API Gateway)
 
 ## Deploying ArangoDB

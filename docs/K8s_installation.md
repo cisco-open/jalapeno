@@ -1,10 +1,77 @@
-# MicroK8s
-
 If you already have a Kubernetes environment deployed you may skip this document and move on to:
+[Getting-Started.md](../Getting-Started.md)
+
+The following instructions present two options for installing Kubernetes:
+
+1. Kubernetes/Kubeadm
+2. Microk8s
+
+# Kubernetes installation:
+
+1. Install Kubeadm:
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+
+2. Creating a cluster:
+https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
+
+Ubuntu system pre-flight checks may error out with:
+
+	[WARNING IsDockerSystemdCheck]: detected "cgroupfs" as the Docker cgroup driver. The recommended driver is "systemd". Please follow the guide at https://kubernetes.io/docs/setup/cri/
+
+To change Docker driver to systemd add this line to /etc/docker/daemon.json :
+
+```
+{
+	"exec-opts": ["native.cgroupdriver=systemd"]
+}
+```
+Then: 
+```
+sudo systemctl restart docker.service
+```
+
+3. Optional: Calico CNI:
+https://docs.projectcalico.org/getting-started/kubernetes/self-managed-onprem/onpremises
+
+Once installation is complete the cluster should look something like this:
+
+```
+$ kubectl get all --all-namespaces
+
+NAMESPACE     NAME                                           READY   STATUS    RESTARTS   AGE
+kube-system   pod/calico-kube-controllers-5c6f6b67db-n6vnd   1/1     Running   0          107s
+kube-system   pod/calico-node-fk4kz                          1/1     Running   0          108s
+kube-system   pod/coredns-f9fd979d6-g6n2j                    1/1     Running   0          2m38s
+kube-system   pod/coredns-f9fd979d6-kzw8v                    1/1     Running   0          2m38s
+kube-system   pod/etcd-ie-dev8                               1/1     Running   0          2m36s
+kube-system   pod/kube-apiserver-ie-dev8                     1/1     Running   0          2m36s
+kube-system   pod/kube-controller-manager-ie-dev8            1/1     Running   0          2m36s
+kube-system   pod/kube-proxy-7mvrw                           1/1     Running   0          2m38s
+kube-system   pod/kube-scheduler-ie-dev8                     1/1     Running   0          2m36s
+
+NAMESPACE     NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+default       service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP                  2m45s
+kube-system   service/kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   2m43s
+
+NAMESPACE     NAME                         DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+kube-system   daemonset.apps/calico-node   1         1         1       1            1           kubernetes.io/os=linux   109s
+kube-system   daemonset.apps/kube-proxy    1         1         1       1            1           kubernetes.io/os=linux   2m43s
+
+NAMESPACE     NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system   deployment.apps/calico-kube-controllers   1/1     1            1           108s
+kube-system   deployment.apps/coredns                   2/2     2            2           2m43s
+
+NAMESPACE     NAME                                                 DESIRED   CURRENT   READY   AGE
+kube-system   replicaset.apps/calico-kube-controllers-5c6f6b67db   1         1         1       108s
+kube-system   replicaset.apps/coredns-f9fd979d6                    2         2         2       2m38s
+```
+After installing Kubeadm, Kubectl, CNI, etc.:
 
 [Getting-Started.md](../Getting-Started.md)
 
-If you do not have an existing Kubernetes environment, then the following instructions may be used to install a single-node Microk8s cluster.  Microk8s is great for development and is contained to a single server.
+# MicroK8s installation
+
+The following instructions may be used to install a single-node Microk8s cluster.  
 
 ### Installing MicroK8s on Ubuntu
 
