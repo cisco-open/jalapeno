@@ -1,7 +1,7 @@
-# Jalapeno Installation Guide
+# Jalapeno Installation
 Jalapeno has been primarily developed, tested, and operated on Ubuntu 18.04 (bare-metal or VM), and Google Kubernetes Engine. Minimum VM sizing for a test lab is 2 vCPU, 4GB memory, and 8G of disk.  If deploying in an environment with large table sizes (full Internet table, 100k + internal or vpn prefixes), then we recommend bare metal or a VM with at least 4 vCPU, 16GB memory, and 40G of disk.
 
-Users who do not have a full Kubernetes or GKE deployment can get up and running quite quickly with Microk8s [Installing MicroK8s](docs/MicroK8s_installation.md)
+Users who do not have a full Kubernetes or GKE deployment can get up and running quite quickly with Microk8s [Installing K8s](docs/K8s_installation.md)
 
 ### Installing Jalapeno
 
@@ -24,60 +24,59 @@ kubectl get all -n jalapeno-collectors
 ```
 Output
 ```
-kubectl get all -n jalapeno 
-
-NAME                                              READY   STATUS        RESTARTS   AGE
-pod/arangodb-0                                    1/1     Running       0          9d
-pod/grafana-deployment-579c5f75bb-j6zwr           1/1     Running       0          9d
-pod/influxdb-0                                    1/1     Running       0          9d
-pod/kafka-0                                       1/1     Running       0          9d
-pod/telegraf-egress-deployment-55cbff896c-7mqlh   1/1     Running       5          9d
-pod/topology-6db7dc4fc4-rj5p5                     1/1     Running       0          33m
-pod/zookeeper-0                                   1/1     Running       1          9d
+NAME                                              READY   STATUS    RESTARTS   AGE
+pod/arangodb-0                                    1/1     Running   0          3m12s
+pod/grafana-deployment-7d4dd466f5-d8lm5           1/1     Running   0          3m9s
+pod/influxdb-0                                    1/1     Running   0          3m11s
+pod/kafka-0                                       1/1     Running   0          3m13s
+pod/telegraf-egress-deployment-77d475d8d8-xvhtp   1/1     Running   2          3m5s
+pod/topology-75958bdf79-9n8tj                     1/1     Running   2          2m50s
+pod/zookeeper-0                                   1/1     Running   0          3m14s
 
 NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-service/arango-np     NodePort    10.152.183.34    <none>        8529:30852/TCP               9d
-service/arangodb      ClusterIP   10.152.183.103   <none>        8529/TCP                     9d
-service/broker        ClusterIP   10.152.183.11    <none>        9092/TCP                     9d
-service/grafana       ClusterIP   10.152.183.186   <none>        3000/TCP                     9d
-service/grafana-np    NodePort    10.152.183.83    <none>        3000:30300/TCP               9d
-service/influxdb      ClusterIP   10.152.183.9     <none>        8086/TCP                     9d
-service/influxdb-np   NodePort    10.152.183.176   <none>        8086:30308/TCP               9d
-service/kafka         NodePort    10.152.183.109   <none>        9092:30092/TCP               9d
-service/zookeeper     ClusterIP   10.152.183.93    <none>        2888/TCP,3888/TCP,2181/TCP   9d
+service/arango-np     NodePort    10.106.206.60    <none>        8529:30852/TCP               3m12s
+service/arangodb      ClusterIP   10.96.17.131     <none>        8529/TCP                     3m13s
+service/broker        ClusterIP   10.96.137.177    <none>        9092/TCP                     3m14s
+service/grafana       ClusterIP   10.96.248.207    <none>        3000/TCP                     3m8s
+service/grafana-np    NodePort    10.102.250.199   <none>        3000:30300/TCP               3m7s
+service/influxdb      ClusterIP   10.105.37.120    <none>        8086/TCP                     3m11s
+service/influxdb-np   NodePort    10.108.158.189   <none>        8086:30308/TCP               3m10s
+service/kafka         NodePort    10.105.91.121    <none>        9092:30092/TCP               3m13s
+service/zookeeper     ClusterIP   10.100.169.211   <none>        2888/TCP,3888/TCP,2181/TCP   3m14s
 
 NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/grafana-deployment           1/1     1            1           9d
-deployment.apps/telegraf-egress-deployment   1/1     1            1           9d
-deployment.apps/topology                     1/1     1            1           33m
+deployment.apps/grafana-deployment           1/1     1            1           3m9s
+deployment.apps/telegraf-egress-deployment   1/1     1            1           3m5s
+deployment.apps/topology                     1/1     1            1           2m50s
 
 NAME                                                    DESIRED   CURRENT   READY   AGE
-replicaset.apps/grafana-deployment-579c5f75bb           1         1         1       9d
-replicaset.apps/telegraf-egress-deployment-55cbff896c   1         1         1       9d
-replicaset.apps/topology-6db7dc4fc4                     1         1         1       33m
+replicaset.apps/grafana-deployment-7d4dd466f5           1         1         1       3m9s
+replicaset.apps/telegraf-egress-deployment-77d475d8d8   1         1         1       3m5s
+replicaset.apps/topology-75958bdf79                     1         1         1       2m50s
 
 NAME                         READY   AGE
-statefulset.apps/arangodb    1/1     9d
-statefulset.apps/influxdb    1/1     9d
-statefulset.apps/kafka       1/1     9d
-statefulset.apps/zookeeper   1/1     9d
+statefulset.apps/arangodb    1/1     3m13s
+statefulset.apps/influxdb    1/1     3m11s
+statefulset.apps/kafka       1/1     3m13s
+statefulset.apps/zookeeper   1/1     3m14s
 ```
 Collectors
 ```
-kubectl get all -n jalapeno-collectors
-NAME                                              READY   STATUS    RESTARTS   AGE
-pod/openbmpd-0                                    1/1     Running   1          40h
-pod/telegraf-ingress-deployment-ddfc8ff47-66n9j   1/1     Running   2          40h
+NAME                                               READY   STATUS    RESTARTS   AGE
+pod/gobmp-f8bf8d6d5-nvwn8                          1/1     Running   2          3m42s
+pod/telegraf-ingress-deployment-56867cf9b4-62snv   1/1     Running   1          3m46s
 
-NAME                          TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)           AGE
-service/openbmpd-np           NodePort   10.152.183.23    <none>        5000:30555/TCP    40h
-service/telegraf-ingress-np   NodePort   10.152.183.168   <none>        57400:32400/TCP   40h
+NAME                          TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                          AGE
+service/gobmp                 NodePort   10.97.107.27    <none>        5000:30511/TCP,56767:30767/TCP   3m43s
+service/telegraf-ingress-np   NodePort   10.97.218.162   <none>        57400:32400/TCP                  3m46s
 
 NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/telegraf-ingress-deployment   1/1     1            1           40h
+deployment.apps/gobmp                         1/1     1            1           3m42s
+deployment.apps/telegraf-ingress-deployment   1/1     1            1           3m46s
 
-NAME                                                    DESIRED   CURRENT   READY   AGE
-replicaset.apps/telegraf-ingress-deployment-ddfc8ff47   1         1         1       40h
+NAME                                                     DESIRED   CURRENT   READY   AGE
+replicaset.apps/gobmp-f8bf8d6d5                          1         1         1       3m42s
+replicaset.apps/telegraf-ingress-deployment-56867cf9b4   1         1         1       3m46s
 
 ```
 
