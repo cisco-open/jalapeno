@@ -6,7 +6,7 @@ The following instructions present two options for installing Kubernetes:
 1. Kubernetes/Kubeadm
 2. Microk8s
 
-# Kubernetes installation:
+## Kubernetes installation:
 
 1. Install Kubeadm:
 https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
@@ -69,7 +69,7 @@ After installing Kubeadm, Kubectl, CNI, etc.:
 
 [Getting-Started.md](../Getting-Started.md)
 
-# MicroK8s installation
+## MicroK8s installation
 
 The following instructions may be used to install a single-node Microk8s cluster.  
 
