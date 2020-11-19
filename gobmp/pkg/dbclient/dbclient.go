@@ -28,4 +28,7 @@ const (
 	UnicastPrefix   CollectionType = bmp.UnicastPrefixMsg
 	UnicastPrefixV4 CollectionType = bmp.UnicastPrefixV4Msg
 	UnicastPrefixV6 CollectionType = bmp.UnicastPrefixV6Msg
+	SRPolicy        CollectionType = bmp.SRPolicyMsg
+	SRPolicyV4      CollectionType = bmp.SRPolicyV4Msg
+	SRPolicyV6      CollectionType = bmp.SRPolicyV6Msg
 )

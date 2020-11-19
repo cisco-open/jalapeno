@@ -10,8 +10,8 @@ import (
 
 	"github.com/Shopify/sarama"
 	"github.com/golang/glog"
-	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/jalapeno/topology/pkg/dbclient"
+	"github.com/sbezverk/gobmp/pkg/bmp"
 )
 
 // Define constants for each topic name
@@ -28,6 +28,9 @@ const (
 	LSPrefixEventTopic        = "gobmp.parsed.ls_prefix_events"
 	LSSRv6SIDEventTopic       = "gobmp.parsed.ls_srv6_sid_events"
 	EVPNEventTopic            = "gobmp.parsed.evpn_events"
+	SRPolicyEventTopic        = "gobmp.parsed.sr_policy_events"
+	SRPolicyV4EventTopic      = "gobmp.parsed.sr_policy_v4_events"
+	SRPolicyV6EventTopic      = "gobmp.parsed.sr_policy_v6_events"
 )
 
 var (
@@ -51,6 +54,9 @@ var (
 		LSPrefixEventTopic,
 		LSSRv6SIDEventTopic,
 		EVPNEventTopic,
+		SRPolicyEventTopic,
+		SRPolicyV4EventTopic,
+		SRPolicyV6EventTopic,
 	}
 )
 
@@ -97,6 +103,12 @@ func (n *notifier) EventNotification(msg *EventMessage) error {
 		return n.triggerNotification(LSSRv6SIDEventTopic, msg)
 	case bmp.EVPNMsg:
 		return n.triggerNotification(EVPNEventTopic, msg)
+	case bmp.SRPolicyMsg:
+		return n.triggerNotification(SRPolicyEventTopic, msg)
+	case bmp.SRPolicyV4Msg:
+		return n.triggerNotification(SRPolicyV4EventTopic, msg)
+	case bmp.SRPolicyV6Msg:
+		return n.triggerNotification(SRPolicyV6EventTopic, msg)
 	}
 
 	return fmt.Errorf("unknown topic type %d", msg.TopicType)

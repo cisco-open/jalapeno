@@ -7,9 +7,9 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
-	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/jalapeno/topology/pkg/dbclient"
 	"github.com/jalapeno/topology/pkg/kafkanotifier"
+	"github.com/sbezverk/gobmp/pkg/bmp"
 	"go.uber.org/atomic"
 )
 
@@ -38,10 +38,10 @@ type collection struct {
 	stats           *stats
 	stop            chan struct{}
 	topicCollection driver.Collection
-	collectionType dbclient.CollectionType
-	handler    func()
-	arango     *arangoDB
-	properties *collectionProperties
+	collectionType  dbclient.CollectionType
+	handler         func()
+	arango          *arangoDB
+	properties      *collectionProperties
 }
 
 func (c *collection) processError(r *result) bool {
@@ -146,7 +146,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		if err == nil {
 			c.stats.total.Add(1)
 		}
-		glog.V(5).Infof("done key: %s, type: %d total messages: %s", k, c.collectionType, c.stats.total.String())
+		glog.V(6).Infof("done key: %s, type: %d total messages: %s", k, c.collectionType, c.stats.total.String())
 	}()
 	ctx := context.TODO()
 	var obj interface{}
@@ -223,6 +223,19 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		obj.(*unicastPrefixArangoMessage).Key = k
 		obj.(*unicastPrefixArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*unicastPrefixArangoMessage).Action
+	case bmp.SRPolicyMsg:
+		fallthrough
+	case bmp.SRPolicyV4Msg:
+		fallthrough
+	case bmp.SRPolicyV6Msg:
+		obj, ok = o.(*srPolicyArangoMessage)
+		if !ok {
+			err = fmt.Errorf("failed to recover SRPolicy from DBRecord interface")
+			return
+		}
+		obj.(*srPolicyArangoMessage).Key = k
+		obj.(*srPolicyArangoMessage).ID = c.properties.name + "/" + k
+		action = obj.(*srPolicyArangoMessage).Action
 	default:
 		err = fmt.Errorf("unknown collection type %d", c.collectionType)
 		return
@@ -305,6 +318,16 @@ func newDBRecord(msgData []byte, collectionType dbclient.CollectionType) (DBReco
 		fallthrough
 	case bmp.UnicastPrefixV6Msg:
 		var o unicastPrefixArangoMessage
+		if err := json.Unmarshal(msgData, &o); err != nil {
+			return nil, err
+		}
+		return &o, nil
+	case bmp.SRPolicyMsg:
+		fallthrough
+	case bmp.SRPolicyV4Msg:
+		fallthrough
+	case bmp.SRPolicyV6Msg:
+		var o srPolicyArangoMessage
 		if err := json.Unmarshal(msgData, &o); err != nil {
 			return nil, err
 		}
