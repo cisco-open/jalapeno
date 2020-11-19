@@ -9,39 +9,45 @@ import (
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/tools"
-	"github.com/jalapeno/topology/pkg/dbclient"
+	"github.com/sbezverk/topology/pkg/dbclient"
 )
 
 // Define constants for each topic name
 const (
-	peerTopic             = "gobmp.parsed.peer"
-	unicastMessageTopic   = "gobmp.parsed.unicast_prefix"
-	unicastMessageV4Topic = "gobmp.parsed.unicast_prefix_v4"
-	unicastMessageV6Topic = "gobmp.parsed.unicast_prefix_v6"
-	lsNodeMessageTopic    = "gobmp.parsed.ls_node"
-	lsLinkMessageTopic    = "gobmp.parsed.ls_link"
-	l3vpnMessageTopic     = "gobmp.parsed.l3vpn"
-	l3vpnMessageV4Topic   = "gobmp.parsed.l3vpn_v4"
-	l3vpnMessageV6Topic   = "gobmp.parsed.l3vpn_v6"
-	lsPrefixMessageTopic  = "gobmp.parsed.ls_prefix"
-	lsSRv6SIDMessageTopic = "gobmp.parsed.ls_srv6_sid"
-	evpnMessageTopic      = "gobmp.parsed.evpn"
+	peerTopic              = "gobmp.parsed.peer"
+	unicastMessageTopic    = "gobmp.parsed.unicast_prefix"
+	unicastMessageV4Topic  = "gobmp.parsed.unicast_prefix_v4"
+	unicastMessageV6Topic  = "gobmp.parsed.unicast_prefix_v6"
+	lsNodeMessageTopic     = "gobmp.parsed.ls_node"
+	lsLinkMessageTopic     = "gobmp.parsed.ls_link"
+	l3vpnMessageTopic      = "gobmp.parsed.l3vpn"
+	l3vpnMessageV4Topic    = "gobmp.parsed.l3vpn_v4"
+	l3vpnMessageV6Topic    = "gobmp.parsed.l3vpn_v6"
+	lsPrefixMessageTopic   = "gobmp.parsed.ls_prefix"
+	lsSRv6SIDMessageTopic  = "gobmp.parsed.ls_srv6_sid"
+	evpnMessageTopic       = "gobmp.parsed.evpn"
+	srPolicyMessageTopic   = "gobmp.parsed.sr_policy"
+	srPolicyMessageV4Topic = "gobmp.parsed.sr_policy_v4"
+	srPolicyMessageV6Topic = "gobmp.parsed.sr_policy_v6"
 )
 
 var (
 	topics = map[string]dbclient.CollectionType{
-		peerTopic:             bmp.PeerStateChangeMsg,
-		unicastMessageTopic:   bmp.UnicastPrefixMsg,
-		unicastMessageV4Topic: bmp.UnicastPrefixV4Msg,
-		unicastMessageV6Topic: bmp.UnicastPrefixV6Msg,
-		lsNodeMessageTopic:    bmp.LSNodeMsg,
-		lsLinkMessageTopic:    bmp.LSLinkMsg,
-		l3vpnMessageTopic:     bmp.L3VPNMsg,
-		l3vpnMessageV4Topic:   bmp.L3VPNV4Msg,
-		l3vpnMessageV6Topic:   bmp.L3VPNV6Msg,
-		lsPrefixMessageTopic:  bmp.LSPrefixMsg,
-		lsSRv6SIDMessageTopic: bmp.LSSRv6SIDMsg,
-		evpnMessageTopic:      bmp.EVPNMsg,
+		peerTopic:              bmp.PeerStateChangeMsg,
+		unicastMessageTopic:    bmp.UnicastPrefixMsg,
+		unicastMessageV4Topic:  bmp.UnicastPrefixV4Msg,
+		unicastMessageV6Topic:  bmp.UnicastPrefixV6Msg,
+		lsNodeMessageTopic:     bmp.LSNodeMsg,
+		lsLinkMessageTopic:     bmp.LSLinkMsg,
+		l3vpnMessageTopic:      bmp.L3VPNMsg,
+		l3vpnMessageV4Topic:    bmp.L3VPNV4Msg,
+		l3vpnMessageV6Topic:    bmp.L3VPNV6Msg,
+		lsPrefixMessageTopic:   bmp.LSPrefixMsg,
+		lsSRv6SIDMessageTopic:  bmp.LSSRv6SIDMsg,
+		evpnMessageTopic:       bmp.EVPNMsg,
+		srPolicyMessageTopic:   bmp.SRPolicyMsg,
+		srPolicyMessageV4Topic: bmp.SRPolicyV4Msg,
+		srPolicyMessageV6Topic: bmp.SRPolicyV6Msg,
 	}
 )
 

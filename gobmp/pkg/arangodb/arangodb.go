@@ -6,10 +6,10 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
-	"github.com/jalapeno/topology/pkg/dbclient"
-	"github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/tools"
+	"github.com/sbezverk/topology/pkg/dbclient"
+	"github.com/sbezverk/topology/pkg/kafkanotifier"
 )
 
 const (
@@ -29,6 +29,9 @@ var (
 		dbclient.UnicastPrefix:   {name: "UnicastPrefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.UnicastPrefixV4: {name: "UnicastPrefixV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.UnicastPrefixV6: {name: "UnicastPrefixV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.SRPolicy:        {name: "SRPolicy", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.SRPolicyV4:      {name: "SRPolicyV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.SRPolicyV6:      {name: "SRPolicyV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
 	}
 )
 
@@ -115,6 +118,12 @@ func (a *arangoDB) ensureCollection(p *collectionProperties, collectionType dbcl
 		case bmp.UnicastPrefixV4Msg:
 			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
 		case bmp.UnicastPrefixV6Msg:
+			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
+		case bmp.SRPolicyMsg:
+			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
+		case bmp.SRPolicyV4Msg:
+			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
+		case bmp.SRPolicyV6Msg:
 			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
 		default:
 			return fmt.Errorf("unknown collection type %d", collectionType)
