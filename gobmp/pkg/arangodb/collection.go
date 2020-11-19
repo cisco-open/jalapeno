@@ -7,9 +7,9 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
+	"github.com/jalapeno/topology/pkg/dbclient"
+	"github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/sbezverk/topology/pkg/dbclient"
-	"github.com/sbezverk/topology/pkg/kafkanotifier"
 	"go.uber.org/atomic"
 )
 
@@ -38,10 +38,10 @@ type collection struct {
 	stats           *stats
 	stop            chan struct{}
 	topicCollection driver.Collection
-	collectionType dbclient.CollectionType
-	handler    func()
-	arango     *arangoDB
-	properties *collectionProperties
+	collectionType  dbclient.CollectionType
+	handler         func()
+	arango          *arangoDB
+	properties      *collectionProperties
 }
 
 func (c *collection) processError(r *result) bool {

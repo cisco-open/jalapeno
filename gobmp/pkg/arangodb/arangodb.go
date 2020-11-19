@@ -6,10 +6,10 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
+	"github.com/jalapeno/topology/pkg/dbclient"
+	"github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/tools"
-	"github.com/sbezverk/topology/pkg/dbclient"
-	"github.com/sbezverk/topology/pkg/kafkanotifier"
 )
 
 const (

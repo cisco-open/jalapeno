@@ -10,8 +10,8 @@ import (
 
 	"github.com/Shopify/sarama"
 	"github.com/golang/glog"
+	"github.com/jalapeno/topology/pkg/dbclient"
 	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/sbezverk/topology/pkg/dbclient"
 )
 
 // Define constants for each topic name
