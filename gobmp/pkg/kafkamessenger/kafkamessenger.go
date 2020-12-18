@@ -29,6 +29,9 @@ const (
 	srPolicyMessageTopic   = "gobmp.parsed.sr_policy"
 	srPolicyMessageV4Topic = "gobmp.parsed.sr_policy_v4"
 	srPolicyMessageV6Topic = "gobmp.parsed.sr_policy_v6"
+	flowspecMessageTopic   = "gobmp.parsed.flowspec"
+	flowspecMessageV4Topic = "gobmp.parsed.flowspec_v4"
+	flowspecMessageV6Topic = "gobmp.parsed.flowspec_v6"
 )
 
 var (
@@ -48,6 +51,9 @@ var (
 		srPolicyMessageTopic:   bmp.SRPolicyMsg,
 		srPolicyMessageV4Topic: bmp.SRPolicyV4Msg,
 		srPolicyMessageV6Topic: bmp.SRPolicyV6Msg,
+		flowspecMessageTopic:   bmp.FlowspecMsg,
+		flowspecMessageV4Topic: bmp.FlowspecV4Msg,
+		flowspecMessageV6Topic: bmp.FlowspecV6Msg,
 	}
 )
 

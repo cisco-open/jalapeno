@@ -31,6 +31,9 @@ const (
 	SRPolicyEventTopic        = "gobmp.parsed.sr_policy_events"
 	SRPolicyV4EventTopic      = "gobmp.parsed.sr_policy_v4_events"
 	SRPolicyV6EventTopic      = "gobmp.parsed.sr_policy_v6_events"
+	FlowspecEventTopic        = "gobmp.parsed.flowspec_events"
+	FlowspecV4EventTopic      = "gobmp.parsed.flowspec_v4_events"
+	FlowspecV6EventTopic      = "gobmp.parsed.flowspec_v6_events"
 )
 
 var (
@@ -57,6 +60,9 @@ var (
 		SRPolicyEventTopic,
 		SRPolicyV4EventTopic,
 		SRPolicyV6EventTopic,
+		FlowspecEventTopic,
+		FlowspecV4EventTopic,
+		FlowspecV6EventTopic,
 	}
 )
 
@@ -108,6 +114,12 @@ func (n *notifier) EventNotification(msg *EventMessage) error {
 	case bmp.SRPolicyV4Msg:
 		return n.triggerNotification(SRPolicyV4EventTopic, msg)
 	case bmp.SRPolicyV6Msg:
+		return n.triggerNotification(SRPolicyV6EventTopic, msg)
+	case bmp.FlowspecMsg:
+		return n.triggerNotification(SRPolicyEventTopic, msg)
+	case bmp.FlowspecV4Msg:
+		return n.triggerNotification(SRPolicyV4EventTopic, msg)
+	case bmp.FlowspecV6Msg:
 		return n.triggerNotification(SRPolicyV6EventTopic, msg)
 	}
 

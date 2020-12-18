@@ -236,6 +236,19 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		obj.(*srPolicyArangoMessage).Key = k
 		obj.(*srPolicyArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*srPolicyArangoMessage).Action
+	case bmp.FlowspecMsg:
+		fallthrough
+	case bmp.FlowspecV4Msg:
+		fallthrough
+	case bmp.FlowspecV6Msg:
+		obj, ok = o.(*flowspecArangoMessage)
+		if !ok {
+			err = fmt.Errorf("failed to recover Flowspec Arango Message from DBRecord interface")
+			return
+		}
+		obj.(*flowspecArangoMessage).Key = k
+		obj.(*flowspecArangoMessage).ID = c.properties.name + "/" + k
+		action = obj.(*flowspecArangoMessage).Action
 	default:
 		err = fmt.Errorf("unknown collection type %d", c.collectionType)
 		return
@@ -328,6 +341,15 @@ func newDBRecord(msgData []byte, collectionType dbclient.CollectionType) (DBReco
 		fallthrough
 	case bmp.SRPolicyV6Msg:
 		var o srPolicyArangoMessage
+		if err := json.Unmarshal(msgData, &o); err != nil {
+			return nil, err
+		}
+	case bmp.FlowspecMsg:
+		fallthrough
+	case bmp.FlowspecV4Msg:
+		fallthrough
+	case bmp.FlowspecV6Msg:
+		o := flowspecArangoMessage{}
 		if err := json.Unmarshal(msgData, &o); err != nil {
 			return nil, err
 		}

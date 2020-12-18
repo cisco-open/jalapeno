@@ -32,6 +32,9 @@ var (
 		dbclient.SRPolicy:        {name: "SRPolicy", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.SRPolicyV4:      {name: "SRPolicyV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.SRPolicyV6:      {name: "SRPolicyV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.Flowspec:        {name: "Flowspec_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.FlowspecV4:      {name: "FlowspecV4_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.FlowspecV6:      {name: "FlowspecV6_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
 	}
 )
 
@@ -124,6 +127,12 @@ func (a *arangoDB) ensureCollection(p *collectionProperties, collectionType dbcl
 		case bmp.SRPolicyV4Msg:
 			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
 		case bmp.SRPolicyV6Msg:
+			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
+		case bmp.FlowspecMsg:
+			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
+		case bmp.FlowspecV4Msg:
+			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
+		case bmp.FlowspecV6Msg:
 			a.collections[collectionType].handler = a.collections[collectionType].genericHandler
 		default:
 			return fmt.Errorf("unknown collection type %d", collectionType)

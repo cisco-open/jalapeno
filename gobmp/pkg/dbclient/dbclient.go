@@ -31,4 +31,7 @@ const (
 	SRPolicy        CollectionType = bmp.SRPolicyMsg
 	SRPolicyV4      CollectionType = bmp.SRPolicyV4Msg
 	SRPolicyV6      CollectionType = bmp.SRPolicyV6Msg
+	Flowspec        CollectionType = bmp.FlowspecMsg
+	FlowspecV4      CollectionType = bmp.FlowspecV4Msg
+	FlowspecV6      CollectionType = bmp.FlowspecV6Msg
 )
