@@ -172,6 +172,8 @@ func (a *arangoDB) ensureGraph(name string) (driver.Graph, error) {
 	edgeDefinition.Collection = name + "_Edge"
 	edgeDefinition.From = []string{name}
 	edgeDefinition.To = []string{name}
+	// log graph creation
+	glog.Infof("graph created: %s", name)
 
 	var options driver.CreateGraphOptions
 	options.EdgeDefinitions = []driver.EdgeDefinition{edgeDefinition}

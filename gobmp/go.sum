@@ -65,6 +65,7 @@ github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0 h1:MkV+77GLUNo
 github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
 github.com/rs/xid v1.2.1/go.mod h1:+uKXf+4Djp6Md1KODXJxgGQPKngRmWyn10oCKFzNHOQ=
 github.com/rs/zerolog v1.19.0/go.mod h1:IzD0RJ65iWH0w97OQQebJEvTZYvsCUm9WVLWBQrJRjo=
+github.com/sbezverk/gobmp v0.0.1-beta h1:2Yj0FTBus9C9r6wRuQpGVRU4ZDzjsakDEncStNnOLlc=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20201119150546-b614bfbd0cd4 h1:EWV9l++/F96PiCIXhIxe60w1v09h2LFRIxE9/+zGA/A=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20201119150546-b614bfbd0cd4/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20201209211856-373436f0251d h1:uiSV3p+azG45B26JqnALT4UsBhfR65fI2DXXG4MAyiI=

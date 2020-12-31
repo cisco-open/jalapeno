@@ -162,6 +162,8 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		obj.(*peerStateChangeArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*peerStateChangeArangoMessage).Action
 	case bmp.LSLinkMsg:
+		// logging lslink while working on lsv4-edge
+		glog.Infof("done key: %s, type: %d total messages: %s", k, c.collectionType, c.stats.total.String())
 		obj, ok = o.(*lsLinkArangoMessage)
 		if !ok {
 			err = fmt.Errorf("failed to recover lsLinkArangoMessage from DBRecord interface")
