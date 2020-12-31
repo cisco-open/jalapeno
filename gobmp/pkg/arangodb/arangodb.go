@@ -148,13 +148,19 @@ func (a *arangoDB) ensureCollection(p *collectionProperties, collectionType dbcl
 				return err
 			}
 			ci, err = a.db.CreateCollection(context.TODO(), a.collections[collectionType].properties.name, a.collections[collectionType].properties.options)
+			// log create collection
+			glog.Infof("create collection: %s", a.collections[collectionType].properties.name)
 		}
 	} else {
 		graph, err := a.ensureGraph(a.collections[collectionType].properties.name)
+		// log ensure graph
+		glog.Infof("ensure graph: %s", a.collections[collectionType].properties.name)
 		if err != nil {
 			return err
 		}
 		ci, err = graph.VertexCollection(context.TODO(), a.collections[collectionType].properties.name)
+		// log ensure vertex
+		glog.Infof("ensure graph.vertex: %s", a.collections[collectionType].properties.name)
 		if err != nil {
 			if !driver.IsArangoErrorWithErrorNum(err, driver.ErrArangoDataSourceNotFound) {
 				return err
