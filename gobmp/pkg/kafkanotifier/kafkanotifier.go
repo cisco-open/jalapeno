@@ -39,6 +39,8 @@ const (
 var (
 	brockerConnectTimeout = 10 * time.Second
 	topicCreateTimeout    = 1 * time.Second
+	// topic Retention for events is 5 minutes
+	topicRetention = "300000"
 )
 
 var (
@@ -68,9 +70,9 @@ var (
 
 type EventMessage struct {
 	TopicType dbclient.CollectionType
-	Key       string
-	ID        string
-	Action    string
+	Key       string `json:"_key"`
+	ID        string `json:"_id"`
+	Action    string `json:"action"`
 }
 
 type Event interface {
@@ -170,15 +172,7 @@ func (n *notifier) triggerNotification(topic string, msg *EventMessage) error {
 	k := sarama.ByteEncoder{}
 	k = []byte(msg.Key)
 	m := sarama.ByteEncoder{}
-	m, _ = json.Marshal(&struct {
-		ID     string
-		Key    string
-		Action string
-	}{
-		ID:     msg.ID,
-		Key:    msg.Key,
-		Action: msg.Action,
-	})
+	m, _ = json.Marshal(msg)
 	_, _, err := n.producer.SendMessage(&sarama.ProducerMessage{
 		Topic: topic,
 		Key:   k,
@@ -218,6 +212,9 @@ func ensureTopic(br *sarama.Broker, timeout time.Duration, topicName string) err
 			topicName: {
 				NumPartitions:     1,
 				ReplicationFactor: 1,
+				ConfigEntries: map[string]*string{
+					"retention.ms": &topicRetention,
+				},
 			},
 		},
 	}

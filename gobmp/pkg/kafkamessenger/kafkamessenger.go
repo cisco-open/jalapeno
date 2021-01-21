@@ -79,7 +79,7 @@ func NewKafkaMessenger(kafkaSrv string, db dbclient.DB) (Srv, error) {
 	}
 
 	config := sarama.NewConfig()
-	config.ClientID = "gobmp-consumer" + "_" + strconv.Itoa(rand.Intn(1000))
+	config.ClientID = "topology-consumer" + "_" + strconv.Itoa(rand.Intn(1000))
 	config.Consumer.Return.Errors = true
 	config.Version = sarama.V0_11_0_0
 

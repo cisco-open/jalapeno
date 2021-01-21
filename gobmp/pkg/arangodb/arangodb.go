@@ -21,7 +21,7 @@ var (
 		dbclient.PeerStateChange: {name: "Node", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.LSLink:          {name: "LSLink", isVertex: true, options: &driver.CreateCollectionOptions{}},
 		dbclient.LSNode:          {name: "LSNode", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSPrefix:        {name: "LSPrefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSPrefix:        {name: "LSPrefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
 		dbclient.LSSRv6SID:       {name: "LSSRv6SID", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.L3VPN:           {name: "L3VPN_Prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.L3VPNV4:         {name: "L3VPNV4_Prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
@@ -32,9 +32,9 @@ var (
 		dbclient.SRPolicy:        {name: "SRPolicy", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.SRPolicyV4:      {name: "SRPolicyV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.SRPolicyV6:      {name: "SRPolicyV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.Flowspec:        {name: "Flowspec_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.FlowspecV4:      {name: "FlowspecV4_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.FlowspecV6:      {name: "FlowspecV6_Test", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.Flowspec:        {name: "Flowspec", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.FlowspecV4:      {name: "FlowspecV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.FlowspecV6:      {name: "FlowspecV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
 	}
 )
 
@@ -140,32 +140,36 @@ func (a *arangoDB) ensureCollection(p *collectionProperties, collectionType dbcl
 	}
 	var ci driver.Collection
 	var err error
-	// There are two possible collection types, base type and vertex type
-	if !a.collections[collectionType].properties.isVertex {
-		ci, err = a.db.Collection(context.TODO(), a.collections[collectionType].properties.name)
-		if err != nil {
-			if !driver.IsArangoErrorWithErrorNum(err, driver.ErrArangoDataSourceNotFound) {
-				return err
-			}
-			ci, err = a.db.CreateCollection(context.TODO(), a.collections[collectionType].properties.name, a.collections[collectionType].properties.options)
-			// log create collection
-			glog.Infof("create collection: %s", a.collections[collectionType].properties.name)
-		}
-	} else {
+	// There are two possible collection types, base type and edge type
+	// for Edge type a collection must be created as a Vertex collection
+	if a.collections[collectionType].properties.isVertex {
 		graph, err := a.ensureGraph(a.collections[collectionType].properties.name)
-		// log ensure graph
-		glog.Infof("ensure graph: %s", a.collections[collectionType].properties.name)
 		if err != nil {
 			return err
 		}
+		// Check if the vertex collection already exists
 		ci, err = graph.VertexCollection(context.TODO(), a.collections[collectionType].properties.name)
-		// log ensure vertex
-		glog.Infof("ensure graph.vertex: %s", a.collections[collectionType].properties.name)
 		if err != nil {
 			if !driver.IsArangoErrorWithErrorNum(err, driver.ErrArangoDataSourceNotFound) {
 				return err
 			}
+			// Collection does not exist, attempting to create it
 			ci, err = graph.CreateVertexCollection(context.TODO(), a.collections[collectionType].properties.name)
+			if err != nil {
+				return err
+			}
+		}
+		a.collections[collectionType].topicCollection = ci
+		return nil
+	}
+	ci, err = a.db.Collection(context.TODO(), a.collections[collectionType].properties.name)
+	if err != nil {
+		if !driver.IsArangoErrorWithErrorNum(err, driver.ErrArangoDataSourceNotFound) {
+			return err
+		}
+		ci, err = a.db.CreateCollection(context.TODO(), a.collections[collectionType].properties.name, a.collections[collectionType].properties.options)
+		if err != nil {
+			return err
 		}
 	}
 	a.collections[collectionType].topicCollection = ci
@@ -178,8 +182,6 @@ func (a *arangoDB) ensureGraph(name string) (driver.Graph, error) {
 	edgeDefinition.Collection = name + "_Edge"
 	edgeDefinition.From = []string{name}
 	edgeDefinition.To = []string{name}
-	// log graph creation
-	glog.Infof("graph created: %s", name)
 
 	var options driver.CreateGraphOptions
 	options.EdgeDefinitions = []driver.EdgeDefinition{edgeDefinition}
