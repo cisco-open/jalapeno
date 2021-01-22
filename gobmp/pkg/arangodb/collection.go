@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
@@ -18,6 +19,7 @@ type DBRecord interface {
 }
 
 type result struct {
+	object DBRecord
 	key    string
 	action string
 	err    error
@@ -44,10 +46,16 @@ type collection struct {
 	properties      *collectionProperties
 }
 
+const (
+	// ErrArangoGraphNotFound defines Arango DB error to return when requested Gra[h is not found
+	// This error is not defined by ArangoDB go driver module.
+	ErrArangoGraphNotFound = 1924
+)
+
 func (c *collection) processError(r *result) bool {
 	switch {
 	// Condition when a collection was deleted while the topology was running
-	case driver.IsArangoErrorWithErrorNum(r.err, driver.ErrArangoDataSourceNotFound):
+	case driver.IsArangoErrorWithErrorNum(r.err, driver.ErrArangoDataSourceNotFound, ErrArangoGraphNotFound):
 		if err := c.arango.ensureCollection(c.properties, c.collectionType); err != nil {
 			return true
 		}
@@ -61,6 +69,10 @@ func (c *collection) processError(r *result) bool {
 	}
 }
 
+var (
+	backlogCheckInterval = time.Millisecond * 500
+)
+
 func (c *collection) genericHandler() {
 	glog.Infof("Starting handler for type: %d", c.collectionType)
 	// keyStore is used to track duplicate key in messages, duplicate key means there is already in processing
@@ -72,9 +84,11 @@ func (c *collection) genericHandler() {
 	// conflicting database changes, each go routine processes a message with the unique key.
 	tokens := make(chan struct{}, concurrentWorkers)
 	done := make(chan *result, concurrentWorkers*2)
+	backlogTicker := time.NewTicker(backlogCheckInterval)
 	for {
 		select {
 		case m := <-c.queue:
+			backlogTicker.Reset(backlogCheckInterval)
 			o, err := newDBRecord(m.msgData, c.collectionType)
 			if err != nil {
 				glog.Errorf("failed to unmarshal message of type %d with error: %+v", c.collectionType, err)
@@ -98,20 +112,33 @@ func (c *collection) genericHandler() {
 			keyStore[k] = true
 			go c.genericWorker(k, o, done, tokens)
 		case r := <-done:
+			backlogTicker.Reset(backlogCheckInterval)
 			if r.err != nil {
-				// Error was encountered during processing of the key
+				// Error was encountered during processing of the key, attempting to correct the error condition
+				// and pushing failed DBObject to the backlog queue
 				if c.processError(r) {
 					glog.Errorf("genericWorker for key: %s reported a fatal error: %+v", r.key, r.err)
+				} else {
+					glog.Errorf("genericWorker for key: %s reported a non fatal error: %+v", r.key, r.err)
 				}
-				glog.Errorf("genericWorker for key: %s reported a non fatal error: %+v", r.key, r.err)
+				glog.Infof("Pushing key: %s to the backlog after the failure", r.key)
+				b, ok := backlog[r.key]
+				if !ok {
+					b = newFIFO()
+				}
+				// Saving message in the backlog
+				b.Push(r.object)
+				backlog[r.key] = b
+				continue
 			}
 			if c.arango.notifyCompletion && c.arango.notifier != nil {
-				if err := c.arango.notifier.EventNotification(&kafkanotifier.EventMessage{
+				m := &kafkanotifier.EventMessage{
 					TopicType: c.collectionType,
 					Key:       r.key,
 					ID:        c.properties.name + "/" + r.key,
 					Action:    r.action,
-				}); err != nil {
+				}
+				if err := c.arango.notifier.EventNotification(m); err != nil {
 					glog.Errorf("genericWorker for key: %s failed to send notification with error: %+v", r.key, r.err)
 				}
 			}
@@ -132,7 +159,25 @@ func (c *collection) genericHandler() {
 				delete(backlog, r.key)
 			}
 		case <-c.stop:
+			backlogTicker.Stop()
 			return
+		case <-backlogTicker.C:
+			// If loop is idle for backlogCheckInterval, trying to process any outstanding items stored in the backlog
+			for key, b := range backlog {
+				glog.V(5).Infof("Extracted key %s from backlog (backlogTicker)", key)
+				bo := b.Pop()
+				if bo != nil {
+					tokens <- struct{}{}
+					keyStore[key] = true
+					go c.genericWorker(key, bo.(DBRecord), done, tokens)
+				}
+				// If Backlog for a specific key is empty, remove it from the backlog
+				if b.Len() == 0 {
+					delete(backlog, key)
+				}
+				// Processing a single item per backlogTicker cycle
+				break
+			}
 		}
 	}
 }
@@ -142,7 +187,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 	var action string
 	defer func() {
 		<-tokens
-		done <- &result{key: k, action: action, err: err}
+		done <- &result{object: o, key: k, action: action, err: err}
 		if err == nil {
 			c.stats.total.Add(1)
 		}
@@ -162,8 +207,6 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		obj.(*peerStateChangeArangoMessage).ID = c.properties.name + "/" + k
 		action = obj.(*peerStateChangeArangoMessage).Action
 	case bmp.LSLinkMsg:
-		// logging lslink while working on lsv4-edge
-		glog.Infof("done key: %s, type: %d total messages: %s", k, c.collectionType, c.stats.total.String())
 		obj, ok = o.(*lsLinkArangoMessage)
 		if !ok {
 			err = fmt.Errorf("failed to recover lsLinkArangoMessage from DBRecord interface")

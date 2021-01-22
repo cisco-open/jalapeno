@@ -1,5 +1,5 @@
 REGISTRY_NAME?=docker.io/iejalapeno
-IMAGE_VERSION?=0.0.0
+IMAGE_VERSION?=0.0.1
 
 .PHONY: all gobmp topology container push clean test
 
