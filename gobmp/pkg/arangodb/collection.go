@@ -164,7 +164,7 @@ func (c *collection) genericHandler() {
 		case <-backlogTicker.C:
 			// If loop is idle for backlogCheckInterval, trying to process any outstanding items stored in the backlog
 			for key, b := range backlog {
-				glog.Infof("Extracted key %s from backlog (backlogTicker)", key)
+				glog.V(5).Infof("Extracted key %s from backlog (backlogTicker)", key)
 				bo := b.Pop()
 				if bo != nil {
 					tokens <- struct{}{}
