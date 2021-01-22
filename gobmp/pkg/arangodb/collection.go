@@ -70,7 +70,7 @@ func (c *collection) processError(r *result) bool {
 }
 
 var (
-	bacllogCheckInterval = time.Millisecond * 500
+	backlogCheckInterval = time.Millisecond * 500
 )
 
 func (c *collection) genericHandler() {
@@ -84,11 +84,11 @@ func (c *collection) genericHandler() {
 	// conflicting database changes, each go routine processes a message with the unique key.
 	tokens := make(chan struct{}, concurrentWorkers)
 	done := make(chan *result, concurrentWorkers*2)
-	backlogTicker := time.NewTicker(bacllogCheckInterval)
+	backlogTicker := time.NewTicker(backlogCheckInterval)
 	for {
 		select {
 		case m := <-c.queue:
-			backlogTicker.Reset(bacllogCheckInterval)
+			backlogTicker.Reset(backlogCheckInterval)
 			o, err := newDBRecord(m.msgData, c.collectionType)
 			if err != nil {
 				glog.Errorf("failed to unmarshal message of type %d with error: %+v", c.collectionType, err)
@@ -112,7 +112,7 @@ func (c *collection) genericHandler() {
 			keyStore[k] = true
 			go c.genericWorker(k, o, done, tokens)
 		case r := <-done:
-			backlogTicker.Reset(bacllogCheckInterval)
+			backlogTicker.Reset(backlogCheckInterval)
 			if r.err != nil {
 				// Error was encountered during processing of the key, attempting to correct the error condition
 				// and pushing failed DBObject to the backlog queue
