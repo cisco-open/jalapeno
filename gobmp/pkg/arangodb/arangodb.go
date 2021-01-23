@@ -20,7 +20,7 @@ var (
 	collections = map[dbclient.CollectionType]*collectionProperties{
 		dbclient.PeerStateChange: {name: "Node", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.LSLink:          {name: "LSLink", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSNode:          {name: "LSNode", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSNode:          {name: "LSNode", isVertex: true, options: &driver.CreateCollectionOptions{}},
 		dbclient.LSPrefix:        {name: "LSPrefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
 		dbclient.LSSRv6SID:       {name: "LSSRv6SID", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.L3VPN:           {name: "L3VPN_Prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
