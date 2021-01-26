@@ -1,5 +1,5 @@
 # Jalapeno Installation
-Jalapeno has been primarily developed, tested, and operated on Ubuntu 18.04 (bare-metal or VM), and Google Kubernetes Engine. Recommended VM sizing for a test lab is 4 vCPU, 16GB memory, and 50G of disk.  If deploying in production or an test environment with large table sizes (full Internet table, 100k + internal or vpn prefixes), then we recommend a bare metal K8s cluster with two or more nodes.
+Jalapeno has been primarily developed, tested, and operated on Ubuntu 18.04 Kubernetes environments (bare-metal, VM, or cloud). Recommended VM sizing for a test lab is 4 vCPU, 16GB memory, and 50G of disk.  If deploying in production or a test environment with large table sizes (full Internet table, 250k + internal or vpn prefixes), then we recommend a bare metal K8s cluster with two or more nodes.
 
 Users who do not have a full Kubernetes or GKE deployment can get up and running quite quickly with Microk8s [Installing K8s](docs/K8s_installation.md)
 
