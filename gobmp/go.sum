@@ -74,6 +74,8 @@ github.com/sbezverk/gobmp v0.0.1-beta.0.20201218014718-91e194ffe509 h1:MU1UPudKj
 github.com/sbezverk/gobmp v0.0.1-beta.0.20201218014718-91e194ffe509/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210118182608-9eb4600cfbbc h1:0/5dKzuG6LtoOf8tn+Ks6k2oDXdO/TKMDL477g1XW00=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210118182608-9eb4600cfbbc/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210125022733-d2f3a99d56ad h1:C4ryDOEVT2cu9c4nyuRsHR2eQoecI5b1BqkKyNIFDcI=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210125022733-d2f3a99d56ad/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/segmentio/kafka-go v0.4.2/go.mod h1:Inh7PqOsxmfgasV8InZYKVXWsdjcCq2d9tFV75GLbuM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
