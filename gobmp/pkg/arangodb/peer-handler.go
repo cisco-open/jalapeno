@@ -9,5 +9,5 @@ type peerStateChangeArangoMessage struct {
 }
 
 func (p *peerStateChangeArangoMessage) MakeKey() string {
-	return p.RouterIP
+	return p.RemoteIP
 }
