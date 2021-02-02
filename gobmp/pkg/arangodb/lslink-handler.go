@@ -33,7 +33,6 @@ func (l *lsLinkArangoMessage) MakeKey() string {
 			strconv.Itoa(int(l.RemoteLinkID>>8)&0x000000ff) + "." +
 			strconv.Itoa(int(l.RemoteLinkID)&0x000000ff)
 	}
-
 	routerID := l.IGPRouterID
 	remoteRouterID := l.RemoteIGPRouterID
 	// If Protocol ID == 7 (BGP) LS Link does not carry IGP Router ID field, instead BGP Router ID must be used
