@@ -28,9 +28,6 @@ ${KUBE} create -f ${PWD}/${BASEDIR}/influxdb/.
 echo "Deploying Grafana"
 ${KUBE} create -f ${PWD}/${BASEDIR}/grafana/.
 
-echo "Deploying Telegraf-Egress"
-${KUBE} create -f ${PWD}/${BASEDIR}/telegraf-egress/.
-
 echo "Finished deploying infra services"
 
 

@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ls-edge-processor
+  template:
+    metadata:
+      labels:
+        app: ls-edge-processor
+    spec:
+      containers:
+        - args:
+            - --v
+            - "5"
+            - --message-server
+            - "broker.jalapeno:9092"
+            - --database-server
+            - "http://arangodb.jalapeno:8529"
+            - --database-name
+            - "jalapeno"
+            - --database-user
+            - "root"
+            - --database-pass
+            - "jalapeno"
+          image: docker.io/iejalapeno/ls-edge-processor@sha256:cb94a20f7e9ba5c7930399a0e1581d2c882b8e224bcb3b2eb20d92be8d55eabb
+          imagePullPolicy: Always
+          name: ls-edge-processor
+metadata:
+  name: ls-edge-processor
+  namespace: jalapeno
