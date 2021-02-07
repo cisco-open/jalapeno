@@ -18,7 +18,7 @@ const (
 
 var (
 	collections = map[dbclient.CollectionType]*collectionProperties{
-		dbclient.PeerStateChange: {name: "Node", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.PeerStateChange: {name: "Node", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.LSLink:          {name: "LSLink", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.LSNode:          {name: "LSNode", isVertex: true, options: &driver.CreateCollectionOptions{}},
 		dbclient.LSPrefix:        {name: "LSPrefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
@@ -27,8 +27,8 @@ var (
 		dbclient.L3VPNV4:         {name: "L3VPNV4_Prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.L3VPNV6:         {name: "L3VPNV6_Prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.UnicastPrefix:   {name: "UnicastPrefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.UnicastPrefixV4: {name: "UnicastPrefixV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.UnicastPrefixV6: {name: "UnicastPrefixV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefixV4: {name: "UnicastPrefixV4", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefixV6: {name: "UnicastPrefixV6", isVertex: true, options: &driver.CreateCollectionOptions{}},
 		dbclient.SRPolicy:        {name: "SRPolicy", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.SRPolicyV4:      {name: "SRPolicyV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.SRPolicyV6:      {name: "SRPolicyV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
