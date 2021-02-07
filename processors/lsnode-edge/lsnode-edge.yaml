@@ -5,11 +5,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ls-edge-processor
+      app: lsnode-edge
   template:
     metadata:
       labels:
-        app: ls-edge-processor
+        app: lsnode-edge
     spec:
       containers:
         - args:
@@ -25,9 +25,9 @@ spec:
             - "root"
             - --database-pass
             - "jalapeno"
-          image: docker.io/iejalapeno/ls-edge-processor@sha256:cb94a20f7e9ba5c7930399a0e1581d2c882b8e224bcb3b2eb20d92be8d55eabb
+          image: docker.io/iejalapeno/lsnode-edge@sha256:7e1066c7040e0e956d8b1be7ce500dca7391a5d7a96fe96472db8e1f0278fe1b
           imagePullPolicy: Always
-          name: ls-edge-processor
+          name: lsnode-edge
 metadata:
-  name: ls-edge-processor
+  name: lsnode-edge
   namespace: jalapeno
