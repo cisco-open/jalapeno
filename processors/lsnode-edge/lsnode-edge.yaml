@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lsnode-edge
+  template:
+    metadata:
+      labels:
+        app: lsnode-edge
+    spec:
+      containers:
+        - args:
+            - --v
+            - "5"
+            - --message-server
+            - "broker.jalapeno:9092"
+            - --database-server
+            - "http://arangodb.jalapeno:8529"
+            - --database-name
+            - "jalapeno"
+            - --database-user
+            - "root"
+            - --database-pass
+            - "jalapeno"
+          image: docker.io/iejalapeno/lsnode-edge@sha256:7e1066c7040e0e956d8b1be7ce500dca7391a5d7a96fe96472db8e1f0278fe1b
+          imagePullPolicy: Always
+          name: lsnode-edge
+metadata:
+  name: lsnode-edge
+  namespace: jalapeno
