@@ -39,6 +39,8 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 	}
 	switch obj.Action {
 	case "add":
+		fallthrough
+	case "update":
 		if err := a.processEdge(ctx, obj.Key, &o); err != nil {
 			return fmt.Errorf("failed to process action %s for edge %s with error: %+v", obj.Action, obj.Key, err)
 		}
@@ -73,6 +75,8 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 	}
 	switch obj.Action {
 	case "add":
+		fallthrough
+	case "update":
 		if err := a.processVertex(ctx, obj.Key, &o); err != nil {
 			return fmt.Errorf("failed to process action %s for vertex %s with error: %+v", obj.Action, obj.Key, err)
 		}
@@ -85,6 +89,8 @@ type lsNodeEdgeObject struct {
 	Key  string `json:"_key"`
 	From string `json:"_from"`
 	To   string `json:"_to"`
+	MTID uint16 `json:"mtid"`
+	Link string `json:"link"`
 }
 
 // processEdge processes a single LS Link connection which is a unidirectional edge between two nodes (vertices).
@@ -163,10 +169,16 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 	glog.V(6).Infof("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
 		rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
 
+	mtid := 0
+	if e.MTID != nil {
+		mtid = int(e.MTID.MTID)
+	}
 	ne := lsNodeEdgeObject{
 		Key:  key,
 		From: ln.ID,
 		To:   rn.ID,
+		MTID: uint16(mtid),
+		Link: e.Key,
 	}
 	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
 		if !driver.IsConflict(err) {
@@ -256,10 +268,16 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSN
 	glog.V(6).Infof("Local link: %s", ln.ID)
 	glog.V(6).Infof("Remote link: %s", rn.ID)
 
+	mtid := 0
+	if rn.MTID != nil {
+		mtid = int(rn.MTID.MTID)
+	}
 	ne := lsNodeEdgeObject{
 		Key:  key,
 		From: ln.ID,
 		To:   rn.ID,
+		MTID: uint16(mtid),
+		Link: rn.Key,
 	}
 
 	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
