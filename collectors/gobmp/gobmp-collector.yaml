@@ -44,7 +44,7 @@ spec:
       containers:
         - args:
           - --v
-          - "6"
+          - "5"
           - --kafka-server
           - broker.jalapeno:9092
           image: docker.io/sbezverk/gobmp:latest
