@@ -27,7 +27,7 @@ spec:
           - "root"
           - --database-pass
           - "jalapeno"
-          image: docker.io/iejalapeno/topology@sha256:0c93ce1822171229a3063b355bb9e56d5f7d6b8f707c11c5a45b4d52f3a49547
+          image: docker.io/iejalapeno/topology:0.0.1
           imagePullPolicy: Always
           name: topology
 metadata:
