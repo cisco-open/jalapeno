@@ -39,6 +39,8 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 	}
 	switch obj.Action {
 	case "add":
+		fallthrough
+	case "update":
 		if err := a.processEdge(ctx, obj.Key, &o); err != nil {
 			return fmt.Errorf("failed to process action %s for edge %s with error: %+v", obj.Action, obj.Key, err)
 		}
@@ -73,6 +75,8 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 	}
 	switch obj.Action {
 	case "add":
+		fallthrough
+	case "update":
 		if err := a.processVertex(ctx, obj.Key, &o); err != nil {
 			return fmt.Errorf("failed to process action %s for vertex %s with error: %+v", obj.Action, obj.Key, err)
 		}
