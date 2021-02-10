@@ -87,7 +87,6 @@ func (a *arangoDB) GetArangoDBInterface() *ArangoConn {
 
 func (a *arangoDB) StoreMessage(msgType dbclient.CollectionType, msg []byte) error {
 	event := &notifier.EventMessage{}
-	glog.Infof("Event message: %+v", msg)
 	if err := json.Unmarshal(msg, event); err != nil {
 		return err
 	}
@@ -129,7 +128,8 @@ func (a *arangoDB) loadEdge() error {
 			return err
 		}
 		if err := a.processEdge(ctx, meta.Key, &p); err != nil {
-			return err
+			glog.Errorf("failed to process key: %s with error: %+v", meta.Key, err)
+			continue
 		}
 	}
 
