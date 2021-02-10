@@ -54,8 +54,8 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 	}
 	// Check if Collection encoded in ID exists
 	c := strings.Split(obj.ID, "/")[0]
-	if strings.Compare(c, a.edge.Name()) != 0 {
-		return fmt.Errorf("configured collection name %s and received in event collection name %s do not match", a.edge.Name(), c)
+	if strings.Compare(c, a.vertex.Name()) != 0 {
+		return fmt.Errorf("configured collection name %s and received in event collection name %s do not match", a.vertex.Name(), c)
 	}
 	glog.V(5).Infof("Processing action: %s for key: %s ID: %s", obj.Action, obj.Key, obj.ID)
 	var o message.LSNode
