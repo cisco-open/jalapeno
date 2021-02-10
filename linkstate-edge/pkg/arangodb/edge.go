@@ -123,7 +123,7 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 	if i == 0 {
 		return fmt.Errorf("query %s returned 0 results", query)
 	}
-	if i < 1 {
+	if i > 1 {
 		return fmt.Errorf("query %s returned more than 1 result", query)
 	}
 
@@ -155,7 +155,7 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 	if i == 0 {
 		return fmt.Errorf("query %s returned 0 results", query)
 	}
-	if i < 1 {
+	if i > 1 {
 		return fmt.Errorf("query %s returned more than 1 result", query)
 	}
 	glog.V(6).Infof("Local node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
@@ -215,7 +215,7 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSN
 	if i == 0 {
 		return fmt.Errorf("query %s returned 0 results", query)
 	}
-	if i < 1 {
+	if i > 1 {
 		return fmt.Errorf("query %s returned more than 1 result", query)
 	}
 
@@ -249,7 +249,7 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSN
 	if i == 0 {
 		return fmt.Errorf("query %s returned 0 results", query)
 	}
-	if i < 1 {
+	if i > 1 {
 		return fmt.Errorf("query %s returned more than 1 result", query)
 	}
 
