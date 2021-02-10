@@ -11,5 +11,6 @@ type unicastPrefixArangoMessage struct {
 }
 
 func (u *unicastPrefixArangoMessage) MakeKey() string {
-	return u.Prefix + "_" + strconv.Itoa(int(u.PrefixLen)) + "_" + u.PeerIP + "_" + u.Nexthop
+	return u.Prefix + "_" + strconv.Itoa(int(u.PrefixLen)) + "_" + u.PeerIP
+	//return u.Prefix + "_" + strconv.Itoa(int(u.PrefixLen)) + "_" + u.PeerIP + "_" + u.Nexthop
 }
