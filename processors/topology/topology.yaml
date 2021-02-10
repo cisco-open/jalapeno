@@ -27,6 +27,8 @@ spec:
           - "root"
           - --database-pass
           - "jalapeno"
+          - --notify-event
+          - "true"
           image: docker.io/iejalapeno/topology:0.0.1
           imagePullPolicy: Always
           name: topology
