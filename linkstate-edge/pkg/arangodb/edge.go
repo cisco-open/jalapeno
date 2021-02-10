@@ -11,8 +11,6 @@ import (
 	notifier "github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/message"
-	"github.com/sbezverk/gobmp/pkg/sr"
-	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
 func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
@@ -84,12 +82,10 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 }
 
 type lsNodeEdgeObject struct {
-	Key          string                `json:"_key"`
-	From         string                `json:"_from"`
-	To           string                `json:"_to"`
-	MTID         uint16                `json:"mtid"`
-	AdjacencySID []*sr.AdjacencySIDTLV `json:"adjacency_sid"`
-	SRv6ENDXSID  []*srv6.EndXSIDTLV    `json:"srv6_endx_sid"`
+	Key  string `json:"_key"`
+	From string `json:"_from"`
+	To   string `json:"_to"`
+	MTID uint16 `json:"mtid"`
 }
 
 // processEdge processes a single LS Link connection which is a unidirectional edge between two nodes (vertices).
@@ -173,12 +169,10 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 		mtid = int(e.MTID.MTID)
 	}
 	ne := lsNodeEdgeObject{
-		Key:          key,
-		From:         ln.ID,
-		To:           rn.ID,
-		MTID:         uint16(mtid),
-		AdjacencySID: e.LSAdjacencySID,
-		SRv6ENDXSID:  e.SRv6ENDXSID,
+		Key:  key,
+		From: ln.ID,
+		To:   rn.ID,
+		MTID: uint16(mtid),
 	}
 	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
 		if !driver.IsConflict(err) {
