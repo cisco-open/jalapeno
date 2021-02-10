@@ -86,6 +86,7 @@ type lsNodeEdgeObject struct {
 	From string `json:"_from"`
 	To   string `json:"_to"`
 	MTID uint16 `json:"mtid"`
+	Link string `json:"link"`
 }
 
 // processEdge processes a single LS Link connection which is a unidirectional edge between two nodes (vertices).
@@ -173,6 +174,7 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 		From: ln.ID,
 		To:   rn.ID,
 		MTID: uint16(mtid),
+		Link: e.Key,
 	}
 	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
 		if !driver.IsConflict(err) {
