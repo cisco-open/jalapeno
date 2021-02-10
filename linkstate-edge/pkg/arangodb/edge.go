@@ -268,10 +268,16 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSN
 	glog.V(6).Infof("Local link: %s", ln.ID)
 	glog.V(6).Infof("Remote link: %s", rn.ID)
 
+	mtid := 0
+	if rn.MTID != nil {
+		mtid = int(rn.MTID.MTID)
+	}
 	ne := lsNodeEdgeObject{
 		Key:  key,
 		From: ln.ID,
 		To:   rn.ID,
+		MTID: uint16(mtid),
+		Link: rn.Key,
 	}
 
 	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
