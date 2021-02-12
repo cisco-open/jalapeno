@@ -47,6 +47,7 @@ router bgp 100000
    route-policy pass out
 !
 ```
+![Getting BMP data to Jalapeno](diagrams/BGP-LS-and-BMP.png)
 
 ### BGP-LS
 
@@ -114,8 +115,8 @@ While we anticipate most operators to run a BGP-free core, we'll generally want 
 ```
 bmp server 1
  host 10.0.250.2 port 5000
- description Jalapenno OpenBMP 
- update-source Loopback0
+ description Jalapeno GoBMP 
+ update-source Loopback0  // or MgmtEth0/RP0/CPU0/0
  flapping-delay 60
  initial-delay 5
  stats-reporting-period 60
