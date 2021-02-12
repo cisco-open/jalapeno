@@ -90,7 +90,7 @@ router bgp 100000
    route-policy pass out
 ```
 
-3.  Add Egress Peer Engineering data to BGP-LS feed:
+3.  Add Egress Peer Engineering data to BGP-LS feed (optional):
 ```
 On an ASBR node, or Internet peering node add the following (it is assumed v4/v6 AFIs are already enabled):
 
