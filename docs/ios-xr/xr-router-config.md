@@ -47,7 +47,7 @@ router bgp 100000
    route-policy pass out
 !
 ```
-![Getting BMP data to Jalapeno](jalapeno/docs/diagrams/BGP-LS-and-BMP.png)
+![Getting BMP data to Jalapeno](../docs/diagrams/BGP-LS-and-BMP.png)
 
 ### BGP-LS
 
