@@ -116,7 +116,7 @@ While we anticipate most operators to run a BGP-free core, we'll generally want 
 1.  Configure BMP Server on RR's and on ASBRs and peering routers:
 ```
 bmp server 1
- host 10.0.250.2 port 5000
+ host 10.0.250.2 port 30511
  description Jalapeno GoBMP 
  update-source Loopback0  // or MgmtEth0/RP0/CPU0/0
  flapping-delay 60
