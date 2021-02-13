@@ -86,11 +86,16 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 }
 
 type lsNodeEdgeObject struct {
-	Key  string `json:"_key"`
-	From string `json:"_from"`
-	To   string `json:"_to"`
-	MTID uint16 `json:"mtid"`
-	Link string `json:"link"`
+	Key        string       `json:"_key"`
+	From       string       `json:"_from"`
+	To         string       `json:"_to"`
+	Link       string       `json:"link"`
+	ProtocolID base.ProtoID `json:"protocol_id"`
+	DomainID   int64        `json:"domain_id"`
+	MTID       uint16       `json:"mt_id"`
+	AreaID     string       `json:"area_id"`
+	FromLSNode string       `json:"from_lsnode"`
+	ToLSNode   string       `json:"to_lsnode"`
 }
 
 // processEdge processes a single LS Link connection which is a unidirectional edge between two nodes (vertices).
@@ -174,11 +179,16 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 		mtid = int(e.MTID.MTID)
 	}
 	ne := lsNodeEdgeObject{
-		Key:  key,
-		From: ln.ID,
-		To:   rn.ID,
-		MTID: uint16(mtid),
-		Link: e.Key,
+		Key:        key,
+		From:       ln.ID,
+		To:         rn.ID,
+		Link:       e.Key,
+		ProtocolID: e.ProtocolID,
+		DomainID:   e.DomainID,
+		MTID:       uint16(mtid),
+		AreaID:     e.AreaID,
+		FromLSNode: ln.Name,
+		ToLSNode:   rn.Name,
 	}
 	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
 		if !driver.IsConflict(err) {
@@ -273,11 +283,14 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSN
 		mtid = int(rn.MTID.MTID)
 	}
 	ne := lsNodeEdgeObject{
-		Key:  key,
-		From: ln.ID,
-		To:   rn.ID,
-		MTID: uint16(mtid),
-		Link: rn.Key,
+		Key:        key,
+		From:       ln.ID,
+		To:         rn.ID,
+		Link:       rn.Key,
+		ProtocolID: rn.ProtocolID,
+		DomainID:   rn.DomainID,
+		MTID:       uint16(mtid),
+		AreaID:     rn.AreaID,
 	}
 
 	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
