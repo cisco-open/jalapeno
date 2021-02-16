@@ -149,18 +149,19 @@ bmp server 1
  ```
  telemetry model-driven
  destination-group jalapeno
+  vrf <name> // optional 
   address-family ipv4 10.251.251.1 port 32400
    encoding self-describing-gpb
    protocol grpc no-tls
   !
  !
  sensor-group cisco_models 
-  sensor-path Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface
-  sensor-path Cisco-IOS-XR-infra-tc-oper:traffic-collector/afs/af/counters/prefixes/prefix
-  sensor-path Cisco-IOS-XR-fib-common-oper:mpls-forwarding/nodes/node/label-fib/forwarding-details/forwarding-detail
+  sensor-path Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface  // interface stats
+  sensor-path Cisco-IOS-XR-infra-tc-oper:traffic-collector/afs/af/counters/prefixes/prefix // SR traffic collector stats
+  sensor-path Cisco-IOS-XR-fib-common-oper:mpls-forwarding/nodes/node/label-fib/forwarding-details/forwarding-detail // per mpls label forwarding stats
  !
  sensor-group openconfig_interfaces
-  sensor-path openconfig-interfaces:interfaces/interface
+  sensor-path openconfig-interfaces:interfaces/interface  // openconfig interface stats
  !
  subscription base_metrics
   sensor-group-id cisco_models sample-interval 10000
