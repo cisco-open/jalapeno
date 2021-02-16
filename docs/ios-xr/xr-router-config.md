@@ -144,4 +144,29 @@ bmp server 1
   egress-engineering
   bmp-activate server 1
  ```
+ ### Streaming Telemetry (Model Driven Telemetry)
+ 
+ ```
+ telemetry model-driven
+ destination-group jalapeno
+  address-family ipv4 10.251.251.1 port 32400
+   encoding self-describing-gpb
+   protocol grpc no-tls
+  !
+ !
+ sensor-group cisco_models 
+  sensor-path Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface
+  sensor-path Cisco-IOS-XR-infra-tc-oper:traffic-collector/afs/af/counters/prefixes/prefix
+  sensor-path Cisco-IOS-XR-fib-common-oper:mpls-forwarding/nodes/node/label-fib/forwarding-details/forwarding-detail
+ !
+ sensor-group openconfig_interfaces
+  sensor-path openconfig-interfaces:interfaces/interface
+ !
+ subscription base_metrics
+  sensor-group-id cisco_models sample-interval 10000
+  sensor-group-id openconfig_interfaces sample-interval 10000
+  destination-id jalapeno
+  source-interface MgmtEth0/RP0/CPU0/0
+ !
+ ```
  
