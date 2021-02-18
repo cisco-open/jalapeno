@@ -5,7 +5,7 @@ To access Kafka and validate Jalapeno topics and data:
 ```
 1. Access container:
 
-kubectl exec -it kafka-0 /bin/bash -n jalapeno
+kubectl exec -it <kafka pod name> /bin/bash -n jalapeno
 
 2. cd into bin and unset JMX_PORT
 
