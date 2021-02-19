@@ -35,6 +35,7 @@ Click import on the right side of the screen
 Import telemetry json files and modify as necessary to fit your topology
 
 Sample json to import:
+
 https://github.com/jalapeno/jalapeno-lab/blob/master/grafana/egress-mdt.json
 https://github.com/jalapeno/jalapeno-lab/blob/master/grafana/ingress-mdt.json
 
