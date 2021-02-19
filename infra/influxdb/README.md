@@ -19,8 +19,10 @@ auth root jalapeno
 use mdt_db
 show series  // provides a list of all time-series in the mdt_db
 ```
+To start working with Grafana dashboards see:
+https://github.com/jalapeno/jalapeno/blob/master/infra/grafana/README.md
 
-#### Sample Queries:
+#### Sample InfluxDB Queries:
 Provide all of Router 16's interface names and IPv4 addresses:
 ```
 SELECT last("ip_information/ip_address") FROM "Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-xr/interface" WHERE ("source" = 'R16-LSR') GROUP BY "interface_name"
