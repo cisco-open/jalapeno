@@ -17,7 +17,7 @@ To access Grafana's UI, log in at `<server_ip>:30300`, using credentials `root/j
 
 Jalapeno's installation script does not automatically add Grafana dashboards.
 To do so:
-
+```
 Connect to Grafana: Http://<jalapeno_ip>:30300
 User/pw = root/jalapeno
 After authenticating click on add data source, choose InfluxDB
@@ -27,11 +27,14 @@ Database: mdt_db
 Basic Auth: root/jalapeno
 Http method GET
 Click 'save and test'
+```
 Once added, hover over the Dashboard icon (4 squares on the left), click 'Manage'
+
 Click import on the right side of the screen
+
 Import telemetry json files and modify as necessary to fit your topology
 
-Sample json:
+Sample json to import:
 https://github.com/jalapeno/jalapeno-lab/blob/master/grafana/egress-mdt.json
 https://github.com/jalapeno/jalapeno-lab/blob/master/grafana/ingress-mdt.json
 
