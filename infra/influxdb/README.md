@@ -37,3 +37,9 @@ Provide transmit and receive bytes collected for a given router interface over t
 ```
 SELECT last("state/counters/out_octets"), last("state/counters/in_octets") FROM "openconfig-interfaces:interfaces/interface" WHERE ("name" = 'GigabitEthernet0/0/0/0' AND "source" = 'R12-LSR') AND time >= now() - 30m  GROUP BY time(30s) fill(null)
 ```
+
+Provide total MPLS label switched bytes for a given interface
+```
+SELECT last("label_information/tx_bytes") FROM "Cisco-IOS-XR-fib-common-oper:mpls-forwarding/nodes/node/label-fib/forwarding-details/forwarding-detail" WHERE ("source" = 'R12-LSR' AND "label_information/outgoing_interface" = 'Gi0/0/0/4')
+```
+
