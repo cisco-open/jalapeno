@@ -42,6 +42,6 @@ Provide total MPLS label switched bytes for a given interface or label value
 ```
 SELECT last("label_information/tx_bytes") FROM "Cisco-IOS-XR-fib-common-oper:mpls-forwarding/nodes/node/label-fib/forwarding-details/forwarding-detail" WHERE ("source" = 'R12-LSR' AND "label_information/outgoing_interface" = 'Gi0/0/0/4')
 
-SELECT mean("label_information/label_information_detail/transmit_number_of_bytes_switched") FROM "Cisco-IOS-XR-fib-common-oper:mpls-forwarding/nodes/node/label-fib/forwarding-details/forwarding-detail" WHERE ("source" = 'R12-LSR' AND "label_value" = '100014') 
+SELECT last("label_information/label_information_detail/transmit_number_of_bytes_switched") FROM "Cisco-IOS-XR-fib-common-oper:mpls-forwarding/nodes/node/label-fib/forwarding-details/forwarding-detail" WHERE ("source" = 'R12-LSR' AND "label_value" = '100014') 
 ```
 
