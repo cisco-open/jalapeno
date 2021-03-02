@@ -45,3 +45,7 @@ SELECT last("label_information/tx_bytes") FROM "Cisco-IOS-XR-fib-common-oper:mpl
 SELECT last("label_information/label_information_detail/transmit_number_of_bytes_switched") FROM "Cisco-IOS-XR-fib-common-oper:mpls-forwarding/nodes/node/label-fib/forwarding-details/forwarding-detail" WHERE ("source" = 'R12-LSR' AND "label_value" = '100014') 
 ```
 
+Segment Routing Traffic Matrix collection
+```
+SELECT last("base_counter_statistics/count_history/transmit_number_of_bytes_switched") FROM "Cisco-IOS-XR-infra-tc-oper:traffic-collector/vrf-table/default-vrf/afs/af/counters/prefixes/prefix" WHERE ("source" = 'R08-ABR' AND "label" = '100014') 
+```
