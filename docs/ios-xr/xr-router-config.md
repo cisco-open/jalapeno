@@ -5,7 +5,7 @@
 1. SRGB - we use a custom label block in our lab.  The default is 16000 - 23999
 ```
 segment-routing
- global-block 100000 163999
+ global-block 100000 163999   
 ```
 
 2. Enable SR in ISIS
@@ -61,8 +61,7 @@ router bgp 100000
  !
  address-family link-state link-state
  !
- neighbor-group ASN100000_clients
-  !       
+ neighbor <neighbor IP>
   address-family link-state link-state
    route-policy pass in
    route-policy drop out
