@@ -129,8 +129,7 @@ bmp server 1
  // Route reflector:
  
  router bgp 100000
- neighbor-group ASN100000_clients    // Assuming clients are vpnv4/v6 PE's this also captures vpnv4/6 messages
-  remote-as 100000
+ neighbor <neighbor IP>    // Assuming clients are vpnv4/v6 PE's this also captures vpnv4/6 messages
   bmp-activate server 1
   
 // ASBR/Peering
