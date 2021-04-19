@@ -84,6 +84,12 @@ github.com/sbezverk/gobmp v0.0.1-beta.0.20210326163712-ebffd52d631c h1:Xqa4X2dJs
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210326163712-ebffd52d631c/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210331183657-a7f656fb219c h1:KO2mdmpu7/YZOUsVPZjKEpxf47McWf9KivJkNwoMLIs=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210331183657-a7f656fb219c/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210401170203-5e8e94f3f740 h1:LiVMOWHkAF+9afFn7TsBMB+oJbSw4ZkWNx8C5ZBniM0=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210401170203-5e8e94f3f740/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210401201810-f1072b589701 h1:F8vI71bd+F6pimhqk/7Ij03NNEwqqllIuy8TdTKmpWg=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210401201810-f1072b589701/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210407140021-a04bca0ad1d0 h1:vV/JCJxyLC4COI4LjbNWm1d5dfqA+7k0JJjV8v2G0tg=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210407140021-a04bca0ad1d0/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/segmentio/kafka-go v0.4.2/go.mod h1:Inh7PqOsxmfgasV8InZYKVXWsdjcCq2d9tFV75GLbuM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
