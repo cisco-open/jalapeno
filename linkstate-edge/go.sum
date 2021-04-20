@@ -46,6 +46,8 @@ github.com/jalapeno/topology v0.0.0-20210202031629-329919bc5256 h1:JeNMzWUQ+8w/9
 github.com/jalapeno/topology v0.0.0-20210202031629-329919bc5256/go.mod h1:3FESqZgvhp99RU4KU7iicSXkdJsaQN3gRb/EZDJY3cM=
 github.com/jalapeno/topology v0.0.0-20210327163538-c010652933dd h1:66kuaG9VR3zF5JskZSz1uELScmXOTJ76SUe4oRAt+O0=
 github.com/jalapeno/topology v0.0.0-20210327163538-c010652933dd/go.mod h1:7ApXibYp2iADT53zw1i3yqE1QM1hrB2FFbEOQD+ZGew=
+github.com/jalapeno/topology v0.0.0-20210419210222-5a7524f66185 h1:hvoOU08mK/OxhX91yUXLh28tJqQr80DbzjPNBof1MiI=
+github.com/jalapeno/topology v0.0.0-20210419210222-5a7524f66185/go.mod h1:GXMiVlNuORJJU3l5Qyx5+2sNCcHhvEPbcHWbqi1OOb4=
 github.com/jcmturner/gofork v1.0.0 h1:J7uCkflzTEhUZ64xqKnkDxq3kzc96ajM1Gli5ktUem8=
 github.com/jcmturner/gofork v1.0.0/go.mod h1:MK8+TM0La+2rjBD4jE12Kj1pCCxK7d2LK/UM3ncEo0o=
 github.com/klauspost/compress v1.9.8/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
@@ -77,7 +79,9 @@ github.com/sbezverk/gobmp v0.0.1-beta.0.20210201185400-611bfd0d949a h1:UPWtuqp5l
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210201185400-611bfd0d949a/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210210154328-6db1f6bc1e78 h1:F+dXj3PFjkXX40VI60MDkLVE2g02pUm5xJ6PpN8rvN8=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210210154328-6db1f6bc1e78/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210326163712-ebffd52d631c h1:Xqa4X2dJsZac4E0jFAyG09uGwa/hkNr4OctNsuNliZA=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210326163712-ebffd52d631c/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210407140021-a04bca0ad1d0/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/segmentio/kafka-go v0.4.2/go.mod h1:Inh7PqOsxmfgasV8InZYKVXWsdjcCq2d9tFV75GLbuM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
