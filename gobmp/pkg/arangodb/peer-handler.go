@@ -9,5 +9,5 @@ type peerStateChangeArangoMessage struct {
 }
 
 func (p *peerStateChangeArangoMessage) MakeKey() string {
-	return p.RemoteIP
+	return p.RemoteBGPID  + "_" + p.RemoteIP
 }
