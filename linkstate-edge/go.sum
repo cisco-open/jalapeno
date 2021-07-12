@@ -42,12 +42,6 @@ github.com/google/go-cmp v0.5.2/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/hashicorp/go-uuid v1.0.2 h1:cfejS+Tpcp13yd5nYHWDI6qVCny6wyX2Mt5SGur2IGE=
 github.com/hashicorp/go-uuid v1.0.2/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
-github.com/jalapeno/topology v0.0.0-20210202031629-329919bc5256 h1:JeNMzWUQ+8w/9rnUnsa0fM/8L9EtpyPy5NhKT2dWhrE=
-github.com/jalapeno/topology v0.0.0-20210202031629-329919bc5256/go.mod h1:3FESqZgvhp99RU4KU7iicSXkdJsaQN3gRb/EZDJY3cM=
-github.com/jalapeno/topology v0.0.0-20210327163538-c010652933dd h1:66kuaG9VR3zF5JskZSz1uELScmXOTJ76SUe4oRAt+O0=
-github.com/jalapeno/topology v0.0.0-20210327163538-c010652933dd/go.mod h1:7ApXibYp2iADT53zw1i3yqE1QM1hrB2FFbEOQD+ZGew=
-github.com/jalapeno/topology v0.0.0-20210419210222-5a7524f66185 h1:hvoOU08mK/OxhX91yUXLh28tJqQr80DbzjPNBof1MiI=
-github.com/jalapeno/topology v0.0.0-20210419210222-5a7524f66185/go.mod h1:GXMiVlNuORJJU3l5Qyx5+2sNCcHhvEPbcHWbqi1OOb4=
 github.com/jalapeno/topology v0.0.0-20210712193052-94875c8030d5 h1:leHB8v23QbGIfyDPtMv7nMAHIA0qQSvBbr1nXcybSZo=
 github.com/jalapeno/topology v0.0.0-20210712193052-94875c8030d5/go.mod h1:CPZnOmFs1woAFD5NsFNOvpRydn6oD5Gvw30mqZ8Q5/M=
 github.com/jcmturner/gofork v1.0.0 h1:J7uCkflzTEhUZ64xqKnkDxq3kzc96ajM1Gli5ktUem8=
@@ -77,14 +71,6 @@ github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0 h1:MkV+77GLUNo
 github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
 github.com/rs/xid v1.2.1/go.mod h1:+uKXf+4Djp6Md1KODXJxgGQPKngRmWyn10oCKFzNHOQ=
 github.com/rs/zerolog v1.19.0/go.mod h1:IzD0RJ65iWH0w97OQQebJEvTZYvsCUm9WVLWBQrJRjo=
-github.com/sbezverk/gobmp v0.0.1-beta.0.20210201185400-611bfd0d949a h1:UPWtuqp5l0igdoLpWB3FKGEsF+CMnikPTcwL5VM5p3c=
-github.com/sbezverk/gobmp v0.0.1-beta.0.20210201185400-611bfd0d949a/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
-github.com/sbezverk/gobmp v0.0.1-beta.0.20210210154328-6db1f6bc1e78 h1:F+dXj3PFjkXX40VI60MDkLVE2g02pUm5xJ6PpN8rvN8=
-github.com/sbezverk/gobmp v0.0.1-beta.0.20210210154328-6db1f6bc1e78/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
-github.com/sbezverk/gobmp v0.0.1-beta.0.20210326163712-ebffd52d631c h1:Xqa4X2dJsZac4E0jFAyG09uGwa/hkNr4OctNsuNliZA=
-github.com/sbezverk/gobmp v0.0.1-beta.0.20210326163712-ebffd52d631c/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
-github.com/sbezverk/gobmp v0.0.1-beta.0.20210407140021-a04bca0ad1d0 h1:vV/JCJxyLC4COI4LjbNWm1d5dfqA+7k0JJjV8v2G0tg=
-github.com/sbezverk/gobmp v0.0.1-beta.0.20210407140021-a04bca0ad1d0/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210708163419-62d7fc1982bd h1:f9c2k+cIGfEw15irU6Swcb8/GOVjyo0L48DDxapky7c=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210708163419-62d7fc1982bd/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/segmentio/kafka-go v0.4.2/go.mod h1:Inh7PqOsxmfgasV8InZYKVXWsdjcCq2d9tFV75GLbuM=
