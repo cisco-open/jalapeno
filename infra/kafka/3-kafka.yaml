@@ -18,10 +18,10 @@ metadata:
     namespace: jalapeno
 spec:
     ports:
-      - name: 9092-tcp
-        port: 9092
+      - name: 9094-tcp
+        port: 9094
         nodePort: 30092
-        targetPort: 9092
+        targetPort: 9094
     type: NodePort
     selector:
       app: kafka

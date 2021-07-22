@@ -27,7 +27,7 @@ data:
       fi
 
       OUTSIDE_HOST=$(kubectl get node "$NODE_NAME" -o jsonpath='{.status.addresses[?(@.type=="InternalIP")].address}')
-      OUTSIDE_PORT=$((32400 + ${KAFKA_BROKER_ID}))
+      OUTSIDE_PORT=$((30092 + ${KAFKA_BROKER_ID}))
       SEDS+=("s|#init#advertised.listeners=PLAINTEXT://#init#|advertised.listeners=PLAINTEXT://broker.jalapeno:9092,OUTSIDE://${OUTSIDE_HOST}:${OUTSIDE_PORT}|")
       ANNOTATIONS="$ANNOTATIONS kafka-listener-outside-host=$OUTSIDE_HOST kafka-listener-outside-port=$OUTSIDE_PORT"
 
@@ -255,4 +255,3 @@ data:
     # Change to DEBUG to enable audit log for the authorizer
     log4j.logger.kafka.authorizer.logger=WARN, authorizerAppender
     log4j.additivity.kafka.authorizer.logger=false
-
