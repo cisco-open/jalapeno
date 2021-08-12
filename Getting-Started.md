@@ -97,7 +97,7 @@ replicaset.apps/telegraf-ingress-deployment-56867cf9b4   1         1         1  
 
       ```shell
       bmp server 1
-       host <server-ip> port 30555
+       host <server-ip> port 30511
        description jalapeno GoBMP
        update-source MgmtEth0/RP0/CPU0/0
        flapping-delay 60
