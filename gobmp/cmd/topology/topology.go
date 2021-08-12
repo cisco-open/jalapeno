@@ -101,6 +101,13 @@ func main() {
 		}
 	}
 	var dbSrv dbclient.Srv
+	// validateDBCreds check if the user name and the password are provided either as
+	// command line parameters or via files. If both are provided command line parameters
+	// will be used, if neither, topology will fail.
+	if err := validateDBCreds(); err != nil {
+		glog.Errorf("failed to validate the database credentials with error: %+v", err)
+		os.Exit(1)
+	}
 	// Initializing database client
 	isMockDB, err := strconv.ParseBool(mockDB)
 	if err != nil {
