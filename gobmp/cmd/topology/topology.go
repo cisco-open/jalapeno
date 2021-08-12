@@ -20,6 +20,17 @@ import (
 	_ "net/http/pprof"
 )
 
+const (
+	// userFile defines the name of file containing base64 encoded user name
+	userFile = "./credentials/.username"
+	// passFile defines the name of file containing base64 encoded password
+	passFile = "./credentials/.password"
+	// MAXUSERNAME defines maximum length of ArangoDB user name
+	MAXUSERNAME = 256
+	// MAXPASS defines maximum length of ArangoDB password
+	MAXPASS = 256
+)
+
 var (
 	msgSrvAddr  string
 	dbSrvAddr   string
