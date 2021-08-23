@@ -214,6 +214,9 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		}
 		obj.(*lsLinkArangoMessage).Key = k
 		obj.(*lsLinkArangoMessage).ID = c.properties.name + "/" + k
+		// if len(obj.(*lsLinkArangoMessage).LSAdjacencySID) != 0 {
+		// 	glog.Infof("lslink document: %+v", obj.(*lsLinkArangoMessage).LSAdjacencySID[0].SID)
+		// }
 		action = obj.(*lsLinkArangoMessage).Action
 	case bmp.LSNodeMsg:
 		obj, ok = o.(*lsNodeArangoMessage)
@@ -338,6 +341,7 @@ func newDBRecord(msgData []byte, collectionType dbclient.CollectionType) (DBReco
 		return &o, nil
 	case bmp.LSLinkMsg:
 		var o lsLinkArangoMessage
+		glog.Infof("lslink message: %+v", o)
 		if err := json.Unmarshal(msgData, &o); err != nil {
 			return nil, err
 		}
