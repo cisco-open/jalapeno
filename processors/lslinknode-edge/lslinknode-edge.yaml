@@ -1,13 +1,4 @@
 ---
-apiVersion: v1
-kind: Secret
-metadata:
-  name: jalapeno
-  namespace: jalapeno
-data:
-  .username: cm9vdA==
-  .password: amFsYXBlbm8=
----
 apiVersion: apps/v1
 kind: Deployment
 spec:
