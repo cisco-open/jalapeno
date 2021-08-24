@@ -44,6 +44,8 @@ github.com/hashicorp/go-uuid v1.0.2 h1:cfejS+Tpcp13yd5nYHWDI6qVCny6wyX2Mt5SGur2I
 github.com/hashicorp/go-uuid v1.0.2/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
 github.com/jalapeno/topology v0.0.0-20210712193052-94875c8030d5 h1:leHB8v23QbGIfyDPtMv7nMAHIA0qQSvBbr1nXcybSZo=
 github.com/jalapeno/topology v0.0.0-20210712193052-94875c8030d5/go.mod h1:CPZnOmFs1woAFD5NsFNOvpRydn6oD5Gvw30mqZ8Q5/M=
+github.com/jalapeno/topology v0.0.0-20210824155929-cf38bc5e949b h1:YwcIR3ZNVqr5iP986poTSmFHnctQujrhOe3EXui5eZs=
+github.com/jalapeno/topology v0.0.0-20210824155929-cf38bc5e949b/go.mod h1:/T5T3eULMowwdevAFHFDD2gT1uN0XkJMrMB162CzN+I=
 github.com/jcmturner/gofork v1.0.0 h1:J7uCkflzTEhUZ64xqKnkDxq3kzc96ajM1Gli5ktUem8=
 github.com/jcmturner/gofork v1.0.0/go.mod h1:MK8+TM0La+2rjBD4jE12Kj1pCCxK7d2LK/UM3ncEo0o=
 github.com/klauspost/compress v1.9.8/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
@@ -75,6 +77,8 @@ github.com/sbezverk/gobmp v0.0.1-beta.0.20210708163419-62d7fc1982bd h1:f9c2k+cIG
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210708163419-62d7fc1982bd/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210823112252-27cacc69c3d2 h1:eKkfWW6j3DhIqKET7j+Gj1dVOIaH3uSwjz2T1axTcVQ=
 github.com/sbezverk/gobmp v0.0.1-beta.0.20210823112252-27cacc69c3d2/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210824155606-237c0a744415 h1:D+moWNilAeDH7cPcx9WTOPqvV7sULH3AWdorZX0pabA=
+github.com/sbezverk/gobmp v0.0.1-beta.0.20210824155606-237c0a744415/go.mod h1:UUBU2hfxyZhQMfH1+uCi7ddGPiuiKGiizrZnpeIKyvo=
 github.com/segmentio/kafka-go v0.4.2/go.mod h1:Inh7PqOsxmfgasV8InZYKVXWsdjcCq2d9tFV75GLbuM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
