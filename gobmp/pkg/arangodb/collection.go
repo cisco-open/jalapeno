@@ -341,7 +341,7 @@ func newDBRecord(msgData []byte, collectionType dbclient.CollectionType) (DBReco
 		return &o, nil
 	case bmp.LSLinkMsg:
 		var o lsLinkArangoMessage
-		glog.Infof("lslink message: %+v", o)
+		//glog.Infof("lslink message: %+v", o)
 		if err := json.Unmarshal(msgData, &o); err != nil {
 			return nil, err
 		}
