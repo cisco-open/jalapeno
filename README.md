@@ -35,7 +35,7 @@ Jalapeno is comprised of a series of microservices which can be summarized as:
   * Base data processors: parse topology and performance data coming off Kafka and populate the Influx TSDB and base data collections in the Arango graph database.  The Topology and Telegraf pods are base processors.
   * Virtual_Topology processors: mine the graph and TSDB data collections and then populate virtual topology collections in the graph DB.  LS, EPE, and L3VPN, are examples of virtual topology processors (see https://github.com/jalapeno/demo-processors).
 
-* API-GW - expose Jalapeno's virtual topology data for application consumption
+* API-GW - expose Jalapeno's virtual topology data for application consumption (API-GW is under construction)
 
 * SR-Apps - mini-applications that mine the graph and time-series databases for the label stack or SRv6 SRH data needed to execute topology or traffic engineering use cases.  Each SR-App should have its own API to field client requests for Segment Routing network services.  
 
