@@ -103,6 +103,8 @@ func main() {
 
 	msgSrv.Start()
 
+	arangodb.InitializeKafkaNotifier(msgSrvAddr)
+
 	stopCh := setupSignalHandler()
 	<-stopCh
 
