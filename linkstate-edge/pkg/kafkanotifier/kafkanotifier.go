@@ -13,7 +13,7 @@ import (
 	"github.com/jalapeno/topology/pkg/kafkanotifier"
 )
 
-const LSNodeEdgeTopic = "gobmp.parsed.peer_events"
+const LSNodeEdgeTopic = "jalapeno.ls_node_edge_events"
 
 var (
 	brockerConnectTimeout = 10 * time.Second
