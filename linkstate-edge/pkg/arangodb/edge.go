@@ -3,15 +3,30 @@ package arangodb
 import (
 	"context"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
+	"github.com/jalapeno/lslinknode-edge/pkg/kafkanotifier"
 	notifier "github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/message"
 )
+
+const LSNodeEdgeCollection = "LSNode_Edge"
+
+var Notifier *kafkanotifier.Notifier;
+
+func InitializeKafkaNotifier(msgSrvAddr string) {
+	kNotifier, err := kafkanotifier.NewKafkaNotifier(msgSrvAddr)
+	if err != nil {
+		glog.Errorf("failed to initialize events notifier with error: %+v", err)
+		os.Exit(1)
+	}
+	Notifier = kNotifier
+}
 
 func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 	ctx := context.TODO()
@@ -35,7 +50,7 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 		if obj.Action != "del" {
 			return fmt.Errorf("document %s not found but Action is not \"del\", possible stale event", obj.Key)
 		}
-		return a.processEdgeRemoval(ctx, obj.Key)
+		return a.processEdgeRemoval(ctx, obj.Key, obj.Action)
 	}
 	switch obj.Action {
 	case "add":
@@ -71,7 +86,7 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 		if obj.Action != "del" {
 			return fmt.Errorf("document %s not found but Action is not \"del\", possible stale event", obj.Key)
 		}
-		return a.processVertexRemoval(ctx, obj.Key)
+		return a.processVertexRemoval(ctx, obj.Key, obj.Action)
 	}
 	switch obj.Action {
 	case "add":
@@ -186,16 +201,19 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 		MTID:       uint16(mtid),
 		AreaID:     e.AreaID,
 	}
-	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
+	var doc driver.DocumentMeta
+	if doc, err = a.graph.CreateDocument(ctx, &ne); err != nil {
 		if !driver.IsConflict(err) {
 			return err
 		}
 		// The document already exists, updating it with the latest info
-		if _, err := a.graph.UpdateDocument(ctx, e.Key, &ne); err != nil {
+		doc, err = a.graph.UpdateDocument(ctx, e.Key, &ne)
+		if err != nil {
 			return err
 		}
 	}
-
+	
+	notifyKafka(doc, e.Action)
 	return nil
 }
 
@@ -289,34 +307,37 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSN
 		AreaID:     rn.AreaID,
 	}
 
-	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
+	var doc driver.DocumentMeta
+	if doc, err = a.graph.CreateDocument(ctx, &ne); err != nil {
 		if !driver.IsConflict(err) {
 			return err
 		}
 		// The document already exists, updating it with the latest info
-		if _, err := a.graph.UpdateDocument(ctx, e.Key, &ne); err != nil {
+		if _, err = a.graph.UpdateDocument(ctx, e.Key, &ne); err != nil {
 			return err
 		}
 	}
 
+	notifyKafka(doc, e.Action)
 	return nil
 }
 
 // processEdgeRemoval removes a record from Node's graph collection
 // since the key matches in both collections (LS Links and Nodes' Graph) deleting the record directly.
-func (a *arangoDB) processEdgeRemoval(ctx context.Context, key string) error {
-	if _, err := a.graph.RemoveDocument(ctx, key); err != nil {
+func (a *arangoDB) processEdgeRemoval(ctx context.Context, key string, action string) error {
+	doc, err := a.graph.RemoveDocument(ctx, key)
+	if err != nil {
 		if !driver.IsNotFound(err) {
 			return err
 		}
 		return nil
 	}
-
+	notifyKafka(doc, action)
 	return nil
 }
 
 // processEdgeRemoval removes all documents where removed Vertix (LSNode) is referenced in "_to" or "_from"
-func (a *arangoDB) processVertexRemoval(ctx context.Context, key string) error {
+func (a *arangoDB) processVertexRemoval(ctx context.Context, key string, action string) error {
 	query := "FOR d IN " + a.graph.Name() +
 		" filter d._to == " + "\"" + key + "\"" + " OR" + " d._from == " + "\"" + key + "\"" +
 		" return d"
@@ -336,12 +357,22 @@ func (a *arangoDB) processVertexRemoval(ctx context.Context, key string) error {
 			break
 		}
 		glog.V(6).Infof("Removing from %s object %s", a.graph.Name(), p.Key)
-		if _, err := a.graph.RemoveDocument(ctx, p.Key); err != nil {
+		var doc driver.DocumentMeta
+		if doc, err = a.graph.RemoveDocument(ctx, p.Key); err != nil {
 			if !driver.IsNotFound(err) {
 				return err
 			}
 			return nil
 		}
+		notifyKafka(doc, action)
 	}
 	return nil
+}
+
+func notifyKafka(doc driver.DocumentMeta, action string) {
+	kafkanotifier.TriggerNotification(Notifier, kafkanotifier.LSNodeEdgeTopic, &notifier.EventMessage{
+		Key: doc.Key,
+		ID: LSNodeEdgeCollection + "/" + doc.Key,
+		Action: action,
+	})
 }
