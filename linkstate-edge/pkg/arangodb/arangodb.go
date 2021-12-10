@@ -122,6 +122,7 @@ func (a *arangoDB) loadEdge() error {
 	for {
 		var p message.LSLink
 		meta, err := cursor.ReadDocument(ctx, &p)
+		//glog.Infof("processing lslink document: %+v", p)
 		if driver.IsNoMoreDocuments(err) {
 			break
 		} else if err != nil {

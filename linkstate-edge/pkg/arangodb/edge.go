@@ -13,6 +13,8 @@ import (
 	notifier "github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/message"
+	"github.com/sbezverk/gobmp/pkg/sr"
+	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
 const LSNodeEdgeCollection = "LSNode_Edge"
@@ -101,14 +103,22 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 }
 
 type lsNodeEdgeObject struct {
-	Key        string       `json:"_key"`
-	From       string       `json:"_from"`
-	To         string       `json:"_to"`
-	Link       string       `json:"link"`
-	ProtocolID base.ProtoID `json:"protocol_id"`
-	DomainID   int64        `json:"domain_id"`
-	MTID       uint16       `json:"mt_id"`
-	AreaID     string       `json:"area_id"`
+	Key           string                `json:"_key"`
+	From          string                `json:"_from"`
+	To            string                `json:"_to"`
+	Link          string                `json:"link"`
+	ProtocolID    base.ProtoID          `json:"protocol_id"`
+	DomainID      int64                 `json:"domain_id"`
+	MTID          uint16                `json:"mt_id"`
+	AreaID        string                `json:"area_id"`
+	LocalLinkID   uint32                `json:"local_link_id"`
+	RemoteLinkID  uint32                `json:"remote_link_id"`
+	LocalLinkIP   string                `json:"local_link_ip"`
+	RemoteLinkIP  string                `json:"remote_link_ip"`
+	LocalNodeASN  uint32                `json:"local_node_asn"`
+	RemoteNodeASN uint32                `json:"remote_node_asn"`
+	SRv6ENDXSID   []*srv6.EndXSIDTLV    `json:"srv6_endx_sid"`
+	LSAdjSID      []*sr.AdjacencySIDTLV `json:"ls_adj_sid"`
 }
 
 // processEdge processes a single LS Link connection which is a unidirectional edge between two nodes (vertices).
@@ -192,14 +202,22 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 		mtid = int(e.MTID.MTID)
 	}
 	ne := lsNodeEdgeObject{
-		Key:        key,
-		From:       ln.ID,
-		To:         rn.ID,
-		Link:       e.Key,
-		ProtocolID: e.ProtocolID,
-		DomainID:   e.DomainID,
-		MTID:       uint16(mtid),
-		AreaID:     e.AreaID,
+		Key:           key,
+		From:          ln.ID,
+		To:            rn.ID,
+		Link:          e.Key,
+		ProtocolID:    e.ProtocolID,
+		DomainID:      e.DomainID,
+		MTID:          uint16(mtid),
+		AreaID:        e.AreaID,
+		LocalLinkID:   e.LocalLinkID,
+		RemoteLinkID:  e.RemoteLinkID,
+		LocalLinkIP:   e.LocalLinkIP,
+		RemoteLinkIP:  e.RemoteLinkIP,
+		LocalNodeASN:  e.LocalNodeASN,
+		RemoteNodeASN: e.RemoteNodeASN,
+		SRv6ENDXSID:   e.SRv6ENDXSID,
+		LSAdjSID:      e.LSAdjacencySID,
 	}
 	var doc driver.DocumentMeta
 	if doc, err = a.graph.CreateDocument(ctx, &ne); err != nil {
