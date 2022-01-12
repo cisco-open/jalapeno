@@ -122,16 +122,16 @@ type lsNodeEdgeObject struct {
 }
 
 // processEdge processes a single LS Link connection which is a unidirectional edge between two nodes (vertices).
-func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLink) error {
-	if e.ProtocolID == base.BGP {
+func (a *arangoDB) processEdge(ctx context.Context, key string, l *message.LSLink) error {
+	if l.ProtocolID == base.BGP {
 		return nil
 	}
-	ln, err := a.getNode(ctx, e, true)
+	ln, err := a.getNode(ctx, l, true)
 	if err != nil {
 		return err
 	}
 
-	rn, err := a.getNode(ctx, e, false)
+	rn, err := a.getNode(ctx, l, false)
 	if err != nil {
 		return err
 	}
@@ -139,37 +139,13 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 		ln.ProtocolID, ln.DomainID, ln.IGPRouterID)
 	glog.V(6).Infof("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
 		rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
-
-	mtid := 0
-	if e.MTID != nil {
-		mtid = int(e.MTID.MTID)
-	}
-	ne := lsNodeEdgeObject{
-		Key:           key,
-		From:          ln.ID,
-		To:            rn.ID,
-		Link:          e.Key,
-		ProtocolID:    e.ProtocolID,
-		DomainID:      e.DomainID,
-		MTID:          uint16(mtid),
-		AreaID:        e.AreaID,
-		LocalLinkID:   e.LocalLinkID,
-		RemoteLinkID:  e.RemoteLinkID,
-		LocalLinkIP:   e.LocalLinkIP,
-		RemoteLinkIP:  e.RemoteLinkIP,
-		LocalNodeASN:  e.LocalNodeASN,
-		RemoteNodeASN: e.RemoteNodeASN,
-		SRv6ENDXSID:   e.SRv6ENDXSID,
-		LSAdjSID:      e.LSAdjacencySID,
-	}
-	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
-		if !driver.IsConflict(err) {
-			return err
-		}
-		// The document already exists, updating it with the latest info
-		if _, err := a.graph.UpdateDocument(ctx, ne.Key, &ne); err != nil {
-			return err
-		}
+	if err := a.createEdgeObject(ctx, l, ln, rn); err != nil {
+		glog.Errorf("failed to create LSNode Edge object with error: %+v", err)
+		glog.Errorf("Local node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+			ln.ProtocolID, ln.DomainID, ln.IGPRouterID)
+		glog.Errorf("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+			rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
+		return err
 	}
 
 	return nil
@@ -214,25 +190,12 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, ln *message.LS
 		glog.V(6).Infof("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
 			rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
 
-		mtid := 0
-		if ln.MTID != nil {
-			mtid = int(l.MTID.MTID)
-		}
-		ne := lsNodeEdgeObject{
-			Key:  l.Key,
-			From: ln.ID,
-			To:   rn.ID,
-			MTID: uint16(mtid),
-			Link: l.Key,
-		}
-		if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
-			if !driver.IsConflict(err) {
-				return err
-			}
-			// The document already exists, updating it with the latest info
-			if _, err := a.graph.UpdateDocument(ctx, ne.Key, &ne); err != nil {
-				return err
-			}
+		if err := a.createEdgeObject(ctx, &l, ln, rn); err != nil {
+			glog.Errorf("failed to create LSNode Edge object with error: %+v", err)
+			glog.Errorf("Local node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+				ln.ProtocolID, ln.DomainID, ln.IGPRouterID)
+			glog.Errorf("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+				rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
 		}
 	}
 
@@ -306,7 +269,6 @@ func (a *arangoDB) getNode(ctx context.Context, e *message.LSLink, local bool) (
 	}
 	defer lcursor.Close()
 	var ln message.LSNode
-	// var lm driver.DocumentMeta
 	i := 0
 	for ; ; i++ {
 		_, err := lcursor.ReadDocument(ctx, &ln)
@@ -325,4 +287,40 @@ func (a *arangoDB) getNode(ctx context.Context, e *message.LSLink, local bool) (
 	}
 
 	return &ln, nil
+}
+
+func (a *arangoDB) createEdgeObject(ctx context.Context, l *message.LSLink, ln, rn *message.LSNode) error {
+	mtid := 0
+	if l.MTID != nil {
+		mtid = int(l.MTID.MTID)
+	}
+	       ne := lsNodeEdgeObject{
+                Key:           l.Key,
+                From:          ln.ID,
+                To:            rn.ID,
+                Link:          l.Key,
+                ProtocolID:    l.ProtocolID,
+                DomainID:      l.DomainID,
+                MTID:          uint16(mtid),
+                AreaID:        l.AreaID,
+                LocalLinkID:   l.LocalLinkID,
+                RemoteLinkID:  l.RemoteLinkID,
+                LocalLinkIP:   l.LocalLinkIP,
+                RemoteLinkIP:  l.RemoteLinkIP,
+                LocalNodeASN:  l.LocalNodeASN,
+                RemoteNodeASN: l.RemoteNodeASN,
+                SRv6ENDXSID:   l.SRv6ENDXSID,
+                LSAdjSID:      l.LSAdjacencySID,
+        }
+	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
+		if !driver.IsConflict(err) {
+			return err
+		}
+		// The document already exists, updating it with the latest info
+		if _, err := a.graph.UpdateDocument(ctx, ne.Key, &ne); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
