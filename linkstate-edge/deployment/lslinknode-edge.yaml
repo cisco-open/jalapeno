@@ -16,12 +16,16 @@ spec:
             - --v
             - "6"
             - --message-server
-            - "broker.jalapeno:9092"
+            - "kafka:9092"
             - --database-server
-            - "http://arangodb.jalapeno:8529"
+            - "http://arangodb:28529"
             - --database-name
             - "jalapeno"
-          image: docker.io/iejalapeno/lslinknode-edge:latest
+            - --database-user
+            - "root"
+            - --database-pass
+            - "jalapeno"
+          image: docker.io/sbezverk/lslinknode-edge:testbed
           imagePullPolicy: Always
           name: lslinknode-edge
           volumeMounts:
@@ -33,4 +37,4 @@ spec:
             secretName: jalapeno
 metadata:
   name: lslinknode-edge
-  namespace: jalapeno
+  namespace: default

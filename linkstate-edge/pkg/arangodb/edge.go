@@ -240,7 +240,7 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSN
 		return nil
 	}
 	// Check if there is an edge with matching to LSNode's e.IGPRouterID, e.AreaID, e.DomainID and e.ProtocolID
-	query := "FOR d IN " + a.vertex.Name() +
+	query := "FOR d IN " + a.edge.Name() +
 		" filter d.igp_router_id == " + "\"" + e.IGPRouterID + "\"" +
 		" filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
 		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
@@ -274,7 +274,7 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSN
 	}
 
 	// Check if there is a second link LS Link with with matching to LSNode's e.IGPRouterID, e.AreaID, e.DomainID and e.ProtocolID
-	query = "FOR d IN " + a.vertex.Name() +
+	query = "FOR d IN " + a.edge.Name() +
 		" filter d.remote_igp_router_id == " + "\"" + e.IGPRouterID + "\"" +
 		" filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
 		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))

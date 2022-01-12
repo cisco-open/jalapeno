@@ -1,4 +1,4 @@
-REGISTRY_NAME?=docker.io/iejalapeno
+REGISTRY_NAME?=docker.io/sbezverk
 IMAGE_VERSION?=latest
 
 .PHONY: all lslinknode-edge container push clean test
