@@ -126,71 +126,14 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 	if e.ProtocolID == base.BGP {
 		return nil
 	}
-
-	// Need to fine Node object matching LS Link's IGP Router ID
-	query := "FOR d IN " + a.vertex.Name() +
-		" filter d.igp_router_id == " + "\"" + e.IGPRouterID + "\"" +
-		" filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
-		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
-	// If OSPFv2 or OSPFv3, then query must include AreaID
-	if e.ProtocolID == base.OSPFv2 || e.ProtocolID == base.OSPFv3 {
-		query += " filter d.area_id == " + "\"" + e.AreaID + "\""
-	}
-	query += " return d"
-	lcursor, err := a.db.Query(ctx, query, nil)
+	ln, err := a.getNode(ctx, e, true)
 	if err != nil {
 		return err
 	}
-	defer lcursor.Close()
-	var ln message.LSNode
-	// var lm driver.DocumentMeta
-	i := 0
-	for ; ; i++ {
-		_, err := lcursor.ReadDocument(ctx, &ln)
-		if err != nil {
-			if !driver.IsNoMoreDocuments(err) {
-				return err
-			}
-			break
-		}
-	}
-	if i == 0 {
-		return fmt.Errorf("query %s returned 0 results", query)
-	}
-	if i > 1 {
-		return fmt.Errorf("query %s returned more than 1 result", query)
-	}
 
-	query = "FOR d IN " + a.vertex.Name() +
-		" filter d.igp_router_id == " + "\"" + e.RemoteIGPRouterID + "\"" +
-		" filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
-		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
-	// If OSPFv2 or OSPFv3, then query must include AreaID
-	if e.ProtocolID == base.OSPFv2 || e.ProtocolID == base.OSPFv3 {
-		query += " filter d.area_id == " + "\"" + e.AreaID + "\""
-	}
-	query += " return d"
-	rcursor, err := a.db.Query(ctx, query, nil)
+	rn, err := a.getNode(ctx, e, false)
 	if err != nil {
 		return err
-	}
-	defer rcursor.Close()
-	i = 0
-	var rn message.LSNode
-	for ; ; i++ {
-		_, err := rcursor.ReadDocument(ctx, &rn)
-		if err != nil {
-			if !driver.IsNoMoreDocuments(err) {
-				return err
-			}
-			break
-		}
-	}
-	if i == 0 {
-		return fmt.Errorf("query %s returned 0 results", query)
-	}
-	if i > 1 {
-		return fmt.Errorf("query %s returned more than 1 result", query)
 	}
 	glog.V(6).Infof("Local node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
 		ln.ProtocolID, ln.DomainID, ln.IGPRouterID)
@@ -219,34 +162,31 @@ func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLin
 		SRv6ENDXSID:   e.SRv6ENDXSID,
 		LSAdjSID:      e.LSAdjacencySID,
 	}
-	var doc driver.DocumentMeta
-	if doc, err = a.graph.CreateDocument(ctx, &ne); err != nil {
+	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
 		if !driver.IsConflict(err) {
 			return err
 		}
 		// The document already exists, updating it with the latest info
-		doc, err = a.graph.UpdateDocument(ctx, e.Key, &ne)
-		if err != nil {
+		if _, err := a.graph.UpdateDocument(ctx, ne.Key, &ne); err != nil {
 			return err
 		}
 	}
-	
-	notifyKafka(doc, e.Action)
+
 	return nil
 }
 
-func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSNode) error {
-	if e.ProtocolID == 7 {
+func (a *arangoDB) processVertex(ctx context.Context, key string, ln *message.LSNode) error {
+	if ln.ProtocolID == 7 {
 		return nil
 	}
 	// Check if there is an edge with matching to LSNode's e.IGPRouterID, e.AreaID, e.DomainID and e.ProtocolID
 	query := "FOR d IN " + a.edge.Name() +
-		" filter d.igp_router_id == " + "\"" + e.IGPRouterID + "\"" +
-		" filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
-		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
+		" filter d.igp_router_id == " + "\"" + ln.IGPRouterID + "\"" +
+		" filter d.domain_id == " + strconv.Itoa(int(ln.DomainID)) +
+		" filter d.protocol_id == " + strconv.Itoa(int(ln.ProtocolID))
 	// If OSPFv2 or OSPFv3, then query must include AreaID
-	if e.ProtocolID == base.OSPFv2 || e.ProtocolID == base.OSPFv3 {
-		query += " filter d.area_id == " + "\"" + e.AreaID + "\""
+	if ln.ProtocolID == base.OSPFv2 || ln.ProtocolID == base.OSPFv3 {
+		query += " filter d.area_id == " + "\"" + ln.AreaID + "\""
 	}
 	query += " return d"
 	lcursor, err := a.db.Query(ctx, query, nil)
@@ -254,89 +194,48 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSN
 		return err
 	}
 	defer lcursor.Close()
-	var ln message.LSLink
-	// var lm driver.DocumentMeta
+	var l message.LSLink
+	// Processing each LSLink
 	i := 0
 	for ; ; i++ {
-		_, err := lcursor.ReadDocument(ctx, &ln)
+		_, err := lcursor.ReadDocument(ctx, &l)
 		if err != nil {
 			if !driver.IsNoMoreDocuments(err) {
 				return err
 			}
 			break
 		}
-	}
-	if i == 0 {
-		return fmt.Errorf("query %s returned 0 results", query)
-	}
-	if i > 1 {
-		return fmt.Errorf("query %s returned more than 1 result", query)
-	}
-
-	// Check if there is a second link LS Link with with matching to LSNode's e.IGPRouterID, e.AreaID, e.DomainID and e.ProtocolID
-	query = "FOR d IN " + a.edge.Name() +
-		" filter d.remote_igp_router_id == " + "\"" + e.IGPRouterID + "\"" +
-		" filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
-		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
-	// If OSPFv2 or OSPFv3, then query must include AreaID
-	if e.ProtocolID == base.OSPFv2 || e.ProtocolID == base.OSPFv3 {
-		query += " filter d.area_id == " + "\"" + e.AreaID + "\""
-	}
-	query += " return d"
-	rcursor, err := a.db.Query(ctx, query, nil)
-	if err != nil {
-		return err
-	}
-	defer rcursor.Close()
-	var rn message.LSLink
-	// var lm driver.DocumentMeta
-	i = 0
-	for ; ; i++ {
-		_, err := lcursor.ReadDocument(ctx, &rn)
+		rn, err := a.getNode(ctx, &l, false)
 		if err != nil {
-			if !driver.IsNoMoreDocuments(err) {
+			continue
+		}
+		glog.V(6).Infof("Local node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+			ln.ProtocolID, ln.DomainID, ln.IGPRouterID)
+		glog.V(6).Infof("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+			rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
+
+		mtid := 0
+		if ln.MTID != nil {
+			mtid = int(l.MTID.MTID)
+		}
+		ne := lsNodeEdgeObject{
+			Key:  l.Key,
+			From: ln.ID,
+			To:   rn.ID,
+			MTID: uint16(mtid),
+			Link: l.Key,
+		}
+		if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
+			if !driver.IsConflict(err) {
 				return err
 			}
-			break
-		}
-	}
-	if i == 0 {
-		return fmt.Errorf("query %s returned 0 results", query)
-	}
-	if i > 1 {
-		return fmt.Errorf("query %s returned more than 1 result", query)
-	}
-
-	glog.V(6).Infof("Local link: %s", ln.ID)
-	glog.V(6).Infof("Remote link: %s", rn.ID)
-
-	mtid := 0
-	if rn.MTID != nil {
-		mtid = int(rn.MTID.MTID)
-	}
-	ne := lsNodeEdgeObject{
-		Key:        key,
-		From:       ln.ID,
-		To:         rn.ID,
-		Link:       rn.Key,
-		ProtocolID: rn.ProtocolID,
-		DomainID:   rn.DomainID,
-		MTID:       uint16(mtid),
-		AreaID:     rn.AreaID,
-	}
-
-	var doc driver.DocumentMeta
-	if doc, err = a.graph.CreateDocument(ctx, &ne); err != nil {
-		if !driver.IsConflict(err) {
-			return err
-		}
-		// The document already exists, updating it with the latest info
-		if _, err = a.graph.UpdateDocument(ctx, e.Key, &ne); err != nil {
-			return err
+			// The document already exists, updating it with the latest info
+			if _, err := a.graph.UpdateDocument(ctx, ne.Key, &ne); err != nil {
+				return err
+			}
 		}
 	}
 
-	notifyKafka(doc, e.Action)
 	return nil
 }
 
@@ -382,15 +281,48 @@ func (a *arangoDB) processVertexRemoval(ctx context.Context, key string, action 
 			}
 			return nil
 		}
-		notifyKafka(doc, action)
 	}
 	return nil
 }
 
-func notifyKafka(doc driver.DocumentMeta, action string) {
-	kafkanotifier.TriggerNotification(Notifier, kafkanotifier.LSNodeEdgeTopic, &notifier.EventMessage{
-		Key: doc.Key,
-		ID: LSNodeEdgeCollection + "/" + doc.Key,
-		Action: action,
-	})
+func (a *arangoDB) getNode(ctx context.Context, e *message.LSLink, local bool) (*message.LSNode, error) {
+	// Need to fine Node object matching LS Link's IGP Router ID
+	query := "FOR d IN " + a.vertex.Name()
+	if local {
+		query += " filter d.igp_router_id == " + "\"" + e.IGPRouterID + "\""
+	} else {
+		query += " filter d.igp_router_id == " + "\"" + e.RemoteIGPRouterID + "\""
+	}
+	query += " filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
+		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
+	// If OSPFv2 or OSPFv3, then query must include AreaID
+	if e.ProtocolID == base.OSPFv2 || e.ProtocolID == base.OSPFv3 {
+		query += " filter d.area_id == " + "\"" + e.AreaID + "\""
+	}
+	query += " return d"
+	lcursor, err := a.db.Query(ctx, query, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer lcursor.Close()
+	var ln message.LSNode
+	// var lm driver.DocumentMeta
+	i := 0
+	for ; ; i++ {
+		_, err := lcursor.ReadDocument(ctx, &ln)
+		if err != nil {
+			if !driver.IsNoMoreDocuments(err) {
+				return nil, err
+			}
+			break
+		}
+	}
+	if i == 0 {
+		return nil, fmt.Errorf("query %s returned 0 results", query)
+	}
+	if i > 1 {
+		return nil, fmt.Errorf("query %s returned more than 1 result", query)
+	}
+
+	return &ln, nil
 }
