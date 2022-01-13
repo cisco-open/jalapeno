@@ -19,7 +19,7 @@ import (
 
 const LSNodeEdgeCollection = "LSNode_Edge"
 
-var Notifier *kafkanotifier.Notifier;
+var Notifier *kafkanotifier.Notifier
 
 func InitializeKafkaNotifier(msgSrvAddr string) {
 	kNotifier, err := kafkanotifier.NewKafkaNotifier(msgSrvAddr)
@@ -205,14 +205,13 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, ln *message.LS
 // processEdgeRemoval removes a record from Node's graph collection
 // since the key matches in both collections (LS Links and Nodes' Graph) deleting the record directly.
 func (a *arangoDB) processEdgeRemoval(ctx context.Context, key string, action string) error {
-	doc, err := a.graph.RemoveDocument(ctx, key)
-	if err != nil {
+	if _, err := a.graph.RemoveDocument(ctx, key); err != nil {
 		if !driver.IsNotFound(err) {
 			return err
 		}
 		return nil
 	}
-	notifyKafka(doc, action)
+
 	return nil
 }
 
@@ -237,8 +236,7 @@ func (a *arangoDB) processVertexRemoval(ctx context.Context, key string, action 
 			break
 		}
 		glog.V(6).Infof("Removing from %s object %s", a.graph.Name(), p.Key)
-		var doc driver.DocumentMeta
-		if doc, err = a.graph.RemoveDocument(ctx, p.Key); err != nil {
+		if _, err = a.graph.RemoveDocument(ctx, p.Key); err != nil {
 			if !driver.IsNotFound(err) {
 				return err
 			}
@@ -294,24 +292,24 @@ func (a *arangoDB) createEdgeObject(ctx context.Context, l *message.LSLink, ln, 
 	if l.MTID != nil {
 		mtid = int(l.MTID.MTID)
 	}
-	       ne := lsNodeEdgeObject{
-                Key:           l.Key,
-                From:          ln.ID,
-                To:            rn.ID,
-                Link:          l.Key,
-                ProtocolID:    l.ProtocolID,
-                DomainID:      l.DomainID,
-                MTID:          uint16(mtid),
-                AreaID:        l.AreaID,
-                LocalLinkID:   l.LocalLinkID,
-                RemoteLinkID:  l.RemoteLinkID,
-                LocalLinkIP:   l.LocalLinkIP,
-                RemoteLinkIP:  l.RemoteLinkIP,
-                LocalNodeASN:  l.LocalNodeASN,
-                RemoteNodeASN: l.RemoteNodeASN,
-                SRv6ENDXSID:   l.SRv6ENDXSID,
-                LSAdjSID:      l.LSAdjacencySID,
-        }
+	ne := lsNodeEdgeObject{
+		Key:           l.Key,
+		From:          ln.ID,
+		To:            rn.ID,
+		Link:          l.Key,
+		ProtocolID:    l.ProtocolID,
+		DomainID:      l.DomainID,
+		MTID:          uint16(mtid),
+		AreaID:        l.AreaID,
+		LocalLinkID:   l.LocalLinkID,
+		RemoteLinkID:  l.RemoteLinkID,
+		LocalLinkIP:   l.LocalLinkIP,
+		RemoteLinkIP:  l.RemoteLinkIP,
+		LocalNodeASN:  l.LocalNodeASN,
+		RemoteNodeASN: l.RemoteNodeASN,
+		SRv6ENDXSID:   l.SRv6ENDXSID,
+		LSAdjSID:      l.LSAdjacencySID,
+	}
 	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
 		if !driver.IsConflict(err) {
 			return err
