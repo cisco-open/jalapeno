@@ -45,7 +45,7 @@ func (l *lsLinkArangoMessage) MakeKey() string {
 	// 	glog.Infof("handling lslink local IP: %+v, remote IP: %+v, protocol: %+v, with Adj SID: %+v ", l.LocalLinkIP, l.RemoteLinkIP, l.Protocol, l.LSAdjacencySID[0].SID)
 	// }
 
-	// The LSLink Key uses ProtocolID, DomainID, and Multi-Topology ID
+	// The ls_link Key uses ProtocolID, DomainID, and Multi-Topology ID
 	// to create unique Keys for DB entries in multi-area / multi-topology scenarios
 
 	return strconv.Itoa(int(l.ProtocolID)) + "_" + strconv.Itoa(int(l.DomainID)) + "_" + strconv.Itoa(mtid) + "_" + l.AreaID + "_" + routerID + "_" + localID + "_" + remoteRouterID + "_" + remoteID
