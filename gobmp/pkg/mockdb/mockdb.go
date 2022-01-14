@@ -12,7 +12,7 @@ type mockDB struct {
 }
 
 // NewDBSrvClient returns an instance of a mock DB server client process
-func NewDBSrvClient(addr string) (dbclient.Srv, error) {
+func NewDBSrvClient() (dbclient.Srv, error) {
 	m := &mockDB{
 		stop: make(chan struct{}),
 	}

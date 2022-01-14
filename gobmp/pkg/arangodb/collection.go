@@ -8,9 +8,9 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
+	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/jalapeno/topology/pkg/dbclient"
 	"github.com/jalapeno/topology/pkg/kafkanotifier"
-	"github.com/sbezverk/gobmp/pkg/bmp"
 	"go.uber.org/atomic"
 )
 
@@ -31,8 +31,7 @@ type queueMsg struct {
 }
 
 type stats struct {
-	total  atomic.Int64
-	failed atomic.Int64
+	total atomic.Int64
 }
 
 type collection struct {
@@ -164,7 +163,7 @@ func (c *collection) genericHandler() {
 		case <-backlogTicker.C:
 			// If loop is idle for backlogCheckInterval, trying to process any outstanding items stored in the backlog
 			for key, b := range backlog {
-				glog.V(5).Infof("Extracted key %s from backlog (backlogTicker)", key)
+				glog.Infof("Extracted key %s from backlog (backlogTicker)", key)
 				bo := b.Pop()
 				if bo != nil {
 					tokens <- struct{}{}
@@ -298,9 +297,10 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		err = fmt.Errorf("unknown collection type %d", c.collectionType)
 		return
 	}
+	syncCtx := driver.WithWaitForSync(ctx, true)
 	switch action {
 	case "add":
-		if _, e := c.topicCollection.CreateDocument(ctx, obj); e != nil {
+		if _, e := c.topicCollection.CreateDocument(syncCtx, obj); e != nil {
 			switch {
 			// The following 2 types of errors inidcate that the document by the key already
 			// exists, no need to fail but instead call Update of the document.
@@ -308,9 +308,8 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 			case driver.IsArangoErrorWithErrorNum(e, driver.ErrArangoUniqueConstraintViolated):
 			default:
 				err = e
-				break
 			}
-			if _, e := c.topicCollection.UpdateDocument(ctx, k, obj); e != nil {
+			if _, e := c.topicCollection.UpdateDocument(syncCtx, k, obj); e != nil {
 				err = e
 				break
 			}
@@ -318,14 +317,12 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 			action = "update"
 		}
 	case "del":
-		if _, e := c.topicCollection.RemoveDocument(ctx, k); e != nil {
+		if _, e := c.topicCollection.RemoveDocument(syncCtx, k); e != nil {
 			if !driver.IsArangoErrorWithErrorNum(e, driver.ErrArangoDocumentNotFound) {
 				err = e
 			}
 		}
 	}
-
-	return
 }
 
 func newDBRecord(msgData []byte, collectionType dbclient.CollectionType) (DBRecord, error) {

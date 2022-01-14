@@ -89,7 +89,7 @@ func main() {
 	var err error
 	isNotify, err := strconv.ParseBool(notifyEvent)
 	if err != nil {
-		glog.Errorf("invalid mock-database parameter: %s", mockDB)
+		glog.Errorf("invalid value of \"--notify-event\" parameter: %s", notifyEvent)
 		os.Exit(1)
 	}
 	var notifier kafkanotifier.Event
@@ -111,17 +111,24 @@ func main() {
 	// Initializing database client
 	isMockDB, err := strconv.ParseBool(mockDB)
 	if err != nil {
-		glog.Errorf("invalid mock-database parameter: %s", mockDB)
+		glog.Errorf("invalid value of \"--mock-database\" parameter: %s", mockDB)
 		os.Exit(1)
 	}
 	if !isMockDB {
+		// validateDBCreds check if the user name and the password are provided either as
+		// command line parameters or via files. If both are provided command line parameters
+		// will be used, if neither, topology will fail.
+		if err := validateDBCreds(); err != nil {
+			glog.Errorf("failed to validate the database credentials with error: %+v", err)
+			os.Exit(1)
+		}
 		dbSrv, err = arangodb.NewDBSrvClient(dbSrvAddr, dbUser, dbPass, dbName, notifier)
 		if err != nil {
 			glog.Errorf("failed to initialize database client with error: %+v", err)
 			os.Exit(1)
 		}
 	} else {
-		dbSrv, _ = mockdb.NewDBSrvClient("")
+		dbSrv, _ = mockdb.NewDBSrvClient()
 	}
 
 	if err := dbSrv.Start(); err != nil {
