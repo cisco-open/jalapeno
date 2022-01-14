@@ -11,5 +11,5 @@ type l3VPNArangoMessage struct {
 }
 
 func (v *l3VPNArangoMessage) MakeKey() string {
-	return v.VPNRD + "_" + v.Prefix + "_" + strconv.Itoa(int(v.PrefixLen))
+	return v.VPNRD + "_" + v.Prefix + "_" + strconv.Itoa(int(v.PrefixLen)) + "_" + v.Nexthop
 }
