@@ -13,7 +13,7 @@ type lsNodeArangoMessage struct {
 
 func (n *lsNodeArangoMessage) MakeKey() string {
 	areaID := "0"
-	if (n.ProtocolID == base.OSPFv2 || n.ProtocolID == base.OSPFv3) {
+	if n.ProtocolID == base.OSPFv2 || n.ProtocolID == base.OSPFv3 {
 		areaID = n.AreaID
 	}
 	// The LSNode Key uses ProtocolID, DomainID, and AreaID (if node is for OSPF protocol)

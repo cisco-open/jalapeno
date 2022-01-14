@@ -36,7 +36,7 @@ type ArangoConn struct {
 }
 
 var (
-	ErrCollectionNotFound = fmt.Errorf("Could not find collection")
+	ErrCollectionNotFound = fmt.Errorf("could not find collection")
 )
 
 func NewArango(cfg ArangoConfig) (*ArangoConn, error) {
