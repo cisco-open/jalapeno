@@ -6,10 +6,10 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
-	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/sbezverk/gobmp/pkg/tools"
 	"github.com/jalapeno/topology/pkg/dbclient"
 	"github.com/jalapeno/topology/pkg/kafkanotifier"
+	"github.com/sbezverk/gobmp/pkg/bmp"
+	"github.com/sbezverk/gobmp/pkg/tools"
 )
 
 const (
@@ -18,23 +18,23 @@ const (
 
 var (
 	collections = map[dbclient.CollectionType]*collectionProperties{
-		dbclient.PeerStateChange: {name: "Peer", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSLink:          {name: "LSLink", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSNode:          {name: "LSNode", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSPrefix:        {name: "LSPrefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSSRv6SID:       {name: "LSSRv6SID", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.L3VPN:           {name: "L3VPN_Prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.L3VPNV4:         {name: "L3VPNV4_Prefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.L3VPNV6:         {name: "L3VPNV6_Prefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.UnicastPrefix:   {name: "UnicastPrefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.UnicastPrefixV4: {name: "UnicastPrefixV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.UnicastPrefixV6: {name: "UnicastPrefixV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.SRPolicy:        {name: "SRPolicy", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.SRPolicyV4:      {name: "SRPolicyV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.SRPolicyV6:      {name: "SRPolicyV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.Flowspec:        {name: "Flowspec", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.FlowspecV4:      {name: "FlowspecV4", isVertex: false, options: &driver.CreateCollectionOptions{}},
-		dbclient.FlowspecV6:      {name: "FlowspecV6", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.PeerStateChange: {name: "peer", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSLink:          {name: "ls_link", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSNode:          {name: "ls_node", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSPrefix:        {name: "ls_prefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSSRv6SID:       {name: "ls_srv6_sid", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.L3VPN:           {name: "l3vpn_prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.L3VPNV4:         {name: "l3vpn_v4_prefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.L3VPNV6:         {name: "l3vpn_v6_prefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefix:   {name: "unicast_prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefixV4: {name: "unicast_prefix_v4", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.UnicastPrefixV6: {name: "unicast_prefix_v6", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.SRPolicy:        {name: "sr_policy", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.SRPolicyV4:      {name: "sr_policy_v4", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.SRPolicyV6:      {name: "sr_policy_v6", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.Flowspec:        {name: "flowspec", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.FlowspecV4:      {name: "flowspec_v4", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.FlowspecV6:      {name: "flowspec_v6", isVertex: false, options: &driver.CreateCollectionOptions{}},
 	}
 )
 
@@ -179,7 +179,7 @@ func (a *arangoDB) ensureCollection(p *collectionProperties, collectionType dbcl
 
 func (a *arangoDB) ensureGraph(name string) (driver.Graph, error) {
 	var edgeDefinition driver.EdgeDefinition
-	edgeDefinition.Collection = name + "_Edge"
+	edgeDefinition.Collection = name + "_edge"
 	edgeDefinition.From = []string{name}
 	edgeDefinition.To = []string{name}
 

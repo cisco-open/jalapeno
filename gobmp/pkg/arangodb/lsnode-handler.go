@@ -16,7 +16,7 @@ func (n *lsNodeArangoMessage) MakeKey() string {
 	if n.ProtocolID == base.OSPFv2 || n.ProtocolID == base.OSPFv3 {
 		areaID = n.AreaID
 	}
-	// The LSNode Key uses ProtocolID, DomainID, and AreaID (if node is for OSPF protocol)
+	// The ls_node Key uses ProtocolID, DomainID, and AreaID (if node is for OSPF protocol)
 	// to create unique Keys for DB entries in multi-area / multi-topology scenarios
 	return strconv.Itoa(int(n.ProtocolID)) + "_" + strconv.Itoa(int(n.DomainID)) + "_" + areaID + "_" + n.IGPRouterID
 }

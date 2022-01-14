@@ -15,7 +15,7 @@ func (p *lsPrefixArangoMessage) MakeKey() string {
 	if p.MTID != nil {
 		mtid = int(p.MTID.MTID)
 	}
-	// The LSPrefix Key uses ProtocolID, DomainID, and Multi-Topology ID
+	// The ls_prefix Key uses ProtocolID, DomainID, and Multi-Topology ID
 	// to create unique Keys for DB entries in multi-area / multi-topology scenarios
 	return strconv.Itoa(int(p.ProtocolID)) + "_" +
 		strconv.Itoa(int(p.DomainID)) + "_" +
