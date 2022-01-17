@@ -6,7 +6,7 @@ require (
 	github.com/Shopify/sarama v1.27.2
 	github.com/arangodb/go-driver v1.2.1
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/jalapeno/topology v0.0.0-20210202031629-329919bc5256
+        github.com/jalapeno/topology v0.0.0-20220117083633-1775a637d771
 	github.com/sbezverk/gobmp v1.0.0
 )
 
@@ -31,4 +31,3 @@ require (
 	gopkg.in/jcmturner/rpc.v1 v1.1.0 // indirect
 )
 
-replace github.com/jalapeno/topology => ../topology
