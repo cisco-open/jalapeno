@@ -53,7 +53,7 @@ func NewDBSrvClient(arangoSrv, user, pass, dbname, vcn string, ecn string) (dbcl
 		return nil, err
 	}
 	// Check if graph exists, if not fail as Jalapeno topology is not running
-	arango.graph, err = arango.db.Collection(context.TODO(), arango.vertex.Name()+"_Edge")
+	arango.graph, err = arango.db.Collection(context.TODO(), arango.vertex.Name()+"_edge")
 	if err != nil {
 		return nil, err
 	}

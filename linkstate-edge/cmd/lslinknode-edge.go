@@ -43,8 +43,8 @@ func init() {
 	flag.StringVar(&dbName, "database-name", "", "DB name")
 	flag.StringVar(&dbUser, "database-user", "", "DB User name")
 	flag.StringVar(&dbPass, "database-pass", "", "DB User's password")
-	flag.StringVar(&vertexCollection, "vertex-name", "LSNode_Test", "Vertex Collection name, default: \"LSNode\"")
-	flag.StringVar(&edgeCollection, "edge-name", "LSLink_Test", "Edge Collection name, default \"LSLink\"")
+	flag.StringVar(&vertexCollection, "vertex-name", "ls_node", "Vertex Collection name, default: \"ls_node\"")
+	flag.StringVar(&edgeCollection, "edge-name", "ls_link", "Edge Collection name, default \"ls_link\"")
 }
 
 var (

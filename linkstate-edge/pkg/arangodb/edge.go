@@ -11,9 +11,11 @@ import (
 	notifier "github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/message"
+	"github.com/sbezverk/gobmp/pkg/sr"
+	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
-const LSNodeEdgeCollection = "LSNode_Edge"
+const LSNodeEdgeCollection = "ls_node_edge"
 
 func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 	ctx := context.TODO()
@@ -37,8 +39,8 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 		if obj.Action != "del" {
 			return fmt.Errorf("document %s not found but Action is not \"del\", possible stale event", obj.Key)
 		}
-		// return a.processEdgeRemoval(ctx, obj.Key, obj.Action)
-		return nil
+		return a.processEdgeRemoval(ctx, obj.Key, obj.Action)
+		//return nil
 	}
 	switch obj.Action {
 	case "add":
@@ -92,20 +94,22 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 }
 
 type lsNodeEdgeObject struct {
-	Key           string       `json:"_key"`
-	From          string       `json:"_from"`
-	To            string       `json:"_to"`
-	Link          string       `json:"link"`
-	ProtocolID    base.ProtoID `json:"protocol_id"`
-	DomainID      int64        `json:"domain_id"`
-	MTID          uint16       `json:"mt_id"`
-	AreaID        string       `json:"area_id"`
-	LocalLinkID   uint32       `json:"local_link_id"`
-	RemoteLinkID  uint32       `json:"remote_link_id"`
-	LocalLinkIP   string       `json:"local_link_ip"`
-	RemoteLinkIP  string       `json:"remote_link_ip"`
-	LocalNodeASN  uint32       `json:"local_node_asn"`
-	RemoteNodeASN uint32       `json:"remote_node_asn"`
+	Key           string                `json:"_key"`
+	From          string                `json:"_from"`
+	To            string                `json:"_to"`
+	Link          string                `json:"link"`
+	ProtocolID    base.ProtoID          `json:"protocol_id"`
+	DomainID      int64                 `json:"domain_id"`
+	MTID          uint16                `json:"mt_id"`
+	AreaID        string                `json:"area_id"`
+	LocalLinkID   uint32                `json:"local_link_id"`
+	RemoteLinkID  uint32                `json:"remote_link_id"`
+	LocalLinkIP   string                `json:"local_link_ip"`
+	RemoteLinkIP  string                `json:"remote_link_ip"`
+	LocalNodeASN  uint32                `json:"local_node_asn"`
+	RemoteNodeASN uint32                `json:"remote_node_asn"`
+	SRv6ENDXSID   []*srv6.EndXSIDTLV    `json:"srv6_endx_sid"`
+	LSAdjSID      []*sr.AdjacencySIDTLV `json:"ls_adj_sid"`
 }
 
 // processEdge processes a single LS Link connection which is a unidirectional edge between two nodes (vertices).
