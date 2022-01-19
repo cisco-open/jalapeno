@@ -3,32 +3,17 @@ package arangodb
 import (
 	"context"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
-	"github.com/jalapeno/lslinknode-edge/pkg/kafkanotifier"
 	notifier "github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/message"
-	"github.com/sbezverk/gobmp/pkg/sr"
-	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
 const LSNodeEdgeCollection = "LSNode_Edge"
-
-var Notifier *kafkanotifier.Notifier;
-
-func InitializeKafkaNotifier(msgSrvAddr string) {
-	kNotifier, err := kafkanotifier.NewKafkaNotifier(msgSrvAddr)
-	if err != nil {
-		glog.Errorf("failed to initialize events notifier with error: %+v", err)
-		os.Exit(1)
-	}
-	Notifier = kNotifier
-}
 
 func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 	ctx := context.TODO()
@@ -52,7 +37,8 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 		if obj.Action != "del" {
 			return fmt.Errorf("document %s not found but Action is not \"del\", possible stale event", obj.Key)
 		}
-		return a.processEdgeRemoval(ctx, obj.Key, obj.Action)
+		// return a.processEdgeRemoval(ctx, obj.Key, obj.Action)
+		return nil
 	}
 	switch obj.Action {
 	case "add":
@@ -62,6 +48,7 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 			return fmt.Errorf("failed to process action %s for edge %s with error: %+v", obj.Action, obj.Key, err)
 		}
 	}
+	glog.V(5).Infof("Complete processing action: %s for key: %s ID: %s", obj.Action, obj.Key, obj.ID)
 
 	return nil
 }
@@ -88,7 +75,8 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 		if obj.Action != "del" {
 			return fmt.Errorf("document %s not found but Action is not \"del\", possible stale event", obj.Key)
 		}
-		return a.processVertexRemoval(ctx, obj.Key, obj.Action)
+		// return a.processVertexRemoval(ctx, obj.Key, obj.Action)
+		return nil
 	}
 	switch obj.Action {
 	case "add":
@@ -98,155 +86,75 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 			return fmt.Errorf("failed to process action %s for vertex %s with error: %+v", obj.Action, obj.Key, err)
 		}
 	}
+	glog.V(5).Infof("Complete processing action: %s for key: %s ID: %s", obj.Action, obj.Key, obj.ID)
 
 	return nil
 }
 
 type lsNodeEdgeObject struct {
-	Key           string                `json:"_key"`
-	From          string                `json:"_from"`
-	To            string                `json:"_to"`
-	Link          string                `json:"link"`
-	ProtocolID    base.ProtoID          `json:"protocol_id"`
-	DomainID      int64                 `json:"domain_id"`
-	MTID          uint16                `json:"mt_id"`
-	AreaID        string                `json:"area_id"`
-	LocalLinkID   uint32                `json:"local_link_id"`
-	RemoteLinkID  uint32                `json:"remote_link_id"`
-	LocalLinkIP   string                `json:"local_link_ip"`
-	RemoteLinkIP  string                `json:"remote_link_ip"`
-	LocalNodeASN  uint32                `json:"local_node_asn"`
-	RemoteNodeASN uint32                `json:"remote_node_asn"`
-	SRv6ENDXSID   []*srv6.EndXSIDTLV    `json:"srv6_endx_sid"`
-	LSAdjSID      []*sr.AdjacencySIDTLV `json:"ls_adj_sid"`
+	Key           string       `json:"_key"`
+	From          string       `json:"_from"`
+	To            string       `json:"_to"`
+	Link          string       `json:"link"`
+	ProtocolID    base.ProtoID `json:"protocol_id"`
+	DomainID      int64        `json:"domain_id"`
+	MTID          uint16       `json:"mt_id"`
+	AreaID        string       `json:"area_id"`
+	LocalLinkID   uint32       `json:"local_link_id"`
+	RemoteLinkID  uint32       `json:"remote_link_id"`
+	LocalLinkIP   string       `json:"local_link_ip"`
+	RemoteLinkIP  string       `json:"remote_link_ip"`
+	LocalNodeASN  uint32       `json:"local_node_asn"`
+	RemoteNodeASN uint32       `json:"remote_node_asn"`
 }
 
 // processEdge processes a single LS Link connection which is a unidirectional edge between two nodes (vertices).
-func (a *arangoDB) processEdge(ctx context.Context, key string, e *message.LSLink) error {
-	if e.ProtocolID == base.BGP {
+func (a *arangoDB) processEdge(ctx context.Context, key string, l *message.LSLink) error {
+	if l.ProtocolID == base.BGP {
 		return nil
 	}
-
-	// Need to fine Node object matching LS Link's IGP Router ID
-	query := "FOR d IN " + a.vertex.Name() +
-		" filter d.igp_router_id == " + "\"" + e.IGPRouterID + "\"" +
-		" filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
-		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
-	// If OSPFv2 or OSPFv3, then query must include AreaID
-	if e.ProtocolID == base.OSPFv2 || e.ProtocolID == base.OSPFv3 {
-		query += " filter d.area_id == " + "\"" + e.AreaID + "\""
-	}
-	query += " return d"
-	lcursor, err := a.db.Query(ctx, query, nil)
+	glog.V(9).Infof("processEdge processing lslink: %s", l.ID)
+	ln, err := a.getNode(ctx, l, true)
 	if err != nil {
+		glog.Errorf("processEdge failed to get local lsnode %s for link: %s with error: %+v", l.IGPRouterID, l.ID, err)
 		return err
 	}
-	defer lcursor.Close()
-	var ln message.LSNode
-	// var lm driver.DocumentMeta
-	i := 0
-	for ; ; i++ {
-		_, err := lcursor.ReadDocument(ctx, &ln)
-		if err != nil {
-			if !driver.IsNoMoreDocuments(err) {
-				return err
-			}
-			break
-		}
-	}
-	if i == 0 {
-		return fmt.Errorf("query %s returned 0 results", query)
-	}
-	if i > 1 {
-		return fmt.Errorf("query %s returned more than 1 result", query)
-	}
 
-	query = "FOR d IN " + a.vertex.Name() +
-		" filter d.igp_router_id == " + "\"" + e.RemoteIGPRouterID + "\"" +
-		" filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
-		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
-	// If OSPFv2 or OSPFv3, then query must include AreaID
-	if e.ProtocolID == base.OSPFv2 || e.ProtocolID == base.OSPFv3 {
-		query += " filter d.area_id == " + "\"" + e.AreaID + "\""
-	}
-	query += " return d"
-	rcursor, err := a.db.Query(ctx, query, nil)
+	rn, err := a.getNode(ctx, l, false)
 	if err != nil {
+		glog.Errorf("processEdge failed to get remote lsnode %s for link: %s with error: %+v", l.RemoteIGPRouterID, l.ID, err)
 		return err
 	}
-	defer rcursor.Close()
-	i = 0
-	var rn message.LSNode
-	for ; ; i++ {
-		_, err := rcursor.ReadDocument(ctx, &rn)
-		if err != nil {
-			if !driver.IsNoMoreDocuments(err) {
-				return err
-			}
-			break
-		}
+	// glog.V(6).Infof("Local node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+	// 	ln.ProtocolID, ln.DomainID, ln.IGPRouterID)
+	// glog.V(6).Infof("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+	// 	rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
+	if err := a.createEdgeObject(ctx, l, ln, rn); err != nil {
+		glog.Errorf("processEdge failed to create Edge object with error: %+v", err)
+		glog.Errorf("Local node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+			ln.ProtocolID, ln.DomainID, ln.IGPRouterID)
+		glog.Errorf("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+			rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
+		return err
 	}
-	if i == 0 {
-		return fmt.Errorf("query %s returned 0 results", query)
-	}
-	if i > 1 {
-		return fmt.Errorf("query %s returned more than 1 result", query)
-	}
-	glog.V(6).Infof("Local node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
-		ln.ProtocolID, ln.DomainID, ln.IGPRouterID)
-	glog.V(6).Infof("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
-		rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
+	glog.V(9).Infof("processEdge completed processing lslink: %s for ls nodes: %s - %s", l.ID, ln.ID, rn.ID)
 
-	mtid := 0
-	if e.MTID != nil {
-		mtid = int(e.MTID.MTID)
-	}
-	ne := lsNodeEdgeObject{
-		Key:           key,
-		From:          ln.ID,
-		To:            rn.ID,
-		Link:          e.Key,
-		ProtocolID:    e.ProtocolID,
-		DomainID:      e.DomainID,
-		MTID:          uint16(mtid),
-		AreaID:        e.AreaID,
-		LocalLinkID:   e.LocalLinkID,
-		RemoteLinkID:  e.RemoteLinkID,
-		LocalLinkIP:   e.LocalLinkIP,
-		RemoteLinkIP:  e.RemoteLinkIP,
-		LocalNodeASN:  e.LocalNodeASN,
-		RemoteNodeASN: e.RemoteNodeASN,
-		SRv6ENDXSID:   e.SRv6ENDXSID,
-		LSAdjSID:      e.LSAdjacencySID,
-	}
-	var doc driver.DocumentMeta
-	if doc, err = a.graph.CreateDocument(ctx, &ne); err != nil {
-		if !driver.IsConflict(err) {
-			return err
-		}
-		// The document already exists, updating it with the latest info
-		doc, err = a.graph.UpdateDocument(ctx, e.Key, &ne)
-		if err != nil {
-			return err
-		}
-	}
-	
-	notifyKafka(doc, e.Action)
 	return nil
 }
 
-func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSNode) error {
-	if e.ProtocolID == 7 {
+func (a *arangoDB) processVertex(ctx context.Context, key string, ln *message.LSNode) error {
+	if ln.ProtocolID == 7 {
 		return nil
 	}
 	// Check if there is an edge with matching to LSNode's e.IGPRouterID, e.AreaID, e.DomainID and e.ProtocolID
-	query := "FOR d IN " + a.vertex.Name() +
-		" filter d.igp_router_id == " + "\"" + e.IGPRouterID + "\"" +
-		" filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
-		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
+	query := "FOR d IN " + a.edge.Name() +
+		" filter d.igp_router_id == " + "\"" + ln.IGPRouterID + "\"" +
+		" OR d.remote_igp_router_id == " + "\"" + ln.IGPRouterID + "\"" +
+		" filter d.domain_id == " + strconv.Itoa(int(ln.DomainID)) +
+		" filter d.protocol_id == " + strconv.Itoa(int(ln.ProtocolID))
 	// If OSPFv2 or OSPFv3, then query must include AreaID
-	if e.ProtocolID == base.OSPFv2 || e.ProtocolID == base.OSPFv3 {
-		query += " filter d.area_id == " + "\"" + e.AreaID + "\""
+	if ln.ProtocolID == base.OSPFv2 || ln.ProtocolID == base.OSPFv3 {
+		query += " filter d.area_id == " + "\"" + ln.AreaID + "\""
 	}
 	query += " return d"
 	lcursor, err := a.db.Query(ctx, query, nil)
@@ -254,103 +162,52 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, e *message.LSN
 		return err
 	}
 	defer lcursor.Close()
-	var ln message.LSLink
-	// var lm driver.DocumentMeta
+	var l message.LSLink
+	// Processing each LSLink
 	i := 0
 	for ; ; i++ {
-		_, err := lcursor.ReadDocument(ctx, &ln)
+		_, err := lcursor.ReadDocument(ctx, &l)
 		if err != nil {
 			if !driver.IsNoMoreDocuments(err) {
 				return err
 			}
 			break
 		}
-	}
-	if i == 0 {
-		return fmt.Errorf("query %s returned 0 results", query)
-	}
-	if i > 1 {
-		return fmt.Errorf("query %s returned more than 1 result", query)
-	}
-
-	// Check if there is a second link LS Link with with matching to LSNode's e.IGPRouterID, e.AreaID, e.DomainID and e.ProtocolID
-	query = "FOR d IN " + a.vertex.Name() +
-		" filter d.remote_igp_router_id == " + "\"" + e.IGPRouterID + "\"" +
-		" filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
-		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
-	// If OSPFv2 or OSPFv3, then query must include AreaID
-	if e.ProtocolID == base.OSPFv2 || e.ProtocolID == base.OSPFv3 {
-		query += " filter d.area_id == " + "\"" + e.AreaID + "\""
-	}
-	query += " return d"
-	rcursor, err := a.db.Query(ctx, query, nil)
-	if err != nil {
-		return err
-	}
-	defer rcursor.Close()
-	var rn message.LSLink
-	// var lm driver.DocumentMeta
-	i = 0
-	for ; ; i++ {
-		_, err := lcursor.ReadDocument(ctx, &rn)
+		glog.V(9).Infof("processVertex processing lsnode: %s link: %s", ln.ID, l.ID)
+		rn, err := a.getNode(ctx, &l, false)
 		if err != nil {
-			if !driver.IsNoMoreDocuments(err) {
-				return err
-			}
-			break
+			glog.Errorf("processVertex failed to get remote ls node for lsnode: %s link: %s remote node: %s", ln.ID, l.ID, l.RemoteIGPRouterID)
+			continue
 		}
-	}
-	if i == 0 {
-		return fmt.Errorf("query %s returned 0 results", query)
-	}
-	if i > 1 {
-		return fmt.Errorf("query %s returned more than 1 result", query)
-	}
+		// glog.V(6).Infof("Local node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+		// 	ln.ProtocolID, ln.DomainID, ln.IGPRouterID)
+		// glog.V(6).Infof("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+		// 	rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
 
-	glog.V(6).Infof("Local link: %s", ln.ID)
-	glog.V(6).Infof("Remote link: %s", rn.ID)
-
-	mtid := 0
-	if rn.MTID != nil {
-		mtid = int(rn.MTID.MTID)
-	}
-	ne := lsNodeEdgeObject{
-		Key:        key,
-		From:       ln.ID,
-		To:         rn.ID,
-		Link:       rn.Key,
-		ProtocolID: rn.ProtocolID,
-		DomainID:   rn.DomainID,
-		MTID:       uint16(mtid),
-		AreaID:     rn.AreaID,
-	}
-
-	var doc driver.DocumentMeta
-	if doc, err = a.graph.CreateDocument(ctx, &ne); err != nil {
-		if !driver.IsConflict(err) {
-			return err
+		if err := a.createEdgeObject(ctx, &l, ln, rn); err != nil {
+			glog.Errorf("proicessVertex failed to create Edge object with error: %+v", err)
+			glog.Errorf("Local node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+				ln.ProtocolID, ln.DomainID, ln.IGPRouterID)
+			glog.Errorf("Remote node -> Protocol: %+v Domain ID: %+v IGP Router ID: %+v",
+				rn.ProtocolID, rn.DomainID, rn.IGPRouterID)
+			continue
 		}
-		// The document already exists, updating it with the latest info
-		if _, err = a.graph.UpdateDocument(ctx, e.Key, &ne); err != nil {
-			return err
-		}
+		glog.V(9).Infof("processVertex completed processing lsnode: %s link: %s remote node: %s", ln.ID, l.ID, rn.ID)
 	}
 
-	notifyKafka(doc, e.Action)
 	return nil
 }
 
 // processEdgeRemoval removes a record from Node's graph collection
 // since the key matches in both collections (LS Links and Nodes' Graph) deleting the record directly.
 func (a *arangoDB) processEdgeRemoval(ctx context.Context, key string, action string) error {
-	doc, err := a.graph.RemoveDocument(ctx, key)
-	if err != nil {
+	if _, err := a.graph.RemoveDocument(ctx, key); err != nil {
 		if !driver.IsNotFound(err) {
 			return err
 		}
 		return nil
 	}
-	notifyKafka(doc, action)
+
 	return nil
 }
 
@@ -375,22 +232,87 @@ func (a *arangoDB) processVertexRemoval(ctx context.Context, key string, action 
 			break
 		}
 		glog.V(6).Infof("Removing from %s object %s", a.graph.Name(), p.Key)
-		var doc driver.DocumentMeta
-		if doc, err = a.graph.RemoveDocument(ctx, p.Key); err != nil {
+		if _, err = a.graph.RemoveDocument(ctx, p.Key); err != nil {
 			if !driver.IsNotFound(err) {
 				return err
 			}
 			return nil
 		}
-		notifyKafka(doc, action)
 	}
 	return nil
 }
 
-func notifyKafka(doc driver.DocumentMeta, action string) {
-	kafkanotifier.TriggerNotification(Notifier, kafkanotifier.LSNodeEdgeTopic, &notifier.EventMessage{
-		Key: doc.Key,
-		ID: LSNodeEdgeCollection + "/" + doc.Key,
-		Action: action,
-	})
+func (a *arangoDB) getNode(ctx context.Context, e *message.LSLink, local bool) (*message.LSNode, error) {
+	// Need to fine Node object matching LS Link's IGP Router ID
+	query := "FOR d IN " + a.vertex.Name()
+	if local {
+		query += " filter d.igp_router_id == " + "\"" + e.IGPRouterID + "\""
+	} else {
+		query += " filter d.igp_router_id == " + "\"" + e.RemoteIGPRouterID + "\""
+	}
+	query += " filter d.domain_id == " + strconv.Itoa(int(e.DomainID)) +
+		" filter d.protocol_id == " + strconv.Itoa(int(e.ProtocolID))
+	// If OSPFv2 or OSPFv3, then query must include AreaID
+	if e.ProtocolID == base.OSPFv2 || e.ProtocolID == base.OSPFv3 {
+		query += " filter d.area_id == " + "\"" + e.AreaID + "\""
+	}
+	query += " return d"
+	lcursor, err := a.db.Query(ctx, query, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer lcursor.Close()
+	var ln message.LSNode
+	i := 0
+	for ; ; i++ {
+		_, err := lcursor.ReadDocument(ctx, &ln)
+		if err != nil {
+			if !driver.IsNoMoreDocuments(err) {
+				return nil, err
+			}
+			break
+		}
+	}
+	if i == 0 {
+		return nil, fmt.Errorf("query %s returned 0 results", query)
+	}
+	if i > 1 {
+		return nil, fmt.Errorf("query %s returned more than 1 result", query)
+	}
+
+	return &ln, nil
+}
+
+func (a *arangoDB) createEdgeObject(ctx context.Context, l *message.LSLink, ln, rn *message.LSNode) error {
+	mtid := 0
+	if l.MTID != nil {
+		mtid = int(l.MTID.MTID)
+	}
+	ne := lsNodeEdgeObject{
+		Key:           l.Key,
+		From:          ln.ID,
+		To:            rn.ID,
+		Link:          l.Key,
+		ProtocolID:    l.ProtocolID,
+		DomainID:      l.DomainID,
+		MTID:          uint16(mtid),
+		AreaID:        l.AreaID,
+		LocalLinkID:   l.LocalLinkID,
+		RemoteLinkID:  l.RemoteLinkID,
+		LocalLinkIP:   l.LocalLinkIP,
+		RemoteLinkIP:  l.RemoteLinkIP,
+		LocalNodeASN:  l.LocalNodeASN,
+		RemoteNodeASN: l.RemoteNodeASN,
+	}
+	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
+		if !driver.IsConflict(err) {
+			return err
+		}
+		// The document already exists, updating it with the latest info
+		if _, err := a.graph.UpdateDocument(ctx, ne.Key, &ne); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

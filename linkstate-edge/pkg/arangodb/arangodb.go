@@ -66,7 +66,6 @@ func (a *arangoDB) Start() error {
 		return err
 	}
 	glog.Infof("Connected to arango database, starting monitor")
-	go a.monitor()
 
 	return nil
 }
@@ -90,6 +89,7 @@ func (a *arangoDB) StoreMessage(msgType dbclient.CollectionType, msg []byte) err
 	if err := json.Unmarshal(msg, event); err != nil {
 		return err
 	}
+	glog.V(9).Infof("Received event from topology: %+v", *event)
 	event.TopicType = msgType
 	switch msgType {
 	case bmp.LSLinkMsg:
@@ -99,16 +99,6 @@ func (a *arangoDB) StoreMessage(msgType dbclient.CollectionType, msg []byte) err
 	}
 
 	return nil
-}
-
-func (a *arangoDB) monitor() {
-	for {
-		select {
-		case <-a.stop:
-			// TODO Add clean up of connection with Arango DB
-			return
-		}
-	}
 }
 
 func (a *arangoDB) loadEdge() error {
