@@ -13,7 +13,7 @@ import (
 	"github.com/sbezverk/gobmp/pkg/message"
 )
 
-const LSNodeEdgeCollection = "LSNode_Edge"
+const LSNodeEdgeCollection = "ls_node_edge"
 
 func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 	ctx := context.TODO()
@@ -37,8 +37,8 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 		if obj.Action != "del" {
 			return fmt.Errorf("document %s not found but Action is not \"del\", possible stale event", obj.Key)
 		}
-		// return a.processEdgeRemoval(ctx, obj.Key, obj.Action)
-		return nil
+		return a.processEdgeRemoval(ctx, obj.Key, obj.Action)
+		//return nil
 	}
 	switch obj.Action {
 	case "add":

@@ -25,7 +25,7 @@ spec:
             - "root"
             - --database-pass
             - "jalapeno"
-          image: docker.io/sbezverk/lslinknode-edge:testbed
+          image: docker.io/iejalapeno/lslinknode-edge:latest
           imagePullPolicy: Always
           name: lslinknode-edge
           volumeMounts:
