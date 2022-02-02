@@ -10,8 +10,8 @@ import (
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/sbezverk/topology/pkg/dbclient"
-	"github.com/sbezverk/topology/pkg/kafkanotifier"
+	"github.com/jalapeno/topology/pkg/dbclient"
+	"github.com/jalapeno/topology/pkg/kafkanotifier"
 	"go.uber.org/atomic"
 )
 
