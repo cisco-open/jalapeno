@@ -1,5 +1,9 @@
 # Jalapeno Installation
-Jalapeno has been primarily developed, tested, and operated on Ubuntu 18.04 Kubernetes environments (bare-metal, VM, or cloud). Recommended VM sizing for a test lab is 4 vCPU, 16GB memory, and 50G of disk.  If deploying in production or a test environment with large table sizes (full Internet table, 250k + internal or vpn prefixes), then we recommend a bare metal K8s cluster with two or more nodes.
+Jalapeno has been primarily developed, tested, and operated on Ubuntu 18.04 and 20.04 Kubernetes environments (bare-metal, VM, or cloud). Recommended VM sizing for a test lab is 4 vCPU, 16GB memory, and 50G of disk.  If deploying in production or a test environment with large table sizes (full Internet table, 250k + internal or vpn prefixes), then we recommend a bare metal K8s cluster with two or more nodes. 
+
+Note: the Jalapeno installation script by default will pull a telemetry stack consisting of Telegraf, Influx, and Kafka images (the TIK stack).  If you would like to integrate Jalapeno's BMP/Topology/GraphDB elements with an existing telemetry stack simply comment out the TIK stack elements in the shell script.
+
+Instructions for installing Kubernetes: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 
 Users who do not have a full Kubernetes or GKE deployment can get up and running quite quickly with Microk8s [Installing K8s](docs/K8s_installation.md)
 
