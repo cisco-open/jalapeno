@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	driver "github.com/arangodb/go-driver"
@@ -14,6 +15,28 @@ import (
 	"go.uber.org/atomic"
 )
 
+const (
+	addAction     actionType = "add"
+	updateAction  actionType = "update"
+	delAction     actionType = "del"
+	unknownAction actionType = "unknown"
+)
+
+type actionType string
+
+func newAction(a string) actionType {
+	switch strings.ToLower(a) {
+	case "add":
+		return addAction
+	case "update":
+		return updateAction
+	case "del":
+		return delAction
+	default:
+		return unknownAction
+	}
+}
+
 type DBRecord interface {
 	MakeKey() string
 }
@@ -21,7 +44,7 @@ type DBRecord interface {
 type result struct {
 	object DBRecord
 	key    string
-	action string
+	action actionType
 	err    error
 }
 
@@ -131,15 +154,18 @@ func (c *collection) genericHandler() {
 				continue
 			}
 			if c.arango.notifyCompletion && c.arango.notifier != nil {
-				m := &kafkanotifier.EventMessage{
-					TopicType: c.collectionType,
-					Key:       r.key,
-					ID:        c.properties.name + "/" + r.key,
-					Action:    r.action,
-				}
-				if err := c.arango.notifier.EventNotification(m); err != nil {
-					glog.Errorf("genericWorker for key: %s failed to send notification with error: %+v", r.key, r.err)
-				}
+				go c.reliableNotifier(r)
+				// Need to dispatch a go routine which should ensure that the record has been stored in DB and only then to send the notification
+
+				// m := &kafkanotifier.EventMessage{
+				// 	TopicType: c.collectionType,
+				// 	Key:       r.key,
+				// 	ID:        c.properties.name + "/" + r.key,
+				// 	Action:    r.action,
+				// }
+				// if err := c.arango.notifier.EventNotification(m); err != nil {
+				// 	glog.Errorf("genericWorker for key: %s failed to send notification with error: %+v", r.key, r.err)
+				// }
 			}
 			delete(keyStore, r.key)
 			// Check if there an entry for this key in the backlog, if there is, retrieve it and process it
@@ -151,7 +177,7 @@ func (c *collection) genericHandler() {
 			if bo != nil {
 				tokens <- struct{}{}
 				keyStore[r.key] = true
-				go c.genericWorker(r.key, bo.(DBRecord), done, tokens)
+				go c.genericWorker(r.key, bo, done, tokens)
 			}
 			// If Backlog for a specific key is empty, remove it from the backlog
 			if b.Len() == 0 {
@@ -168,7 +194,7 @@ func (c *collection) genericHandler() {
 				if bo != nil {
 					tokens <- struct{}{}
 					keyStore[key] = true
-					go c.genericWorker(key, bo.(DBRecord), done, tokens)
+					go c.genericWorker(key, bo, done, tokens)
 				}
 				// If Backlog for a specific key is empty, remove it from the backlog
 				if b.Len() == 0 {
@@ -181,9 +207,61 @@ func (c *collection) genericHandler() {
 	}
 }
 
+// reliableNotifier is function which is called if Topology needs to send an event out notifying
+// about topology change event.
+func (c *collection) reliableNotifier(r *result) {
+	// The check for the DB record state will be done every 1000 milliseconds
+	ticker := time.NewTicker(time.Millisecond * 1000)
+	defer func() {
+		ticker.Stop()
+	}()
+	m := &kafkanotifier.EventMessage{
+		TopicType: c.collectionType,
+		Key:       r.key,
+		ID:        c.properties.name + "/" + r.key,
+		Action:    string(r.action),
+	}
+notify:
+	for {
+		found, err := c.topicCollection.DocumentExists(context.TODO(), r.key)
+		if err != nil {
+			glog.Errorf("reliableNotifier for key: %s failed to check the state of the document with error: %+v", r.key, err)
+			return
+		}
+		switch r.action {
+		case addAction:
+			fallthrough
+		case updateAction:
+			// For add and update actions, the record must be "readable" from the collection,
+			// if collection read error Document not found, it means DB has not yet written it
+			// any other error terminates notifier and generate the error message
+			if found {
+				break notify
+			}
+		case delAction:
+			// For del action, the read opration should return Document not found, if no error received
+			//
+			if !found {
+				break notify
+			}
+		case unknownAction:
+			return
+		}
+		select {
+		case <-c.stop:
+			return
+		case <-ticker.C:
+			continue
+		}
+	}
+	if err := c.arango.notifier.EventNotification(m); err != nil {
+		glog.Errorf("reliableNotifier for key: %s failed to send notification with error: %+v", r.key, err)
+	}
+}
+
 func (c *collection) genericWorker(k string, o DBRecord, done chan *result, tokens chan struct{}) {
 	var err error
-	var action string
+	var action actionType
 	defer func() {
 		<-tokens
 		done <- &result{object: o, key: k, action: action, err: err}
@@ -204,7 +282,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		}
 		obj.(*peerStateChangeArangoMessage).Key = k
 		obj.(*peerStateChangeArangoMessage).ID = c.properties.name + "/" + k
-		action = obj.(*peerStateChangeArangoMessage).Action
+		action = newAction(obj.(*peerStateChangeArangoMessage).Action)
 	case bmp.LSLinkMsg:
 		obj, ok = o.(*lsLinkArangoMessage)
 		if !ok {
@@ -213,7 +291,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		}
 		obj.(*lsLinkArangoMessage).Key = k
 		obj.(*lsLinkArangoMessage).ID = c.properties.name + "/" + k
-		action = obj.(*lsLinkArangoMessage).Action
+		action = newAction(obj.(*lsLinkArangoMessage).Action)
 	case bmp.LSNodeMsg:
 		obj, ok = o.(*lsNodeArangoMessage)
 		if !ok {
@@ -222,7 +300,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		}
 		obj.(*lsNodeArangoMessage).Key = k
 		obj.(*lsNodeArangoMessage).ID = c.properties.name + "/" + k
-		action = obj.(*lsNodeArangoMessage).Action
+		action = newAction(obj.(*lsNodeArangoMessage).Action)
 	case bmp.LSPrefixMsg:
 		obj, ok = o.(*lsPrefixArangoMessage)
 		if !ok {
@@ -231,7 +309,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		}
 		obj.(*lsPrefixArangoMessage).Key = k
 		obj.(*lsPrefixArangoMessage).ID = c.properties.name + "/" + k
-		action = obj.(*lsPrefixArangoMessage).Action
+		action = newAction(obj.(*lsPrefixArangoMessage).Action)
 	case bmp.LSSRv6SIDMsg:
 		obj, ok = o.(*lsSRv6SIDArangoMessage)
 		if !ok {
@@ -240,7 +318,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		}
 		obj.(*lsSRv6SIDArangoMessage).Key = k
 		obj.(*lsSRv6SIDArangoMessage).ID = c.properties.name + "/" + k
-		action = obj.(*lsSRv6SIDArangoMessage).Action
+		action = newAction(obj.(*lsSRv6SIDArangoMessage).Action)
 	case bmp.L3VPNMsg:
 		fallthrough
 	case bmp.L3VPNV4Msg:
@@ -253,7 +331,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		}
 		obj.(*l3VPNArangoMessage).Key = k
 		obj.(*l3VPNArangoMessage).ID = c.properties.name + "/" + k
-		action = obj.(*l3VPNArangoMessage).Action
+		action = newAction(obj.(*l3VPNArangoMessage).Action)
 	case bmp.UnicastPrefixMsg:
 		fallthrough
 	case bmp.UnicastPrefixV4Msg:
@@ -266,7 +344,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		}
 		obj.(*unicastPrefixArangoMessage).Key = k
 		obj.(*unicastPrefixArangoMessage).ID = c.properties.name + "/" + k
-		action = obj.(*unicastPrefixArangoMessage).Action
+		action = newAction(obj.(*unicastPrefixArangoMessage).Action)
 	case bmp.SRPolicyMsg:
 		fallthrough
 	case bmp.SRPolicyV4Msg:
@@ -279,7 +357,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		}
 		obj.(*srPolicyArangoMessage).Key = k
 		obj.(*srPolicyArangoMessage).ID = c.properties.name + "/" + k
-		action = obj.(*srPolicyArangoMessage).Action
+		action = newAction(obj.(*srPolicyArangoMessage).Action)
 	case bmp.FlowspecMsg:
 		fallthrough
 	case bmp.FlowspecV4Msg:
@@ -292,15 +370,14 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 		}
 		obj.(*flowspecArangoMessage).Key = k
 		obj.(*flowspecArangoMessage).ID = c.properties.name + "/" + k
-		action = obj.(*flowspecArangoMessage).Action
+		action = newAction(obj.(*flowspecArangoMessage).Action)
 	default:
 		err = fmt.Errorf("unknown collection type %d", c.collectionType)
 		return
 	}
-	syncCtx := driver.WithWaitForSync(ctx, true)
 	switch action {
 	case "add":
-		if _, e := c.topicCollection.CreateDocument(syncCtx, obj); e != nil {
+		if _, e := c.topicCollection.CreateDocument(ctx, obj); e != nil {
 			switch {
 			// The following 2 types of errors inidcate that the document by the key already
 			// exists, no need to fail but instead call Update of the document.
@@ -309,7 +386,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 			default:
 				err = e
 			}
-			if _, e := c.topicCollection.UpdateDocument(syncCtx, k, obj); e != nil {
+			if _, e := c.topicCollection.UpdateDocument(ctx, k, obj); e != nil {
 				err = e
 				break
 			}
@@ -317,7 +394,7 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 			action = "update"
 		}
 	case "del":
-		if _, e := c.topicCollection.RemoveDocument(syncCtx, k); e != nil {
+		if _, e := c.topicCollection.RemoveDocument(ctx, k); e != nil {
 			if !driver.IsArangoErrorWithErrorNum(e, driver.ErrArangoDocumentNotFound) {
 				err = e
 			}
