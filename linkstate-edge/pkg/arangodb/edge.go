@@ -51,7 +51,7 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 	var o message.LSLink
 	_, err := a.edge.ReadDocument(ctx, obj.Key, &o)
 	if err != nil {
-		// In case of a LSLink removal notification, reading it will return Not Found error
+		// In case of a ls_link removal notification, reading it will return Not Found error
 		if !driver.IsNotFound(err) {
 			return fmt.Errorf("failed to read existing document %s with error: %+v", obj.Key, err)
 		}
@@ -89,7 +89,7 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 	var o message.LSNode
 	_, err := a.vertex.ReadDocument(ctx, obj.Key, &o)
 	if err != nil {
-		// In case of a LSNode removal notification, reading it will return Not Found error
+		// In case of a ls_node removal notification, reading it will return Not Found error
 		if !driver.IsNotFound(err) {
 			return fmt.Errorf("failed to read existing document %s with error: %+v", obj.Key, err)
 		}
@@ -130,7 +130,7 @@ type lsNodeEdgeObject struct {
 	RemoteNodeASN uint32       `json:"remote_node_asn"`
 }
 
-// processEdge processes a single LS Link connection which is a unidirectional edge between two nodes (vertices).
+// processEdge processes a single ls_link connection which is a unidirectional edge between two nodes (vertices).
 func (a *arangoDB) processEdge(ctx context.Context, key string, l *message.LSLink) error {
 	if l.ProtocolID == base.BGP {
 		return nil
@@ -168,7 +168,7 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, ln *message.LS
 	if ln.ProtocolID == 7 {
 		return nil
 	}
-	// Check if there is an edge with matching to LSNode's e.IGPRouterID, e.AreaID, e.DomainID and e.ProtocolID
+	// Check if there is an edge with matching to ls_node's e.IGPRouterID, e.AreaID, e.DomainID and e.ProtocolID
 	query := "FOR d IN " + a.edge.Name() +
 		" filter d.igp_router_id == " + "\"" + ln.IGPRouterID + "\"" +
 		" OR d.remote_igp_router_id == " + "\"" + ln.IGPRouterID + "\"" +
@@ -185,7 +185,7 @@ func (a *arangoDB) processVertex(ctx context.Context, key string, ln *message.LS
 	}
 	defer lcursor.Close()
 	var l message.LSLink
-	// Processing each LSLink
+	// Processing each ls_link
 	i := 0
 	for ; ; i++ {
 		_, err := lcursor.ReadDocument(ctx, &l)
@@ -233,7 +233,7 @@ func (a *arangoDB) processEdgeRemoval(ctx context.Context, key string, action st
 	return nil
 }
 
-// processEdgeRemoval removes all documents where removed Vertix (LSNode) is referenced in "_to" or "_from"
+// processEdgeRemoval removes all documents where removed Vertix (ls_node) is referenced in "_to" or "_from"
 func (a *arangoDB) processVertexRemoval(ctx context.Context, key string, action string) error {
 	query := "FOR d IN " + a.graph.Name() +
 		" filter d._to == " + "\"" + key + "\"" + " OR" + " d._from == " + "\"" + key + "\"" +
@@ -265,7 +265,7 @@ func (a *arangoDB) processVertexRemoval(ctx context.Context, key string, action 
 }
 
 func (a *arangoDB) getNode(ctx context.Context, e *message.LSLink, local bool) (*message.LSNode, error) {
-	// Need to fine Node object matching LS Link's IGP Router ID
+	// Need to find ls_node object matching ls_link's IGP Router ID
 	query := "FOR d IN " + a.vertex.Name()
 	if local {
 		query += " filter d.igp_router_id == " + "\"" + e.IGPRouterID + "\""
