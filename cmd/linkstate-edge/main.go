@@ -30,9 +30,9 @@ import (
 	"os/signal"
 	"runtime"
 
+	"github.com/cisco-open/jalapeno/linkstate-edge/arangodb"
+	"github.com/cisco-open/jalapeno/linkstate-edge/kafkamessenger"
 	"github.com/golang/glog"
-	"github.com/jalapeno/lslinknode-edge/pkg/arangodb"
-	"github.com/jalapeno/lslinknode-edge/pkg/kafkamessenger"
 
 	_ "net/http/pprof"
 )

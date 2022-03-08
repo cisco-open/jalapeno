@@ -27,9 +27,9 @@ import (
 	"fmt"
 
 	driver "github.com/arangodb/go-driver"
+	"github.com/cisco-open/jalapeno/topology/dbclient"
+	"github.com/cisco-open/jalapeno/topology/kafkanotifier"
 	"github.com/golang/glog"
-	"github.com/jalapeno/topology/pkg/dbclient"
-	"github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/tools"
 )
