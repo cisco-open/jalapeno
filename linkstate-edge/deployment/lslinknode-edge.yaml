@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lslinknode-edge
+  template:
+    metadata:
+      labels:
+        app: lslinknode-edge
+    spec:
+      containers:
+        - args:
+            - --v
+            - "6"
+            - --message-server
+            - "kafka:9092"
+            - --database-server
+            - "http://arangodb:28529"
+            - --database-name
+            - "jalapeno"
+            - --database-user
+            - "root"
+            - --database-pass
+            - "jalapeno"
+          image: docker.io/iejalapeno/lslinknode-edge:latest
+          imagePullPolicy: Always
+          name: lslinknode-edge
+          volumeMounts:
+            - name: credentials
+              mountPath: /credentials
+      volumes:
+        - name: credentials
+          secret:
+            secretName: jalapeno
+metadata:
+  name: lslinknode-edge
+  namespace: default
