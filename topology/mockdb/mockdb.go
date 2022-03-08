@@ -23,8 +23,8 @@
 package mockdb
 
 import (
+	"github.com/cisco-open/jalapeno/topology/dbclient"
 	"github.com/golang/glog"
-	"github.com/jalapeno/topology/pkg/dbclient"
 	"github.com/sbezverk/gobmp/pkg/message"
 )
 

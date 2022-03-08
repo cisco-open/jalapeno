@@ -23,20 +23,59 @@
 package kafkamessenger
 
 import (
+	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/Shopify/sarama"
+	"github.com/cisco-open/jalapeno/topology/dbclient"
 	"github.com/golang/glog"
-	"github.com/jalapeno/topology/pkg/dbclient"
-	"github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/tools"
 )
 
+// Define constants for each topic name
+const (
+	peerTopic              = "gobmp.parsed.peer"
+	unicastMessageTopic    = "gobmp.parsed.unicast_prefix"
+	unicastMessageV4Topic  = "gobmp.parsed.unicast_prefix_v4"
+	unicastMessageV6Topic  = "gobmp.parsed.unicast_prefix_v6"
+	lsNodeMessageTopic     = "gobmp.parsed.ls_node"
+	lsLinkMessageTopic     = "gobmp.parsed.ls_link"
+	l3vpnMessageTopic      = "gobmp.parsed.l3vpn"
+	l3vpnMessageV4Topic    = "gobmp.parsed.l3vpn_v4"
+	l3vpnMessageV6Topic    = "gobmp.parsed.l3vpn_v6"
+	lsPrefixMessageTopic   = "gobmp.parsed.ls_prefix"
+	lsSRv6SIDMessageTopic  = "gobmp.parsed.ls_srv6_sid"
+	evpnMessageTopic       = "gobmp.parsed.evpn"
+	srPolicyMessageTopic   = "gobmp.parsed.sr_policy"
+	srPolicyMessageV4Topic = "gobmp.parsed.sr_policy_v4"
+	srPolicyMessageV6Topic = "gobmp.parsed.sr_policy_v6"
+	flowspecMessageTopic   = "gobmp.parsed.flowspec"
+	flowspecMessageV4Topic = "gobmp.parsed.flowspec_v4"
+	flowspecMessageV6Topic = "gobmp.parsed.flowspec_v6"
+)
+
 var (
 	topics = map[string]dbclient.CollectionType{
-		kafkanotifier.LSLinkEventTopic: bmp.LSLinkMsg,
-		kafkanotifier.LSNodeEventTopic: bmp.LSNodeMsg,
+		peerTopic:              bmp.PeerStateChangeMsg,
+		unicastMessageTopic:    bmp.UnicastPrefixMsg,
+		unicastMessageV4Topic:  bmp.UnicastPrefixV4Msg,
+		unicastMessageV6Topic:  bmp.UnicastPrefixV6Msg,
+		lsNodeMessageTopic:     bmp.LSNodeMsg,
+		lsLinkMessageTopic:     bmp.LSLinkMsg,
+		l3vpnMessageTopic:      bmp.L3VPNMsg,
+		l3vpnMessageV4Topic:    bmp.L3VPNV4Msg,
+		l3vpnMessageV6Topic:    bmp.L3VPNV6Msg,
+		lsPrefixMessageTopic:   bmp.LSPrefixMsg,
+		lsSRv6SIDMessageTopic:  bmp.LSSRv6SIDMsg,
+		evpnMessageTopic:       bmp.EVPNMsg,
+		srPolicyMessageTopic:   bmp.SRPolicyMsg,
+		srPolicyMessageV4Topic: bmp.SRPolicyV4Msg,
+		srPolicyMessageV6Topic: bmp.SRPolicyV6Msg,
+		flowspecMessageTopic:   bmp.FlowspecMsg,
+		flowspecMessageV4Topic: bmp.FlowspecV4Msg,
+		flowspecMessageV6Topic: bmp.FlowspecV6Msg,
 	}
 )
 
@@ -56,13 +95,13 @@ type kafka struct {
 
 // NewKafkaMessenger returns an instance of a kafka consumer acting as a messenger server
 func NewKafkaMessenger(kafkaSrv string, db dbclient.DB) (Srv, error) {
-	glog.Infof("LS Node Vertex kafka reader")
+	glog.Infof("NewKafkaMessenger")
 	if err := tools.HostAddrValidator(kafkaSrv); err != nil {
 		return nil, err
 	}
 
 	config := sarama.NewConfig()
-	config.ClientID = "lslinknode-edge-collection"
+	config.ClientID = "topology-consumer" + "_" + strconv.Itoa(rand.Intn(1000))
 	config.Consumer.Return.Errors = true
 	config.Version = sarama.V0_11_0_0
 
@@ -101,11 +140,10 @@ func (k *kafka) Stop() error {
 func (k *kafka) topicReader(topicType dbclient.CollectionType, topicName string) {
 	ticker := time.NewTicker(200 * time.Millisecond)
 	for {
-		partitions, _ := k.master.Partitions(topicName)
-		// this only consumes partition no 1, you would probably want to consume all partitions
-		consumer, err := k.master.ConsumePartition(topicName, partitions[0], sarama.OffsetOldest)
+		// Loop until either a topic becomes available at the broker or stop signal is received
+		partitions, err := k.master.Partitions(topicName)
 		if nil != err {
-			glog.Infof("Consumer error: %+v", err)
+			glog.Errorf("fail to get partitions for the topic %s with error: %+v", topicName, err)
 			select {
 			case <-ticker.C:
 			case <-k.stopCh:
@@ -113,16 +151,25 @@ func (k *kafka) topicReader(topicType dbclient.CollectionType, topicName string)
 			}
 			continue
 		}
-		glog.Infof("Starting Kafka reader for topic: %s topicType: %d", topicName, topicType)
+		// Loop until either a topic's partition becomes consumable or stop signal is received
+		consumer, err := k.master.ConsumePartition(topicName, partitions[0], sarama.OffsetOldest)
+		if nil != err {
+			glog.Errorf("fail to consume partition for the topic %s with error: %+v", topicName, err)
+			select {
+			case <-ticker.C:
+			case <-k.stopCh:
+				return
+			}
+			continue
+		}
+		glog.Infof("Starting Kafka reader for topic: %s", topicName)
 		for {
 			select {
 			case msg := <-consumer.Messages():
 				if msg == nil {
 					continue
 				}
-				if err := k.db.StoreMessage(topicType, msg.Value); err != nil {
-					glog.Errorf("failed to process a message from topic %s with error: %+v", topicName, err)
-				}
+				k.db.StoreMessage(topicType, msg.Value)
 			case consumerError := <-consumer.Errors():
 				if consumerError == nil {
 					break

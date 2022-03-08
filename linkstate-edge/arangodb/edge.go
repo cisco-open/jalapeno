@@ -29,8 +29,8 @@ import (
 	"strings"
 
 	driver "github.com/arangodb/go-driver"
+	notifier "github.com/cisco-open/jalapeno/topology/kafkanotifier"
 	"github.com/golang/glog"
-	notifier "github.com/jalapeno/topology/pkg/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/message"
 )
