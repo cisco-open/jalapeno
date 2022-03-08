@@ -1,0 +1,4 @@
+FROM scratch
+
+COPY ./bin/lslinknode-edge /lslinknode-edge
+ENTRYPOINT ["/lslinknode-edge"]
