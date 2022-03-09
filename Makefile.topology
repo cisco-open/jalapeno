@@ -1,7 +1,7 @@
 REGISTRY_NAME?=docker.io/iejalapeno
 IMAGE_VERSION?=latest
 
-.PHONY: all gobmp topology container push clean test
+.PHONY: all topology container push clean test
 
 ifdef V
 TESTARGS = -v -args -alsologtostderr -v 5

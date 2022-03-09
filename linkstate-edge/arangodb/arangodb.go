@@ -116,8 +116,8 @@ func (a *arangoDB) StoreMessage(msgType dbclient.CollectionType, msg []byte) err
 	switch msgType {
 	case bmp.LSLinkMsg:
 		return a.lsLinkHandler(event)
-	case bmp.LSNodeMsg:
-		return a.lsNodeHandler(event)
+		// case bmp.LSNodeMsg:
+		// 	return a.lsNodeHandler(event)
 	}
 
 	return nil

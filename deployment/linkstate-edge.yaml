@@ -5,29 +5,25 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: lslinknode-edge
+      app: linkstate-edge
   template:
     metadata:
       labels:
-        app: lslinknode-edge
+        app: linkstate-edge
     spec:
       containers:
         - args:
             - --v
-            - "6"
+            - "5"
             - --message-server
-            - "kafka:9092"
+            - "broker.jalapeno:9092"
             - --database-server
-            - "http://arangodb:28529"
+            - "http://arangodb:8529"
             - --database-name
             - "jalapeno"
-            - --database-user
-            - "root"
-            - --database-pass
-            - "jalapeno"
-          image: docker.io/iejalapeno/lslinknode-edge:latest
+          image: docker.io/iejalapeno/linkstate-edge:latest
           imagePullPolicy: Always
-          name: lslinknode-edge
+          name: linkstate-edge
           volumeMounts:
             - name: credentials
               mountPath: /credentials
@@ -36,5 +32,5 @@ spec:
           secret:
             secretName: jalapeno
 metadata:
-  name: lslinknode-edge
-  namespace: default
+  name: linkstate-edge
+  namespace: jalapeno
