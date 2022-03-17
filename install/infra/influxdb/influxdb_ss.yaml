@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: influxdb
+  namespace: jalapeno
+spec:
+  selector:
+    matchLabels:
+      app: influxdb
+  serviceName: "influxdb"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: influxdb
+        storage: persistent
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: influxdb
+        image: influxdb:1.7-alpine
+        ports:
+        - containerPort: 8086
+          protocol: TCP
+        env:
+        - name: INFLUXDB_DB
+          value: "mdt_db"
+        - name: INFLUXDB_ADMIN_ENABLED
+          value: "true"
+        - name: INFLUXDB_ADMIN_USER
+          value: "admin"
+        - name: INFLUXDB_ADMIN_PASSWORD
+          value: "gsplab"
+        - name: INFLUXDB_USER
+          value: "root"
+        - name: INFLUXDB_USER_PASSWORD
+          value: "jalapeno"
+        command: ["/bin/sh"]
+        args: ["-c", "/init-influxdb.sh && /entrypoint.sh influxd"]
+        resources: {}
+        volumeMounts:
+        - mountPath: /data
+          name: influxdb-storage
+        - mountPath: /var/log/influxdb
+          name: influxdb-log
+        - mountPath: /var/lib/influxdb
+          name: influxdb-lib
+      volumes:
+      - name: influxdb-storage
+        emptyDir: {}
+      - name: influxdb-log
+        emptyDir: {}
+      - name: influxdb-lib
+        emptyDir: {}

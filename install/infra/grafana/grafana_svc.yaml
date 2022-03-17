@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  namespace: jalapeno
+spec:
+  ports:
+  - port: 3000
+    name: grafana
+  selector:
+    app: grafana

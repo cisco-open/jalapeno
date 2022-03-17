@@ -6,7 +6,7 @@ require (
 	github.com/Shopify/sarama v1.27.2
 	github.com/arangodb/go-driver v1.2.1
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/sbezverk/gobmp v1.0.1
+	github.com/sbezverk/gobmp v1.0.2-0.20220308191616-3710b2afc210
 	go.uber.org/atomic v1.7.0
 )
 

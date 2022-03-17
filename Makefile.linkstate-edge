@@ -1,7 +1,7 @@
 REGISTRY_NAME?=docker.io/iejalapeno
 IMAGE_VERSION?=latest
 
-.PHONY: all lslinknode-edge container push clean test
+.PHONY: all linkstate-edge container push clean test
 
 ifdef V
 TESTARGS = -v -args -alsologtostderr -v 5
@@ -9,17 +9,17 @@ else
 TESTARGS =
 endif
 
-all: lslinknode-edge
+all: linkstate-edge
 
-lslinknode-edge:
+linkstate-edge:
 	mkdir -p bin
-	$(MAKE) -C ./cmd compile-lslinknode-edge
+	$(MAKE) -C ./cmd/linkstate-edge compile-linkstate-edge
 
-lslinknode-edge-container: lslinknode-edge
-	docker build -t $(REGISTRY_NAME)/lslinknode-edge:$(IMAGE_VERSION) -f ./build/Dockerfile.lslinknode-edge .
+linkstate-edge-container: linkstate-edge
+	docker build -t $(REGISTRY_NAME)/linkstate-edge:$(IMAGE_VERSION) -f ./build/Dockerfile.linkstate-edge .
 
-push: lslinknode-edge-container
-	docker push $(REGISTRY_NAME)/lslinknode-edge:$(IMAGE_VERSION)
+push: linkstate-edge-container
+	docker push $(REGISTRY_NAME)/linkstate-edge:$(IMAGE_VERSION)
 
 clean:
 	rm -rf bin
