@@ -11,7 +11,7 @@ To install Jalapeno and get started, visit the [Getting Started](Getting-Started
 ![jalapeno_architecture](docs/diagrams/jalapeno_architecture.png "jalapeno architecture")
 
 #### Platform Overview: SDN is a Database Problem
-At the heart of Jalapeno is the concept that all SDN use cases are really virtual topologies whose type and characteristics are driven by dataplane encapsulations and other meta data. Thus, SDN is database problem.. With this framework in mind, Jalapeno has the theoretical ability to address any kind of virtual topology use case, for example:
+At the heart of Jalapeno is the concept that all SDN use cases are really virtual topologies whose type and characteristics are driven by dataplane encapsulations and other meta data. Thus, SDN is database problem. With this framework in mind, Jalapeno has the theoretical ability to address any kind of virtual topology use case, for example:
 
 * Internal Traffic Engineering (TE) - engineered tunnels traversing a network under common management (BGP-LS use cases - see note below**)
 * Egress Peer Engineering (EPE) - engineered tunnels sending traffic out a specific egress router/interface to an external network
@@ -25,7 +25,7 @@ At the heart of Jalapeno is the concept that all SDN use cases are really virtua
 * Give applications the ability to directly choose their service/SLA (path through the network)
 * Enable development of an ecosystem of Network Service tools and capabilities
 * The Host may be the control/encapsulation point (linux, fd.io, eBPF, other)
-* Cloud-native microservice architecture from day 1
+* Microservice architecture
 * Combine network and application performance data
 * Emphasize the use of APIs over Protocols for greater agility
 
@@ -37,7 +37,7 @@ Jalapeno is comprised of a series of microservices which can be summarized as:
 
 * Data Processors, Graph Database, and Time-Series Database - Jalapeno has two classes of processors: 
   * Base data processors: parse topology and performance data coming off Kafka and populate the Influx TSDB and base data collections in the Arango graph database.  The Topology and Telegraf pods are base processors.
-  * Virtual_Topology processors: mine the graph and TSDB data collections and then populate virtual topology collections in the graph DB.  LS, EPE, and L3VPN, are examples of virtual topology processors (see https://github.com/jalapeno/demo-processors).
+  * Virtual Topology or Edge processors: mine the graph and TSDB data collections and then populate virtual topology Edge collections in the graph DB.  Linkstate-edge is an one such processor: https://github.com/cisco-open/jalapeno/tree/main/linkstate-edge
 
 * API-GW - expose Jalapeno's virtual topology data for application consumption (API-GW is under construction)
 
@@ -45,7 +45,6 @@ Jalapeno is comprised of a series of microservices which can be summarized as:
 
 Jalapeno's kubernetes architecture make it inherently extensible, and we imagine the number of collectors, graphDB virtual topology use cases, and SR-Apps to expand significantly as our community grows.
 
-Jalapeno's hello-world sample app is called "LUP" or Least-Utilized-Path.  https://github.com/jalapeno/sr-app-lup
 
 In this example app an end user or application would like to send their backup/background traffic to its destination via the least utilized path, and thus preserve more capacity on the routing protocol's chosen best path. Jalapeno responds to the request with a segment routing label stack that, when appended to outbound packets, will steer traffic over the least utilized path. The app then re-queries Jalapeno every 10 seconds and updates the SR label stack should the least utilized path change.   
 
