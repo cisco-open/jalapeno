@@ -5,20 +5,17 @@ Note: the Jalapeno installation script by default will pull a telemetry stack co
 
 Instructions for installing Kubernetes: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 
-Users who do not have a full Kubernetes or GKE deployment can get up and running quite quickly with Microk8s [Installing K8s](docs/K8s_installation.md)
+Users who do not have a full Kubernetes or GKE deployment can get up and running quite quickly with Microk8s [Installing K8s](docs/K8s_installation.md) - note, we haven't tested with Microk8s in a while.
 
 ### Installing Jalapeno
 
 1. Clone this repo and `cd` into the folder: `git clone <repo> && cd jalapeno`
 
-2. Use the `deploy_jalapeno.sh` script. This will start the collectors and all jalapeno infra and the Topology processor on the single node.
-
-Note: if using Microk8s you may need to put a 'microk8s.kubectl' the commands referenced below
+2. Use the `deploy_jalapeno.sh` script. This will start the collectors, the Jalapeno infra images, and the topology and linkstate-edge processors.
 
    ```bash
    ./deploy_jalapeno.sh
-   or
-   ./deploy_jalapeno.sh microk8s.kubectl
+
    ```
 
 3. Check that all containers are up using: `kubectl get all --all-namespaces` or on a per-namespace basis:
@@ -29,40 +26,43 @@ kubectl get all -n jalapeno-collectors
 Output
 ```
 NAME                                              READY   STATUS    RESTARTS   AGE
-pod/arangodb-0                                    1/1     Running   0          3m12s
-pod/grafana-deployment-7d4dd466f5-d8lm5           1/1     Running   0          3m9s
-pod/influxdb-0                                    1/1     Running   0          3m11s
-pod/kafka-0                                       1/1     Running   0          3m13s
-pod/telegraf-egress-deployment-77d475d8d8-xvhtp   1/1     Running   2          3m5s
-pod/topology-75958bdf79-9n8tj                     1/1     Running   2          2m50s
-pod/zookeeper-0                                   1/1     Running   0          3m14s
+pod/arangodb-0                                    1/1     Running   0          9d
+pod/grafana-deployment-579c5f75bb-7g7bk           1/1     Running   0          9d
+pod/influxdb-0                                    1/1     Running   0          9d
+pod/kafka-0                                       1/1     Running   0          9d
+pod/linkstate-edge-66fb9b8fb7-skmsc               1/1     Running   0          6d22h
+pod/telegraf-egress-deployment-55cbff896c-vf26q   1/1     Running   3          9d
+pod/topology-6fdd6ccc8b-6mcpc                     1/1     Running   0          8d
+pod/zookeeper-0                                   1/1     Running   0          9d
 
 NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-service/arango-np     NodePort    10.106.206.60    <none>        8529:30852/TCP               3m12s
-service/arangodb      ClusterIP   10.96.17.131     <none>        8529/TCP                     3m13s
-service/broker        ClusterIP   10.96.137.177    <none>        9092/TCP                     3m14s
-service/grafana       ClusterIP   10.96.248.207    <none>        3000/TCP                     3m8s
-service/grafana-np    NodePort    10.102.250.199   <none>        3000:30300/TCP               3m7s
-service/influxdb      ClusterIP   10.105.37.120    <none>        8086/TCP                     3m11s
-service/influxdb-np   NodePort    10.108.158.189   <none>        8086:30308/TCP               3m10s
-service/kafka         NodePort    10.105.91.121    <none>        9092:30092/TCP               3m13s
-service/zookeeper     ClusterIP   10.100.169.211   <none>        2888/TCP,3888/TCP,2181/TCP   3m14s
+service/arango-np     NodePort    10.152.183.143   <none>        8529:30852/TCP               9d
+service/arangodb      ClusterIP   10.152.183.142   <none>        8529/TCP                     9d
+service/broker        ClusterIP   10.152.183.247   <none>        9092/TCP                     9d
+service/grafana       ClusterIP   10.152.183.62    <none>        3000/TCP                     9d
+service/grafana-np    NodePort    10.152.183.124   <none>        3000:30300/TCP               9d
+service/influxdb      ClusterIP   10.152.183.197   <none>        8086/TCP                     9d
+service/influxdb-np   NodePort    10.152.183.68    <none>        8086:30308/TCP               9d
+service/kafka         NodePort    10.152.183.160   <none>        9094:30092/TCP               9d
+service/zookeeper     ClusterIP   10.152.183.36    <none>        2888/TCP,3888/TCP,2181/TCP   9d
 
 NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/grafana-deployment           1/1     1            1           3m9s
-deployment.apps/telegraf-egress-deployment   1/1     1            1           3m5s
-deployment.apps/topology                     1/1     1            1           2m50s
+deployment.apps/grafana-deployment           1/1     1            1           9d
+deployment.apps/linkstate-edge               1/1     1            1           6d22h
+deployment.apps/telegraf-egress-deployment   1/1     1            1           9d
+deployment.apps/topology                     1/1     1            1           8d
 
 NAME                                                    DESIRED   CURRENT   READY   AGE
-replicaset.apps/grafana-deployment-7d4dd466f5           1         1         1       3m9s
-replicaset.apps/telegraf-egress-deployment-77d475d8d8   1         1         1       3m5s
-replicaset.apps/topology-75958bdf79                     1         1         1       2m50s
+replicaset.apps/grafana-deployment-579c5f75bb           1         1         1       9d
+replicaset.apps/linkstate-edge-66fb9b8fb7               1         1         1       6d22h
+replicaset.apps/telegraf-egress-deployment-55cbff896c   1         1         1       9d
+replicaset.apps/topology-6fdd6ccc8b                     1         1         1       8d
 
 NAME                         READY   AGE
-statefulset.apps/arangodb    1/1     3m13s
-statefulset.apps/influxdb    1/1     3m11s
-statefulset.apps/kafka       1/1     3m13s
-statefulset.apps/zookeeper   1/1     3m14s
+statefulset.apps/arangodb    1/1     9d
+statefulset.apps/influxdb    1/1     9d
+statefulset.apps/kafka       1/1     9d
+statefulset.apps/zookeeper   1/1     9d
 ```
 Collectors
 ```
@@ -84,7 +84,7 @@ replicaset.apps/telegraf-ingress-deployment-56867cf9b4   1         1         1  
 
 ```
 
-4. Configure routers in the network to stream telemetry and BMP data to the Jalapeno cluster. The MDT port is 32400 and the BMP port is 30555.
+4. Configure routers in the network to stream telemetry and BMP data to the Jalapeno cluster. Jalapeno's default MDT port is 32400 and the BMP port is 30511.  Generally we would setup MDT on all routers and BMP only on route reflectors and any routers with external peering sessions.
 
    1. Example destination group for MDT: **Note: you may need to set TPA mgmt**
 
@@ -113,11 +113,6 @@ replicaset.apps/telegraf-ingress-deployment-56867cf9b4   1         1         1  
        neighbor 172.31.101.4
        bmp-activate server 1
       ```
-
-5. If using Microk8s, navigate to the dashboard and check invidual services as appropriate.
-```
-http://<server-ip>:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
-```
 
 ## Destroying Jalapeno
 
