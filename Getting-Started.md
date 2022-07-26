@@ -5,7 +5,7 @@ Note: the Jalapeno installation script by default will pull a telemetry stack co
 
 Instructions for installing Kubernetes: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 
-Users who do not have a full Kubernetes or GKE deployment can get up and running quite quickly with Microk8s [Installing K8s](docs/K8s_installation.md) - note, we haven't tested with Microk8s in a while.
+Users who do not have a full Kubernetes or GKE deployment can get up and running quite quickly with Microk8s [Installing K8s](docs/K8s_installation.md). (_Note that the DNS service must be enabled before deploying Jalapeno: `microk8s enable dns`._)
 
 ### Installing Jalapeno
 
@@ -14,9 +14,10 @@ Users who do not have a full Kubernetes or GKE deployment can get up and running
 2. Use the `deploy_jalapeno.sh` script. This will start the collectors, the Jalapeno infra images, and the topology and linkstate-edge processors.
 
    ```bash
-   ./deploy_jalapeno.sh
+   ./deploy_jalapeno.sh [path_to_kubectl]
 
    ```
+  (_Note: if you're using a nonstandard kubectl, you need to pass the appropriate command to this script. For example, with microk8s:_ `./deploy_jalapeno.sh microk8s.kubectl`)
 
 3. Check that all containers are up using: `kubectl get all --all-namespaces` or on a per-namespace basis:
 ```
