@@ -1,6 +1,8 @@
 ### Example Arango DB queries
 #### Many of these queries are specific to a setup we run internally
 
+https://github.com/cisco-open/jalapeno/blob/brmcdoug-patch-1/docs/arango/edge_collection.png
+
 Link state collection queries
 ```
 for l in ls_node_edge return l
