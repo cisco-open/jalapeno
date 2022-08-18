@@ -1,7 +1,7 @@
 ### Example Arango DB queries
 #### Many of these queries are specific to a setup we run internally
 
-<img src="edge_collection.png" width="200" height="200" />
+<img src="edge_collection.png" width="500" height="400" />
 
 Link state collection queries
 ```
