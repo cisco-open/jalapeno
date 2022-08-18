@@ -17,7 +17,7 @@ topology:
 
 topology-aio:
 	mkdir -p bin
-	$(MAKE) -C ./cmd/topology compile-topology-aio
+	$(MAKE) -C ./cmd/topology-aio compile-topology-aio
 
 topology-container: topology
 	docker build -t $(REGISTRY_NAME)/topology:$(IMAGE_VERSION) -f ./build/Dockerfile.topology .
