@@ -2,7 +2,8 @@
 #### Many of these queries are specific to a setup we run internally
 
 ```
-for l in ls_node_edge return l
+Query:  for l in ls_node_edge return l
+Returns:
 ```
 <img src="edge_collection.png" width="500" height="400" />
 
