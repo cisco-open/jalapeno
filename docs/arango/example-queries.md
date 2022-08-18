@@ -5,18 +5,16 @@
 Query:  for l in ls_node_edge return l
 Returns:
 ```
-<img src="edge_collection.png" width="500" height="400" />
+<img src="topology.png" width="500" height="400" />
 
 Link state collection queries
 ```
+for l in ls_node return l
 for l in ls_node_edge  return { from: l._from, to: l._to }
 for l in ls_node filter l.router_id == "10.0.0.8" return l
 for l in ls_node_edge filter l._key like "%0019%" return l
 for l in ls_link filter l.mt_id_tlv.mt_id != 2 return l._key
 for l in ls_link filter l.protocol_id == 7 && l.peer_asn == 100000 && l.remote_link_ip == "10.71.0.1" return { epe_sid: l.peer_node_sid.sid } 
-for l in ls_link filter l.protocol_id == 7  &&  l.remote_link_ip == "10.71.0.1" return l
-for l in ls_link filter l._key == "7_0_0_46489_10.0.0.43_10.73.0.0_10.0.0.73_10.73.0.1" return l
-for l in ls_link filter l.protocol_id == 7 return [l._key, l.remote_link_ip, l.peer_node_sid.sid]
 for l in ls_prefix filter l.prefix == "10.0.0.8" return l
 for l in ls_prefix return l
 for l in ls_prefix filter l.prefix_attr_tlvs.ls_prefix_sid != null return l
