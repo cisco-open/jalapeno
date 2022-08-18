@@ -1,7 +1,7 @@
 ### Example Arango DB queries
 #### Many of these queries are specific to a setup we run internally
 
-https://github.com/cisco-open/jalapeno/blob/brmcdoug-patch-1/docs/arango/edge_collection.png
+![LS Edge Collection](edge_collection.png "edge")
 
 Link state collection queries
 ```
