@@ -1,7 +1,7 @@
 REGISTRY_NAME?=docker.io/iejalapeno
 IMAGE_VERSION?=latest
 
-.PHONY: all topology container push clean test
+.PHONY: all topology container push-aio clean test
 
 ifdef V
 TESTARGS = -v -args -alsologtostderr -v 5
@@ -15,11 +15,21 @@ topology:
 	mkdir -p bin
 	$(MAKE) -C ./cmd/topology compile-topology
 
+topology-aio:
+	mkdir -p bin
+	$(MAKE) -C ./cmd/topology-aio compile-topology-aio
+
 topology-container: topology
 	docker build -t $(REGISTRY_NAME)/topology:$(IMAGE_VERSION) -f ./build/Dockerfile.topology .
 
+topology-aio-container: topology-aio
+	docker build -t $(REGISTRY_NAME)/topology-aio:$(IMAGE_VERSION) -f ./build/Dockerfile.topology-aio .
+
 push: topology-container
 	docker push $(REGISTRY_NAME)/topology:$(IMAGE_VERSION)
+
+push-aio: topology-aio-container
+	docker push $(REGISTRY_NAME)/topology-aio:$(IMAGE_VERSION)
 
 clean:
 	rm -rf bin
