@@ -1,11 +1,13 @@
 ### Example Arango DB queries
 #### Many of these queries are specific to a setup we run internally
 
+```
+for l in ls_node_edge return l
+```
 <img src="edge_collection.png" width="500" height="400" />
 
 Link state collection queries
 ```
-for l in ls_node_edge return l
 for l in ls_node_edge  return { from: l._from, to: l._to }
 for l in ls_node filter l.router_id == "10.0.0.8" return l
 for l in ls_node_edge filter l._key like "%0019%" return l
