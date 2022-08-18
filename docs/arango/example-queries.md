@@ -1,7 +1,7 @@
 ### Example Arango DB queries
 #### Many of these queries are specific to a setup we run internally
 
-![LS Edge Collection](edge_collection.png "edge")
+![LS Edge Collection](edge_collection.png "edge" =250x)
 
 Link state collection queries
 ```
