@@ -1,7 +1,7 @@
 name: Minimal Jalapeno Spinup
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
 jobs:
   Clear-A-Cluster:
     runs-on: self-hosted
