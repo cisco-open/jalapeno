@@ -1,0 +1,29 @@
+name: Minimal Jalapeno Spinup
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  Clear-A-Cluster:
+    runs-on: self-hosted
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Spin it down
+        run: |
+          cd ${{ github.workspace }}/install
+          ./destroy_minimal_jalapeno.sh microk8s.kubectl
+
+  Run-A-Cluster:
+    needs: Clear-A-Cluster
+    runs-on: self-hosted
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Spin it up
+        run: |
+          cd ${{ github.workspace }}/install
+          ./deploy_minimal_jalapeno.sh microk8s.kubectl
+      - name: Make sure it's up
+        run: |
+          cd ${{ github.workspace }}/build/tools
+          ./cluster_up.sh microk8s.kubectl
