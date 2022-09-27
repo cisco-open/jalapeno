@@ -1,0 +1,241 @@
+networks:
+  lab1-xrd1:
+    driver_opts:
+      com.docker.network.container_iface_prefix: xr-4
+    ipam:
+      config:
+      - subnet: 172.30.1.0/24
+  lab2-xrd2:
+    driver_opts:
+      com.docker.network.container_iface_prefix: xr-5
+    ipam:
+      config:
+      - subnet: 172.31.1.0/24
+  lab3-xrd3:
+    driver_opts:
+      com.docker.network.container_iface_prefix: xr-6
+    ipam:
+      config:
+      - subnet: 172.32.1.0/24
+  mgmt:
+    driver_opts:
+      com.docker.network.container_iface_prefix: xr-3
+    ipam:
+      config:
+      - subnet: 172.28.0.0/16
+  xrd1-gi1-xrd2-gi0:
+    driver_opts:
+      com.docker.network.container_iface_prefix: xr-0
+    internal: true
+    name: xrd1-gi1-xrd2-gi0
+  xrd1-gi6-xrd3-gi6:
+    driver_opts:
+      com.docker.network.container_iface_prefix: xr-1
+    internal: true
+    name: xrd1-gi6-xrd3-gi6
+  xrd2-gi1-xrd3-gi1:
+    driver_opts:
+      com.docker.network.container_iface_prefix: xr-2
+    internal: true
+    name: xrd2-gi1-xrd3-gi1
+services:
+  lab1:
+    cap_add:
+    - NET_ADMIN
+    command: /bin/sh -c "ip route add 10.0.0.0/8 via 172.30.1.200 && /bin/sh"
+    container_name: lab1
+    image: alpine:3.15
+    networks:
+      lab1-xrd1:
+        ipv4_address: 172.30.1.100
+    stdin_open: true
+    tty: true
+  lab2:
+    cap_add:
+    - NET_ADMIN
+    command: /bin/sh -c "ip route add 10.0.0.0/8 via 172.31.1.200 && /bin/sh"
+    container_name: lab2
+    image: alpine:3.15
+    networks:
+      lab2-xrd2:
+        ipv4_address: 172.31.1.100
+    stdin_open: true
+    tty: true
+  lab3:
+    cap_add:
+    - NET_ADMIN
+    command: /bin/sh -c "ip route add 10.0.0.0/8 via 172.32.1.200 && /bin/sh"
+    container_name: lab3
+    image: alpine:3.15
+    networks:
+      lab3-xrd3:
+        ipv4_address: 172.32.1.100
+    stdin_open: true
+    tty: true
+  xrd1:
+    cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FSETID
+    - FOWNER
+    - MKNOD
+    - NET_RAW
+    - SETGID
+    - SETUID
+    - SETFCAP
+    - SETPCAP
+    - NET_BIND_SERVICE
+    - SYS_CHROOT
+    - KILL
+    - AUDIT_WRITE
+    - SYS_NICE
+    - SYS_ADMIN
+    - SYS_RESOURCE
+    - NET_ADMIN
+    - SYS_PTRACE
+    - IPC_LOCK
+    cap_drop:
+    - all
+    container_name: xrd1
+    devices:
+    - /dev/fuse
+    - /dev/net/tun
+    environment:
+      XR_EVERY_BOOT_CONFIG: /etc/xrd/startup.cfg
+      XR_INTERFACES: linux:xr-40,xr_name=Gi0/0/0/0,chksum;linux:xr-00,xr_name=Gi0/0/0/1;linux:xr-10,xr_name=Gi0/0/0/6
+      XR_MGMT_INTERFACES: linux:xr-30,xr_name=Mg0/RP0/CPU0/0,chksum
+    image: localhost/ios-xr:7.8.1.18I
+    networks:
+      lab1-xrd1:
+        ipv4_address: 172.30.1.200
+      mgmt: null
+      xrd1-gi1-xrd2-gi0: null
+      xrd1-gi6-xrd3-gi6: null
+    security_opt:
+    - apparmor:unconfined
+    - label:disable
+    stdin_open: true
+    tty: true
+    volumes:
+    - source: xrd1_xrconf.cfg
+      target: /etc/xrd/startup.cfg
+      type: bind
+    - xrd1:/xr-storage/
+    - read_only: true
+      source: /sys/fs/cgroup
+      target: /sys/fs/cgroup
+      type: bind
+  xrd2:
+    cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FSETID
+    - FOWNER
+    - MKNOD
+    - NET_RAW
+    - SETGID
+    - SETUID
+    - SETFCAP
+    - SETPCAP
+    - NET_BIND_SERVICE
+    - SYS_CHROOT
+    - KILL
+    - AUDIT_WRITE
+    - SYS_NICE
+    - SYS_ADMIN
+    - SYS_RESOURCE
+    - NET_ADMIN
+    - SYS_PTRACE
+    - IPC_LOCK
+    cap_drop:
+    - all
+    container_name: xrd2
+    devices:
+    - /dev/fuse
+    - /dev/net/tun
+    environment:
+      XR_EVERY_BOOT_CONFIG: /etc/xrd/startup.cfg
+      XR_INTERFACES: linux:xr-00,xr_name=Gi0/0/0/0;linux:xr-20,xr_name=Gi0/0/0/1;linux:xr-50,xr_name=Gi0/0/0/2,chksum
+      XR_MGMT_INTERFACES: linux:xr-30,xr_name=Mg0/RP0/CPU0/0,chksum
+    image: localhost/ios-xr:7.8.1.18I
+    networks:
+      lab2-xrd2:
+        ipv4_address: 172.31.1.200
+      mgmt: null
+      xrd1-gi1-xrd2-gi0: null
+      xrd2-gi1-xrd3-gi1: null
+    security_opt:
+    - apparmor:unconfined
+    - label:disable
+    stdin_open: true
+    tty: true
+    volumes:
+    - source: xrd2_xrconf.cfg
+      target: /etc/xrd/startup.cfg
+      type: bind
+    - xrd2:/xr-storage/
+    - read_only: true
+      source: /sys/fs/cgroup
+      target: /sys/fs/cgroup
+      type: bind
+  xrd3:
+    cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FSETID
+    - FOWNER
+    - MKNOD
+    - NET_RAW
+    - SETGID
+    - SETUID
+    - SETFCAP
+    - SETPCAP
+    - NET_BIND_SERVICE
+    - SYS_CHROOT
+    - KILL
+    - AUDIT_WRITE
+    - SYS_NICE
+    - SYS_ADMIN
+    - SYS_RESOURCE
+    - NET_ADMIN
+    - SYS_PTRACE
+    - IPC_LOCK
+    cap_drop:
+    - all
+    container_name: xrd3
+    devices:
+    - /dev/fuse
+    - /dev/net/tun
+    environment:
+      XR_EVERY_BOOT_CONFIG: /etc/xrd/startup.cfg
+      XR_INTERFACES: linux:xr-20,xr_name=Gi0/0/0/1;linux:xr-10,xr_name=Gi0/0/0/6;linux:xr-60,xr_name=Gi0/0/0/2,chksum
+      XR_MGMT_INTERFACES: linux:xr-30,xr_name=Mg0/RP0/CPU0/0,chksum
+    image: localhost/ios-xr:7.8.1.18I
+    networks:
+      lab3-xrd3:
+        ipv4_address: 172.32.1.200
+      mgmt: null
+      xrd1-gi6-xrd3-gi6: null
+      xrd2-gi1-xrd3-gi1: null
+    security_opt:
+    - apparmor:unconfined
+    - label:disable
+    stdin_open: true
+    tty: true
+    volumes:
+    - source: xrd3_xrconf.cfg
+      target: /etc/xrd/startup.cfg
+      type: bind
+    - xrd3:/xr-storage/
+    - read_only: true
+      source: /sys/fs/cgroup
+      target: /sys/fs/cgroup
+      type: bind
+version: '2.4'
+volumes:
+  xrd1:
+    name: xrd1
+  xrd2:
+    name: xrd2
+  xrd3:
+    name: xrd3
