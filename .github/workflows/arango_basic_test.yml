@@ -1,7 +1,7 @@
 name: Arango Smoke Test
 on:
   workflow_run:
-    workflows: ["Minimal Jalapeno Spinup"]
+    workflows: [Minimal Jalapeno Spinup]
     types: [completed]
 
 jobs:
