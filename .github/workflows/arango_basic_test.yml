@@ -1,24 +1,13 @@
 name: Arango Smoke Test
 on:
   workflow_run:
-    workflows: [Minimal Jalapeno Spinup]
+    workflows: ["Minimal Jalapeno Spinup"]
     types: [completed]
 
 jobs:
-  Kill-XRD:
+  Run-XRD:
     runs-on: self-hosted
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - name: Kill XRD testbed
-        run: |
-          cd ${{ github.workspace }}/build/tools/xrd
-          docker-compose down
-
-  Run-XRD:
-    needs: Kill-XRD
-    runs-on: self-hosted
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3

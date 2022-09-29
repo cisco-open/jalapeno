@@ -2,7 +2,18 @@ name: Minimal Jalapeno Spinup
 on:
   pull_request:
     branches: [main]
+
 jobs:
+  Kill-XRD:
+    runs-on: self-hosted
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Kill XRD testbed
+        run: |
+          cd ${{ github.workspace }}/build/tools/xrd
+          docker-compose down
+
   Clear-A-Cluster:
     runs-on: self-hosted
     steps:
