@@ -12,7 +12,7 @@ jobs:
       - name: Kill XRD testbed
         run: |
           cd ${{ github.workspace }}/build/tools/xrd
-          ./docker-compose down
+          docker-compose down
 
   Clear-A-Cluster:
     runs-on: self-hosted
