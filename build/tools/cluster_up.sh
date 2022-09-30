@@ -14,7 +14,8 @@ fi
 
 ATTEMPTS=0
 TIMEOUT=5
-until $KUBE get all -A | grep -o '[0-9]\/[0-9]' | grep -v '0\/1'
+sleep 10
+until $KUBE get all -n jalapeno | grep -o '[0-9]\/[0-9]' | grep -v '0\/1'
 do
   ((ATTEMPTS=ATTEMPTS+1))
   if [ $ATTEMPTS -gt 12]; then
