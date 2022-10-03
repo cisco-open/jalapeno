@@ -25,4 +25,5 @@ jobs:
       - name: Check Arango for routes
         run: |
           cd ${{ github.workspace }}/build/tools
+          sleep 60
           ./check_arango.sh
