@@ -50,6 +50,10 @@ spec:
       labels:
         app: topology-aio
     spec:
+      initContainers:
+        - name: arango-tester
+          image: yauritux/busybox-curl
+          command: ["sh", "-c", "until [ $(curl -s -I -o /dev/null -w '%{response_code}' --user 'root:jalapeno' -X GET http://arangodb:8529/_api/version) -eq 200 ]; do sleep 5; done"]
       containers:
         - args:
           - --v
@@ -58,19 +62,19 @@ spec:
           - "http://arangodb:8529"
           - --database-name
           - "jalapeno"
-          image: docker.io/iejalapeno/topology-aio:latest
-          imagePullPolicy: Always
-          name: topology-aio
-          volumeMounts:
-            - name: credentials
-              mountPath: /credentials
-          ports:
-          - containerPort: 5000
-            protocol: TCP
-            name: 5000-tcp
-          - containerPort: 56767
-            protocol: TCP
-            name: perf
+        image: docker.io/iejalapeno/topology-aio:latest
+        imagePullPolicy: Always
+        name: topology-aio
+        volumeMounts:
+          - name: credentials
+            mountPath: /credentials
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+          name: 5000-tcp
+        - containerPort: 56767
+          protocol: TCP
+          name: perf
       volumes:
         - name: config-volume
           configMap:
