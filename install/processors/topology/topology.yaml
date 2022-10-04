@@ -22,6 +22,10 @@ spec:
       labels:
         app: topology
     spec:
+      initContainers:
+        - name: arango-tester
+          image: yauritux/busybox-curl
+          command: ["sh", "-c", "until [ $(curl -s -I -o /dev/null -w '%{response_code}' --user 'root:jalapeno' -X GET http://arangodb:8529/_api/version) -eq 200 ]; do sleep 5; done"]
       containers:
         - args:
           - --v
