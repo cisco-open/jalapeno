@@ -32,6 +32,7 @@ import (
 
 	"github.com/cisco-open/jalapeno/linkstate-edge/arangodb"
 	"github.com/cisco-open/jalapeno/linkstate-edge/kafkamessenger"
+	"github.com/cisco-open/jalapeno/linkstate-edge/kafkanotifier"
 	"github.com/golang/glog"
 
 	_ "net/http/pprof"
@@ -103,9 +104,17 @@ func main() {
 		glog.Errorf("failed to validate the database credentials with error: %+v", err)
 		os.Exit(1)
 	}
-	dbSrv, err := arangodb.NewDBSrvClient(dbSrvAddr, dbUser, dbPass, dbName, vertexCollection, edgeCollection)
+
+	// TODO (dilli)
+	notifier, err := kafkanotifier.NewKafkaNotifier(msgSrvAddr)
 	if err != nil {
-		glog.Errorf("failed to initialize databse client with error: %+v", err)
+		glog.Errorf("failed to initialize events notifier with error: %+v", err)
+		os.Exit(1)
+	}
+
+	dbSrv, err := arangodb.NewDBSrvClient(dbSrvAddr, dbUser, dbPass, dbName, vertexCollection, edgeCollection, notifier)
+	if err != nil {
+		glog.Errorf("failed to initialize database client with error: %+v", err)
 		os.Exit(1)
 	}
 

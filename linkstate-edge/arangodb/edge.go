@@ -29,6 +29,7 @@ import (
 	"strings"
 
 	driver "github.com/arangodb/go-driver"
+	"github.com/cisco-open/jalapeno/linkstate-edge/kafkanotifier"
 	notifier "github.com/cisco-open/jalapeno/topology/kafkanotifier"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/base"
@@ -71,6 +72,10 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 		}
 	}
 	glog.V(5).Infof("Complete processing action: %s for key: %s ID: %s", obj.Action, obj.Key, obj.ID)
+
+	//TODO Write back into ls_node_edge_events topic
+	glog.V(5).Infof("Writing into events topic")
+	a.notifier.EventNotification((*kafkanotifier.EventMessage)(obj))
 
 	return nil
 }

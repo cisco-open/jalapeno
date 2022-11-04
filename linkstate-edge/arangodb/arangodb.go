@@ -27,6 +27,7 @@ import (
 	"encoding/json"
 
 	driver "github.com/arangodb/go-driver"
+	"github.com/cisco-open/jalapeno/linkstate-edge/kafkanotifier"
 	"github.com/cisco-open/jalapeno/topology/dbclient"
 	notifier "github.com/cisco-open/jalapeno/topology/kafkanotifier"
 	"github.com/golang/glog"
@@ -38,14 +39,15 @@ import (
 type arangoDB struct {
 	dbclient.DB
 	*ArangoConn
-	stop   chan struct{}
-	vertex driver.Collection
-	edge   driver.Collection
-	graph  driver.Collection
+	stop     chan struct{}
+	vertex   driver.Collection
+	edge     driver.Collection
+	graph    driver.Collection
+	notifier kafkanotifier.Event
 }
 
 // NewDBSrvClient returns an instance of a DB server client process
-func NewDBSrvClient(arangoSrv, user, pass, dbname, vcn string, ecn string) (dbclient.Srv, error) {
+func NewDBSrvClient(arangoSrv, user, pass, dbname, vcn string, ecn string, notifier kafkanotifier.Event) (dbclient.Srv, error) {
 	if err := tools.URLAddrValidation(arangoSrv); err != nil {
 		return nil, err
 	}
@@ -63,6 +65,9 @@ func NewDBSrvClient(arangoSrv, user, pass, dbname, vcn string, ecn string) (dbcl
 	}
 	arango.DB = arango
 	arango.ArangoConn = arangoConn
+	if notifier != nil {
+		arango.notifier = notifier
+	}
 
 	// Check if vertex collection exists, if not fail as Jalapeno topology is not running
 	arango.vertex, err = arango.db.Collection(context.TODO(), vcn)
