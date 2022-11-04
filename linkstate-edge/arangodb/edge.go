@@ -60,8 +60,13 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 		if obj.Action != "del" {
 			return fmt.Errorf("document %s not found but Action is not \"del\", possible stale event", obj.Key)
 		}
-		return a.processEdgeRemoval(ctx, obj.Key, obj.Action)
-		//return nil
+		err := a.processEdgeRemoval(ctx, obj.Key, obj.Action)
+		if err != nil {
+			return err
+		}
+		glog.V(5).Infof("Writing into events topic")
+		a.notifier.EventNotification((*kafkanotifier.EventMessage)(obj))
+		return nil
 	}
 	switch obj.Action {
 	case "add":
