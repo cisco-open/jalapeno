@@ -64,7 +64,7 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 		if err != nil {
 			return err
 		}
-		glog.V(5).Infof("Writing into events topic")
+		// write event into ls_node_edge topic
 		a.notifier.EventNotification((*kafkanotifier.EventMessage)(obj))
 		return nil
 	}
@@ -78,8 +78,7 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 	}
 	glog.V(5).Infof("Complete processing action: %s for key: %s ID: %s", obj.Action, obj.Key, obj.ID)
 
-	//TODO Write back into ls_node_edge_events topic
-	glog.V(5).Infof("Writing into events topic")
+	// write event into ls_node_edge topic
 	a.notifier.EventNotification((*kafkanotifier.EventMessage)(obj))
 
 	return nil
@@ -108,6 +107,7 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 			return fmt.Errorf("document %s not found but Action is not \"del\", possible stale event", obj.Key)
 		}
 		// return a.processVertexRemoval(ctx, obj.Key, obj.Action)
+
 		return nil
 	}
 	switch obj.Action {

@@ -105,7 +105,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// TODO (dilli)
+	// initialize kafkanotifiert to write back processed events into ls_node_edge_events topic
 	notifier, err := kafkanotifier.NewKafkaNotifier(msgSrvAddr)
 	if err != nil {
 		glog.Errorf("failed to initialize events notifier with error: %+v", err)

@@ -74,7 +74,7 @@ type notifier struct {
 
 func (n *notifier) EventNotification(msg *EventMessage) error {
 	switch msg.TopicType {
-	case bmp.LSNodeMsg: //TODO
+	case bmp.LSNodeMsg:
 		return n.triggerNotification(LSNodeEdgeEventTopic, msg)
 	case bmp.LSLinkMsg:
 		return n.triggerNotification(LSNodeEdgeEventTopic, msg)
