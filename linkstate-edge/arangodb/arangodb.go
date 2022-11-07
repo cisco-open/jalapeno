@@ -29,7 +29,6 @@ import (
 	driver "github.com/arangodb/go-driver"
 	"github.com/cisco-open/jalapeno/linkstate-edge/kafkanotifier"
 	"github.com/cisco-open/jalapeno/topology/dbclient"
-	notifier "github.com/cisco-open/jalapeno/topology/kafkanotifier"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/message"
@@ -112,7 +111,7 @@ func (a *arangoDB) GetArangoDBInterface() *ArangoConn {
 }
 
 func (a *arangoDB) StoreMessage(msgType dbclient.CollectionType, msg []byte) error {
-	event := &notifier.EventMessage{}
+	event := &kafkanotifier.EventMessage{}
 	if err := json.Unmarshal(msg, event); err != nil {
 		return err
 	}

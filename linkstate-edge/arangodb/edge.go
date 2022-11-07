@@ -30,7 +30,6 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/cisco-open/jalapeno/linkstate-edge/kafkanotifier"
-	notifier "github.com/cisco-open/jalapeno/topology/kafkanotifier"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/message"
@@ -38,7 +37,7 @@ import (
 
 const LSNodeEdgeCollection = "ls_node_edge"
 
-func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
+func (a *arangoDB) lsLinkHandler(obj *kafkanotifier.EventMessage) error {
 	ctx := context.TODO()
 	if obj == nil {
 		return fmt.Errorf("event message is nil")
@@ -65,7 +64,7 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 			return err
 		}
 		// write event into ls_node_edge topic
-		a.notifier.EventNotification((*kafkanotifier.EventMessage)(obj))
+		a.notifier.EventNotification(obj)
 		return nil
 	}
 	switch obj.Action {
@@ -79,12 +78,12 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 	glog.V(5).Infof("Complete processing action: %s for key: %s ID: %s", obj.Action, obj.Key, obj.ID)
 
 	// write event into ls_node_edge topic
-	a.notifier.EventNotification((*kafkanotifier.EventMessage)(obj))
+	a.notifier.EventNotification(obj)
 
 	return nil
 }
 
-func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
+func (a *arangoDB) lsNodeHandler(obj *kafkanotifier.EventMessage) error {
 	ctx := context.TODO()
 	if obj == nil {
 		return fmt.Errorf("event message is nil")
