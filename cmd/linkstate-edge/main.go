@@ -105,7 +105,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// initialize kafkanotifiert to write back processed events into ls_node_edge_events topic
+	// initialize kafkanotifier to write back processed events into ls_node_edge_events topic
 	notifier, err := kafkanotifier.NewKafkaNotifier(msgSrvAddr)
 	if err != nil {
 		glog.Errorf("failed to initialize events notifier with error: %+v", err)
@@ -125,7 +125,7 @@ func main() {
 		}
 	}
 
-	// Initializing messenger process
+	// initializing messenger process
 	msgSrv, err := kafkamessenger.NewKafkaMessenger(msgSrvAddr, dbSrv.GetInterface())
 	if err != nil {
 		glog.Errorf("failed to initialize message server with error: %+v", err)
