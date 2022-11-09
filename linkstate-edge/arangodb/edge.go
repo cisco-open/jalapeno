@@ -29,7 +29,7 @@ import (
 	"strings"
 
 	driver "github.com/arangodb/go-driver"
-	notifier "github.com/cisco-open/jalapeno/topology/kafkanotifier"
+	"github.com/cisco-open/jalapeno/linkstate-edge/kafkanotifier"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/message"
@@ -37,7 +37,7 @@ import (
 
 const LSNodeEdgeCollection = "ls_node_edge"
 
-func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
+func (a *arangoDB) lsLinkHandler(obj *kafkanotifier.EventMessage) error {
 	ctx := context.TODO()
 	if obj == nil {
 		return fmt.Errorf("event message is nil")
@@ -59,8 +59,13 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 		if obj.Action != "del" {
 			return fmt.Errorf("document %s not found but Action is not \"del\", possible stale event", obj.Key)
 		}
-		return a.processEdgeRemoval(ctx, obj.Key, obj.Action)
-		//return nil
+		err := a.processEdgeRemoval(ctx, obj.Key, obj.Action)
+		if err != nil {
+			return err
+		}
+		// write event into ls_node_edge topic
+		a.notifier.EventNotification(obj)
+		return nil
 	}
 	switch obj.Action {
 	case "add":
@@ -72,10 +77,13 @@ func (a *arangoDB) lsLinkHandler(obj *notifier.EventMessage) error {
 	}
 	glog.V(5).Infof("Complete processing action: %s for key: %s ID: %s", obj.Action, obj.Key, obj.ID)
 
+	// write event into ls_node_edge topic
+	a.notifier.EventNotification(obj)
+
 	return nil
 }
 
-func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
+func (a *arangoDB) lsNodeHandler(obj *kafkanotifier.EventMessage) error {
 	ctx := context.TODO()
 	if obj == nil {
 		return fmt.Errorf("event message is nil")
@@ -98,6 +106,7 @@ func (a *arangoDB) lsNodeHandler(obj *notifier.EventMessage) error {
 			return fmt.Errorf("document %s not found but Action is not \"del\", possible stale event", obj.Key)
 		}
 		// return a.processVertexRemoval(ctx, obj.Key, obj.Action)
+
 		return nil
 	}
 	switch obj.Action {
