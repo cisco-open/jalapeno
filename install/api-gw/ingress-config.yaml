@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-ingress
+  namespace: jalapeno-api-gw
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+   # there must be a host for this version of nginx
+   - host: localhost
+     http:
+      ### There is no default backend configuration for this nginx ingress, so we have a catchall
+      ###   that returns a 404 and responds with 200 to /healthz
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: api-gw-default-backend
+            port:
+              number: 80
+        #      - path: /api
+        #pathType: Prefix
+        #backend:
+        #  service:
+        #    name: api-gw-default-backend
+        #    port:
+        #      number: 80
+
+# this configuration will end up in /etc/nginx/conf.d/<namespace>-<ingress_name>.conf

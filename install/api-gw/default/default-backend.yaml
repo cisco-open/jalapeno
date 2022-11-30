@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gw-default-backend
+  namespace: jalapeno-api-gw
+  labels:
+    app: api-gw-default-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gw-default-backend
+  template:
+    metadata:
+      labels:
+        app: api-gw-default-backend
+    spec:
+      containers:
+      - name: api-gw-default-backend
+        image: docker.io/iejalapeno/api-gw-default-backend:latest
+        #command:
+        #- grafana-server
+        ports:
+        - containerPort: 8000

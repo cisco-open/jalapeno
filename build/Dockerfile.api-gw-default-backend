@@ -1,0 +1,4 @@
+FROM scratch
+
+COPY ./bin/api-gw-default-backend /api-gw-default-backend
+ENTRYPOINT ["/api-gw-default-backend"]
