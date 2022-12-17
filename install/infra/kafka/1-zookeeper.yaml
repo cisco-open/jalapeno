@@ -59,7 +59,7 @@ spec:
               topologyKey: "kubernetes.io/hostname"
       containers:
       - name: zookeeper
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         #image: "k8s.gcr.io/kubernetes-zookeeper:latest"
         image: "k8s.gcr.io/kubernetes-zookeeper:1.0-3.4.10"
         resources:
