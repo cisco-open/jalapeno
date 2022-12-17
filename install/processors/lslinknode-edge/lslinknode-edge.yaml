@@ -22,7 +22,7 @@ spec:
             - --database-name
             - "jalapeno"
           image: docker.io/iejalapeno/lslinknode-edge:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: lslinknode-edge
           volumeMounts:
             - name: credentials
