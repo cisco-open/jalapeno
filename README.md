@@ -40,6 +40,7 @@ Jalapeno is comprised of a series of microservices which can be summarized as:
   * Virtual Topology or Edge processors: mine the graph and TSDB data collections and then populate virtual topology Edge collections in the graph DB.  Linkstate-edge is an one such processor: https://github.com/cisco-open/jalapeno/tree/main/linkstate-edge
 
 * API-GW - expose Jalapeno's virtual topology data for application consumption (API-GW is under construction)
+  * An implementation focusing on fetching topology and telemetry data from Jalapeño can be found in a separate GitHub organisation: https://github.com/jalapeno-api-gateway 
 
 * SR-Apps - mini-applications that mine the graph and time-series databases for the label stack or SRv6 SRH data needed to execute topology or traffic engineering use cases.  Each SR-App should have its own API to field client requests for Segment Routing network services.  
 
