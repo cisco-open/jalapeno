@@ -29,3 +29,8 @@ data:
       brokers = ["broker.jalapeno.svc:9092"]
       topic = "jalapeno.telemetry"
 
+    [[outputs.kafka]]
+      brokers = ["broker.jalapeno.svc:9092"]
+      topic = "jalapeno.srv6"   
+      data_format = "json"
+      namepass = ["Cisco-IOS-XR-segment-routing-srv6-oper*"] 
