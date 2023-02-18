@@ -50,8 +50,8 @@ spec:
       terminationGracePeriodSeconds: 30
       initContainers:
       - name: init-config
-        image: solsson/kafka:3.3.0-initutils
-        #image: solsson/kafka-initutils@sha256:c8582b9df3b3ca9d804e2d914994411fb9b2d94353c4d5476f0a63cf75e59eb0
+        #image: solsson/kafka:3.3.0-initutils
+        image: solsson/kafka-initutils@sha256:c8582b9df3b3ca9d804e2d914994411fb9b2d94353c4d5476f0a63cf75e59eb0
 
         env:
         - name: NODE_NAME

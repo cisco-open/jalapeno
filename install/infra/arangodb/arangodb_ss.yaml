@@ -20,7 +20,7 @@ spec:
       - env:
         - name: ARANGO_ROOT_PASSWORD
           value: jalapeno
-        image: arangodb:3.10.3
+        image: arangodb:3.9.8
         #image: arangodb:3.6.12
         name: arangodb
         ports:
@@ -38,7 +38,7 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 160Gi
+          storage: 80Gi
   - metadata:
       name: appdata
     spec:
