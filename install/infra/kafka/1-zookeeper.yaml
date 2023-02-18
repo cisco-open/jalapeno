@@ -60,8 +60,7 @@ spec:
       containers:
       - name: zookeeper
         imagePullPolicy: Always
-        image: "zookeeper:latest"
-        #image: "k8s.gcr.io/kubernetes-zookeeper:1.0-3.4.10"
+        image: "k8s.gcr.io/kubernetes-zookeeper:1.0-3.4.10"
         resources:
           requests:
             memory: "8Gi"

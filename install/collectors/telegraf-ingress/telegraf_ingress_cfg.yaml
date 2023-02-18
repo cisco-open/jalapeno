@@ -2,7 +2,7 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: telegraf-ingress-config
-  namespace: jalapeno-collectors
+  namespace: jalapeno
   selfLink: /api/v1/namespaces/jalapeno/configmaps/telegraf-ingress-config
 data:
   telegraf.conf: |
