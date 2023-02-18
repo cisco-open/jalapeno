@@ -35,7 +35,7 @@ spec:
           - --notify-event
           - "true"
           image: docker.io/iejalapeno/topology:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: topology
           volumeMounts:
             - name: credentials
