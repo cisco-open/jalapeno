@@ -1,0 +1,8 @@
+apiVersion: "database.arangodb.com/v1alpha"
+kind: "ArangoDeployment"
+metadata:
+  name: "arango-cluster"
+  namespace: jalapeno
+spec:
+  mode: Cluster
+  image: "arangodb/arangodb:3.10.3"

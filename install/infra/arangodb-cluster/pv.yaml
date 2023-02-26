@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: arangodb-a
+spec:
+  capacity:
+       storage: 200Gi
+  accessModes:
+       - ReadWriteOnce
+  hostPath:
+       path: /var/lib/arangodb-a
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: arangodb-b
+spec:
+  capacity:
+       storage: 200Gi
+  accessModes:
+       - ReadWriteOnce
+  hostPath:
+       path: /var/lib/arangodb-b
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: arangodb-c
+spec:
+  capacity:
+       storage: 200Gi
+  accessModes:
+       - ReadWriteOnce
+  hostPath:
+       path: /var/lib/arangodb-c
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: arangodb-d
+spec:
+  capacity:
+       storage: 200Gi
+  accessModes:
+       - ReadWriteOnce
+  hostPath:
+       path: /var/lib/arangodb-d
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: arangodb-e
+spec:
+  capacity:
+       storage: 200Gi
+  accessModes:
+       - ReadWriteOnce
+  hostPath:
+       path: /var/lib/arangodb-e
+  persistentVolumeReclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+   name: arangodb-f
+spec:
+  capacity:
+       storage: 200Gi
+  accessModes:
+       - ReadWriteOnce
+  hostPath:
+       path: /var/lib/arangodb-f
+  persistentVolumeReclaimPolicy: Retain
