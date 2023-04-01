@@ -33,6 +33,8 @@ import (
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/base"
 	"github.com/sbezverk/gobmp/pkg/message"
+	"github.com/sbezverk/gobmp/pkg/sr"
+	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
 const LSNodeEdgeCollection = "ls_node_edge"
@@ -123,20 +125,33 @@ func (a *arangoDB) lsNodeHandler(obj *kafkanotifier.EventMessage) error {
 }
 
 type lsNodeEdgeObject struct {
-	Key           string       `json:"_key"`
-	From          string       `json:"_from"`
-	To            string       `json:"_to"`
-	Link          string       `json:"link"`
-	ProtocolID    base.ProtoID `json:"protocol_id"`
-	DomainID      int64        `json:"domain_id"`
-	MTID          uint16       `json:"mt_id"`
-	AreaID        string       `json:"area_id"`
-	LocalLinkID   uint32       `json:"local_link_id"`
-	RemoteLinkID  uint32       `json:"remote_link_id"`
-	LocalLinkIP   string       `json:"local_link_ip"`
-	RemoteLinkIP  string       `json:"remote_link_ip"`
-	LocalNodeASN  uint32       `json:"local_node_asn"`
-	RemoteNodeASN uint32       `json:"remote_node_asn"`
+	Key                   string                `json:"_key"`
+	From                  string                `json:"_from"`
+	To                    string                `json:"_to"`
+	Link                  string                `json:"link"`
+	ProtocolID            base.ProtoID          `json:"protocol_id"`
+	DomainID              int64                 `json:"domain_id"`
+	MTID                  uint16                `json:"mt_id"`
+	AreaID                string                `json:"area_id"`
+	LocalLinkID           uint32                `json:"local_link_id"`
+	RemoteLinkID          uint32                `json:"remote_link_id"`
+	LocalLinkIP           string                `json:"local_link_ip"`
+	RemoteLinkIP          string                `json:"remote_link_ip"`
+	LocalNodeASN          uint32                `json:"local_node_asn"`
+	RemoteNodeASN         uint32                `json:"remote_node_asn"`
+	PeerNodeSID           *sr.PeerSID           `json:"peer_node_sid,omitempty"`
+	PeerAdjSID            *sr.PeerSID           `json:"peer_adj_sid,omitempty"`
+	PeerSetSID            *sr.PeerSID           `json:"peer_set_sid,omitempty"`
+	SRv6BGPPeerNodeSID    *srv6.BGPPeerNodeSID  `json:"srv6_bgp_peer_node_sid,omitempty"`
+	SRv6ENDXSID           []*srv6.EndXSIDTLV    `json:"srv6_endx_sid,omitempty"`
+	LSAdjacencySID        []*sr.AdjacencySIDTLV `json:"ls_adjacency_sid,omitempty"`
+	UnidirLinkDelay       uint32                `json:"unidir_link_delay"`
+	UnidirLinkDelayMinMax []uint32              `json:"unidir_link_delay_min_max"`
+	UnidirDelayVariation  uint32                `json:"unidir_delay_variation,omitempty"`
+	UnidirPacketLoss      uint32                `json:"unidir_packet_loss,omitempty"`
+	UnidirResidualBW      uint32                `json:"unidir_residual_bw,omitempty"`
+	UnidirAvailableBW     uint32                `json:"unidir_available_bw,omitempty"`
+	UnidirBWUtilization   uint32                `json:"unidir_bw_utilization,omitempty"`
 }
 
 // processEdge processes a single ls_link connection which is a unidirectional edge between two nodes (vertices).
@@ -320,20 +335,31 @@ func (a *arangoDB) createEdgeObject(ctx context.Context, l *message.LSLink, ln, 
 		mtid = int(l.MTID.MTID)
 	}
 	ne := lsNodeEdgeObject{
-		Key:           l.Key,
-		From:          ln.ID,
-		To:            rn.ID,
-		Link:          l.Key,
-		ProtocolID:    l.ProtocolID,
-		DomainID:      l.DomainID,
-		MTID:          uint16(mtid),
-		AreaID:        l.AreaID,
-		LocalLinkID:   l.LocalLinkID,
-		RemoteLinkID:  l.RemoteLinkID,
-		LocalLinkIP:   l.LocalLinkIP,
-		RemoteLinkIP:  l.RemoteLinkIP,
-		LocalNodeASN:  l.LocalNodeASN,
-		RemoteNodeASN: l.RemoteNodeASN,
+		Key:                   l.Key,
+		From:                  ln.ID,
+		To:                    rn.ID,
+		Link:                  l.Key,
+		ProtocolID:            l.ProtocolID,
+		DomainID:              l.DomainID,
+		MTID:                  uint16(mtid),
+		AreaID:                l.AreaID,
+		LocalLinkID:           l.LocalLinkID,
+		RemoteLinkID:          l.RemoteLinkID,
+		LocalLinkIP:           l.LocalLinkIP,
+		RemoteLinkIP:          l.RemoteLinkIP,
+		LocalNodeASN:          l.LocalNodeASN,
+		RemoteNodeASN:         l.RemoteNodeASN,
+		PeerNodeSID:           l.PeerNodeSID,
+		SRv6BGPPeerNodeSID:    l.SRv6BGPPeerNodeSID,
+		SRv6ENDXSID:           l.SRv6ENDXSID,
+		LSAdjacencySID:        l.LSAdjacencySID,
+		UnidirLinkDelay:       l.UnidirLinkDelay,
+		UnidirLinkDelayMinMax: l.UnidirLinkDelayMinMax,
+		UnidirDelayVariation:  l.UnidirDelayVariation,
+		UnidirPacketLoss:      l.UnidirPacketLoss,
+		UnidirResidualBW:      l.UnidirResidualBW,
+		UnidirAvailableBW:     l.UnidirAvailableBW,
+		UnidirBWUtilization:   l.UnidirBWUtilization,
 	}
 	if _, err := a.graph.CreateDocument(ctx, &ne); err != nil {
 		if !driver.IsConflict(err) {
