@@ -64,8 +64,6 @@ github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0 h1:MkV+77GLUNo
 github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
 github.com/rs/xid v1.2.1/go.mod h1:+uKXf+4Djp6Md1KODXJxgGQPKngRmWyn10oCKFzNHOQ=
 github.com/rs/zerolog v1.19.0/go.mod h1:IzD0RJ65iWH0w97OQQebJEvTZYvsCUm9WVLWBQrJRjo=
-github.com/sbezverk/gobmp v1.0.3-0.20230413205504-3227414b3831 h1:8Y7ZL2io/zob5qdOMemTaxO8ONedM3vj2SFxbbsI3yo=
-github.com/sbezverk/gobmp v1.0.3-0.20230413205504-3227414b3831/go.mod h1:DSc/44GZbSeJwl+ZDtcbw+D1B9p/dabIReGtMw8thbM=
 github.com/sbezverk/gobmp v1.0.3-0.20230414141753-29b5fa2e1103 h1:4IqdNZ0f0FFRCJ0wjO/g8GKX18nPFpXPK5WdM0AgIvo=
 github.com/sbezverk/gobmp v1.0.3-0.20230414141753-29b5fa2e1103/go.mod h1:DSc/44GZbSeJwl+ZDtcbw+D1B9p/dabIReGtMw8thbM=
 github.com/sbezverk/gobmp/pkg/tools v0.0.0-20200507134823-d53b60020204 h1:jhFKry6O3+NIn0lxOuTYDBr/MXkacoc4xSFgKW2952E=
