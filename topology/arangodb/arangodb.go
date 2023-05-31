@@ -41,10 +41,10 @@ const (
 var (
 	collections = map[dbclient.CollectionType]*collectionProperties{
 		dbclient.PeerStateChange: {name: "peer", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSLink:          {name: "ls_link", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSLink:          {name: "ls_link", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.LSNode:          {name: "ls_node", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSPrefix:        {name: "ls_prefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
-		dbclient.LSSRv6SID:       {name: "ls_srv6_sid", isVertex: true, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSPrefix:        {name: "ls_prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
+		dbclient.LSSRv6SID:       {name: "ls_srv6_sid", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.L3VPN:           {name: "l3vpn_prefix", isVertex: false, options: &driver.CreateCollectionOptions{}},
 		dbclient.L3VPNV4:         {name: "l3vpn_v4_prefix", isVertex: true, options: &driver.CreateCollectionOptions{}},
 		dbclient.L3VPNV6:         {name: "l3vpn_v6_prefix", isVertex: true, options: &driver.CreateCollectionOptions{}},

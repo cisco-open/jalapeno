@@ -6,7 +6,8 @@ require (
 	github.com/Shopify/sarama v1.27.2
 	github.com/arangodb/go-driver v1.2.1
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
-	github.com/sbezverk/gobmp v1.0.2-0.20220308191616-3710b2afc210
+	github.com/sbezverk/gobmp v1.0.3-0.20230414141753-29b5fa2e1103
+	github.com/sbezverk/gobmp/pkg/tools v0.0.0-20200507134823-d53b60020204
 	go.uber.org/atomic v1.7.0
 )
 
@@ -23,6 +24,7 @@ require (
 	github.com/pierrec/lz4 v2.5.2+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0 // indirect
+	github.com/sbezverk/tools v0.0.0-20220706091339-17ec2f713538 // indirect
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
 	golang.org/x/net v0.0.0-20200904194848-62affa334b73 // indirect
 	gopkg.in/jcmturner/aescts.v1 v1.0.1 // indirect
