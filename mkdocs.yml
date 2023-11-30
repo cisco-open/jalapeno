@@ -28,13 +28,20 @@ theme:
 # Site Nav
 nav:
   - Home: index.md
-  - About: about.md
+  - About: 
+    - about/index.md
+    - Processors: about/processors.md
   - Installation: 
-    - install.md
-    - Quickstart: quickstart.md
+    - Getting Started: install/gettingstarted.md
+    - Prerequisites: install/prerequisites.md
+    - Kubernetes Setup: install/kubernetes.md
+    - Install Jalapeno: install/jalapeno.md
+  - Device Config:
+    - device-config/index.md
+    - IOS-XR: device-config/xr-config.md
   - Development:  
-    - devenv.md
-    - Contributing: contribute.md
+    - development/index.md
+    - Contributing: development/contributing.md
   
 # Extras
 extra:
@@ -49,6 +56,8 @@ markdown_extensions:
   - admonition
   - abbr
   - attr_list
+  - pymdownx.superfences
+  - pymdownx.details
   - pymdownx.snippets:
       base_path: ["docs"]
       auto_append:
