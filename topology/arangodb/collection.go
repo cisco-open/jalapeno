@@ -41,6 +41,7 @@ const (
 	addAction     actionType = "add"
 	updateAction  actionType = "update"
 	delAction     actionType = "del"
+	downAction    actionType = "down"
 	unknownAction actionType = "unknown"
 )
 
@@ -54,6 +55,8 @@ func newAction(a string) actionType {
 		return updateAction
 	case "del":
 		return delAction
+	case "down":
+		return downAction
 	default:
 		return unknownAction
 	}
@@ -266,6 +269,12 @@ notify:
 			if !found {
 				break notify
 			}
+		case downAction:
+			// For down action, the read opration should return Document not found, if no error received
+			//
+			if !found {
+				break notify
+			}
 		case unknownAction:
 			return
 		}
@@ -416,6 +425,12 @@ func (c *collection) genericWorker(k string, o DBRecord, done chan *result, toke
 			action = "update"
 		}
 	case "del":
+		if _, e := c.topicCollection.RemoveDocument(ctx, k); e != nil {
+			if !driver.IsArangoErrorWithErrorNum(e, driver.ErrArangoDocumentNotFound) {
+				err = e
+			}
+		}
+	case "down":
 		if _, e := c.topicCollection.RemoveDocument(ctx, k); e != nil {
 			if !driver.IsArangoErrorWithErrorNum(e, driver.ErrArangoDocumentNotFound) {
 				err = e
