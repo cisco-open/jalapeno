@@ -39,18 +39,28 @@ nav:
   - Home: index.md
   - About: 
     - about/index.md
+    - Infrastructure: about/infrastructure.md
+    - Collectors: about/collectors.md
     - Processors: about/processors.md
   - Installation: 
     - Getting Started: install/gettingstarted.md
     - Prerequisites: install/prerequisites.md
     - Kubernetes Setup: install/kubernetes.md
     - Install Jalapeno: install/jalapeno.md
+  - Usage:
+    - usage/index.md
+    - API: usage/api.md
+    - Arango: usage/arango.md
+    - Grafana: usage/grafana.md
+    - Influx: usage/influx.md
+    - Kafka: usage/kafka.md
   - Device Config:
     - device-config/index.md
     - IOS-XR: device-config/xr-config.md
   - Resources:
     - resources/index.md
     - ArangoDB: resources/arangodb.md
+    - InfluxDB: resources/influxdb.md
   - Development:  
     - development/index.md
     - Building Images: development/images.md

@@ -11,4 +11,4 @@ Project Jalapeno combines existing open source tools with some new stuff we've d
 
 This website provides documentation and shell scripts to install Jalapeno's component images.
 
-Check out [Getting Started](install/gettingstarted.md) to set up Jalapeno on your own systems.
+Learn about the project architecture & components [here](./about/index.md) - or head over to [Getting Started](install/gettingstarted.md) to set up your own Jalapeno instance.

@@ -2,7 +2,7 @@
 
 This section will cover some example queries that can be run against the ArangoDB instance.
 
-!!! warning
+!!! info
     Many of these queries are specific to a lab setup we run internally. A reference topology has been provided below.
 
     Please note, the queries will need to be adjusted to fit your environment / needs.
