@@ -2,7 +2,7 @@
 
 !!! info
 
-    If you already have a Kubernetes environment deployed you may skip this document and move on to the [Jalapeno Install](install.md)
+    If you already have a Kubernetes environment deployed you may skip this document and move on to the [Jalapeno Install](jalapeno.md)
 
 The following instructions present two options for installing Kubernetes:
 
@@ -44,7 +44,7 @@ If desired, install Calico for CNI using the instructions available [here](https
 
 Once installation is complete the cluster should look similar to the output below:
 
-```bash
+```{ .bash .no-copy }
 $ kubectl get all --all-namespaces
 
 NAMESPACE     NAME                                           READY   STATUS    RESTARTS   AGE
@@ -75,7 +75,7 @@ kube-system   replicaset.apps/calico-kube-controllers-5c6f6b67db   1         1  
 kube-system   replicaset.apps/coredns-f9fd979d6                    2         2         2       2m38s
 ```
 
-If everything looks good, move onto [Installing Jalepeno](install.md).
+If everything looks good, move onto [Installing Jalepeno](jalapeno.md).
 
 ## MicroK8s Install
 
@@ -117,7 +117,7 @@ The following documentation is based on [this guide](https://tutorials.ubuntu.co
 
     The output should look like below. Take note of the columns `READY` and `STATUS`.
 
-    ```bash
+    ```{ .bash .no-copy }
     $ microk8s.kubectl get all --all-namespaces
     NAMESPACE     NAME                                                  READY   STATUS    RESTARTS   AGE
     kube-system   pod/coredns-9b8997588-qxxpf                           1/1     Running   0          2d4h
@@ -229,7 +229,7 @@ The following documentation is based on [this guide](https://tutorials.ubuntu.co
     microk8s kubectl config view --raw > $HOME/.kube/config
     ```
 
-You may now proceed to [Install Jalapeno](install.md) on your Microk8s cluster
+You may now proceed to [Install Jalapeno](jalapeno.md) on your Microk8s cluster
 
 ### Removing Microk8s
 

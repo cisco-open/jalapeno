@@ -1,6 +1,6 @@
 # Device Configuration
 
-This section will contain notes and configuration snips for getting devices into Jalapeno.
+This section will contain notes and configuration snippets for getting devices to report information to Jalapeno.
 
 Jalapeno's default MDT port is 32400 and the BMP port is 30511.
 
