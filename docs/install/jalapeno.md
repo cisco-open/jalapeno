@@ -37,7 +37,7 @@ kubectl get all -n jalapeno-collectors
 
 Expected Output for `jalapeno` Namespace:
 
-```{ .bash .no-copy }
+```{ .text .no-copy }
 NAME                                              READY   STATUS    RESTARTS   AGE
 pod/arangodb-0                                    1/1     Running   0          9d
 pod/grafana-deployment-579c5f75bb-7g7bk           1/1     Running   0          9d
@@ -80,7 +80,7 @@ statefulset.apps/zookeeper   1/1     9d
 
 Expected Output for `jalapeno-collectors` Namespace:
 
-```{ .bash .no-copy }
+```{ .text .no-copy }
 NAME                                               READY   STATUS    RESTARTS   AGE
 pod/gobmp-f8bf8d6d5-nvwn8                          1/1     Running   2          3m42s
 pod/telegraf-ingress-deployment-56867cf9b4-62snv   1/1     Running   1          3m46s
@@ -108,8 +108,8 @@ Instructions can be found under the [Device Config](../device-config/index.md) s
 
 Jalapeno can also be destroyed using the script.
 
-1. Use the `destroy_jalapeno.sh` script. This will remove both namespaces `jalapeno` and `jalapeno-collectors` and all associated services/pods/deployments/etc. This will also remove all the persistent volumes associated with kafka and arangodb.
+1. Use the `destroy_jalapeno.sh` script. This will remove both namespaces `jalapeno` and `jalapeno-collectors` and all associated services/pods/deployments/etc. This will also remove all the persistent volumes associated with Kafka and Arangodb.
 
    ```bash
-   destroy_jalapeno.sh kubectl
+   ./destroy_jalapeno.sh kubectl
    ```

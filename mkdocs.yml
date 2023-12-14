@@ -10,11 +10,17 @@ copyright: Copyright © 2023 Cisco Systems, Inc. and its affiliates. All rights 
 theme:
   name: material
   palette:
-    - scheme: slate
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-    - scheme: default
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
@@ -50,9 +56,9 @@ nav:
   - Usage:
     - usage/index.md
     - API: usage/api.md
-    - Arango: usage/arango.md
+    - ArangoDB: usage/arangodb.md
     - Grafana: usage/grafana.md
-    - Influx: usage/influx.md
+    - InfluxDB: usage/influxdb.md
     - Kafka: usage/kafka.md
   - Device Config:
     - device-config/index.md
@@ -63,6 +69,7 @@ nav:
     - InfluxDB: resources/influxdb.md
   - Development:  
     - development/index.md
+    - Minimal Instance: development/minimal.md
     - Building Images: development/images.md
     - Contributing: development/contributing.md
   
@@ -79,9 +86,13 @@ markdown_extensions:
   - admonition
   - abbr
   - attr_list
+  - md_in_html
   - pymdownx.superfences
   - pymdownx.details
   - pymdownx.snippets:
       base_path: ["docs"]
       auto_append:
         - includes/abbreviations.md
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg

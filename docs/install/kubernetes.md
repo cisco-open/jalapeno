@@ -44,7 +44,7 @@ If desired, install Calico for CNI using the instructions available [here](https
 
 Once installation is complete the cluster should look similar to the output below:
 
-```{ .bash .no-copy }
+```{ .text .no-copy }
 $ kubectl get all --all-namespaces
 
 NAMESPACE     NAME                                           READY   STATUS    RESTARTS   AGE
@@ -117,7 +117,7 @@ The following documentation is based on [this guide](https://tutorials.ubuntu.co
 
     The output should look like below. Take note of the columns `READY` and `STATUS`.
 
-    ```{ .bash .no-copy }
+    ```{ .text .no-copy }
     $ microk8s.kubectl get all --all-namespaces
     NAMESPACE     NAME                                                  READY   STATUS    RESTARTS   AGE
     kube-system   pod/coredns-9b8997588-qxxpf                           1/1     Running   0          2d4h

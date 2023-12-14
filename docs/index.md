@@ -11,4 +11,25 @@ Project Jalapeno combines existing open source tools with some new stuff we've d
 
 This website provides documentation and shell scripts to install Jalapeno's component images.
 
-Learn about the project architecture & components [here](./about/index.md) - or head over to [Getting Started](install/gettingstarted.md) to set up your own Jalapeno instance.
+<br/>
+<div class="grid cards" markdown>
+
+- :octicons-mortar-board-24:{ .lg .middle } __Learn About Jalapeno__
+
+    ---
+
+    Read about the project components and architecture.
+
+    [:octicons-arrow-right-24: About](./about/index.md)
+
+- :material-monitor-arrow-down-variant:{ .lg .middle } __Setup & Install__
+
+    ---
+
+    Set up your own instance of Jalapeno & start collecting data!
+
+    [:octicons-arrow-right-24: Getting Started](./install/gettingstarted.md)
+
+</div>
+
+<br/>
