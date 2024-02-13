@@ -74,6 +74,7 @@ func init() {
 	flag.StringVar(&mockMsg, "mock-messenger", "false", "when set to true, message server is disabled.")
 	flag.StringVar(&dbName, "database-name", "", "DB name")
 	flag.StringVar(&dbUser, "database-user", "", "DB User name")
+
 	flag.StringVar(&dbPass, "database-pass", "", "DB User's password")
 	flag.StringVar(&notifyEvent, "notify-event", "false", "when true, a completion message is sent to kafka, indicating and end of processing of the topic's message")
 }
