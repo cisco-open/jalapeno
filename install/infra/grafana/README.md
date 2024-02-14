@@ -36,8 +36,8 @@ Import telemetry json files and modify as necessary to fit your topology
 
 Sample json to import:
 
-https://github.com/cisco-open/jalapeno/install/infra/grafana/egress-mdt.json
+https://github.com/cisco-open/jalapeno/blob/main/install/infra/grafana/egress-mdt.json
 
-https://github.com/cisco-open/jalapeno/install/infra/grafana/ingress-mdt.json
+https://github.com/cisco-open/jalapeno/blob/main/install/infra/grafana/ingress-mdt.json
 
 
