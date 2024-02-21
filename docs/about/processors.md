@@ -13,3 +13,7 @@ Collections created using this service are considered base-collections. These ba
 For example, the Topology processor creates the LSNode collection and the LSLink collection directly from GoBMP BGP-LS message data.
 
 The configuration for topology deployment is in "topology_dp.yaml" in the topology directory.
+
+## Other Processors
+
+Currently the project is bundled with a limited set of processors. However, other processors can be found in [this repository](https://github.com/orgs/jalapeno/repositories) which may offer additional functionality to Jalapeno.

@@ -36,7 +36,7 @@ InfluxDB is Jalapeno's time-series database.
 
 Telemetry data is parsed and passed from Kafka into InfluxDB using a telemetry consumer (Telegraf).
 
-The data stored in InfluxDB can be queried by [Processors](./processors.md) and by the ArangoDB Jalapeno API. These queries construct and derive relevant metrics. For example, the LS-Performance Processor generates rolling-averages of bytes sent out of a router's interface, which is used to simulate link utilization.
+The data stored in InfluxDB can be queried by [Processors](./processors.md) and by the ArangoDB Jalapeno API. These queries construct and derive relevant metrics. For example, a processor could generate rolling-averages of bytes sent out of a router's interface, which would be used to simulate link utilization.
 
 Using InfluxDB as a historical data-store, Jalapeno [Processors](./processors.md) can also infer trends based on historical analysis. [Processors](./processors.md) and even applications can determine whether instantaneous measurements are extreme anomalies, and can enable requests for any number of threshold-based reactions.
 

@@ -33,3 +33,8 @@ To do so:
 5. Once added, hover over the Dashboard icon and click **Manage**
 6. Click **Import** on the right side of the screen
 7. Import telemetry json files and modify as necessary to fit your topology
+
+A few sample Grafana dashboards can be found here:
+
+- [Egress Traffic](https://github.com/cisco-open/jalapeno/blob/main/install/infra/grafana/egress-mdt.json)
+- [Ingress Traffic](https://github.com/cisco-open/jalapeno/blob/main/install/infra/grafana/ingress-mdt.json)
