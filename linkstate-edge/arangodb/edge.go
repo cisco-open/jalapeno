@@ -137,8 +137,16 @@ type lsNodeEdgeObject struct {
 	RemoteLinkID          uint32                `json:"remote_link_id"`
 	LocalLinkIP           string                `json:"local_link_ip"`
 	RemoteLinkIP          string                `json:"remote_link_ip"`
+	IGPMetric             uint32                `json:"igp_metric"`
 	LocalNodeASN          uint32                `json:"local_node_asn"`
 	RemoteNodeASN         uint32                `json:"remote_node_asn"`
+	MaxLinkBW             uint32                `json:"max_link_bw,omitempty"`
+	MaxResvBW             uint32                `json:"max_resv_bw,omitempty"`
+	UnResvBW              []uint32              `json:"unresv_bw,omitempty"`
+	MaxLinkBWKbps         uint64                `json:"max_link_bw_kbps,omitempty"`
+	MaxResvBWKbps         uint64                `json:"max_resv_bw_kbps,omitempty"`
+	UnResvBWKbps          []uint64              `json:"unresv_bw_kbps,omitempty"`
+	TEDefaultMetric       uint32                `json:"te_default_metric,omitempty"`
 	PeerNodeSID           *sr.PeerSID           `json:"peer_node_sid,omitempty"`
 	PeerAdjSID            *sr.PeerSID           `json:"peer_adj_sid,omitempty"`
 	PeerSetSID            *sr.PeerSID           `json:"peer_set_sid,omitempty"`
@@ -347,8 +355,16 @@ func (a *arangoDB) createEdgeObject(ctx context.Context, l *message.LSLink, ln, 
 		RemoteLinkID:          l.RemoteLinkID,
 		LocalLinkIP:           l.LocalLinkIP,
 		RemoteLinkIP:          l.RemoteLinkIP,
+		IGPMetric:             l.IGPMetric,
 		LocalNodeASN:          l.LocalNodeASN,
 		RemoteNodeASN:         l.RemoteNodeASN,
+		MaxLinkBW:             l.MaxLinkBW,
+		MaxResvBW:             l.MaxResvBW,
+		UnResvBW:              l.UnResvBW,
+		MaxLinkBWKbps:         l.MaxLinkBWKbps,
+		MaxResvBWKbps:         l.MaxResvBWKbps,
+		UnResvBWKbps:          l.UnResvBWKbps,
+		TEDefaultMetric:       l.TEDefaultMetric,
 		PeerNodeSID:           l.PeerNodeSID,
 		SRv6BGPPeerNodeSID:    l.SRv6BGPPeerNodeSID,
 		SRv6ENDXSID:           l.SRv6ENDXSID,
