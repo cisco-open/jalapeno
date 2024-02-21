@@ -2,7 +2,7 @@ name: Build Docs
 on:
   push:
     branches:
-      - improve-docs
+      - main
 permissions:
   contents: write
 jobs:

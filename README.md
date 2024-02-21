@@ -1,13 +1,5 @@
 # Jalapeno
 
-<div align="center">
-
-<a href="https://cisco-open.github.io/jalapeno">Jalapeno Documentation</a>
-
-</div>
-
----
-
 ### A cloud-native infrastructure platform to enable development of network services
 
 Project Jalapeno combines existing open source tools with some new stuff we've developed into an infrastructure platform intended to enable development of Cloud Native Network Services (CNNS).  Think of it as applying microservices architecture to SDN: give developers the ability to quickly and easily build microservice control planes (CNNS) on top of a common data collection and warehousing infrastructure (Jalapeno).
@@ -15,6 +7,16 @@ Project Jalapeno combines existing open source tools with some new stuff we've d
 This repository provides documentation and shell scripts to install Jalapeno's component images.
 
 To install Jalapeno and get started, visit the [Getting Started](https://cisco-open.github.io/jalapeno/install/gettingstarted/) guide.
+
+<div align="center">
+
+[![view - Documentation](https://img.shields.io/badge/view-Documentation-blue?style=for-the-badge)](https://cisco-open.github.io/jalapeno "Go to project documentation")
+
+</div>
+
+### High level architecture
+
+![jalapeno_architecture](docs/img/jalapeno_architecture.png "jalapeno architecture")
 
 ### High level architecture
 
@@ -30,6 +32,7 @@ At the heart of Jalapeno is the concept that all SDN use cases are really virtua
 * VPN overlays - engineered tunnels creating point-to-point or multipoint overlay virtual networks
 * Network Slicing - see VPN overlays
 * VPN overlays with TE, EPE, SDWAN
+* Service Chaining - engineered tunnels, potentially a series of them, linked together via or seamlessly traversing midpoint service nodes
 * Service Chaining - engineered tunnels, potentially a series of them, linked together via or seamlessly traversing midpoint service nodes
 
 #### Some project principles and goals
@@ -50,8 +53,12 @@ Jalapeno is comprised of a series of microservices which can be summarized as:
 * Data Processors, Graph Database, and Time-Series Database - Jalapeno has two classes of processors:
     * Base data processors: parse topology and performance data coming off Kafka and populate the Influx TSDB and base data collections in the Arango graph database.  The Topology and Telegraf pods are base processors.
     * Virtual Topology or Edge processors: mine the graph and TSDB data collections and then populate virtual topology Edge collections in the graph DB.  Linkstate-edge is an one such processor: <https://github.com/cisco-open/jalapeno/tree/main/linkstate-edge>
+* Data Processors, Graph Database, and Time-Series Database - Jalapeno has two classes of processors:
+    * Base data processors: parse topology and performance data coming off Kafka and populate the Influx TSDB and base data collections in the Arango graph database.  The Topology and Telegraf pods are base processors.
+    * Virtual Topology or Edge processors: mine the graph and TSDB data collections and then populate virtual topology Edge collections in the graph DB.  Linkstate-edge is an one such processor: <https://github.com/cisco-open/jalapeno/tree/main/linkstate-edge>
 
 * API-GW - expose Jalapeno's virtual topology data for application consumption (API-GW is under construction)
+    * An implementation focusing on fetching topology and telemetry data from Jalapeño can be found in a separate GitHub organisation: <https://github.com/jalapeno-api-gateway>
     * An implementation focusing on fetching topology and telemetry data from Jalapeño can be found in a separate GitHub organisation: <https://github.com/jalapeno-api-gateway>
 
 * SR-Apps - mini-applications that mine the graph and time-series databases for the label stack or SRv6 SRH data needed to execute topology or traffic engineering use cases.  Each SR-App should have its own API to field client requests for Segment Routing network services.  
@@ -59,9 +66,11 @@ Jalapeno is comprised of a series of microservices which can be summarized as:
 Jalapeno's kubernetes architecture make it inherently extensible, and we imagine the number of collectors, graphDB virtual topology use cases, and SR-Apps to expand significantly as our community grows.
 
 In this example app an end user or application would like to send their backup/background traffic to its destination via the least utilized path, and thus preserve more capacity on the routing protocol's chosen best path. Jalapeno responds to the request with a segment routing label stack that, when appended to outbound packets, will steer traffic over the least utilized path. The app then re-queries Jalapeno every 10 seconds and updates the SR label stack should the least utilized path change.
+In this example app an end user or application would like to send their backup/background traffic to its destination via the least utilized path, and thus preserve more capacity on the routing protocol's chosen best path. Jalapeno responds to the request with a segment routing label stack that, when appended to outbound packets, will steer traffic over the least utilized path. The app then re-queries Jalapeno every 10 seconds and updates the SR label stack should the least utilized path change.
 
 #### ** Note on BGP-LS
 
+The key to developing and supporting virtual topology use cases is the programmatic acquisition of topology data.  Traditional SDN-TE platforms focus on Internal-TE and therefore leverage BGP-LS. With Jalapeno we wish to eventually support all the above categories of use case, and therefore we use BGP Monitoring Protocol (BMP) and leverage the GoBMP collector:  <https://github.com/sbezverk/gobmp>. BMP provides a superset of topology data, including:
 The key to developing and supporting virtual topology use cases is the programmatic acquisition of topology data.  Traditional SDN-TE platforms focus on Internal-TE and therefore leverage BGP-LS. With Jalapeno we wish to eventually support all the above categories of use case, and therefore we use BGP Monitoring Protocol (BMP) and leverage the GoBMP collector:  <https://github.com/sbezverk/gobmp>. BMP provides a superset of topology data, including:
 
 * BGP-LS topology data
