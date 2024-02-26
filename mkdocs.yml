@@ -1,0 +1,97 @@
+# Site Info
+site_name: Project Jalapeno
+site_url: https://cisco-open.github.io/jalapeno
+site_author: Cisco Open Source
+repo_name: cisco-open/jalapeno
+repo_url: https://github.com/cisco-open/jalapeno
+copyright: Copyright © 2024 Cisco Systems, Inc. and its affiliates. All rights reserved.
+
+# Site Theme
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  icon:
+    repo: fontawesome/brands/github
+  logo: img/jalapeno.png
+  favicon: img/jalapeno.png
+  features:
+    - navigation.footer
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.expand
+    - navigation.indexes 
+    - toc.integrate 
+    - content.code.annotate 
+    - content.code.copy
+
+# Site Nav
+nav:
+  - Home: index.md
+  - About: 
+    - about/index.md
+    - Infrastructure: about/infrastructure.md
+    - Collectors: about/collectors.md
+    - Processors: about/processors.md
+  - Installation: 
+    - Getting Started: install/gettingstarted.md
+    - Prerequisites: install/prerequisites.md
+    - Kubernetes Setup: install/kubernetes.md
+    - Install Jalapeno: install/jalapeno.md
+  - Usage:
+    - usage/index.md
+    - API: usage/api.md
+    - ArangoDB: usage/arangodb.md
+    - Grafana: usage/grafana.md
+    - InfluxDB: usage/influxdb.md
+    - Kafka: usage/kafka.md
+  - Device Config:
+    - device-config/index.md
+    - IOS-XR: device-config/xr-config.md
+  - Resources:
+    - resources/index.md
+    - ArangoDB: resources/arangodb.md
+    - InfluxDB: resources/influxdb.md
+  - Development:  
+    - development/index.md
+    - Minimal Instance: development/minimal.md
+    - Building Images: development/images.md
+  
+# Extras
+extra:
+  social:
+    - icon: material/web 
+      link: https://opensource.cisco.com/
+    - icon: fontawesome/brands/github 
+      link: https://github.com/cisco-open/jalapeno
+
+# Plugins
+markdown_extensions:
+  - admonition
+  - abbr
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.snippets:
+      base_path: ["docs"]
+      auto_append:
+        - includes/abbreviations.md
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg

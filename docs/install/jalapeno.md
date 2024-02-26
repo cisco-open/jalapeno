@@ -1,31 +1,43 @@
 # Jalapeno Installation
-Jalapeno has been primarily developed, tested, and operated on Ubuntu 18.04 and 20.04 Kubernetes environments (bare-metal, VM, or cloud). Recommended VM sizing for a test lab is 4 vCPU, 16GB memory, and 50G of disk.  If deploying in production or a test environment with large table sizes (full Internet table, 250k + internal or vpn prefixes), then we recommend a bare metal K8s cluster with two or more nodes. 
 
-Note: the Jalapeno installation script by default will pull a telemetry stack consisting of Telegraf, Influx, and Kafka images (the TIK stack).  If you would like to integrate Jalapeno's BMP/Topology/GraphDB elements with an existing telemetry stack simply comment out the TIK stack elements in the shell script.
-
-Instructions for installing Kubernetes: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
-
-Users who do not have a full Kubernetes or GKE deployment can get up and running quite quickly with Microk8s [Installing K8s](docs/K8s_installation.md). (_Note that the DNS service must be enabled before deploying Jalapeno: `microk8s enable dns`._)
+!!! warning
+    A Kubernetes installation is required to continue. If you don't have a running environment, please follow the steps [here](kubernetes.md) to get set up.
 
 ### Installing Jalapeno
 
-1. Clone this repo and `cd` into the folder: `git clone <repo> && cd jalapeno`
+???+ tip
+    The Jalapeno installation script by default will pull a telemetry stack consisting of Telegraf, Influx, and Kafka images (the TIK stack). If you would like to  integrate Jalapeno's BMP/Topology/GraphDB elements with an existing telemetry stack simply comment out the TIK stack elements in the shell script.
+
+1. Clone the Jalapeno repo and `cd` into the folder:
+
+    ```bash
+    git clone https://github.com/cisco-open/jalapeno.git && cd jalapeno
+    ```
 
 2. Use the `deploy_jalapeno.sh` script. This will start the collectors, the Jalapeno infra images, and the topology and linkstate-edge processors.
 
-   ```bash
-   ./deploy_jalapeno.sh [path_to_kubectl]
+    ```bash
+    ./deploy_jalapeno.sh [path_to_kubectl]
+ 
+    ```
 
-   ```
-  (_Note: if you're using a nonstandard kubectl, you need to pass the appropriate command to this script. For example, with microk8s:_ `./deploy_jalapeno.sh microk8s.kubectl`)
+    !!! tip
+        If you're using a nonstandard kubectl, you need to pass the appropriate command to this script.
 
-3. Check that all containers are up using: `kubectl get all --all-namespaces` or on a per-namespace basis:
-```
+        For example, with microk8s: `./deploy_jalapeno.sh microk8s.kubectl`
+
+### Validation
+
+Validate that all containers are started & running. Using: `kubectl get all --all-namespaces` or on a per-namespace basis:
+
+```bash
 kubectl get all -n jalapeno
 kubectl get all -n jalapeno-collectors
 ```
-Output
-```
+
+Expected Output for `jalapeno` Namespace:
+
+```{ .text .no-copy }
 NAME                                              READY   STATUS    RESTARTS   AGE
 pod/arangodb-0                                    1/1     Running   0          9d
 pod/grafana-deployment-579c5f75bb-7g7bk           1/1     Running   0          9d
@@ -65,8 +77,10 @@ statefulset.apps/influxdb    1/1     9d
 statefulset.apps/kafka       1/1     9d
 statefulset.apps/zookeeper   1/1     9d
 ```
-Collectors
-```
+
+Expected Output for `jalapeno-collectors` Namespace:
+
+```{ .text .no-copy }
 NAME                                               READY   STATUS    RESTARTS   AGE
 pod/gobmp-f8bf8d6d5-nvwn8                          1/1     Running   2          3m42s
 pod/telegraf-ingress-deployment-56867cf9b4-62snv   1/1     Running   1          3m46s
@@ -82,47 +96,20 @@ deployment.apps/telegraf-ingress-deployment   1/1     1            1           3
 NAME                                                     DESIRED   CURRENT   READY   AGE
 replicaset.apps/gobmp-f8bf8d6d5                          1         1         1       3m42s
 replicaset.apps/telegraf-ingress-deployment-56867cf9b4   1         1         1       3m46s
-
 ```
 
-4. Configure routers in the network to stream telemetry and BMP data to the Jalapeno cluster. Jalapeno's default MDT port is 32400 and the BMP port is 30511.  Generally we would setup MDT on all routers and BMP only on route reflectors and any routers with external peering sessions.
+### Device Config
 
-   1. Example destination group for MDT: **Note: you may need to set TPA mgmt**
+Configure routers in the network to stream telemetry and BMP data to the Jalapeno cluster.
 
-      ```shell
-       destination-group jalapeno
-        address-family ipv4 <server-ip> port 32400
-         encoding self-describing-gpb
-         protocol grpc no-tls
-        !
-       !
-      ```
-
-   2. Example of IOS-XR BMP config:
-
-      ```shell
-      bmp server 1
-       host <server-ip> port 30511
-       description jalapeno GoBMP
-       update-source MgmtEth0/RP0/CPU0/0
-       flapping-delay 60
-       initial-delay 5
-       stats-reporting-period 60
-       initial-refresh delay 30 spread 2
-      !
-      router bgp 65000
-       neighbor 172.31.101.4
-       bmp-activate server 1
-      ```
+Instructions can be found under the [Device Config](../device-config/index.md) section.
 
 ## Destroying Jalapeno
 
 Jalapeno can also be destroyed using the script.
 
-1. Use the `destroy_jalapeno.sh` script. Will remove both namespaces jalapeno and jalapeno-collectors and all associated services/pods/deployments/etc. and it will remove all the persistent volumes associated with kafka and arangodb.
+1. Use the `destroy_jalapeno.sh` script. This will remove both namespaces `jalapeno` and `jalapeno-collectors` and all associated services/pods/deployments/etc. This will also remove all the persistent volumes associated with Kafka and Arangodb.
 
-   ```shell
-   destroy_jalapeno.sh kubectl
+   ```bash
+   ./destroy_jalapeno.sh kubectl
    ```
-
-
