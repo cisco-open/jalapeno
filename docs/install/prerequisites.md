@@ -4,6 +4,7 @@ Jalapeno has been primarily developed, tested, and operated on:
 
 - Ubuntu 18.04
 - Ubuntu 20.04
+- Ubuntu 22.04
 
 With the following Kubernetes environments (Bare-metal, VM, or Cloud):
 
