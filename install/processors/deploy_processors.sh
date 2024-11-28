@@ -14,3 +14,6 @@ ${KUBE} create -f ${PWD}/${BASEDIR}/telegraf-egress/.
 
 echo "Deploying LS Link-Node Edge Processor"
 ${KUBE} create -f ${PWD}/${BASEDIR}/lslinknode-edge/lslinknode-edge.yaml
+
+echo "Deploying IGP Graph Processor"
+${KUBE} create -f ${PWD}/${BASEDIR}/igp-graph/igp-graph.yaml
