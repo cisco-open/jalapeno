@@ -13,7 +13,7 @@ all: igp-graph
 
 igp-graph:
 	mkdir -p bin
-	$(MAKE) -C ./cmd compile-igp-graph
+	$(MAKE) -C ./cmd/igp-graph compile-igp-graph
 
 igp-graph-container: igp-graph
 	docker build -t $(REGISTRY_NAME)/igp-graph:$(IMAGE_VERSION) -f ./build/Dockerfile.igp-graph .
