@@ -18,24 +18,8 @@ spec:
       containers:
       - name: srv6-localsids
         image: iejalapeno/srv6-localsids:latest
-        imagePullPolicy: Always
-      - args:
-          - --v
-          - "5"
-          - --message-server
-          - "broker.jalapeno:9092"
-          - --database-server
-          - "http://arangodb.jalapeno:8529"
-          - --database-name
-          - "jalapeno"
-        volumeMounts:
-            - name: credentials
-              mountPath: /credentials
-      volumes:
-        - name: credentials
-          secret:
-            secretName: jalapeno
-      env:
+        imagePullPolicy: IfNotPresent
+        env:
           - name: PYTHONUNBUFFERED
             value: "1"
       imagePullSecrets:
