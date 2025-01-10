@@ -28,6 +28,12 @@ ${KUBE} create -f ${PWD}/${BASEDIR}/influxdb/.
 echo "Deploying Grafana"
 ${KUBE} create -f ${PWD}/${BASEDIR}/grafana/.
 
+echo "Deploying Jalapeno API"
+${KUBE} create -f ${PWD}/${BASEDIR}/api/.
+
+echo "Deploying Jalapeno UI"
+${KUBE} create -f ${PWD}/${BASEDIR}/ui/.
+
 echo "Finished deploying infra services"
 
 

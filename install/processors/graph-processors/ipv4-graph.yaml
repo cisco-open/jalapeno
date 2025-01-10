@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ipv4-graph
+  template:
+    metadata:
+      labels:
+        app: ipv4-graph
+    spec:
+      containers:
+        - args:
+            - --v
+            - "5"
+            - --message-server
+            - "broker.jalapeno:9092"
+            - --database-server
+            - "http://arangodb:8529"
+            - --database-name
+            - "jalapeno"
+          image: docker.io/iejalapeno/ipv4-graph:latest
+          imagePullPolicy: Always
+          name: ipv4-graph
+          volumeMounts:
+            - name: credentials
+              mountPath: /credentials
+      volumes:
+        - name: credentials
+          secret:
+            secretName: jalapeno
+metadata:
+  name: ipv4-graph
+  namespace: jalapeno
