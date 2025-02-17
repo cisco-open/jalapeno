@@ -20,7 +20,7 @@ spec:
       - env:
         - name: ARANGO_ROOT_PASSWORD
           value: jalapeno
-        image: arangodb:3.6.12
+        image: arangodb:3.12.4
         name: arangodb
         ports:
         - containerPort: 8529
