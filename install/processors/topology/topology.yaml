@@ -12,6 +12,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: topology
+  namespace: jalapeno
 spec:
   replicas: 1
   selector:
@@ -34,7 +35,7 @@ spec:
           - "jalapeno"
           - --notify-event
           - "true"
-          image: docker.io/iejalapeno/topology:latest
+          image: docker.io/iejalapeno/topology:issue_249
           imagePullPolicy: Always
           name: topology
           volumeMounts:
@@ -44,6 +45,4 @@ spec:
         - name: credentials
           secret:
             secretName: jalapeno
-metadata:
-  name: topology
-  namespace: jalapeno
+
