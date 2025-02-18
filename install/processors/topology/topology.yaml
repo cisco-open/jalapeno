@@ -35,7 +35,7 @@ spec:
           - "jalapeno"
           - --notify-event
           - "true"
-          image: docker.io/iejalapeno/topology:issue_249
+          image: docker.io/iejalapeno/topology:latest
           imagePullPolicy: Always
           name: topology
           volumeMounts:

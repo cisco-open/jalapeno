@@ -1,5 +1,5 @@
 REGISTRY_NAME?=docker.io/iejalapeno
-IMAGE_VERSION?=issue_249
+IMAGE_VERSION?=latest
 
 .PHONY: all topology container push-aio clean test
 
