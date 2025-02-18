@@ -12,6 +12,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: topology
+  namespace: jalapeno
 spec:
   replicas: 1
   selector:
@@ -44,6 +45,4 @@ spec:
         - name: credentials
           secret:
             secretName: jalapeno
-metadata:
-  name: topology
-  namespace: jalapeno
+
