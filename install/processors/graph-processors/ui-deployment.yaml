@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jalapeno-ui
+  namespace: jalapeno
+  labels:
+    app: jalapeno-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jalapeno-ui
+  template:
+    metadata:
+      labels:
+        app: jalapeno-ui
+    spec:
+      containers:
+      - name: jalapeno-ui
+        image: iejalapeno/jalapeno-ui:latest  
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: REACT_APP_API_URL
+          value: "http://jalapeno-api:80"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5 

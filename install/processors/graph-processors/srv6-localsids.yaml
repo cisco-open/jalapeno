@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: jalapeno
+  name: srv6-localsids
+  labels:
+    app: srv6-localsids
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: srv6-localsids
+  template:
+    metadata:
+      labels:
+        app: srv6-localsids
+    spec:
+      containers:
+      - name: srv6-localsids
+        image: iejalapeno/srv6-localsids:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: PYTHONUNBUFFERED
+            value: "1"
+      imagePullSecrets:
+        - name: regcred
+
