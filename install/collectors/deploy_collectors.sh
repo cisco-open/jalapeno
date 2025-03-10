@@ -9,9 +9,6 @@ fi
 
 echo "Deploying Jalapeno Collectors"
 
-echo "Creating jalapeno-collectors namespace"
-${KUBE} create -f ${PWD}/${BASEDIR}/namespace-jalapeno-collectors.json
-
 echo "Deploying Telegraf-Ingress Collector to collect network performance-metric data"
 ${KUBE} create -f ${PWD}/${BASEDIR}/telegraf-ingress/.
 

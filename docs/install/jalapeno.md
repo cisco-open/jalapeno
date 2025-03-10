@@ -32,7 +32,6 @@ Validate that all containers are started & running. Using: `kubectl get all --al
 
 ```bash
 kubectl get all -n jalapeno
-kubectl get all -n jalapeno-collectors
 ```
 
 Expected Output for `jalapeno` Namespace:
@@ -78,26 +77,6 @@ statefulset.apps/kafka       1/1     9d
 statefulset.apps/zookeeper   1/1     9d
 ```
 
-Expected Output for `jalapeno-collectors` Namespace:
-
-```{ .text .no-copy }
-NAME                                               READY   STATUS    RESTARTS   AGE
-pod/gobmp-f8bf8d6d5-nvwn8                          1/1     Running   2          3m42s
-pod/telegraf-ingress-deployment-56867cf9b4-62snv   1/1     Running   1          3m46s
-
-NAME                          TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                          AGE
-service/gobmp                 NodePort   10.97.107.27    <none>        5000:30511/TCP,56767:30767/TCP   3m43s
-service/telegraf-ingress-np   NodePort   10.97.218.162   <none>        57400:32400/TCP                  3m46s
-
-NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/gobmp                         1/1     1            1           3m42s
-deployment.apps/telegraf-ingress-deployment   1/1     1            1           3m46s
-
-NAME                                                     DESIRED   CURRENT   READY   AGE
-replicaset.apps/gobmp-f8bf8d6d5                          1         1         1       3m42s
-replicaset.apps/telegraf-ingress-deployment-56867cf9b4   1         1         1       3m46s
-```
-
 ### Device Config
 
 Configure routers in the network to stream telemetry and BMP data to the Jalapeno cluster.
@@ -108,7 +87,7 @@ Instructions can be found under the [Device Config](../device-config/index.md) s
 
 Jalapeno can also be destroyed using the script.
 
-1. Use the `destroy_jalapeno.sh` script. This will remove both namespaces `jalapeno` and `jalapeno-collectors` and all associated services/pods/deployments/etc. This will also remove all the persistent volumes associated with Kafka and Arangodb.
+1. Use the `destroy_jalapeno.sh` script. This will remove the `jalapeno` namespace and all associated services/pods/deployments/etc. This will also remove all the persistent volumes associated with Kafka and Arangodb.
 
    ```bash
    ./destroy_jalapeno.sh kubectl
