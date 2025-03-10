@@ -22,9 +22,7 @@ Kafka is deployed using `kubectl`, as seen in the `deploy_infrastructure.sh` scr
 
 ArangoDB is Jalapeno's graph database.
 
-Jalapeno [Processors](./processors.md) parse through data in Kafka, then create various collections in ArangoDB. These collections represent both the network's topology and its current state. For example, the [Topology Processor](./processors.md#topology-processor) parses BMP messages that have been streamed to Kafka and builds out collections such as "ls_node" and "l3vpn_prefix_v4" in Jalapeno's ArangoDB instance. These collections, in conjunction with ArangoDBs rapid graphical traversals and calculations, make it easy to determine the lowest-latency path, etc.
-
-ArangoDB also houses the most interactive aspects of Jalapeno. Processors for Bandwidth and Latency upsert their scores here. Clients can run queries to generate label stacks for their desired network optimization attribute.
+Jalapeno [Processors](./processors.md) parse through data in Kafka, then create various collections in ArangoDB. These collections represent both the network's topology and its current state. For example, the [Topology Processor](./processors.md#topology-processor) parses BMP messages that have been streamed to Kafka and builds out collections such as "ls_node" and "l3vpn_prefix_v4" in Jalapeno's ArangoDB instance. These collections, in conjunction with ArangoDBs rapid graphical traversals make it easy to model topologies and make path calculations.
 
 ArangoDB is deployed using `kubectl`, as seen in the `deploy_infrastructure.sh` script. The configurations for ArangoDB's deployment are in the YAML files in the `jalapeno/infra/arangodb/` directory.  
 
@@ -53,7 +51,7 @@ show series
 
 ## Grafana
 
-Grafana is Jalapeno's visual dashboard and metric visualization tool.
+The Jalapeno installation package includes a Grafana instance for creating dashboards and metric visualizations.
 
 Loaded with InfluxDB as its data-source, Grafana has various graphical representations of the network, including historical bandwidth usage, historical latency metrics, and more.
 

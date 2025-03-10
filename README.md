@@ -5,7 +5,9 @@
 Jalapeno is an infrastructure platform designed to streamline the development of Software-Defined Networking (SDN) control planes. The project targets a specific class of SDN control planes that can be thought of as "Tunnel Builders," which offer services such as segmentation and path manipulation. Traditionally, these Tunnel Builder control planes have been tailored to specific use cases, and their data collection and topology modeling stacks reflect this specialization. Examples include:
 
 •  Overlay controllers for data center overlays
+
 •  Traffic Engineering (TE) controllers for traffic management
+
 •  SD-WAN controllers, which blend overlay and TE functionalities
 
 Additionally, most existing SDN control planes, apart from those used in Cloud Network Interfaces (CNIs) or Cloud Virtual Private Clouds (VPCs), are constructed with the assumption that routers or switches serve as their primary consumers. These devices typically function as the ingress and egress points for traditional SDN Tunnel Builders.
@@ -26,7 +28,7 @@ To install Jalapeno and get started, visit the [Getting Started](https://cisco-o
 
 ![jalapeno_architecture](docs/img/jalapeno_architecture.png "jalapeno architecture")
 
-#### Platform Overview
+### Platform Overview
 
 At the heart of Jalapeno is the concept that many SDN use cases really involve the creation of virtual topologies whose type and characteristics are driven by dataplane encapsulations and other meta data *(Tunnel Building)* . And network topologies (whether real or virtual) can be modeled as graphs. Thus, if we think in terms of graphs, we can address any topological use case as an exercise in database mapping. With this framework in mind, Jalapeno has the theoretical ability to address any kind of virtual topology use case, for example:
 
@@ -47,7 +49,7 @@ At the heart of Jalapeno is the concept that many SDN use cases really involve t
 * Modular, extensible, microservice architecture
 * Emphasize the use of APIs over Protocols for greater agility
 
-#### Jalapeno's key components
+### Jalapeno's key components
 
 Jalapeno is comprised of a series of microservices which can be summarized as:
 
