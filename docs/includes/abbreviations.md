@@ -37,6 +37,7 @@
 *[TLVs]: Type-Length-Values
 *[TPA]: Third-Party Applications
 *[TX]: Transmit
+*[uSID]: SRv6 Micro-SID
 *[VPN]: Virtual Private Network
 *[VPNv4]: IPv4 Virtual Private Network
 *[VPNv6]: IPv6 Virtual Private Network

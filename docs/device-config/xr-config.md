@@ -1,17 +1,26 @@
 # IOS-XR
 
-This section contains notes on IOS-XR router configs and network design.
+This section contains notes and example IOS-XR router configs and network design.
 
-## Segment Routing
+## Segment Routing and SRv6
 
-1. SRGB: we use a custom label block in our lab.  The default is 16000 - 23999.
+1. Base SR/SRv6 configuration
 
     ```yaml
     segment-routing
-     global-block 100000 163999   
+     global-block 16000 23999   
+     srv6
+      encapsulation
+      source-address fc00:0000:6::1
+     !
+     locators
+      locator MAIN
+        micro-segment behavior unode psp-usd
+        prefix fc00:0000:6::/48
+    !
     ```
 
-2. Enable SR in ISIS
+2. Enable SR/SRv6 in ISIS
 
     ```yaml
     router isis 100
@@ -24,11 +33,14 @@ This section contains notes on IOS-XR router configs and network design.
       mpls traffic-eng router-id Loopback0
       maximum-paths 32
       segment-routing mpls
+      segment-routing srv6
+       locator MAIN
+      !
      !
      interface Loopback0
       passive
       address-family ipv4 unicast
-       prefix-sid absolute 100006 #(1)!
+       prefix-sid absolute 16006 #(1)!
       !
     ```
 
