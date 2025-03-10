@@ -11,7 +11,7 @@
 1. Clone the Jalapeno repo and `cd` into the folder:
 
     ```bash
-    git clone https://github.com/cisco-open/jalapeno.git && cd jalapeno
+    git clone https://github.com/cisco-open/jalapeno.git && cd jalapeno/install
     ```
 
 2. Use the `deploy_jalapeno.sh` script. This will start the collectors, the Jalapeno infra images, and the topology and linkstate-edge processors.

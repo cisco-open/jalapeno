@@ -36,9 +36,9 @@ Setting up a K8s cluster is outside the scope of this documentation. Instead, be
 
     Then restart docker with `sudo systemctl restart docker.service`
 
-### Install Calico CNI (Optional)
+### Install Cilium CNI (Optional)
 
-If desired, install Calico for CNI using the instructions available [here](https://docs.projectcalico.org/getting-started/kubernetes/self-managed-onprem/onpremises).
+If desired, install the Cilium CNI using the instructions available [here](https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/).
 
 ## K8s Validation
 
@@ -47,32 +47,75 @@ Once installation is complete the cluster should look similar to the output belo
 ```{ .text .no-copy }
 $ kubectl get all --all-namespaces
 
-NAMESPACE     NAME                                           READY   STATUS    RESTARTS   AGE
-kube-system   pod/calico-kube-controllers-5c6f6b67db-n6vnd   1/1     Running   0          107s
-kube-system   pod/calico-node-fk4kz                          1/1     Running   0          108s
-kube-system   pod/coredns-f9fd979d6-g6n2j                    1/1     Running   0          2m38s
-kube-system   pod/coredns-f9fd979d6-kzw8v                    1/1     Running   0          2m38s
-kube-system   pod/etcd-ie-dev8                               1/1     Running   0          2m36s
-kube-system   pod/kube-apiserver-ie-dev8                     1/1     Running   0          2m36s
-kube-system   pod/kube-controller-manager-ie-dev8            1/1     Running   0          2m36s
-kube-system   pod/kube-proxy-7mvrw                           1/1     Running   0          2m38s
-kube-system   pod/kube-scheduler-ie-dev8                     1/1     Running   0          2m36s
+NAMESPACE             NAME                                               READY   STATUS    RESTARTS      AGE
+jalapeno-collectors   pod/gobmp-54cc8cf9b9-4kfrj                         1/1     Running   1 (10d ago)   20d
+jalapeno-collectors   pod/telegraf-ingress-deployment-77f868dd79-8fnz8   1/1     Running   2 (10d ago)   20d
+jalapeno              pod/arangodb-0                                     1/1     Running   1 (10d ago)   20d
+jalapeno              pod/grafana-deployment-58986bc44b-gpq7n            1/1     Running   1 (10d ago)   20d
+jalapeno              pod/influxdb-0                                     1/1     Running   1 (10d ago)   20d
+jalapeno              pod/kafka-0                                        1/1     Running   2 (10d ago)   20d
+jalapeno              pod/lslinknode-edge-744bd66695-pzhk2               1/1     Running   6 (10d ago)   20d
+jalapeno              pod/telegraf-egress-deployment-84448c9879-dw8mc    1/1     Running   5 (10d ago)   20d
+jalapeno              pod/topology-665c776f84-l8896                      1/1     Running   0             9d
+jalapeno              pod/zookeeper-0                                    1/1     Running   1 (10d ago)   20d
+kube-system           pod/cilium-envoy-kqjmq                             1/1     Running   1 (10d ago)   20d
+kube-system           pod/cilium-operator-54c7465577-fvcms               1/1     Running   1 (10d ago)   20d
+kube-system           pod/cilium-trrw8                                   1/1     Running   1 (10d ago)   20d
+kube-system           pod/coredns-7c65d6cfc9-fdzc4                       1/1     Running   1 (10d ago)   20d
+kube-system           pod/coredns-7c65d6cfc9-v4mv9                       1/1     Running   1 (10d ago)   20d
+kube-system           pod/etcd-jalapeno-host                             1/1     Running   1 (10d ago)   20d
+kube-system           pod/kube-apiserver-jalapeno-host                   1/1     Running   1 (10d ago)   20d
+kube-system           pod/kube-controller-manager-jalapeno-host          1/1     Running   1 (10d ago)   20d
+kube-system           pod/kube-proxy-dts8w                               1/1     Running   1 (10d ago)   20d
+kube-system           pod/kube-scheduler-jalapeno-host                   1/1     Running   1 (10d ago)   20d
 
-NAMESPACE     NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
-default       service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP                  2m45s
-kube-system   service/kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   2m43s
+NAMESPACE             NAME                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                          AGE
+default               service/kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP                          20d
+jalapeno-collectors   service/gobmp                 NodePort    10.96.245.167    <none>        5000:30511/TCP,56767:30767/TCP   20d
+jalapeno-collectors   service/telegraf-ingress-np   NodePort    10.97.247.231    <none>        57400:32400/TCP                  20d
+jalapeno              service/arango-np             NodePort    10.111.203.73    <none>        8529:30852/TCP                   20d
+jalapeno              service/arangodb              ClusterIP   10.99.179.251    <none>        8529/TCP                         20d
+jalapeno              service/broker                ClusterIP   10.103.212.223   <none>        9092/TCP                         20d
+jalapeno              service/grafana               ClusterIP   10.99.46.64      <none>        3000/TCP                         20d
+jalapeno              service/grafana-np            NodePort    10.104.190.91    <none>        3000:30300/TCP                   20d
+jalapeno              service/influxdb              ClusterIP   10.111.183.55    <none>        8086/TCP                         20d
+jalapeno              service/influxdb-np           NodePort    10.97.60.195     <none>        8086:30308/TCP                   20d
+jalapeno              service/kafka                 NodePort    10.97.226.142    <none>        9094:30092/TCP                   20d
+jalapeno              service/zookeeper             ClusterIP   10.109.47.153    <none>        2888/TCP,3888/TCP,2181/TCP       20d
+kube-system           service/cilium-envoy          ClusterIP   None             <none>        9964/TCP                         20d
+kube-system           service/hubble-peer           ClusterIP   10.110.213.58    <none>        443/TCP                          20d
+kube-system           service/kube-dns              ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP           20d
 
-NAMESPACE     NAME                         DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
-kube-system   daemonset.apps/calico-node   1         1         1       1            1           kubernetes.io/os=linux   109s
-kube-system   daemonset.apps/kube-proxy    1         1         1       1            1           kubernetes.io/os=linux   2m43s
+NAMESPACE     NAME                          DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+kube-system   daemonset.apps/cilium         1         1         1       1            1           kubernetes.io/os=linux   20d
+kube-system   daemonset.apps/cilium-envoy   1         1         1       1            1           kubernetes.io/os=linux   20d
+kube-system   daemonset.apps/kube-proxy     1         1         1       1            1           kubernetes.io/os=linux   20d
 
-NAMESPACE     NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
-kube-system   deployment.apps/calico-kube-controllers   1/1     1            1           108s
-kube-system   deployment.apps/coredns                   2/2     2            2           2m43s
+NAMESPACE             NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
+jalapeno-collectors   deployment.apps/gobmp                         1/1     1            1           20d
+jalapeno-collectors   deployment.apps/telegraf-ingress-deployment   1/1     1            1           20d
+jalapeno              deployment.apps/grafana-deployment            1/1     1            1           20d
+jalapeno              deployment.apps/lslinknode-edge               1/1     1            1           20d
+jalapeno              deployment.apps/telegraf-egress-deployment    1/1     1            1           20d
+jalapeno              deployment.apps/topology                      1/1     1            1           20d
+kube-system           deployment.apps/cilium-operator               1/1     1            1           20d
+kube-system           deployment.apps/coredns                       2/2     2            2           20d
 
-NAMESPACE     NAME                                                 DESIRED   CURRENT   READY   AGE
-kube-system   replicaset.apps/calico-kube-controllers-5c6f6b67db   1         1         1       108s
-kube-system   replicaset.apps/coredns-f9fd979d6                    2         2         2       2m38s
+NAMESPACE             NAME                                                     DESIRED   CURRENT   READY   AGE
+jalapeno-collectors   replicaset.apps/gobmp-54cc8cf9b9                         1         1         1       20d
+jalapeno-collectors   replicaset.apps/telegraf-ingress-deployment-77f868dd79   1         1         1       20d
+jalapeno              replicaset.apps/grafana-deployment-58986bc44b            1         1         1       20d
+jalapeno              replicaset.apps/lslinknode-edge-744bd66695               1         1         1       20d
+jalapeno              replicaset.apps/telegraf-egress-deployment-84448c9879    1         1         1       20d
+jalapeno              replicaset.apps/topology-665c776f84                      1         1         1       20d
+kube-system           replicaset.apps/cilium-operator-54c7465577               1         1         1       20d
+kube-system           replicaset.apps/coredns-7c65d6cfc9                       2         2         2       20d
+
+NAMESPACE   NAME                         READY   AGE
+jalapeno    statefulset.apps/arangodb    1/1     20d
+jalapeno    statefulset.apps/influxdb    1/1     20d
+jalapeno    statefulset.apps/kafka       1/1     20d
+jalapeno    statefulset.apps/zookeeper   1/1     20d
 ```
 
 If everything looks good, move onto [Installing Jalepeno](jalapeno.md).
