@@ -1,8 +1,17 @@
 # Jalapeno
 
-### A cloud-native infrastructure platform to enable development of network services
+### An infrastructure platform to facilitate development of SDN control planes
 
-Project Jalapeno combines existing open source tools with some new stuff we've developed into an infrastructure platform intended to enable development of Cloud Native Network Services (CNNS).  Think of it as applying microservices architecture to SDN: give developers the ability to quickly and easily build microservice control planes (CNNS) on top of a common data collection and warehousing infrastructure (Jalapeno).
+Jalapeno is an infrastructure platform designed to streamline the development of Software-Defined Networking (SDN) control planes. The project targets a specific class of SDN control planes that can be thought of as "Tunnel Builders," which offer services such as segmentation and path manipulation. Traditionally, these Tunnel Builder control planes have been tailored to specific use cases, and their data collection and topology modeling stacks reflect this specialization. Examples include:
+
+	•	Overlay controllers for data center overlays
+	•	Traffic Engineering (TE) controllers for traffic management
+	•	SD-WAN controllers, which blend overlay and TE functionalities
+
+
+Additionally, most existing SDN control planes, apart from those used in Cloud Network Interfaces (CNIs) or Cloud Virtual Private Clouds (VPCs), are constructed with the assumption that routers or switches serve as their primary consumers. These devices typically function as the ingress and egress points for traditional SDN Tunnel Builders.
+
+Project Jalapeno seeks to break out of the silos by providing a platform that is use case, topology, and endpoint agnostic. It features a loosely coupled, modular data collection stack centered around a graph database, enabling the mapping and modeling of any kind of topology. Jalapeno's modular design integrates existing open-source tools with unique services and capabilities we've developed, offering the flexibility and extensibility needed to accelerate the development of innovative SDN control plane applications.
 
 This repository provides documentation and shell scripts to install Jalapeno's component images.
 
@@ -22,42 +31,44 @@ To install Jalapeno and get started, visit the [Getting Started](https://cisco-o
 
 ![jalapeno_architecture](docs/img/jalapeno_architecture.png "jalapeno architecture")
 
-#### Platform Overview: SDN is a Database Problem
+#### Platform Overview
 
-At the heart of Jalapeno is the concept that all SDN use cases are really virtual topologies whose type and characteristics are driven by dataplane encapsulations and other meta data. Thus, SDN is database problem. With this framework in mind, Jalapeno has the theoretical ability to address any kind of virtual topology use case, for example:
+At the heart of Jalapeno is the concept that many SDN use cases really involve the creation of virtual topologies whose type and characteristics are driven by dataplane encapsulations (Tunnel Building) and other meta data. And network topologies (whether real or virtual) can be modeled as graphs. Thus, if we think in terms of graphs, we can address any topological use case as an exercise in database mapping. With this framework in mind, Jalapeno has the theoretical ability to address any kind of virtual topology use case, for example:
 
 * Internal Traffic Engineering (TE) - engineered tunnels traversing a network under common management (BGP-LS use cases - see note below**)
 * Egress Peer Engineering (EPE) - engineered tunnels sending traffic out a specific egress router/interface to an external network
 * SD-WAN - various combinations of TE and EPE
-* VPN overlays - engineered tunnels creating point-to-point or multipoint overlay virtual networks
-* Network Slicing - see VPN overlays
-* VPN overlays with TE, EPE, SDWAN
+* VPN Overlays / Segmentation - engineered tunnels creating point-to-point or multipoint overlay virtual networks
+* Network Slicing - add some SLA to VPN overlays
+* VPN Overlays with TE, EPE, SDWAN
 * Service Chaining - engineered tunnels, potentially a series of them, linked together via or seamlessly traversing midpoint service nodes
-* Service Chaining - engineered tunnels, potentially a series of them, linked together via or seamlessly traversing midpoint service nodes
+* Service Meshes - generally a service-mesh is more of a layer-7 graph, but the mesh could be augmented with some layer-3 topological service as well
 
 #### Some project principles and goals
 
-* Give applications the ability to directly choose their service/SLA (path through the network)
-* Enable development of an ecosystem of Network Service tools and capabilities
-* The Host may be the control/encapsulation point (linux, fd.io, eBPF, other)
-* Microservice architecture
-* Combine network and application performance data
+* Use-case, topology, and endpoint agnostic - The Host may be the control/encapsulation point (linux, fd.io, eBPF, etc.)
+* Give applications the ability to directly choose their network SDN service or SLA
+* Enable development of an ecosystem of SDN control applications, tools, and capabilities
+* Modular, extensible, microservice architecture
 * Emphasize the use of APIs over Protocols for greater agility
 
 #### Jalapeno's key components
 
 Jalapeno is comprised of a series of microservices which can be summarized as:
 
-* Collectors - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.  The collection stack also includes Influx TSDB and Grafana for data visualization
+* **Collectors** - capture network topology and performance data and feed the data to Kafka.  Eventually we wish to incorporate application and server/host performance data as well.  The collection stack also includes Influx TSDB and Grafana for data visualization
 
-* Data Processors, Graph Database, and Time-Series Database - Jalapeno has two classes of processors:
+* **Data Processors**, Graph Database, and Time-Series Database - Jalapeno has two classes of processors:
+  
     * Base data processors: parse topology and performance data coming off Kafka and populate the Influx TSDB and base data collections in the Arango graph database.  The Topology and Telegraf pods are base processors.
     * Virtual Topology or Edge processors: mine the graph and TSDB data collections and then populate virtual topology Edge collections in the graph DB.  Linkstate-edge is an one such processor: <https://github.com/cisco-open/jalapeno/tree/main/linkstate-edge>
+  
 * Data Processors, Graph Database, and Time-Series Database - Jalapeno has two classes of processors:
+  
     * Base data processors: parse topology and performance data coming off Kafka and populate the Influx TSDB and base data collections in the Arango graph database.  The Topology and Telegraf pods are base processors.
     * Virtual Topology or Edge processors: mine the graph and TSDB data collections and then populate virtual topology Edge collections in the graph DB.  Linkstate-edge is an one such processor: <https://github.com/cisco-open/jalapeno/tree/main/linkstate-edge>
 
-* API-GW - expose Jalapeno's virtual topology data for application consumption (API-GW is under construction)
+* API - expose Jalapeno's virtual topology data for application consumption 
     * An implementation focusing on fetching topology and telemetry data from Jalapeño can be found in a separate GitHub organisation: <https://github.com/jalapeno-api-gateway>
     * An implementation focusing on fetching topology and telemetry data from Jalapeño can be found in a separate GitHub organisation: <https://github.com/jalapeno-api-gateway>
 
