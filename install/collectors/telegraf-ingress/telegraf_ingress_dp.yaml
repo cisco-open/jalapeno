@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: telegraf-ingress-deployment
-  namespace: jalapeno-collectors
+  namespace: jalapeno
   labels:
     app: telegraf-ingress
 spec:

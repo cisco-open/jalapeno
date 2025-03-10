@@ -8,7 +8,6 @@ fi
 echo "Shutting down Jalapeno"
 ${KUBE} delete -f ${PWD}/infra/service_account.yaml
 ${KUBE} delete namespace jalapeno
-${KUBE} delete namespace jalapeno-collectors
 
 echo "Deleting Persistent Volumes"
 ${KUBE} delete pv arangodb

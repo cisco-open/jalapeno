@@ -48,8 +48,8 @@ Once installation is complete the cluster should look similar to the output belo
 $ kubectl get all --all-namespaces
 
 NAMESPACE             NAME                                               READY   STATUS    RESTARTS      AGE
-jalapeno-collectors   pod/gobmp-54cc8cf9b9-4kfrj                         1/1     Running   1 (10d ago)   20d
-jalapeno-collectors   pod/telegraf-ingress-deployment-77f868dd79-8fnz8   1/1     Running   2 (10d ago)   20d
+jalapeno              pod/gobmp-54cc8cf9b9-4kfrj                         1/1     Running   1 (10d ago)   20d
+jalapeno              pod/telegraf-ingress-deployment-77f868dd79-8fnz8   1/1     Running   2 (10d ago)   20d
 jalapeno              pod/arangodb-0                                     1/1     Running   1 (10d ago)   20d
 jalapeno              pod/grafana-deployment-58986bc44b-gpq7n            1/1     Running   1 (10d ago)   20d
 jalapeno              pod/influxdb-0                                     1/1     Running   1 (10d ago)   20d
@@ -71,8 +71,8 @@ kube-system           pod/kube-scheduler-jalapeno-host                   1/1    
 
 NAMESPACE             NAME                          TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                          AGE
 default               service/kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP                          20d
-jalapeno-collectors   service/gobmp                 NodePort    10.96.245.167    <none>        5000:30511/TCP,56767:30767/TCP   20d
-jalapeno-collectors   service/telegraf-ingress-np   NodePort    10.97.247.231    <none>        57400:32400/TCP                  20d
+jalapeno              service/gobmp                 NodePort    10.96.245.167    <none>        5000:30511/TCP,56767:30767/TCP   20d
+jalapeno              service/telegraf-ingress-np   NodePort    10.97.247.231    <none>        57400:32400/TCP                  20d
 jalapeno              service/arango-np             NodePort    10.111.203.73    <none>        8529:30852/TCP                   20d
 jalapeno              service/arangodb              ClusterIP   10.99.179.251    <none>        8529/TCP                         20d
 jalapeno              service/broker                ClusterIP   10.103.212.223   <none>        9092/TCP                         20d
@@ -92,8 +92,8 @@ kube-system   daemonset.apps/cilium-envoy   1         1         1       1       
 kube-system   daemonset.apps/kube-proxy     1         1         1       1            1           kubernetes.io/os=linux   20d
 
 NAMESPACE             NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
-jalapeno-collectors   deployment.apps/gobmp                         1/1     1            1           20d
-jalapeno-collectors   deployment.apps/telegraf-ingress-deployment   1/1     1            1           20d
+jalapeno              deployment.apps/gobmp                         1/1     1            1           20d
+jalapeno              deployment.apps/telegraf-ingress-deployment   1/1     1            1           20d
 jalapeno              deployment.apps/grafana-deployment            1/1     1            1           20d
 jalapeno              deployment.apps/lslinknode-edge               1/1     1            1           20d
 jalapeno              deployment.apps/telegraf-egress-deployment    1/1     1            1           20d
@@ -102,8 +102,8 @@ kube-system           deployment.apps/cilium-operator               1/1     1   
 kube-system           deployment.apps/coredns                       2/2     2            2           20d
 
 NAMESPACE             NAME                                                     DESIRED   CURRENT   READY   AGE
-jalapeno-collectors   replicaset.apps/gobmp-54cc8cf9b9                         1         1         1       20d
-jalapeno-collectors   replicaset.apps/telegraf-ingress-deployment-77f868dd79   1         1         1       20d
+jalapeno              replicaset.apps/gobmp-54cc8cf9b9                         1         1         1       20d
+jalapeno              replicaset.apps/telegraf-ingress-deployment-77f868dd79   1         1         1       20d
 jalapeno              replicaset.apps/grafana-deployment-58986bc44b            1         1         1       20d
 jalapeno              replicaset.apps/lslinknode-edge-744bd66695               1         1         1       20d
 jalapeno              replicaset.apps/telegraf-egress-deployment-84448c9879    1         1         1       20d
