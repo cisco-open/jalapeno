@@ -43,7 +43,7 @@ metadata:
     app.kubernetes.io/component: database
 spec:
   capacity:
-    storage: 80Gi
+    storage: 8Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
