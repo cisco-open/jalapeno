@@ -7,45 +7,42 @@ To learn more about the release, try:
   $ helm status {{ .Release.Name }}
   $ helm get all {{ .Release.Name }}
 
-{{- if .Values.kafka.enabled }}
-Kafka can be accessed via port {{ .Values.kafka.service.port }} on the following DNS name from within your cluster:
-  jalapeno-kafka:{{ .Values.kafka.service.port }}
-
-{{- if .Values.kafka.externalAccess.enabled }}
-Kafka can also be accessed externally through NodePort:
-  NodePort: {{ .Values.kafka.externalAccess.service.nodePorts[0] }}
-{{- end }}
-{{- end }}
-
 {{- if .Values.arangodb.enabled }}
 ArangoDB can be accessed via port {{ .Values.arangodb.service.port }} on the following DNS name from within your cluster:
   {{ include "jalapeno.fullname" . }}-arangodb:{{ .Values.arangodb.service.port }}
 
 {{- if eq .Values.arangodb.service.type "NodePort" }}
-ArangoDB can also be accessed on http://NODE_IP:{{ .Values.arangodb.service.nodePort }}
+ArangoDB can also be accessed on node port {{ .Values.arangodb.service.nodePort }}.
 {{- end }}
-
-The root password can be retrieved with:
-  kubectl get secret --namespace {{ .Release.Namespace }} {{ include "jalapeno.fullname" . }}-arangodb -o jsonpath="{.data.password}" | base64 --decode
 {{- end }}
 
 {{- if .Values.influxdb.enabled }}
 InfluxDB can be accessed via port {{ .Values.influxdb.service.port }} on the following DNS name from within your cluster:
-  {{ include "jalapeno.fullname" . }}-influxdb:{{ .Values.influxdb.service.port }}
+  {{ .Release.Name }}-influxdb:{{ .Values.influxdb.service.port }}
 
-The admin credentials can be retrieved with:
-  Username: {{ .Values.influxdb.adminUser }}
-  Password: kubectl get secret --namespace {{ .Release.Namespace }} {{ include "jalapeno.fullname" . }}-influxdb -o jsonpath="{.data.admin-password}" | base64 --decode
+{{- if eq .Values.influxdb.service.type "NodePort" }}
+InfluxDB can also be accessed on node port {{ .Values.influxdb.service.nodePorts.http }}.
+{{- end }}
 {{- end }}
 
 {{- if .Values.grafana.enabled }}
 Grafana can be accessed via port {{ .Values.grafana.service.port }} on the following DNS name from within your cluster:
-  {{ include "jalapeno.fullname" . }}-grafana:{{ .Values.grafana.service.port }}
+  {{ .Release.Name }}-grafana:{{ .Values.grafana.service.port }}
 
 {{- if eq .Values.grafana.service.type "NodePort" }}
-Grafana can also be accessed on http://NODE_IP:{{ .Values.grafana.service.nodePort }}
+Grafana can also be accessed on node port {{ .Values.grafana.service.nodePorts.grafana }}.
 {{- end }}
 
-The admin password can be retrieved with:
-  kubectl get secret --namespace {{ .Release.Namespace }} {{ include "jalapeno.fullname" . }}-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
-{{- end }} 
+To get the admin credentials:
+
+  echo "Username: {{ .Values.grafana.admin.user }}"
+  echo "Password: $(kubectl get secret {{ .Release.Name }}-grafana-admin -n {{ .Release.Namespace }} -o jsonpath="{.data.GF_SECURITY_ADMIN_PASSWORD}" | base64 --decode)"
+{{- end }}
+
+{{- if .Values.kafka.enabled }}
+Kafka can be accessed via port 9092 on the following DNS name from within your cluster:
+  {{ .Release.Name }}-kafka:9092
+{{- end }}
+
+For more information on using Jalapeno, visit:
+https://github.com/cisco-open/jalapeno 
