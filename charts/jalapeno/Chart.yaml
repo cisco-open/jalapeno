@@ -14,7 +14,7 @@ maintainers:
 # Dependencies
 dependencies:
   - name: kafka
-    version: "^21.0.0"
+    version: "21.0.5"
     repository: "https://charts.bitnami.com/bitnami"
     condition: kafka.enabled
 
@@ -24,11 +24,11 @@ dependencies:
     condition: kafka.zookeeper.enabled
 
   - name: influxdb
-    version: "^5.0.0"
+    version: "5.4.13"
     repository: "https://charts.bitnami.com/bitnami"
     condition: influxdb.enabled
 
   - name: grafana
-    version: "^8.0.0"
+    version: "8.2.33"
     repository: "https://charts.bitnami.com/bitnami"
     condition: grafana.enabled

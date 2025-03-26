@@ -13,7 +13,12 @@
    cd jalapeno
    ```
 
-2. Install Jalapeno with default settings:
+2. Install the dependencies:
+   ```bash
+   helm dependency update ./charts/jalapeno
+   ```
+
+3. Install Jalapeno with default settings:
    ```bash
    helm install jalapeno ./charts/jalapeno
    ```
