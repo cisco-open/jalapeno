@@ -14,7 +14,7 @@ maintainers:
 # Dependencies
 dependencies:
   - name: kafka
-    version: "21.0.5"
+    version: "32.0.1"
     repository: "https://charts.bitnami.com/bitnami"
     condition: kafka.enabled
 
