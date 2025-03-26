@@ -1,8 +1,9 @@
 {{- if and .Values.arangodb.enabled .Values.arangodb.persistence.enabled }}
+# PVC for ArangoDB Data
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "jalapeno.fullname" . }}-arangodb
+  name: {{ include "jalapeno.fullname" . }}-arangodb-data
   labels:
     {{- include "jalapeno.labels" . | nindent 4 }}
     app.kubernetes.io/component: database
@@ -13,9 +14,31 @@ spec:
   storageClassName: {{ .Values.global.storageClass }}
   {{- else }}
   storageClassName: ""
-  volumeName: {{ .Release.Name }}-arangodb-pv
+  volumeName: {{ .Release.Name }}-arangodb-data-pv
   {{- end }}
   resources:
     requests:
-      storage: {{ .Values.arangodb.persistence.size }}
+      storage: {{ .Values.arangodb.persistence.dataSize }}
+
+---
+# PVC for ArangoDB Apps
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-arangodb-apps
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.global.storageClass }}
+  storageClassName: {{ .Values.global.storageClass }}
+  {{- else }}
+  storageClassName: ""
+  volumeName: {{ .Release.Name }}-arangodb-apps-pv
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.arangodb.persistence.appSize }}
 {{- end }} 

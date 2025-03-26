@@ -33,22 +33,39 @@ spec:
   hostPath:
     path: "/var/lib/kafka/data"
 ---
-# PersistentVolume for ArangoDB
+# PersistentVolume for ArangoDB Data
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-arangodb-pv
+  name: {{ .Release.Name }}-arangodb-data-pv
   labels:
     {{- include "jalapeno.labels" . | nindent 4 }}
     app.kubernetes.io/component: database
 spec:
   capacity:
-    storage: 8Gi
+    storage: 80Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: "/var/lib/arangodb"
+    path: "/var/lib/arangodb/data"
+---
+# PersistentVolume for ArangoDB Apps
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-arangodb-apps-pv
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/var/lib/arangodb/apps"
 ---
 # PersistentVolume for InfluxDB
 apiVersion: v1
