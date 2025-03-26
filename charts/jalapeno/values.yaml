@@ -19,13 +19,13 @@ kafka:
     enabled: true
     size: 50Gi
   service:
-    type: ClusterIP
-    port: 9092
+    type: NodePort
+    nodePorts:
+      client: 30092
+    ports:
+      client: 9092
   externalAccess:
-    enabled: true
-    service:
-      type: NodePort
-      nodePorts: [30092]
+    enabled: false
   zookeeper:
     enabled: true
     replicaCount: 1
@@ -34,6 +34,11 @@ kafka:
       size: 10Gi
     service:
       port: 2181
+  metrics:
+    kafka:
+      enabled: false
+    jmx:
+      enabled: false
 
 # ArangoDB configuration
 arangodb:
