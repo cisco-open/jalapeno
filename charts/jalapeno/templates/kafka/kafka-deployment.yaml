@@ -1,0 +1,58 @@
+{{- if .Values.kafka.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-kafka
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: kafka
+spec:
+  replicas: {{ .Values.kafka.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "jalapeno.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: kafka
+  template:
+    metadata:
+      labels:
+        {{- include "jalapeno.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: kafka
+    spec:
+      containers:
+        - name: kafka
+          image: "{{ .Values.kafka.image.repository }}:{{ .Values.kafka.image.tag }}"
+          imagePullPolicy: {{ .Values.kafka.image.pullPolicy }}
+          ports:
+            - name: client
+              containerPort: 9092
+            - name: internal
+              containerPort: 9093
+          env:
+            - name: KAFKA_BROKER_ID
+              value: "1"
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: "{{ include "jalapeno.fullname" . }}-zookeeper:2181"
+            - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "CLIENT:PLAINTEXT,INTERNAL:PLAINTEXT"
+            - name: KAFKA_CFG_LISTENERS
+              value: "CLIENT://:9092,INTERNAL://:9093"
+            - name: KAFKA_CFG_ADVERTISED_LISTENERS
+              value: "CLIENT://{{ include "jalapeno.fullname" . }}-kafka:9092,INTERNAL://{{ include "jalapeno.fullname" . }}-kafka:9093"
+            - name: KAFKA_CFG_INTER_BROKER_LISTENER_NAME
+              value: "INTERNAL"
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+          resources:
+            {{- toYaml .Values.kafka.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/kafka
+      volumes:
+        - name: data
+          {{- if .Values.kafka.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "jalapeno.fullname" . }}-kafka
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+{{- end }} 

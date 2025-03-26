@@ -1,0 +1,52 @@
+{{- if .Values.zookeeper.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-zookeeper
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zookeeper
+spec:
+  replicas: {{ .Values.zookeeper.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "jalapeno.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: zookeeper
+  template:
+    metadata:
+      labels:
+        {{- include "jalapeno.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: "{{ .Values.zookeeper.image.repository }}:{{ .Values.zookeeper.image.tag }}"
+          imagePullPolicy: {{ .Values.zookeeper.image.pullPolicy }}
+          ports:
+            - name: client
+              containerPort: 2181
+            - name: follower
+              containerPort: 2888
+            - name: leader
+              containerPort: 3888
+          env:
+            - name: ZOO_MY_ID
+              value: "1"
+            - name: ZOO_PORT
+              value: "2181"
+            - name: ZOO_SERVERS
+              value: "server.1=0.0.0.0:2888:3888;2181"
+          resources:
+            {{- toYaml .Values.zookeeper.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/zookeeper
+      volumes:
+        - name: data
+          {{- if .Values.zookeeper.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "jalapeno.fullname" . }}-zookeeper
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+{{- end }} 

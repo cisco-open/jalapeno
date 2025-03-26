@@ -6,39 +6,17 @@ global:
 # Infrastructure components
 kafka:
   enabled: true
-  # Bitnami Kafka chart values
-  nameOverride: kafka
-  fullnameOverride: jalapeno-kafka
   replicaCount: 1
-  heapOpts: "-Xmx1024m -Xms1024m"
-  deleteTopicEnable: true
-  autoCreateTopicsEnable: true
-  logRetentionHours: 24
-  numPartitions: 1
-  persistence:
-    enabled: true
-    size: 50Gi
+  image:
+    repository: bitnami/kafka
+    tag: 3.4.1
+    pullPolicy: IfNotPresent
   service:
     type: NodePort
-    nodePorts:
-      client: 30092
-    ports:
-      client: 9092
-  externalAccess:
-    enabled: false
-  zookeeper:
+    nodePort: 30092
+  persistence:
     enabled: true
-    replicaCount: 1
-    persistence:
-      enabled: true
-      size: 10Gi
-    service:
-      port: 2181
-  metrics:
-    kafka:
-      enabled: false
-    jmx:
-      enabled: false
+    size: 8Gi
   resources:
     limits:
       cpu: 1000m
@@ -248,8 +226,15 @@ ui:
 zookeeper:
   enabled: true
   replicaCount: 1
+  image:
+    repository: bitnami/zookeeper
+    tag: 3.8.1
+    pullPolicy: IfNotPresent
   service:
     type: ClusterIP
+  persistence:
+    enabled: true
+    size: 8Gi
   resources:
     limits:
       cpu: 500m

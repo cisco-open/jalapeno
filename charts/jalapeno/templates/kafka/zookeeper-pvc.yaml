@@ -1,0 +1,18 @@
+{{- if and .Values.zookeeper.enabled .Values.zookeeper.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-zookeeper
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zookeeper
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.global.storageClass }}
+  storageClassName: {{ .Values.global.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.zookeeper.persistence.size }}
+{{- end }} 
