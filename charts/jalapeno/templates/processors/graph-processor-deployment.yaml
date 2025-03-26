@@ -1,0 +1,46 @@
+{{- if and .Values.processors.graphProcessor.enabled .Values.arangodb.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-graph-processor
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: processor
+    app.kubernetes.io/name: graph-processor
+spec:
+  replicas: {{ .Values.processors.graphProcessor.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "jalapeno.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: processor
+      app.kubernetes.io/name: graph-processor
+  template:
+    metadata:
+      labels:
+        {{- include "jalapeno.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: processor
+        app.kubernetes.io/name: graph-processor
+    spec:
+      containers:
+        - name: graph-processor
+          image: "{{ .Values.processors.graphProcessor.image.repository }}:{{ .Values.processors.graphProcessor.image.tag }}"
+          imagePullPolicy: {{ .Values.processors.graphProcessor.image.pullPolicy }}
+          args:
+            - --v
+            - "{{ .Values.processors.graphProcessor.logLevel }}"
+            - --message-server
+            - "{{ .Release.Name }}-kafka:9092"
+            - --database-server
+            - "http://{{ include "jalapeno.fullname" . }}-arangodb:8529"
+            - --database-name
+            - "{{ .Values.arangodb.databaseName }}"
+          volumeMounts:
+            - name: credentials
+              mountPath: /credentials
+          resources:
+            {{- toYaml .Values.processors.graphProcessor.resources | nindent 12 }}
+      volumes:
+        - name: credentials
+          secret:
+            secretName: {{ include "jalapeno.fullname" . }}-credentials
+{{- end }} 

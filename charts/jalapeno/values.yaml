@@ -1,0 +1,233 @@
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+
+# Infrastructure components
+kafka:
+  enabled: true
+  # Bitnami Kafka chart values
+  nameOverride: kafka
+  fullnameOverride: jalapeno-kafka
+  replicaCount: 1
+  heapOpts: "-Xmx1024m -Xms1024m"
+  deleteTopicEnable: true
+  autoCreateTopicsEnable: true
+  logRetentionHours: 24
+  numPartitions: 1
+  persistence:
+    enabled: true
+    size: 50Gi
+  service:
+    type: ClusterIP
+    port: 9092
+  externalAccess:
+    enabled: true
+    service:
+      type: NodePort
+      nodePorts: [30092]
+  zookeeper:
+    enabled: true
+    replicaCount: 1
+    persistence:
+      enabled: true
+      size: 10Gi
+    service:
+      port: 2181
+
+# ArangoDB configuration
+arangodb:
+  enabled: true
+  auth:
+    rootUser: root
+  rootPassword: ""  # Will generate random if not provided
+  databaseName: "jalapeno"
+  replicaCount: 1
+  image:
+    repository: arangodb
+    tag: 3.10.12
+    pullPolicy: IfNotPresent
+  persistence:
+    enabled: true
+    dataSize: 80Gi
+    appSize: 20Gi
+  service:
+    type: NodePort
+    port: 8529
+    nodePort: 30852
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+
+# InfluxDB configuration using Bitnami chart
+influxdb:
+  enabled: true
+  auth:
+    enabled: true
+    admin:
+      username: admin
+      password: ""  # Will generate random if not provided
+    user:
+      username: root
+      password: ""  # Will generate random if not provided
+  database: mdt_db
+  persistence:
+    enabled: true
+    size: 8Gi
+  service:
+    type: NodePort
+    port: 8086
+    nodePorts:
+      http: 30308
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+
+# Data collectors
+collectors:
+  gobmp:
+    enabled: true
+    image:
+      repository: sbezverkhi/gobmp
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: NodePort
+      port: 5000
+      nodePort: 30511
+      perfPort: 56767
+      perfNodePort: 30767
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    
+  telegraf:
+    enabled: true
+    image:
+      repository: jalapeno/telegraf
+      tag: latest
+      pullPolicy: Always
+    service:
+      type: NodePort
+      port: 57400
+      nodePort: 32400
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    
+  # Add other collectors here
+
+# Data processors
+processors:
+  topology:
+    enabled: true
+    replicaCount: 1
+    logLevel: "5"
+    notifyEvent: "true"
+    image:
+      repository: docker.io/iejalapeno/topology
+      tag: latest
+      pullPolicy: Always
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  
+  linkstateEdge:
+    enabled: true
+    replicaCount: 1
+    logLevel: "5"
+    image:
+      repository: docker.io/iejalapeno/linkstate-edge
+      tag: latest
+      pullPolicy: Always
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  
+  graphProcessor:
+    enabled: true
+    replicaCount: 1
+    logLevel: "5"
+    image:
+      repository: docker.io/iejalapeno/igp-graph
+      tag: latest
+      pullPolicy: Always
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+# Grafana configuration using Bitnami chart
+grafana:
+  enabled: true
+  admin:
+    user: admin
+    password: ""  # Will generate random if not provided
+  persistence:
+    enabled: true
+    size: 5Gi
+  service:
+    type: NodePort
+    nodePorts:
+      grafana: 30300
+  dashboardsProvider:
+    enabled: true
+  dashboardsConfigMaps:
+    - configMapName: jalapeno-grafana-dashboards
+      fileName: egress-traffic-dashboard.json
+  datasources:
+    secretName: jalapeno-grafana-datasources
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+api:
+  enabled: false  # Since it's under construction
+  image:
+    repository: iejalapeno/api
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 8080
+
+ui:
+  enabled: false  # Since it's under construction
+  image:
+    repository: jalapeno/ui
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 80

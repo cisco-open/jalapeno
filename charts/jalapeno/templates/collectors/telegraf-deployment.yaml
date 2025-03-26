@@ -1,0 +1,43 @@
+{{- if .Values.collectors.telegraf.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-telegraf
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/name: telegraf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "jalapeno.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: collector
+      app.kubernetes.io/name: telegraf
+  template:
+    metadata:
+      labels:
+        {{- include "jalapeno.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: collector
+        app.kubernetes.io/name: telegraf
+    spec:
+      containers:
+        - name: telegraf
+          image: "{{ .Values.collectors.telegraf.image.repository }}:{{ .Values.collectors.telegraf.image.tag }}"
+          imagePullPolicy: {{ .Values.collectors.telegraf.image.pullPolicy }}
+          volumeMounts:
+            - mountPath: /etc/telegraf/telegraf.conf
+              name: telegraf-config
+              subPath: telegraf.conf
+              readOnly: true
+          resources:
+            {{- toYaml .Values.collectors.telegraf.resources | nindent 12 }}
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml .Values.global.imagePullSecrets | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: telegraf-config
+          configMap:
+            name: {{ include "jalapeno.fullname" . }}-telegraf-config
+{{- end }} 

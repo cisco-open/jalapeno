@@ -1,0 +1,15 @@
+dependencies:
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 21.4.6
+- name: zookeeper
+  repository: https://charts.bitnami.com/bitnami
+  version: 11.4.11
+- name: influxdb
+  repository: https://charts.bitnami.com/bitnami
+  version: 5.18.1
+- name: grafana
+  repository: https://charts.bitnami.com/bitnami
+  version: 8.4.6
+digest: sha256:bdfcc9e8f5301db1ab63bbb34ea1925cb126cae1e606900e70a96f3c2c9a38ee
+generated: "2025-03-25T00:00:26.068373-07:00"

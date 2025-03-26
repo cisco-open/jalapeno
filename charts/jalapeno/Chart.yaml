@@ -1,0 +1,34 @@
+apiVersion: v2
+name: jalapeno
+description: A Helm chart for Jalapeno - a generalized network topology modeling system.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+home: https://github.com/cisco-open/jalapeno
+sources:
+  - https://github.com/cisco-open/jalapeno
+maintainers:
+  - name: Bruce McDougall
+    email: brmcdoug@cisco.com 
+
+# Dependencies
+dependencies:
+  - name: kafka
+    version: "^21.0.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: kafka.enabled
+
+  - name: zookeeper
+    version: "^11.0.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: kafka.zookeeper.enabled
+
+  - name: influxdb
+    version: "^5.0.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: influxdb.enabled
+
+  - name: grafana
+    version: "^8.0.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: grafana.enabled

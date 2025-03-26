@@ -1,0 +1,68 @@
+{{- if .Values.arangodb.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-arangodb
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+    app.kubernetes.io/name: arangodb
+spec:
+  selector:
+    matchLabels:
+      {{- include "jalapeno.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: database
+      app.kubernetes.io/name: arangodb
+  serviceName: {{ include "jalapeno.fullname" . }}-arangodb
+  replicas: {{ .Values.arangodb.replicaCount }}
+  template:
+    metadata:
+      labels:
+        {{- include "jalapeno.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: database
+        app.kubernetes.io/name: arangodb
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: arangodb
+        image: "arangodb:{{ .Values.arangodb.image.tag }}"
+        imagePullPolicy: {{ .Values.arangodb.image.pullPolicy }}
+        env:
+        - name: ARANGO_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "jalapeno.fullname" . }}-arangodb
+              key: password
+        ports:
+        - containerPort: 8529
+          protocol: TCP
+          name: http
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/arangodb3
+        - name: appdata
+          mountPath: /var/lib/arangodb3-apps
+        resources:
+          {{- toYaml .Values.arangodb.resources | nindent 10 }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.global.storageClass }}
+      storageClassName: {{ .Values.global.storageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.arangodb.persistence.dataSize }}
+  - metadata:
+      name: appdata
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      {{- if .Values.global.storageClass }}
+      storageClassName: {{ .Values.global.storageClass }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.arangodb.persistence.appSize }}
+{{- end }}

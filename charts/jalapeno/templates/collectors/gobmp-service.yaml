@@ -1,0 +1,31 @@
+{{- if .Values.collectors.gobmp.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-gobmp
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/name: gobmp
+spec:
+  type: {{ .Values.collectors.gobmp.service.type }}
+  ports:
+    - name: bmp
+      port: {{ .Values.collectors.gobmp.service.port }}
+      targetPort: 5000
+      protocol: TCP
+      {{- if and (eq .Values.collectors.gobmp.service.type "NodePort") .Values.collectors.gobmp.service.nodePort }}
+      nodePort: {{ .Values.collectors.gobmp.service.nodePort }}
+      {{- end }}
+    - name: perf
+      port: 56767
+      targetPort: 56767
+      protocol: TCP
+      {{- if eq .Values.collectors.gobmp.service.type "NodePort" }}
+      nodePort: 30767
+      {{- end }}
+  selector:
+    {{- include "jalapeno.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/name: gobmp
+{{- end }} 

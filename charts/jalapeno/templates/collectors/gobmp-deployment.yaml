@@ -1,0 +1,46 @@
+{{- if .Values.collectors.gobmp.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-gobmp
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/name: gobmp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "jalapeno.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: collector
+      app.kubernetes.io/name: gobmp
+  template:
+    metadata:
+      labels:
+        {{- include "jalapeno.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: collector
+        app.kubernetes.io/name: gobmp
+    spec:
+      containers:
+        - name: gobmp
+          image: "{{ .Values.collectors.gobmp.image.repository }}:{{ .Values.collectors.gobmp.image.tag }}"
+          imagePullPolicy: {{ .Values.collectors.gobmp.image.pullPolicy }}
+          args:
+            - --v
+            - "5"
+            - --kafka-server
+            - "jalapeno-kafka:9092"
+          ports:
+            - name: bmp
+              containerPort: 5000
+              protocol: TCP
+            - name: perf
+              containerPort: 56767
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.collectors.gobmp.resources | nindent 12 }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "jalapeno.fullname" . }}-gobmp-config
+{{- end }} 

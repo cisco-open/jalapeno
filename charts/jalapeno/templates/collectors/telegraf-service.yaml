@@ -1,0 +1,24 @@
+{{- if .Values.collectors.telegraf.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-telegraf
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/name: telegraf
+spec:
+  type: {{ .Values.collectors.telegraf.service.type }}
+  ports:
+    - port: {{ .Values.collectors.telegraf.service.port }}
+      targetPort: {{ .Values.collectors.telegraf.service.port }}
+      protocol: TCP
+      name: grpc
+      {{- if and (eq .Values.collectors.telegraf.service.type "NodePort") .Values.collectors.telegraf.service.nodePort }}
+      nodePort: {{ .Values.collectors.telegraf.service.nodePort }}
+      {{- end }}
+  selector:
+    {{- include "jalapeno.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/name: telegraf
+{{- end }} 

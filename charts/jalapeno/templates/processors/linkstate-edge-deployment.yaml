@@ -1,0 +1,46 @@
+{{- if and .Values.processors.linkstateEdge.enabled .Values.arangodb.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-linkstate-edge
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: processor
+    app.kubernetes.io/name: linkstate-edge
+spec:
+  replicas: {{ .Values.processors.linkstateEdge.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "jalapeno.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: processor
+      app.kubernetes.io/name: linkstate-edge
+  template:
+    metadata:
+      labels:
+        {{- include "jalapeno.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: processor
+        app.kubernetes.io/name: linkstate-edge
+    spec:
+      containers:
+        - name: linkstate-edge
+          image: "{{ .Values.processors.linkstateEdge.image.repository }}:{{ .Values.processors.linkstateEdge.image.tag }}"
+          imagePullPolicy: {{ .Values.processors.linkstateEdge.image.pullPolicy }}
+          args:
+            - --v
+            - "{{ .Values.processors.linkstateEdge.logLevel }}"
+            - --message-server
+            - "{{ .Release.Name }}-kafka:9092"
+            - --database-server
+            - "http://{{ include "jalapeno.fullname" . }}-arangodb:8529"
+            - --database-name
+            - "{{ .Values.arangodb.databaseName }}"
+          volumeMounts:
+            - name: credentials
+              mountPath: /credentials
+          resources:
+            {{- toYaml .Values.processors.linkstateEdge.resources | nindent 12 }}
+      volumes:
+        - name: credentials
+          secret:
+            secretName: {{ include "jalapeno.fullname" . }}-credentials
+{{- end }} 

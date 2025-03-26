@@ -1,0 +1,13 @@
+{{- if .Values.collectors.gobmp.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-gobmp-config
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/name: gobmp
+data:
+  gobmp.yaml: |
+    # GoBMP configuration can be added here if needed
+{{- end }} 

@@ -1,0 +1,48 @@
+{{- if and .Values.processors.topology.enabled .Values.arangodb.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-topology
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: processor
+    app.kubernetes.io/name: topology
+spec:
+  replicas: {{ .Values.processors.topology.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "jalapeno.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: processor
+      app.kubernetes.io/name: topology
+  template:
+    metadata:
+      labels:
+        {{- include "jalapeno.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: processor
+        app.kubernetes.io/name: topology
+    spec:
+      containers:
+        - name: topology
+          image: "{{ .Values.processors.topology.image.repository }}:{{ .Values.processors.topology.image.tag }}"
+          imagePullPolicy: {{ .Values.processors.topology.image.pullPolicy }}
+          args:
+          - --v
+          - "{{ .Values.processors.topology.logLevel }}"
+          - --message-server
+          - "{{ .Release.Name }}-kafka:9092"
+          - --database-server
+          - "http://{{ include "jalapeno.fullname" . }}-arangodb:8529"
+          - --database-name
+          - "{{ .Values.arangodb.databaseName }}"
+          - --notify-event
+          - "{{ .Values.processors.topology.notifyEvent }}"
+          volumeMounts:
+            - name: credentials
+              mountPath: /credentials
+          resources:
+            {{- toYaml .Values.processors.topology.resources | nindent 12 }}
+      volumes:
+        - name: credentials
+          secret:
+            secretName: {{ include "jalapeno.fullname" . }}-credentials
+{{- end }} 

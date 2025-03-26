@@ -1,0 +1,34 @@
+{{- if .Values.collectors.telegraf.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-telegraf-config
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: collector
+    app.kubernetes.io/name: telegraf
+data:
+  telegraf.conf: |
+    [agent]
+      interval = "10s"
+      round_interval = true
+      metric_buffer_limit = 10000
+      flush_buffer_when_full = true
+      collection_jitter = "0s"
+      flush_interval = "10s"
+      flush_jitter = "0s"
+      debug = false
+      quiet = false
+      hostname = "telegraf"
+
+    [[inputs.cisco_telemetry_mdt]]
+      transport = "grpc"
+      service_address = ":{{ .Values.collectors.telegraf.service.port }}"
+      embedded_tags = ["Cisco-IOS-XR-fib-common-oper:mpls-forwarding/nodes/node/label-fib/forwarding-details/forwarding-detail/label-information/outgoing-interface"]
+      [inputs.cisco_telemetry_mdt.aliases]
+        ifstats = "ietf-interfaces:interfaces-state/interface/statistics"
+
+    [[outputs.kafka]]
+      brokers = ["jalapeno-kafka:9092"]
+      topic = "jalapeno.telemetry"
+{{- end }} 
