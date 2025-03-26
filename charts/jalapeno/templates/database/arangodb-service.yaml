@@ -1,0 +1,24 @@
+{{- if .Values.arangodb.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-arangodb
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+    app.kubernetes.io/name: arangodb
+spec:
+  type: {{ .Values.arangodb.service.type }}
+  ports:
+    - port: {{ .Values.arangodb.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+      {{- if and (eq .Values.arangodb.service.type "NodePort") .Values.arangodb.service.nodePort }}
+      nodePort: {{ .Values.arangodb.service.nodePort }}
+      {{- end }}
+  selector:
+    {{- include "jalapeno.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+    app.kubernetes.io/name: arangodb
+{{- end }} 

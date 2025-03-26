@@ -1,0 +1,44 @@
+{{- if .Values.arangodb.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "jalapeno.fullname" . }}-arangodb
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+    app.kubernetes.io/name: arangodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "jalapeno.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: database
+      app.kubernetes.io/name: arangodb
+  template:
+    metadata:
+      labels:
+        {{- include "jalapeno.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: database
+        app.kubernetes.io/name: arangodb
+    spec:
+      containers:
+        - name: arangodb
+          image: arangodb:3.10.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8529
+              protocol: TCP
+          env:
+            - name: ARANGO_ROOT_PASSWORD
+              value: {{ .Values.arangodb.rootPassword | quote }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/arangodb3
+          resources:
+            {{- toYaml .Values.arangodb.resources | nindent 12 }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "jalapeno.fullname" . }}-arangodb
+{{- end }} 

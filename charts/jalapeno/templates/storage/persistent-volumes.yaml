@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/component: zookeeper
 spec:
   capacity:
-    storage: {{ .Values.zookeeper.persistence.size }}
+    storage: {{ .Values.zookeeper.persistence.size | quote }}
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
@@ -26,7 +26,7 @@ metadata:
     app.kubernetes.io/component: kafka
 spec:
   capacity:
-    storage: {{ .Values.kafka.persistence.size }}
+    storage: {{ .Values.kafka.persistence.size | quote }}
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
@@ -43,7 +43,7 @@ metadata:
     app.kubernetes.io/component: database
 spec:
   capacity:
-    storage: {{ .Values.arangodb.persistence.size }}
+    storage: {{ .Values.arangodb.persistence.size | quote }}
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
@@ -60,7 +60,7 @@ metadata:
     app.kubernetes.io/component: database
 spec:
   capacity:
-    storage: {{ .Values.influxdb.persistence.size }}
+    storage: {{ .Values.influxdb.persistence.size | quote }}
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
@@ -77,7 +77,7 @@ metadata:
     app.kubernetes.io/component: monitoring
 spec:
   capacity:
-    storage: {{ .Values.grafana.persistence.size }}
+    storage: {{ .Values.grafana.persistence.size | quote }}
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
