@@ -17,18 +17,17 @@ dependencies:
     version: "32.0.1"
     repository: "https://charts.bitnami.com/bitnami"
     condition: kafka.enabled
-  # - name: zookeeper
-  #   version: "^11.0.0"
-  #   repository: "https://charts.bitnami.com/bitnami"
-  #   condition: kafka.zookeeper.enabled
+  - name: influxdb
+    version: "5.4.13"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: influxdb.enabled
+  - name: grafana
+    version: "8.2.33"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: grafana.enabled
+  - name: zookeeper
+    version: "12.3.1"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: zookeeper.enabled
 
-  # - name: influxdb
-  #   version: "5.4.13"
-  #   repository: "https://charts.bitnami.com/bitnami"
-  #   condition: influxdb.enabled
-
-  # - name: grafana
-  #   version: "8.2.33"
-  #   repository: "https://charts.bitnami.com/bitnami"
-  #   condition: grafana.enabled
 

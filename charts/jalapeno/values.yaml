@@ -39,6 +39,13 @@ kafka:
       enabled: false
     jmx:
       enabled: false
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
 
 # ArangoDB configuration
 arangodb:
@@ -236,3 +243,17 @@ ui:
   service:
     type: ClusterIP
     port: 80
+
+# ZooKeeper configuration
+zookeeper:
+  enabled: true
+  replicaCount: 1
+  service:
+    type: ClusterIP
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
