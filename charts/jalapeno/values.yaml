@@ -1,3 +1,4 @@
+# Global settings
 global:
   imageRegistry: ""
   imagePullSecrets: []
@@ -30,7 +31,7 @@ arangodb:
   enabled: true
   auth:
     rootUser: root
-  rootPassword: ""  # Will generate random if not provided
+  rootPassword: "jalapeno"
   databaseName: "jalapeno"
   replicaCount: 1
   image:
@@ -53,24 +54,23 @@ arangodb:
       cpu: 500m
       memory: 1Gi
 
-# InfluxDB configuration using Bitnami chart
+# InfluxDB configuration
 influxdb:
   enabled: true
   auth:
-    enabled: true
     admin:
-      username: admin
-      password: ""  # Will generate random if not provided
+      username: root
+      password: "jalapeno"
+      token: "jalapeno-token"
     user:
       username: root
-      password: ""  # Will generate random if not provided
+      password: "jalapeno"
   database: mdt_db
   persistence:
     enabled: true
     size: 8Gi
   service:
     type: NodePort
-    port: 8086
     nodePorts:
       http: 30308
   resources:
@@ -178,8 +178,8 @@ processors:
 grafana:
   enabled: true
   admin:
-    user: admin
-    password: ""  # Will generate random if not provided
+    user: root
+    password: "jalapeno"
   persistence:
     enabled: true
     size: 5Gi
