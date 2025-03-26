@@ -1,11 +1,11 @@
-{{- if and .Values.kafka.enabled .Values.kafka.persistence.enabled }}
+{{- if and .Values.influxdb.enabled .Values.influxdb.persistence.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "jalapeno.fullname" . }}-kafka
+  name: {{ .Release.Name }}-influxdb
   labels:
     {{- include "jalapeno.labels" . | nindent 4 }}
-    app.kubernetes.io/component: kafka
+    app.kubernetes.io/component: database
 spec:
   accessModes:
     - ReadWriteOnce
@@ -13,9 +13,9 @@ spec:
   storageClassName: {{ .Values.global.storageClass }}
   {{- else }}
   storageClassName: ""
-  volumeName: {{ .Release.Name }}-kafka-pv
+  volumeName: {{ .Release.Name }}-influxdb-pv
   {{- end }}
   resources:
     requests:
-      storage: {{ .Values.kafka.persistence.size }}
+      storage: {{ .Values.influxdb.persistence.size }}
 {{- end }} 

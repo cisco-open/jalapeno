@@ -69,6 +69,7 @@ influxdb:
   persistence:
     enabled: true
     size: 8Gi
+    existingClaim: "jalapeno-influxdb"
   service:
     type: NodePort
     nodePorts:
@@ -183,6 +184,7 @@ grafana:
   persistence:
     enabled: true
     size: 5Gi
+    existingClaim: "jalapeno-grafana"
   service:
     type: NodePort
     nodePorts:

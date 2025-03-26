@@ -1,0 +1,86 @@
+{{- if not .Values.global.storageClass }}
+# PersistentVolume for ZooKeeper
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-zookeeper-pv
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: zookeeper
+spec:
+  capacity:
+    storage: {{ .Values.zookeeper.persistence.size }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/var/lib/zookeeper"
+---
+# PersistentVolume for Kafka
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-kafka-pv
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: kafka
+spec:
+  capacity:
+    storage: {{ .Values.kafka.persistence.size }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/var/lib/kafka/data"
+---
+# PersistentVolume for ArangoDB
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-arangodb-pv
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  capacity:
+    storage: {{ .Values.arangodb.persistence.size }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/var/lib/arangodb"
+---
+# PersistentVolume for InfluxDB
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-influxdb-pv
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
+spec:
+  capacity:
+    storage: {{ .Values.influxdb.persistence.size }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/var/lib/influxdb"
+---
+# PersistentVolume for Grafana
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Release.Name }}-grafana-pv
+  labels:
+    {{- include "jalapeno.labels" . | nindent 4 }}
+    app.kubernetes.io/component: monitoring
+spec:
+  capacity:
+    storage: {{ .Values.grafana.persistence.size }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/var/lib/grafana"
+{{- end }} 

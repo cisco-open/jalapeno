@@ -11,6 +11,9 @@ spec:
     - ReadWriteOnce
   {{- if .Values.global.storageClass }}
   storageClassName: {{ .Values.global.storageClass }}
+  {{- else }}
+  storageClassName: ""
+  volumeName: {{ .Release.Name }}-zookeeper-pv
   {{- end }}
   resources:
     requests:

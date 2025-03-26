@@ -1,11 +1,11 @@
-{{- if and .Values.kafka.enabled .Values.kafka.persistence.enabled }}
+{{- if and .Values.grafana.enabled .Values.grafana.persistence.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "jalapeno.fullname" . }}-kafka
+  name: {{ .Release.Name }}-grafana
   labels:
     {{- include "jalapeno.labels" . | nindent 4 }}
-    app.kubernetes.io/component: kafka
+    app.kubernetes.io/component: monitoring
 spec:
   accessModes:
     - ReadWriteOnce
@@ -13,9 +13,9 @@ spec:
   storageClassName: {{ .Values.global.storageClass }}
   {{- else }}
   storageClassName: ""
-  volumeName: {{ .Release.Name }}-kafka-pv
+  volumeName: {{ .Release.Name }}-grafana-pv
   {{- end }}
   resources:
     requests:
-      storage: {{ .Values.kafka.persistence.size }}
+      storage: {{ .Values.grafana.persistence.size }}
 {{- end }} 
