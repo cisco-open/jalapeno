@@ -12,5 +12,5 @@ ${KUBE} create -f ${PWD}/${BASEDIR}/topology/topology.yaml
 echo "Deploying Telegraf-Egress"
 ${KUBE} create -f ${PWD}/${BASEDIR}/telegraf-egress/.
 
-echo "Deploying LS Link-Node Edge Processor"
-${KUBE} create -f ${PWD}/${BASEDIR}/lslinknode-edge/lslinknode-edge.yaml
+echo "Deploying Linkstate Edge Processor"
+${KUBE} create -f ${PWD}/${BASEDIR}/linkstate-edge/linkstate-edge.yaml
