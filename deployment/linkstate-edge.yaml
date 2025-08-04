@@ -18,7 +18,7 @@ spec:
             - --message-server
             - "broker.jalapeno:9092"
             - --database-server
-            - "http://arangodb:8529"
+            - "http://arangodb.jalapeno:8529"
             - --database-name
             - "jalapeno"
           image: docker.io/iejalapeno/linkstate-edge:latest
