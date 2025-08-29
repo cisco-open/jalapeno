@@ -1,0 +1,4 @@
+FROM scratch
+
+COPY ./bin/linkstate-graph /linkstate-graph
+ENTRYPOINT ["/linkstate-graph"]
