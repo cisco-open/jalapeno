@@ -323,6 +323,11 @@ func (a *arangoDB) loadInitialData() error {
 		return fmt.Errorf("failed to load initial SRv6 SIDs: %w", err)
 	}
 
+	// Load initial prefixes
+	if err := a.loadInitialPrefixes(ctx); err != nil {
+		return fmt.Errorf("failed to load initial prefixes: %w", err)
+	}
+
 	glog.Info("Initial IGP topology data loaded successfully")
 	return nil
 }

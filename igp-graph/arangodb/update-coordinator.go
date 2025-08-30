@@ -282,37 +282,137 @@ func (uc *UpdateCoordinator) processLinkUpdate(event *kafkanotifier.EventMessage
 func (uc *UpdateCoordinator) processPrefixUpdate(event *kafkanotifier.EventMessage) error {
 	glog.V(7).Infof("Processing prefix update: %s action: %s", event.Key, event.Action)
 
-	// For now, prefix processing is simplified
-	// In future phases, we'll implement the fixed prefix handling strategy:
-	// - /32, /128 prefixes -> node metadata
-	// - Transit networks -> separate vertices
-
 	ctx := context.TODO()
 
 	switch event.Action {
 	case "del":
-		glog.V(7).Infof("Prefix deleted: %s", event.Key)
-		// TODO: Implement prefix deletion logic
+		return uc.processPrefixDeletion(ctx, event.Key)
 
 	case "add", "update":
-		// Read prefix data
-		var prefixData map[string]interface{}
-		_, err := uc.db.lsprefix.ReadDocument(ctx, event.Key, &prefixData)
-		if err != nil {
-			if driver.IsNotFoundGeneral(err) {
-				glog.V(6).Infof("Prefix %s not found in ls_prefix collection, skipping", event.Key)
-				return nil
-			}
-			return fmt.Errorf("failed to read prefix %s: %w", event.Key, err)
-		}
-
-		glog.V(7).Infof("Prefix %s action %s processed (simplified)", event.Key, event.Action)
-		// TODO: Implement actual prefix processing in next phase
+		return uc.processPrefixAddUpdate(ctx, event.Key)
 
 	default:
 		glog.V(5).Infof("Unknown prefix action: %s for key: %s", event.Action, event.Key)
+		return nil
+	}
+}
+
+func (uc *UpdateCoordinator) processPrefixAddUpdate(ctx context.Context, key string) error {
+	// Read prefix data from ls_prefix collection
+	var prefixData map[string]interface{}
+	_, err := uc.db.lsprefix.ReadDocument(ctx, key, &prefixData)
+	if err != nil {
+		if driver.IsNotFoundGeneral(err) {
+			glog.V(6).Infof("Prefix %s not found in ls_prefix collection, skipping", key)
+			return nil
+		}
+		return fmt.Errorf("failed to read prefix %s: %w", key, err)
 	}
 
+	// Filter out BGP protocol (protocol_id = 7)
+	if protocolID, ok := prefixData["protocol_id"].(float64); ok && protocolID == 7 {
+		glog.V(9).Infof("Skipping BGP prefix %s", key)
+		return nil
+	}
+
+	// Process the prefix using our strategy
+	return uc.db.processInitialPrefix(ctx, prefixData)
+}
+
+func (uc *UpdateCoordinator) processPrefixDeletion(ctx context.Context, key string) error {
+	// We need to determine what type of prefix this was to remove it properly
+	// Try to read from ls_prefix collection first (might still exist during deletion)
+	var prefixData map[string]interface{}
+	_, err := uc.db.lsprefix.ReadDocument(ctx, key, &prefixData)
+	if err != nil {
+		if driver.IsNotFoundGeneral(err) {
+			// Prefix already deleted from ls_prefix, try to clean up from both strategies
+			glog.V(6).Infof("Prefix %s already deleted from ls_prefix, attempting cleanup", key)
+			return uc.cleanupDeletedPrefix(ctx, key)
+		}
+		return fmt.Errorf("failed to read prefix %s for deletion: %w", key, err)
+	}
+
+	// Filter out BGP protocol (protocol_id = 7)
+	if protocolID, ok := prefixData["protocol_id"].(float64); ok && protocolID == 7 {
+		glog.V(9).Infof("Skipping BGP prefix deletion %s", key)
+		return nil
+	}
+
+	// Extract prefix length to determine processing strategy
+	prefixLen, ok := prefixData["prefix_len"].(float64)
+	if !ok {
+		return fmt.Errorf("invalid prefix_len in prefix %s", key)
+	}
+
+	// Determine IPv4 vs IPv6 based on MTID
+	isIPv6 := false
+	if mtidTLV, exists := prefixData["mt_id_tlv"]; exists {
+		if mtidArray, ok := mtidTLV.([]interface{}); ok {
+			for _, mtObj := range mtidArray {
+				if mtMap, ok := mtObj.(map[string]interface{}); ok {
+					if mtid, ok := mtMap["mt_id"].(float64); ok && mtid == 2 {
+						isIPv6 = true
+						break
+					}
+				}
+			}
+		} else if mtidObj, ok := mtidTLV.(map[string]interface{}); ok {
+			if mtid, ok := mtidObj["mt_id"].(float64); ok && mtid == 2 {
+				isIPv6 = true
+			}
+		}
+	}
+
+	// Apply deletion strategy based on prefix length
+	if isIPv6 {
+		if int32(prefixLen) == 128 {
+			// Remove from node metadata
+			return uc.db.removePrefixFromNodeMetadata(ctx, prefixData)
+		} else if int32(prefixLen) != 126 && int32(prefixLen) != 127 {
+			// Remove vertex edges
+			return uc.db.removePrefixVertex(ctx, prefixData, true)
+		}
+	} else {
+		if int32(prefixLen) == 32 {
+			// Remove from node metadata
+			return uc.db.removePrefixFromNodeMetadata(ctx, prefixData)
+		} else if int32(prefixLen) != 30 && int32(prefixLen) != 31 {
+			// Remove vertex edges
+			return uc.db.removePrefixVertex(ctx, prefixData, false)
+		}
+	}
+
+	return nil
+}
+
+func (uc *UpdateCoordinator) cleanupDeletedPrefix(ctx context.Context, key string) error {
+	// When we can't read the prefix data, try to clean up from both strategies
+	// This is a best-effort cleanup for orphaned data
+
+	glog.V(7).Infof("Attempting best-effort cleanup for deleted prefix %s", key)
+
+	// Try to remove from both IPv4 and IPv6 graphs (edges will be ignored if not found)
+	// We can't determine the exact strategy without the prefix data, so try both
+
+	// Create a minimal prefix data structure for cleanup
+	prefixData := map[string]interface{}{
+		"_key": key,
+	}
+
+	// Try removing vertex edges from both graphs
+	if err := uc.db.removePrefixVertex(ctx, prefixData, false); err != nil {
+		glog.V(8).Infof("IPv4 prefix vertex cleanup failed for %s: %v", key, err)
+	}
+
+	if err := uc.db.removePrefixVertex(ctx, prefixData, true); err != nil {
+		glog.V(8).Infof("IPv6 prefix vertex cleanup failed for %s: %v", key, err)
+	}
+
+	// Note: We can't clean up node metadata without knowing which node it belonged to
+	// This is acceptable as the metadata cleanup will happen when nodes are updated
+
+	glog.V(7).Infof("Best-effort cleanup completed for prefix %s", key)
 	return nil
 }
 

@@ -46,6 +46,7 @@ type IGPNode struct {
 	FlexAlgoPrefixMetric []*bgpls.FlexAlgoPrefixMetric   `json:"flex_algo_prefix_metric,omitempty"`
 	SRv6SID              string                          `json:"srv6_sid,omitempty"`
 	SIDS                 []SID                           `json:"sids,omitempty"`
+	Prefixes             []interface{}                   `json:"prefixes,omitempty"`
 }
 
 // SID represents a Segment Routing v6 SID associated with a node
