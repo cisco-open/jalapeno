@@ -69,6 +69,14 @@ func (a *arangoDB) processInitialPrefix(ctx context.Context, prefix map[string]i
 		return nil
 	}
 
+	// Filter out prefixes that match SRv6 locators
+	if isMatched, err := a.isPrefixMatchingSRv6Locator(ctx, prefix); err != nil {
+		glog.Warningf("Failed to check SRv6 locator match for prefix %s: %v", prefix["_key"], err)
+	} else if isMatched {
+		glog.V(8).Infof("Skipping prefix %s as it matches an SRv6 locator", prefix["_key"])
+		return nil
+	}
+
 	// Extract prefix length
 	prefixLen, ok := prefix["prefix_len"].(float64)
 	if !ok {
@@ -503,7 +511,7 @@ func (a *arangoDB) removePrefixVertex(ctx context.Context, prefix map[string]int
 
 	for _, edgeKey := range edgeKeys {
 		if _, err := collection.RemoveDocument(ctx, edgeKey); err != nil {
-			if !driver.IsNotFound(err) {
+			if !driver.IsNotFoundGeneral(err) {
 				glog.Warningf("Failed to remove prefix edge %s: %v", edgeKey, err)
 			}
 		}
@@ -511,4 +519,82 @@ func (a *arangoDB) removePrefixVertex(ctx context.Context, prefix map[string]int
 
 	glog.V(8).Infof("Removed prefix vertex edges for %s from %s graph", prefixKey, graphCollection)
 	return nil
+}
+
+// isPrefixMatchingSRv6Locator checks if a prefix matches any existing SRv6 locator
+// by comparing the prefix length with the calculated locator length from SRv6 SID structure
+func (a *arangoDB) isPrefixMatchingSRv6Locator(ctx context.Context, prefix map[string]interface{}) (bool, error) {
+	prefixStr, ok := prefix["prefix"].(string)
+	if !ok {
+		return false, fmt.Errorf("invalid prefix string in prefix %s", prefix["_key"])
+	}
+
+	prefixLen, ok := prefix["prefix_len"].(float64)
+	if !ok {
+		return false, fmt.Errorf("invalid prefix_len in prefix %s", prefix["_key"])
+	}
+
+	routerID, ok := prefix["igp_router_id"].(string)
+	if !ok {
+		return false, fmt.Errorf("missing igp_router_id in prefix %s", prefix["_key"])
+	}
+
+	domainID := prefix["domain_id"]
+	prefixLenInt := int32(prefixLen)
+
+	// Query ls_srv6_sid collection for SRv6 SIDs from the same router that match this prefix
+	// Calculate the actual locator length from the SRv6 SID structure
+	query := fmt.Sprintf(`
+		FOR sid IN %s
+		FILTER sid.igp_router_id == @routerId
+		FILTER sid.domain_id == @domainId
+		FILTER STARTS_WITH(sid.srv6_sid, @prefix)
+		LET locatorLength = (
+			HAS(sid, "srv6_sid_structure") && 
+			HAS(sid.srv6_sid_structure, "locator_block_length") && 
+			HAS(sid.srv6_sid_structure, "locator_node_length")
+		) ? (
+			sid.srv6_sid_structure.locator_block_length + sid.srv6_sid_structure.locator_node_length
+		) : null
+		FILTER locatorLength != null
+		FILTER locatorLength == @prefixLen
+		RETURN {
+			srv6_sid: sid.srv6_sid,
+			locator_length: locatorLength,
+			sid_structure: sid.srv6_sid_structure
+		}
+	`, "ls_srv6_sid")
+
+	bindVars := map[string]interface{}{
+		"routerId":  routerID,
+		"domainId":  domainID,
+		"prefix":    prefixStr,
+		"prefixLen": prefixLenInt,
+	}
+
+	glog.V(9).Infof("Checking SRv6 locator match for prefix %s/%d from router %s", prefixStr, prefixLenInt, routerID)
+
+	cursor, err := a.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return false, fmt.Errorf("failed to query SRv6 SIDs: %w", err)
+	}
+	defer cursor.Close()
+
+	// If we find any matching SRv6 SID with exact locator length match, filter out this prefix
+	if cursor.HasMore() {
+		var result map[string]interface{}
+		_, err := cursor.ReadDocument(ctx, &result)
+		if err != nil {
+			return false, fmt.Errorf("error reading SRv6 SID document: %w", err)
+		}
+
+		sidStr, _ := result["srv6_sid"].(string)
+		locatorLen, _ := result["locator_length"].(float64)
+
+		glog.V(8).Infof("Prefix %s/%d matches SRv6 locator %s with calculated length /%d",
+			prefixStr, prefixLenInt, sidStr, int32(locatorLen))
+		return true, nil
+	}
+
+	return false, nil
 }

@@ -315,6 +315,14 @@ func (uc *UpdateCoordinator) processPrefixAddUpdate(ctx context.Context, key str
 		return nil
 	}
 
+	// Filter out prefixes that match SRv6 locators
+	if isMatched, err := uc.db.isPrefixMatchingSRv6Locator(ctx, prefixData); err != nil {
+		glog.Warningf("Failed to check SRv6 locator match for prefix %s: %v", key, err)
+	} else if isMatched {
+		glog.V(8).Infof("Skipping prefix %s as it matches an SRv6 locator", key)
+		return nil
+	}
+
 	// Process the prefix using our strategy
 	return uc.db.processInitialPrefix(ctx, prefixData)
 }
