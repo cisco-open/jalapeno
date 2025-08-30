@@ -1,10 +1,12 @@
 package arangodb
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"sync"
 
+	driver "github.com/arangodb/go-driver"
 	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
 	"github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
 	"github.com/golang/glog"
@@ -207,74 +209,82 @@ func (uc *UpdateCoordinator) srv6UpdateProcessor() {
 	}
 }
 
-// Individual update processors - these will be implemented in the next phase
+// Individual update processors - now with real implementation
 func (uc *UpdateCoordinator) processNodeUpdate(event *kafkanotifier.EventMessage) error {
 	glog.V(7).Infof("Processing node update: %s action: %s", event.Key, event.Action)
 
-	// Create operation for batch processor
-	op := &NodeOperation{
-		Type: event.Action,
-		Key:  event.Key,
-		Data: make(map[string]interface{}),
-		Done: make(chan error, 1),
-	}
+	ctx := context.TODO()
 
-	// Submit to batch processor
-	if err := uc.db.batchProcessor.SubmitNodeOperation(op); err != nil {
-		return fmt.Errorf("failed to submit node operation: %w", err)
-	}
+	switch event.Action {
+	case "del":
+		// Handle node deletion
+		return uc.processNodeDeletion(ctx, event.Key)
 
-	// Wait for completion (optional - could be async)
-	select {
-	case err := <-op.Done:
-		return err
-	case <-uc.stop:
-		return ErrProcessorStopped
+	case "add", "update":
+		// Handle node addition/update - fetch the actual node data
+		return uc.processNodeAddUpdate(ctx, event.Key, event.Action)
+
+	default:
+		glog.V(5).Infof("Unknown node action: %s for key: %s", event.Action, event.Key)
+		return nil
 	}
 }
 
 func (uc *UpdateCoordinator) processLinkUpdate(event *kafkanotifier.EventMessage) error {
 	glog.V(7).Infof("Processing link update: %s action: %s", event.Key, event.Action)
 
-	op := &LinkOperation{
-		Type: event.Action,
-		Key:  event.Key,
-		Data: make(map[string]interface{}),
-		Done: make(chan error, 1),
-	}
+	ctx := context.TODO()
 
-	if err := uc.db.batchProcessor.SubmitLinkOperation(op); err != nil {
-		return fmt.Errorf("failed to submit link operation: %w", err)
-	}
+	switch event.Action {
+	case "del":
+		// Handle link deletion
+		return uc.processLinkDeletion(ctx, event.Key)
 
-	select {
-	case err := <-op.Done:
-		return err
-	case <-uc.stop:
-		return ErrProcessorStopped
+	case "add", "update":
+		// Handle link addition/update - fetch the actual link data
+		return uc.processLinkAddUpdate(ctx, event.Key, event.Action)
+
+	default:
+		glog.V(5).Infof("Unknown link action: %s for key: %s", event.Action, event.Key)
+		return nil
 	}
 }
 
 func (uc *UpdateCoordinator) processPrefixUpdate(event *kafkanotifier.EventMessage) error {
 	glog.V(7).Infof("Processing prefix update: %s action: %s", event.Key, event.Action)
 
-	op := &PrefixOperation{
-		Type: event.Action,
-		Key:  event.Key,
-		Data: make(map[string]interface{}),
-		Done: make(chan error, 1),
+	// For now, prefix processing is simplified
+	// In future phases, we'll implement the fixed prefix handling strategy:
+	// - /32, /128 prefixes -> node metadata
+	// - Transit networks -> separate vertices
+
+	ctx := context.TODO()
+
+	switch event.Action {
+	case "del":
+		glog.V(7).Infof("Prefix deleted: %s", event.Key)
+		// TODO: Implement prefix deletion logic
+
+	case "add", "update":
+		// Read prefix data
+		var prefixData map[string]interface{}
+		_, err := uc.db.lsprefix.ReadDocument(ctx, event.Key, &prefixData)
+		if err != nil {
+			if driver.IsNotFoundGeneral(err) {
+				glog.V(6).Infof("Prefix %s not found in ls_prefix collection, skipping", event.Key)
+				return nil
+			}
+			return fmt.Errorf("failed to read prefix %s: %w", event.Key, err)
+		}
+
+		glog.V(7).Infof("Prefix %s action %s processed (simplified)", event.Key, event.Action)
+		// TODO: Implement actual prefix processing in next phase
+
+	default:
+		glog.V(5).Infof("Unknown prefix action: %s for key: %s", event.Action, event.Key)
 	}
 
-	if err := uc.db.batchProcessor.SubmitPrefixOperation(op); err != nil {
-		return fmt.Errorf("failed to submit prefix operation: %w", err)
-	}
-
-	select {
-	case err := <-op.Done:
-		return err
-	case <-uc.stop:
-		return ErrProcessorStopped
-	}
+	return nil
 }
 
 func (uc *UpdateCoordinator) processSRv6Update(event *kafkanotifier.EventMessage) error {
@@ -298,4 +308,162 @@ func (uc *UpdateCoordinator) processSRv6Update(event *kafkanotifier.EventMessage
 	case <-uc.stop:
 		return ErrProcessorStopped
 	}
+}
+
+// Helper functions for real-time processing
+
+func (uc *UpdateCoordinator) processNodeAddUpdate(ctx context.Context, key, action string) error {
+	// Read the actual node data from ls_node collection
+	var nodeData map[string]interface{}
+	_, err := uc.db.lsnode.ReadDocument(ctx, key, &nodeData)
+	if err != nil {
+		if driver.IsNotFoundGeneral(err) {
+			glog.V(6).Infof("Node %s not found in ls_node collection, skipping", key)
+			return nil
+		}
+		return fmt.Errorf("failed to read node %s: %w", key, err)
+	}
+
+	// Process the node using the same logic as initial loading
+	if err := uc.db.processInitialNode(ctx, nodeData); err != nil {
+		return fmt.Errorf("failed to process node %s: %w", key, err)
+	}
+
+	glog.V(6).Infof("Successfully processed node %s action %s", key, action)
+	return nil
+}
+
+func (uc *UpdateCoordinator) processNodeDeletion(ctx context.Context, key string) error {
+	// Remove from igp_node collection
+	if _, err := uc.db.igpNode.RemoveDocument(ctx, key); err != nil {
+		if !driver.IsNotFoundGeneral(err) {
+			return fmt.Errorf("failed to remove node %s from igp_node: %w", key, err)
+		}
+	}
+
+	// Remove all edges where this node is referenced
+	if err := uc.removeNodeEdges(ctx, key); err != nil {
+		return fmt.Errorf("failed to remove edges for node %s: %w", key, err)
+	}
+
+	glog.V(6).Infof("Successfully removed node %s", key)
+	return nil
+}
+
+func (uc *UpdateCoordinator) processLinkAddUpdate(ctx context.Context, key, action string) error {
+	// Read the actual link data from ls_link collection
+	var linkData map[string]interface{}
+	_, err := uc.db.lslink.ReadDocument(ctx, key, &linkData)
+	if err != nil {
+		if driver.IsNotFoundGeneral(err) {
+			glog.V(6).Infof("Link %s not found in ls_link collection, skipping", key)
+			return nil
+		}
+		return fmt.Errorf("failed to read link %s: %w", key, err)
+	}
+
+	// Process the link using the same logic as initial loading
+	if err := uc.db.processInitialLink(ctx, linkData); err != nil {
+		return fmt.Errorf("failed to process link %s: %w", key, err)
+	}
+
+	glog.V(6).Infof("Successfully processed link %s action %s", key, action)
+	return nil
+}
+
+func (uc *UpdateCoordinator) processLinkDeletion(ctx context.Context, key string) error {
+	// Remove from ls_node_edge collection
+	if _, err := uc.db.lsNodeEdge.RemoveDocument(ctx, key); err != nil {
+		if !driver.IsNotFoundGeneral(err) {
+			glog.V(6).Infof("Link %s not found in ls_node_edge collection", key)
+		}
+	}
+
+	// Remove from IGP graph collections
+	collections := []driver.Collection{}
+
+	// Get IGP graph edge collections
+	igpv4Coll, err := uc.db.db.Collection(ctx, uc.db.config.IGPv4Graph)
+	if err == nil {
+		collections = append(collections, igpv4Coll)
+	}
+
+	igpv6Coll, err := uc.db.db.Collection(ctx, uc.db.config.IGPv6Graph)
+	if err == nil {
+		collections = append(collections, igpv6Coll)
+	}
+
+	// Remove from all graph collections
+	for _, coll := range collections {
+		if _, err := coll.RemoveDocument(ctx, key); err != nil {
+			if !driver.IsNotFoundGeneral(err) {
+				glog.V(6).Infof("Link %s not found in collection %s", key, coll.Name())
+			}
+		}
+	}
+
+	glog.V(6).Infof("Successfully removed link %s", key)
+	return nil
+}
+
+func (uc *UpdateCoordinator) removeNodeEdges(ctx context.Context, nodeKey string) error {
+	// Build node references for both ls_node and igp_node collections
+	lsNodeRef := fmt.Sprintf("%s/%s", uc.db.config.LSNode, nodeKey)
+	igpNodeRef := fmt.Sprintf("%s/%s", uc.db.config.IGPNode, nodeKey)
+
+	collections := []driver.Collection{uc.db.lsNodeEdge}
+
+	// Get IGP graph edge collections
+	igpv4Coll, err := uc.db.db.Collection(ctx, uc.db.config.IGPv4Graph)
+	if err == nil {
+		collections = append(collections, igpv4Coll)
+	}
+
+	igpv6Coll, err := uc.db.db.Collection(ctx, uc.db.config.IGPv6Graph)
+	if err == nil {
+		collections = append(collections, igpv6Coll)
+	}
+
+	// Remove edges from all collections where this node is referenced
+	for _, coll := range collections {
+		// Query for edges where this node is _from or _to
+		query := fmt.Sprintf(`
+			FOR doc IN %s
+			FILTER doc._from == @lsNodeRef OR doc._from == @igpNodeRef OR 
+			       doc._to == @lsNodeRef OR doc._to == @igpNodeRef
+			RETURN doc._key`, coll.Name())
+
+		bindVars := map[string]interface{}{
+			"lsNodeRef":  lsNodeRef,
+			"igpNodeRef": igpNodeRef,
+		}
+
+		cursor, err := uc.db.db.Query(ctx, query, bindVars)
+		if err != nil {
+			glog.Errorf("Failed to query edges for node %s in collection %s: %v", nodeKey, coll.Name(), err)
+			continue
+		}
+
+		// Remove each edge found
+		for {
+			var edgeKey string
+			_, err := cursor.ReadDocument(ctx, &edgeKey)
+			if err != nil {
+				if driver.IsNoMoreDocuments(err) {
+					break
+				}
+				glog.Errorf("Error reading edge key: %v", err)
+				continue
+			}
+
+			if _, err := coll.RemoveDocument(ctx, edgeKey); err != nil {
+				glog.Errorf("Failed to remove edge %s: %v", edgeKey, err)
+			} else {
+				glog.V(7).Infof("Removed edge %s from %s", edgeKey, coll.Name())
+			}
+		}
+		cursor.Close()
+	}
+
+	return nil
 }
