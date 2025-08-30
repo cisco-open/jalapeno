@@ -370,6 +370,12 @@ func (uc *UpdateCoordinator) processNodeAddUpdate(ctx context.Context, key, acti
 		return fmt.Errorf("failed to read node %s: %w", key, err)
 	}
 
+	// Filter out BGP nodes (protocol_id = 7)
+	if protocolID, ok := nodeData["protocol_id"].(float64); ok && protocolID == 7 {
+		glog.V(7).Infof("Skipping BGP node update (protocol_id=7): %s", key)
+		return nil
+	}
+
 	// Process the node using the same logic as initial loading
 	if err := uc.db.processInitialNode(ctx, nodeData); err != nil {
 		return fmt.Errorf("failed to process node %s: %w", key, err)
@@ -406,6 +412,12 @@ func (uc *UpdateCoordinator) processLinkAddUpdate(ctx context.Context, key, acti
 			return nil
 		}
 		return fmt.Errorf("failed to read link %s: %w", key, err)
+	}
+
+	// Filter out BGP links (protocol_id = 7)
+	if protocolID, ok := linkData["protocol_id"].(float64); ok && protocolID == 7 {
+		glog.V(7).Infof("Skipping BGP link update (protocol_id=7): %s", key)
+		return nil
 	}
 
 	// Process the link using the same logic as initial loading

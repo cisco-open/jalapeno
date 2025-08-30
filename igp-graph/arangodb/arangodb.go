@@ -396,17 +396,49 @@ func (a *arangoDB) processInitialNode(ctx context.Context, node map[string]inter
 		return fmt.Errorf("invalid node key")
 	}
 
-	// Create IGP node entry with empty SIDS array for SRv6 metadata
+	// Filter out BGP nodes (protocol_id = 7) as they're not part of IGP topology
+	if protocolID, ok := node["protocol_id"].(float64); ok && protocolID == 7 {
+		glog.V(7).Infof("Skipping BGP node (protocol_id=7): %s", key)
+		return nil
+	}
+
+	// Ensure IGP domain exists for this node
+	if err := a.ensureIGPDomain(ctx, node); err != nil {
+		glog.Warningf("Failed to ensure IGP domain for node %s: %v", key, err)
+	}
+
+	// Create IGP node entry with enhanced metadata
 	igpNodeDoc := map[string]interface{}{
-		"_key":          key,
-		"igp_router_id": node["igp_router_id"],
-		"protocol_id":   node["protocol_id"],
-		"domain_id":     node["domain_id"],
-		"area_id":       node["area_id"],
-		"asn":           node["asn"],
-		"name":          node["name"],
-		"timestamp":     node["timestamp"],
-		"sids":          []SID{}, // Initialize empty SIDs array for SRv6 metadata
+		"_key":                       key,
+		"action":                     node["action"],
+		"router_hash":                node["router_hash"],
+		"domain_id":                  node["domain_id"],
+		"router_ip":                  node["router_ip"],
+		"peer_hash":                  node["peer_hash"],
+		"peer_ip":                    node["peer_ip"],
+		"peer_asn":                   node["peer_asn"],
+		"timestamp":                  node["timestamp"],
+		"igp_router_id":              node["igp_router_id"],
+		"router_id":                  node["router_id"],
+		"asn":                        node["asn"],
+		"mt_id_tlv":                  node["mt_id_tlv"],
+		"area_id":                    node["area_id"],
+		"protocol":                   node["protocol"],
+		"protocol_id":                node["protocol_id"],
+		"name":                       node["name"],
+		"ls_sr_capabilities":         node["ls_sr_capabilities"],
+		"sr_algorithm":               node["sr_algorithm"],
+		"sr_local_block":             node["sr_local_block"],
+		"srv6_capabilities_tlv":      node["srv6_capabilities_tlv"],
+		"node_msd":                   node["node_msd"],
+		"flex_algo_definition":       node["flex_algo_definition"],
+		"is_adj_rib_in_post_policy":  node["is_adj_rib_in_post_policy"],
+		"is_adj_rib_out_post_policy": node["is_adj_rib_out_post_policy"],
+		"is_loc_rib_filtered":        node["is_loc_rib_filtered"],
+		"prefix_attr_tlvs":           node["prefix_attr_tlvs"],
+		"is_prepolicy":               node["is_prepolicy"],
+		"is_adj_rib_in":              node["is_adj_rib_in"],
+		"sids":                       []SID{}, // Initialize empty SIDs array for SRv6 metadata
 	}
 
 	// Try to create the document
@@ -439,6 +471,12 @@ func (a *arangoDB) processInitialLink(ctx context.Context, link map[string]inter
 	key, ok := link["_key"].(string)
 	if !ok {
 		return fmt.Errorf("invalid link key")
+	}
+
+	// Filter out BGP links (protocol_id = 7) as they're not part of IGP topology
+	if protocolID, ok := link["protocol_id"].(float64); ok && protocolID == 7 {
+		glog.V(7).Infof("Skipping BGP link (protocol_id=7): %s", key)
+		return nil
 	}
 
 	// Create ls_node_edge entry for backward compatibility
@@ -490,12 +528,24 @@ func (a *arangoDB) createIGPGraphEdges(ctx context.Context, link map[string]inte
 	key, _ := link["_key"].(string)
 
 	// Determine if this is IPv4 or IPv6 based on MTID
-	// IPv4: no mt_id_tlv field (or mt_id = 0)
-	// IPv6: mt_id_tlv.mt_id = 2
+	// IPv4: no mt_id_tlv field or mt_id = 0
+	// IPv6: mt_id_tlv contains mt_id = 2
 	isIPv6 := false
 
 	if mtidTLV, exists := link["mt_id_tlv"]; exists {
-		if mtidObj, ok := mtidTLV.(map[string]interface{}); ok {
+		// Handle both array format (from nodes) and object format (from SRv6)
+		if mtidArray, ok := mtidTLV.([]interface{}); ok {
+			// Array format: search for mt_id = 2
+			for _, mtItem := range mtidArray {
+				if mtObj, ok := mtItem.(map[string]interface{}); ok {
+					if mtID, ok := mtObj["mt_id"].(float64); ok && mtID == 2 {
+						isIPv6 = true
+						break
+					}
+				}
+			}
+		} else if mtidObj, ok := mtidTLV.(map[string]interface{}); ok {
+			// Object format: direct check
 			if mtID, ok := mtidObj["mt_id"].(float64); ok && mtID == 2 {
 				isIPv6 = true
 			}

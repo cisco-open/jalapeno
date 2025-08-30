@@ -95,10 +95,18 @@ func makeLSLinkKey(bmpData map[string]interface{}) string {
 		return ""
 	}
 
-	// Handle MTID
+	// Handle MTID - support both array and object formats
 	mtid := 0
 	if mtData, ok := bmpData["mt_id_tlv"]; ok {
-		if mtObj, ok := mtData.(map[string]interface{}); ok {
+		// Try array format first (from nodes)
+		if mtArray, ok := mtData.([]interface{}); ok && len(mtArray) > 0 {
+			if mtObj, ok := mtArray[0].(map[string]interface{}); ok {
+				if mt, ok := mtObj["mt_id"].(float64); ok {
+					mtid = int(mt)
+				}
+			}
+		} else if mtObj, ok := mtData.(map[string]interface{}); ok {
+			// Object format (from SRv6, links)
 			if mt, ok := mtObj["mt_id"].(float64); ok {
 				mtid = int(mt)
 			}
@@ -157,7 +165,15 @@ func makeLSPrefixKey(bmpData map[string]interface{}) string {
 
 	mtid := 0
 	if mtData, ok := bmpData["mt_id_tlv"]; ok {
-		if mtObj, ok := mtData.(map[string]interface{}); ok {
+		// Try array format first (from nodes)
+		if mtArray, ok := mtData.([]interface{}); ok && len(mtArray) > 0 {
+			if mtObj, ok := mtArray[0].(map[string]interface{}); ok {
+				if mt, ok := mtObj["mt_id"].(float64); ok {
+					mtid = int(mt)
+				}
+			}
+		} else if mtObj, ok := mtData.(map[string]interface{}); ok {
+			// Object format (from SRv6, links)
 			if mt, ok := mtObj["mt_id"].(float64); ok {
 				mtid = int(mt)
 			}
