@@ -147,7 +147,7 @@ func NewDBSrvClient(arangoSrv, user, pass, dbname, lsprefix, lslink, lssrv6sid, 
 		options.OrphanVertexCollections = []string{"ls_srv6_sid", "ls_prefix"}
 		options.EdgeDefinitions = []driver.EdgeDefinition{edgeDefinition}
 
-		arango.igpv4Graph, err = arango.db.CreateGraph(context.TODO(), igpv4Graph, &options)
+		arango.igpv4Graph, err = arango.db.CreateGraphV2(context.TODO(), igpv4Graph, &options)
 		if err != nil {
 			return nil, err
 		}
@@ -189,7 +189,7 @@ func NewDBSrvClient(arangoSrv, user, pass, dbname, lsprefix, lslink, lssrv6sid, 
 		options.OrphanVertexCollections = []string{"ls_srv6_sid", "ls_prefix"}
 		options.EdgeDefinitions = []driver.EdgeDefinition{edgeDefinition}
 
-		arango.igpv6Graph, err = arango.db.CreateGraph(context.TODO(), igpv6Graph, &options)
+		arango.igpv6Graph, err = arango.db.CreateGraphV2(context.TODO(), igpv6Graph, &options)
 		if err != nil {
 			return nil, err
 		}

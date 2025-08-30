@@ -43,7 +43,7 @@ Jalapeno is comprised of a series of microservices which can be summarized as:
 - [Processors](./processors.md)
     - Data Processors
     - Jalapeno has two classes of processors:
-        - Base data processors: Parse topology and performance data coming off Kafka and populate the Influx TSDB and base data collections in the Arango graph database.  The [Topology](./processors.md#topology-processor) and Telegraf pods are base processors.
+        - Base data processors: Parse topology and performance data coming off Kafka and populate the Influx TSDB and base data collections in the Arango graph database.  The [GoBMP-Arango](./processors.md#gobmp-arango-processor) and Telegraf pods are base processors.
         - Virtual Topology or Edge processors: Mine the graph and TSDB data collections, then populate virtual topology Edge collections in the graph DB.  [Linkstate-edge](https://github.com/cisco-open/jalapeno/tree/main/linkstate-edge) is an one such processor.
 
 - [Infrastructure](./infrastructure.md)

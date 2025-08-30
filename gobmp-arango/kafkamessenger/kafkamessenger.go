@@ -28,7 +28,7 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/cisco-open/jalapeno/topology/dbclient"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/tools"
@@ -101,7 +101,7 @@ func NewKafkaMessenger(kafkaSrv string, db dbclient.DB) (Srv, error) {
 	}
 
 	config := sarama.NewConfig()
-	config.ClientID = "topology-consumer" + "_" + strconv.Itoa(rand.Intn(1000))
+	config.ClientID = "gobmp-arango-consumer" + "_" + strconv.Itoa(rand.Intn(1000))
 	config.Consumer.Return.Errors = true
 	config.Version = sarama.V0_11_0_0
 

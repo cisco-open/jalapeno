@@ -30,25 +30,26 @@ spec:
      protocol: TCP
      targetPort: 56767
   selector:
-    app: topology-aio
+    app: gobmp-arango-aio
   type: NodePort
 metadata:
-  name: topology-aio
+  name: gobmp-arango-aio
   namespace: jalapeno
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: topology-aio
+  name: gobmp-arango-aio
+  namespace: jalapeno
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: topology-aio
+      app: gobmp-arango-aio
   template:
     metadata:
       labels:
-        app: topology-aio
+        app: gobmp-arango-aio
     spec:
       containers:
         - args:
@@ -58,9 +59,9 @@ spec:
           - "http://arangodb:8529"
           - --database-name
           - "jalapeno"
-          image: docker.io/iejalapeno/topology-aio:latest
+          image: docker.io/iejalapeno/gobmp-arango-aio:latest
           imagePullPolicy: Always
-          name: topology-aio
+          name: gobmp-arango-aio
           volumeMounts:
             - name: credentials
               mountPath: /credentials
@@ -78,6 +79,5 @@ spec:
         - name: credentials
           secret:
             secretName: jalapeno
-metadata:
-  name: topology-aio
-  namespace: jalapeno
+
+

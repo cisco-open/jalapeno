@@ -2,8 +2,8 @@ package arangodb
 
 import (
 	"github.com/sbezverk/gobmp/pkg/pub"
-//	"github.com/sbezverk/gobmp/pkg/bmp"
-	"github.com/cisco-open/jalapeno/topology/dbclient"
+	//	"github.com/sbezverk/gobmp/pkg/bmp"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
 )
 
 type PubArango struct {

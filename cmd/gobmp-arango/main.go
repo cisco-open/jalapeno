@@ -31,12 +31,12 @@ import (
 	"runtime"
 	"strconv"
 
-	"github.com/cisco-open/jalapeno/topology/arangodb"
-	"github.com/cisco-open/jalapeno/topology/dbclient"
-	"github.com/cisco-open/jalapeno/topology/kafkamessenger"
-	"github.com/cisco-open/jalapeno/topology/kafkanotifier"
-	"github.com/cisco-open/jalapeno/topology/messenger"
-	"github.com/cisco-open/jalapeno/topology/mockdb"
+	"github.com/cisco-open/jalapeno/gobmp-arango/arangodb"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
+	"github.com/cisco-open/jalapeno/gobmp-arango/kafkamessenger"
+	"github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
+	"github.com/cisco-open/jalapeno/gobmp-arango/messenger"
+	"github.com/cisco-open/jalapeno/gobmp-arango/mockdb"
 	"github.com/golang/glog"
 
 	"net/http"
@@ -126,7 +126,7 @@ func main() {
 	var dbSrv dbclient.Srv
 	// validateDBCreds check if the user name and the password are provided either as
 	// command line parameters or via files. If both are provided command line parameters
-	// will be used, if neither, topology will fail.
+	// will be used, if neither, gobmp-arango will fail.
 	if err := validateDBCreds(); err != nil {
 		glog.Errorf("failed to validate the database credentials with error: %+v", err)
 		os.Exit(1)
@@ -140,7 +140,7 @@ func main() {
 	if !isMockDB {
 		// validateDBCreds check if the user name and the password are provided either as
 		// command line parameters or via files. If both are provided command line parameters
-		// will be used, if neither, topology will fail.
+		// will be used, if neither, gobmp-arango will fail.
 		if err := validateDBCreds(); err != nil {
 			glog.Errorf("failed to validate the database credentials with error: %+v", err)
 			os.Exit(1)

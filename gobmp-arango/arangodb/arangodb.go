@@ -27,8 +27,8 @@ import (
 	"fmt"
 
 	driver "github.com/arangodb/go-driver"
-	"github.com/cisco-open/jalapeno/topology/dbclient"
-	"github.com/cisco-open/jalapeno/topology/kafkanotifier"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
+	"github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/tools"
@@ -106,11 +106,6 @@ func NewDBSrvClient(arangoSrv, user, pass, dbname string, notifier kafkanotifier
 		if err := arango.ensureCollection(n, t); err != nil {
 			return nil, err
 		}
-	}
-
-	// Create additional graphs: igpv4_graph and igpv6_graph
-	if err := arango.ensureAdditionalGraphs(); err != nil {
-		return nil, err
 	}
 
 	return arango, nil
@@ -222,44 +217,6 @@ func (a *arangoDB) ensureGraph(name string) (driver.Graph, error) {
 	}
 
 	return a.db.CreateGraphV2(context.TODO(), name, &options)
-}
-
-// ensureAdditionalGraphs creates the igpv4_graph and igpv6_graph graphs
-func (a *arangoDB) ensureAdditionalGraphs() error {
-	additionalGraphs := []string{"igpv4_graph", "igpv6_graph"}
-
-	for _, graphName := range additionalGraphs {
-		if err := a.ensureSpecificGraph(graphName); err != nil {
-			return fmt.Errorf("failed to create %s: %w", graphName, err)
-		}
-	}
-
-	return nil
-}
-
-// ensureSpecificGraph creates a specific graph with the given name
-func (a *arangoDB) ensureSpecificGraph(graphName string) error {
-	var edgeDefinition driver.EdgeDefinition
-	edgeDefinition.Collection = graphName + "_edge"
-	edgeDefinition.From = []string{graphName}
-	edgeDefinition.To = []string{graphName}
-
-	var options driver.CreateGraphOptions
-	options.EdgeDefinitions = []driver.EdgeDefinition{edgeDefinition}
-
-	graph, err := a.db.Graph(context.TODO(), graphName)
-	if err == nil {
-		graph.Remove(context.TODO())
-		_, err = a.db.CreateGraphV2(context.TODO(), graphName, &options)
-		return err
-	}
-
-	if !driver.IsArangoErrorWithErrorNum(err, 1924) {
-		return err
-	}
-
-	_, err = a.db.CreateGraphV2(context.TODO(), graphName, &options)
-	return err
 }
 
 func (a *arangoDB) Start() error {

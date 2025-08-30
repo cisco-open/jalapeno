@@ -1,0 +1,4 @@
+FROM scratch
+
+COPY ./bin/gobmp-arango /gobmp-arango
+ENTRYPOINT ["/gobmp-arango"]

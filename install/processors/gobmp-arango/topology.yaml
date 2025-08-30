@@ -10,15 +10,18 @@ data:
 ---
 apiVersion: apps/v1
 kind: Deployment
+metadata:
+  name: gobmp-arango
+  namespace: jalapeno
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: topology
+      app: gobmp-arango
   template:
     metadata:
       labels:
-        app: topology
+        app: gobmp-arango
     spec:
       containers:
         - args:
@@ -32,9 +35,9 @@ spec:
           - "jalapeno"
           - --notify-event
           - "true"
-          image: docker.io/iejalapeno/topology:latest
+          image: docker.io/iejalapeno/gobmp-arango:latest
           imagePullPolicy: Always
-          name: topology
+          name: gobmp-arango
           volumeMounts:
             - name: credentials
               mountPath: /credentials
@@ -42,6 +45,4 @@ spec:
         - name: credentials
           secret:
             secretName: jalapeno
-metadata:
-  name: topology
-  namespace: jalapeno
+

@@ -30,8 +30,8 @@ import (
 	"time"
 
 	driver "github.com/arangodb/go-driver"
-	"github.com/cisco-open/jalapeno/topology/dbclient"
-	"github.com/cisco-open/jalapeno/topology/kafkanotifier"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
+	"github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"go.uber.org/atomic"
@@ -101,7 +101,7 @@ const (
 
 func (c *collection) processError(r *result) bool {
 	switch {
-	// Condition when a collection was deleted while the topology was running
+	// Condition when a collection was deleted while the gobmp-arango was running
 	case driver.IsArangoErrorWithErrorNum(r.err, driver.ErrArangoDataSourceNotFound, ErrArangoGraphNotFound):
 		if err := c.arango.ensureCollection(c.properties, c.collectionType); err != nil {
 			return true
@@ -232,7 +232,7 @@ func (c *collection) genericHandler() {
 	}
 }
 
-// reliableNotifier is function which is called if Topology needs to send an event out notifying
+// reliableNotifier is function which is called if gobmp-arango needs to send an event out notifying
 // about topology change event.
 func (c *collection) reliableNotifier(r *result) {
 	// The check for the DB record state will be done every 1000 milliseconds

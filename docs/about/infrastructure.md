@@ -12,7 +12,7 @@ Kafka is Jalapeno's message bus and core data handler.
 
 Jalapeno's Kafka instance handles two main types of data: BMP data (topology information) supplied by the GoBMP collector, and telemetry data (network metrics) supplied by Telegraf. Jalapeno Processors are responsible for reading and restructuring the data, and for inferring relevant metrics from the data.
 
-BMP data is organized into Kakfa topics such as `gobmp.parsed.peer` and `gobmp.parsed.ls_node`. These topics are further parsed to create representations of the network topology using the [Topology Processor](processors.md#topology-processor).
+BMP data is organized into Kakfa topics such as `gobmp.parsed.peer` and `gobmp.parsed.ls_node`. These topics are further parsed to create representations of the network topology using the [GoBMP-Arango Processor](processors.md#gobmp-arango-processor).
 
 Telemetry data is collected in the `jalapeno.telemetry` topic. Data in this topic is pushed into Telegraf (a telemetry consumer), and onwards into InfluxDB.
 
@@ -22,7 +22,7 @@ Kafka is deployed using `kubectl`, as seen in the `deploy_infrastructure.sh` scr
 
 ArangoDB is Jalapeno's graph database.
 
-Jalapeno [Processors](./processors.md) parse through data in Kafka, then create various collections in ArangoDB. These collections represent both the network's topology and its current state. For example, the [Topology Processor](./processors.md#topology-processor) parses BMP messages that have been streamed to Kafka and builds out collections such as "ls_node" and "l3vpn_prefix_v4" in Jalapeno's ArangoDB instance. These collections, in conjunction with ArangoDBs rapid graphical traversals make it easy to model topologies and make path calculations.
+Jalapeno [Processors](./processors.md) parse through data in Kafka, then create various collections in ArangoDB. These collections represent both the network's topology and its current state. For example, the [GoBMP-Arango Processor](./processors.md#gobmp-arango-processor) parses BMP messages that have been streamed to Kafka and builds out collections such as "ls_node" and "l3vpn_prefix_v4" in Jalapeno's ArangoDB instance. These collections, in conjunction with ArangoDBs rapid graphical traversals make it easy to model topologies and make path calculations.
 
 ArangoDB is deployed using `kubectl`, as seen in the `deploy_infrastructure.sh` script. The configurations for ArangoDB's deployment are in the YAML files in the `jalapeno/infra/arangodb/` directory.  
 
