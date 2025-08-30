@@ -31,7 +31,7 @@ func NewKafkaMessenger(kafkaConn string, dbSrv dbclient.DB) (*KafkaMessenger, er
 
 	brokers := strings.Split(kafkaConn, ",")
 
-	// Topics that the IGP graph processor subscribes to
+	// Topics that the IGP graph processor subscribes to - raw BMP data topics
 	topics := []string{
 		"gobmp.parsed.ls_node",
 		"gobmp.parsed.ls_link",
@@ -165,14 +165,30 @@ func (h *MessageHandler) processMessage(message *sarama.ConsumerMessage) error {
 		return nil
 	}
 
-	// Validate that the message is valid JSON
-	var temp interface{}
-	if err := json.Unmarshal(message.Value, &temp); err != nil {
-		return err
+	// Parse the raw BMP message
+	var bmpData map[string]interface{}
+	if err := json.Unmarshal(message.Value, &bmpData); err != nil {
+		return fmt.Errorf("failed to parse BMP message: %w", err)
 	}
 
-	// Store the message for processing
-	return h.dbSrv.StoreMessage(msgType, message.Value)
+	// Add message key if present
+	if message.Key != nil {
+		bmpData["_message_key"] = string(message.Key)
+	}
+
+	// Add topic information for processing context
+	bmpData["_topic"] = message.Topic
+	bmpData["_partition"] = message.Partition
+	bmpData["_offset"] = message.Offset
+
+	// Re-marshal for storage
+	processedMessage, err := json.Marshal(bmpData)
+	if err != nil {
+		return fmt.Errorf("failed to marshal processed message: %w", err)
+	}
+
+	// Store the processed message
+	return h.dbSrv.StoreMessage(msgType, processedMessage)
 }
 
 func validateConnection(kafkaConn string) error {
