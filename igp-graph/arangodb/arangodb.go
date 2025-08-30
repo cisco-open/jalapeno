@@ -313,6 +313,11 @@ func (a *arangoDB) loadInitialData() error {
 		return fmt.Errorf("failed to load initial SRv6 SIDs: %w", err)
 	}
 
+	// Run deduplication to handle Level-1-2 nodes
+	if err := a.runDeduplication(); err != nil {
+		return fmt.Errorf("failed to deduplicate IGP nodes: %w", err)
+	}
+
 	glog.Info("Initial IGP topology data loaded successfully")
 	return nil
 }
@@ -552,27 +557,61 @@ func (a *arangoDB) createIGPGraphEdges(ctx context.Context, link map[string]inte
 		}
 	}
 
-	// Create IGP graph edge document
+	// Extract MTID for the edge document
+	var mtID interface{} = 0
+	if mtidTLV, exists := link["mt_id_tlv"]; exists {
+		if mtidArray, ok := mtidTLV.([]interface{}); ok && len(mtidArray) > 0 {
+			if mtObj, ok := mtidArray[0].(map[string]interface{}); ok {
+				if mt, ok := mtObj["mt_id"]; ok {
+					mtID = mt
+				}
+			}
+		} else if mtidObj, ok := mtidTLV.(map[string]interface{}); ok {
+			if mt, ok := mtidObj["mt_id"]; ok {
+				mtID = mt
+			}
+		}
+	}
+
+	// Create comprehensive IGP graph edge document with all fields
 	igpEdgeDoc := map[string]interface{}{
-		"_key":                  key,
-		"_from":                 fmt.Sprintf("%s/%s", a.config.IGPNode, link["igp_router_id"]),
-		"_to":                   fmt.Sprintf("%s/%s", a.config.IGPNode, link["remote_igp_router_id"]),
-		"link":                  key,
-		"protocol_id":           link["protocol_id"],
-		"domain_id":             link["domain_id"],
-		"area_id":               link["area_id"],
-		"local_link_ip":         link["local_link_ip"],
-		"remote_link_ip":        link["remote_link_ip"],
-		"igp_metric":            link["igp_metric"],
-		"local_node_asn":        link["local_node_asn"],
-		"remote_node_asn":       link["remote_node_asn"],
-		"max_link_bw":           link["max_link_bw"],
-		"max_resv_bw":           link["max_resv_bw"],
-		"te_default_metric":     link["te_default_metric"],
-		"unidir_link_delay":     link["unidir_link_delay"],
-		"unidir_packet_loss":    link["unidir_packet_loss"],
-		"unidir_available_bw":   link["unidir_available_bw"],
-		"unidir_bw_utilization": link["unidir_bw_utilization"],
+		"_key":                      key,
+		"_from":                     fmt.Sprintf("%s/%s", a.config.IGPNode, getNodeKey(link, true)),
+		"_to":                       fmt.Sprintf("%s/%s", a.config.IGPNode, getNodeKey(link, false)),
+		"link":                      key,
+		"protocol_id":               link["protocol_id"],
+		"domain_id":                 link["domain_id"],
+		"mt_id":                     mtID,
+		"area_id":                   link["area_id"],
+		"protocol":                  link["protocol"],
+		"local_link_id":             link["local_link_id"],
+		"remote_link_id":            link["remote_link_id"],
+		"local_link_ip":             link["local_link_ip"],
+		"remote_link_ip":            link["remote_link_ip"],
+		"local_node_asn":            link["local_node_asn"],
+		"remote_node_asn":           link["remote_node_asn"],
+		"igp_metric":                link["igp_metric"],
+		"max_link_bw":               link["max_link_bw"],
+		"max_resv_bw":               link["max_resv_bw"],
+		"te_default_metric":         link["te_default_metric"],
+		"unidir_link_delay":         link["unidir_link_delay"],
+		"unidir_link_delay_min_max": link["unidir_link_delay_min_max"],
+		"unidir_delay_variation":    link["unidir_delay_variation"],
+		"unidir_packet_loss":        link["unidir_packet_loss"],
+		"unidir_residual_bw":        link["unidir_residual_bw"],
+		"unidir_available_bw":       link["unidir_available_bw"],
+		"unidir_bw_utilization":     link["unidir_bw_utilization"],
+		"srv6_endx_sid":             link["srv6_endx_sid"],
+		"ls_adjacency_sid":          link["ls_adjacency_sid"],
+		"peer_node_sid":             link["peer_node_sid"],
+		"peer_adj_sid":              link["peer_adj_sid"],
+		"peer_set_sid":              link["peer_set_sid"],
+		"srv6_bgp_peer_node_sid":    link["srv6_bgp_peer_node_sid"],
+		"app_spec_link_attr":        link["app_spec_link_attr"],
+		"prefix":                    "",
+		"prefix_len":                0,
+		"prefix_metric":             0,
+		"prefix_attr_tlvs":          nil,
 	}
 
 	// Create edge in appropriate graph based on IP version
@@ -603,6 +642,37 @@ func (a *arangoDB) createIGPGraphEdges(ctx context.Context, link map[string]inte
 	}
 
 	return nil
+}
+
+// getNodeKey generates the proper IGP node key for graph edges
+// isLocal: true for local node, false for remote node
+func getNodeKey(link map[string]interface{}, isLocal bool) string {
+	var routerID string
+	var protocolID, domainID interface{}
+	var areaID string = "0"
+
+	if isLocal {
+		routerID, _ = link["igp_router_id"].(string)
+	} else {
+		routerID, _ = link["remote_igp_router_id"].(string)
+	}
+
+	protocolID = link["protocol_id"]
+	domainID = link["domain_id"]
+
+	if area, ok := link["area_id"].(string); ok {
+		areaID = area
+	}
+
+	// For OSPF (protocol 3=OSPFv2, 6=OSPFv3), use actual area_id
+	if proto, ok := protocolID.(float64); ok && (proto == 3 || proto == 6) {
+		// Keep the actual area_id for OSPF
+	} else {
+		// For IS-IS and others, use "0"
+		areaID = "0"
+	}
+
+	return fmt.Sprintf("%v_%v_%s_%s", protocolID, domainID, areaID, routerID)
 }
 
 func (a *arangoDB) monitor() {
