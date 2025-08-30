@@ -529,10 +529,11 @@ func (a *arangoDB) processInitialLink(ctx context.Context, link map[string]inter
 }
 
 // createIGPGraphEdges creates edges in appropriate IPv4 or IPv6 graphs based on MTID
+// Following the original linkstate-graph pattern with proper node lookups
 func (a *arangoDB) createIGPGraphEdges(ctx context.Context, link map[string]interface{}) error {
 	key, _ := link["_key"].(string)
 
-	// Determine if this is IPv4 or IPv6 based on MTID
+	// Determine if this is IPv4 or IPv6 based on MTID (matching original logic)
 	// IPv4: no mt_id_tlv field or mt_id = 0
 	// IPv6: mt_id_tlv contains mt_id = 2
 	isIPv6 := false
@@ -557,122 +558,45 @@ func (a *arangoDB) createIGPGraphEdges(ctx context.Context, link map[string]inte
 		}
 	}
 
-	// Extract MTID for the edge document
-	var mtID interface{} = 0
-	if mtidTLV, exists := link["mt_id_tlv"]; exists {
-		if mtidArray, ok := mtidTLV.([]interface{}); ok && len(mtidArray) > 0 {
-			if mtObj, ok := mtidArray[0].(map[string]interface{}); ok {
-				if mt, ok := mtObj["mt_id"]; ok {
-					mtID = mt
-				}
-			}
-		} else if mtidObj, ok := mtidTLV.(map[string]interface{}); ok {
-			if mt, ok := mtidObj["mt_id"]; ok {
-				mtID = mt
-			}
-		}
+	glog.V(8).Infof("Link %s: isIPv6 = %t", key, isIPv6)
+
+	// Get local node from IGP node collection (matching original getv4Node/getv6Node)
+	localNode, err := a.getIGPNode(ctx, link, true)
+	if err != nil {
+		glog.Errorf("Failed to get local IGP node %s for link %s: %v",
+			link["igp_router_id"], key, err)
+		return err
 	}
 
-	// Create comprehensive IGP graph edge document with all fields
-	igpEdgeDoc := map[string]interface{}{
-		"_key":                      key,
-		"_from":                     fmt.Sprintf("%s/%s", a.config.IGPNode, getNodeKey(link, true)),
-		"_to":                       fmt.Sprintf("%s/%s", a.config.IGPNode, getNodeKey(link, false)),
-		"link":                      key,
-		"protocol_id":               link["protocol_id"],
-		"domain_id":                 link["domain_id"],
-		"mt_id":                     mtID,
-		"area_id":                   link["area_id"],
-		"protocol":                  link["protocol"],
-		"local_link_id":             link["local_link_id"],
-		"remote_link_id":            link["remote_link_id"],
-		"local_link_ip":             link["local_link_ip"],
-		"remote_link_ip":            link["remote_link_ip"],
-		"local_node_asn":            link["local_node_asn"],
-		"remote_node_asn":           link["remote_node_asn"],
-		"igp_metric":                link["igp_metric"],
-		"max_link_bw":               link["max_link_bw"],
-		"max_resv_bw":               link["max_resv_bw"],
-		"te_default_metric":         link["te_default_metric"],
-		"unidir_link_delay":         link["unidir_link_delay"],
-		"unidir_link_delay_min_max": link["unidir_link_delay_min_max"],
-		"unidir_delay_variation":    link["unidir_delay_variation"],
-		"unidir_packet_loss":        link["unidir_packet_loss"],
-		"unidir_residual_bw":        link["unidir_residual_bw"],
-		"unidir_available_bw":       link["unidir_available_bw"],
-		"unidir_bw_utilization":     link["unidir_bw_utilization"],
-		"srv6_endx_sid":             link["srv6_endx_sid"],
-		"ls_adjacency_sid":          link["ls_adjacency_sid"],
-		"peer_node_sid":             link["peer_node_sid"],
-		"peer_adj_sid":              link["peer_adj_sid"],
-		"peer_set_sid":              link["peer_set_sid"],
-		"srv6_bgp_peer_node_sid":    link["srv6_bgp_peer_node_sid"],
-		"app_spec_link_attr":        link["app_spec_link_attr"],
-		"prefix":                    "",
-		"prefix_len":                0,
-		"prefix_metric":             0,
-		"prefix_attr_tlvs":          nil,
+	// Get remote node from IGP node collection
+	remoteNode, err := a.getIGPNode(ctx, link, false)
+	if err != nil {
+		glog.Errorf("Failed to get remote IGP node %s for link %s: %v",
+			link["remote_igp_router_id"], key, err)
+		return err
 	}
 
-	// Create edge in appropriate graph based on IP version
+	glog.V(7).Infof("Local node -> Protocol: %v Domain ID: %v IGP Router ID: %v",
+		localNode["protocol_id"], localNode["domain_id"], localNode["igp_router_id"])
+	glog.V(7).Infof("Remote node -> Protocol: %v Domain ID: %v IGP Router ID: %v",
+		remoteNode["protocol_id"], remoteNode["domain_id"], remoteNode["igp_router_id"])
+
+	// Create edge in appropriate graph based on IP version (matching original pattern)
 	if isIPv6 {
-		// IPv6 graph (MTID = 2)
-		igpv6EdgeCollection, err := a.db.Collection(ctx, a.config.IGPv6Graph)
-		if err != nil {
-			return fmt.Errorf("failed to get IGPv6 edge collection: %w", err)
+		// IPv6 graph (MTID = 2) - matches original processigpv6LinkEdge
+		if err := a.createIGPv6EdgeObject(ctx, link, localNode, remoteNode); err != nil {
+			glog.Errorf("Failed to create IPv6 edge object: %v", err)
+			return err
 		}
-
-		_, err = igpv6EdgeCollection.CreateDocument(ctx, igpEdgeDoc)
-		if err != nil && !driver.IsConflict(err) {
-			return fmt.Errorf("failed to create IGPv6 edge: %w", err)
-		}
-		glog.V(6).Infof("Created IPv6 graph edge: %s -> %s", link["igp_router_id"], link["remote_igp_router_id"])
 	} else {
-		// IPv4 graph (MTID = nil or 0)
-		igpv4EdgeCollection, err := a.db.Collection(ctx, a.config.IGPv4Graph)
-		if err != nil {
-			return fmt.Errorf("failed to get IGPv4 edge collection: %w", err)
+		// IPv4 graph (MTID = nil or 0) - matches original processLSLinkEdge
+		if err := a.createIGPv4EdgeObject(ctx, link, localNode, remoteNode); err != nil {
+			glog.Errorf("Failed to create IPv4 edge object: %v", err)
+			return err
 		}
-
-		_, err = igpv4EdgeCollection.CreateDocument(ctx, igpEdgeDoc)
-		if err != nil && !driver.IsConflict(err) {
-			return fmt.Errorf("failed to create IGPv4 edge: %w", err)
-		}
-		glog.V(6).Infof("Created IPv4 graph edge: %s -> %s", link["igp_router_id"], link["remote_igp_router_id"])
 	}
 
 	return nil
-}
-
-// getNodeKey generates the proper IGP node key for graph edges
-// isLocal: true for local node, false for remote node
-func getNodeKey(link map[string]interface{}, isLocal bool) string {
-	var routerID string
-	var protocolID, domainID interface{}
-	var areaID string = "0"
-
-	if isLocal {
-		routerID, _ = link["igp_router_id"].(string)
-	} else {
-		routerID, _ = link["remote_igp_router_id"].(string)
-	}
-
-	protocolID = link["protocol_id"]
-	domainID = link["domain_id"]
-
-	if area, ok := link["area_id"].(string); ok {
-		areaID = area
-	}
-
-	// For OSPF (protocol 3=OSPFv2, 6=OSPFv3), use actual area_id
-	if proto, ok := protocolID.(float64); ok && (proto == 3 || proto == 6) {
-		// Keep the actual area_id for OSPF
-	} else {
-		// For IS-IS and others, use "0"
-		areaID = "0"
-	}
-
-	return fmt.Sprintf("%v_%v_%s_%s", protocolID, domainID, areaID, routerID)
 }
 
 func (a *arangoDB) monitor() {
