@@ -45,7 +45,7 @@ type IGPGraphObject struct {
 }
 
 // getIGPNode finds an IGP node matching the link's router information
-// This mirrors the original getv4Node/getv6Node functions
+// Handles Level-1-2 router connections by trying multiple lookup strategies
 func (a *arangoDB) getIGPNode(ctx context.Context, link map[string]interface{}, local bool) (map[string]interface{}, error) {
 	var routerID string
 	if local {
@@ -62,14 +62,43 @@ func (a *arangoDB) getIGPNode(ctx context.Context, link map[string]interface{}, 
 	protocolID := link["protocol_id"]
 	areaID, _ := link["area_id"].(string)
 
-	// Build query to find matching IGP node
+	// Strategy 1: Try to find node matching the link's protocol (exact match)
+	node, err := a.findNodeByProtocol(ctx, routerID, domainID, protocolID, areaID)
+	if err == nil {
+		glog.V(8).Infof("Found exact protocol match for router %s", routerID)
+		return node, nil
+	}
+
+	// Strategy 2: For Level-1 links, try to find Level-2 node (Level-1-2 routers)
+	if proto, ok := protocolID.(float64); ok && proto == 1 {
+		node, err := a.findNodeByProtocol(ctx, routerID, domainID, float64(2), areaID)
+		if err == nil {
+			glog.V(8).Infof("Found Level-2 node for Level-1 link, router %s (Level-1-2 router)", routerID)
+			return node, nil
+		}
+	}
+
+	// Strategy 3: Find any node with matching router_id and domain_id (protocol-agnostic)
+	node, err = a.findNodeAnyProtocol(ctx, routerID, domainID, areaID)
+	if err == nil {
+		glog.V(8).Infof("Found protocol-agnostic match for router %s", routerID)
+		return node, nil
+	}
+
+	return nil, fmt.Errorf("no IGP node found for router %s in domain %v", routerID, domainID)
+}
+
+// findNodeByProtocol finds a node with specific protocol
+func (a *arangoDB) findNodeByProtocol(ctx context.Context, routerID string, domainID, protocolID interface{}, areaID string) (map[string]interface{}, error) {
 	query := fmt.Sprintf("FOR d IN %s", a.config.IGPNode)
-	query += fmt.Sprintf(" FILTER d.igp_router_id == @routerId")
-	query += fmt.Sprintf(" FILTER d.domain_id == @domainId")
+	query += " FILTER d.igp_router_id == @routerId"
+	query += " FILTER d.domain_id == @domainId"
+	query += " FILTER d.protocol_id == @protocolId"
 
 	bindVars := map[string]interface{}{
-		"routerId": routerID,
-		"domainId": domainID,
+		"routerId":   routerID,
+		"domainId":   domainID,
+		"protocolId": protocolID,
 	}
 
 	// For OSPF (protocol 3=OSPFv2, 6=OSPFv3), include area_id in query
@@ -80,7 +109,27 @@ func (a *arangoDB) getIGPNode(ctx context.Context, link map[string]interface{}, 
 
 	query += " RETURN d"
 
-	glog.V(8).Infof("Node lookup query: %s, vars: %+v", query, bindVars)
+	return a.executeNodeQuery(ctx, query, bindVars)
+}
+
+// findNodeAnyProtocol finds a node regardless of protocol (fallback)
+func (a *arangoDB) findNodeAnyProtocol(ctx context.Context, routerID string, domainID interface{}, areaID string) (map[string]interface{}, error) {
+	query := fmt.Sprintf("FOR d IN %s", a.config.IGPNode)
+	query += " FILTER d.igp_router_id == @routerId"
+	query += " FILTER d.domain_id == @domainId"
+	query += " RETURN d"
+
+	bindVars := map[string]interface{}{
+		"routerId": routerID,
+		"domainId": domainID,
+	}
+
+	return a.executeNodeQuery(ctx, query, bindVars)
+}
+
+// executeNodeQuery executes a node lookup query and returns the result
+func (a *arangoDB) executeNodeQuery(ctx context.Context, query string, bindVars map[string]interface{}) (map[string]interface{}, error) {
+	glog.V(9).Infof("Node query: %s, vars: %+v", query, bindVars)
 
 	cursor, err := a.db.Query(ctx, query, bindVars)
 	if err != nil {
@@ -99,13 +148,19 @@ func (a *arangoDB) getIGPNode(ctx context.Context, link map[string]interface{}, 
 			return nil, fmt.Errorf("error reading node document: %w", err)
 		}
 		count++
+		if count > 1 {
+			// If multiple nodes found, prefer Level-2 (protocol_id = 2)
+			var currentNode map[string]interface{}
+			currentNode = node
+			if proto, ok := currentNode["protocol_id"].(float64); ok && proto == 2 {
+				// Keep this Level-2 node and stop
+				break
+			}
+		}
 	}
 
 	if count == 0 {
-		return nil, fmt.Errorf("query returned 0 results for router %s", routerID)
-	}
-	if count > 1 {
-		return nil, fmt.Errorf("query returned more than 1 result for router %s", routerID)
+		return nil, fmt.Errorf("query returned 0 results")
 	}
 
 	return node, nil
