@@ -3,7 +3,6 @@ package arangodb
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	driver "github.com/arangodb/go-driver"
@@ -58,9 +57,6 @@ type arangoDB struct {
 	// Control
 	stop     chan struct{}
 	notifier kafkanotifier.Event
-
-	// Synchronization
-	mu sync.RWMutex
 }
 
 // NewDBSrvClient creates a new unified IGP Graph database client
@@ -474,9 +470,23 @@ func (a *arangoDB) processInitialLink(ctx context.Context, link map[string]inter
 	return nil
 }
 
-// createIGPGraphEdges creates edges in both IGPv4 and IGPv6 graphs
+// createIGPGraphEdges creates edges in appropriate IPv4 or IPv6 graphs based on MTID
 func (a *arangoDB) createIGPGraphEdges(ctx context.Context, link map[string]interface{}) error {
 	key, _ := link["_key"].(string)
+
+	// Determine if this is IPv4 or IPv6 based on MTID
+	// IPv4: MTID is nil or 0
+	// IPv6: MTID is 2
+	isIPv6 := false
+	if mtidTLV, exists := link["mt_id_tlv"]; exists {
+		if mtArray, ok := mtidTLV.([]interface{}); ok && len(mtArray) > 0 {
+			if mtItem, ok := mtArray[0].(map[string]interface{}); ok {
+				if mtID, ok := mtItem["mt_id"].(float64); ok && mtID == 2 {
+					isIPv6 = true
+				}
+			}
+		}
+	}
 
 	// Create IGP graph edge document
 	igpEdgeDoc := map[string]interface{}{
@@ -501,27 +511,31 @@ func (a *arangoDB) createIGPGraphEdges(ctx context.Context, link map[string]inte
 		"unidir_bw_utilization": link["unidir_bw_utilization"],
 	}
 
-	// Get edge collections for both graphs
-	igpv4EdgeCollection, err := a.db.Collection(ctx, a.config.IGPv4Graph)
-	if err != nil {
-		return fmt.Errorf("failed to get IGPv4 edge collection: %w", err)
-	}
+	// Create edge in appropriate graph based on IP version
+	if isIPv6 {
+		// IPv6 graph (MTID = 2)
+		igpv6EdgeCollection, err := a.db.Collection(ctx, a.config.IGPv6Graph)
+		if err != nil {
+			return fmt.Errorf("failed to get IGPv6 edge collection: %w", err)
+		}
 
-	igpv6EdgeCollection, err := a.db.Collection(ctx, a.config.IGPv6Graph)
-	if err != nil {
-		return fmt.Errorf("failed to get IGPv6 edge collection: %w", err)
-	}
+		_, err = igpv6EdgeCollection.CreateDocument(ctx, igpEdgeDoc)
+		if err != nil && !driver.IsConflict(err) {
+			return fmt.Errorf("failed to create IGPv6 edge: %w", err)
+		}
+		glog.V(6).Infof("Created IPv6 graph edge: %s -> %s", link["igp_router_id"], link["remote_igp_router_id"])
+	} else {
+		// IPv4 graph (MTID = nil or 0)
+		igpv4EdgeCollection, err := a.db.Collection(ctx, a.config.IGPv4Graph)
+		if err != nil {
+			return fmt.Errorf("failed to get IGPv4 edge collection: %w", err)
+		}
 
-	// Create edge in IGPv4 graph
-	_, err = igpv4EdgeCollection.CreateDocument(ctx, igpEdgeDoc)
-	if err != nil && !driver.IsConflict(err) {
-		return fmt.Errorf("failed to create IGPv4 edge: %w", err)
-	}
-
-	// Create edge in IGPv6 graph
-	_, err = igpv6EdgeCollection.CreateDocument(ctx, igpEdgeDoc)
-	if err != nil && !driver.IsConflict(err) {
-		return fmt.Errorf("failed to create IGPv6 edge: %w", err)
+		_, err = igpv4EdgeCollection.CreateDocument(ctx, igpEdgeDoc)
+		if err != nil && !driver.IsConflict(err) {
+			return fmt.Errorf("failed to create IGPv4 edge: %w", err)
+		}
+		glog.V(6).Infof("Created IPv4 graph edge: %s -> %s", link["igp_router_id"], link["remote_igp_router_id"])
 	}
 
 	return nil
@@ -539,8 +553,10 @@ func (a *arangoDB) monitor() {
 			// Log performance statistics
 			if a.batchProcessor != nil {
 				stats := a.batchProcessor.GetStats()
+				processed := stats.Processed
+				pending := stats.Pending
 				glog.V(5).Infof("Batch processor stats: processed=%d, pending=%d",
-					stats.Processed, stats.Pending)
+					processed, pending)
 			}
 		}
 	}
