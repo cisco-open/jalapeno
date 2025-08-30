@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 
 	driver "github.com/arangodb/go-driver"
-	"github.com/cisco-open/jalapeno/topology/dbclient"
-	"github.com/cisco-open/jalapeno/topology/kafkanotifier"
-	notifier "github.com/cisco-open/jalapeno/topology/kafkanotifier"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
+	"github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
+	notifier "github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/tools"
@@ -52,7 +52,7 @@ func NewDBSrvClient(arangoSrv, user, pass, dbname, lsprefix, lslink, lssrv6sid, 
 	arango.DB = arango
 	arango.ArangoConn = arangoConn
 
-	// Check if base link state collections exist, if not fail as Jalapeno topology is not running
+	// Check if base link state collections exist, if not fail as Jalapeno gobmp-arango is not running
 	arango.lsprefix, err = arango.db.Collection(context.TODO(), lsprefix)
 	if err != nil {
 		return nil, err

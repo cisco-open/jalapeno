@@ -8,8 +8,8 @@ import (
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
 
-	"github.com/cisco-open/jalapeno/topology/kafkanotifier"
-	notifier "github.com/cisco-open/jalapeno/topology/kafkanotifier"
+	"github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
+	notifier "github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
 	"github.com/sbezverk/gobmp/pkg/message"
 )
 

@@ -4,8 +4,8 @@ import (
 	"time"
 
 	"github.com/Shopify/sarama"
-	"github.com/cisco-open/jalapeno/topology/dbclient"
-	"github.com/cisco-open/jalapeno/topology/kafkanotifier"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
+	"github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/tools"

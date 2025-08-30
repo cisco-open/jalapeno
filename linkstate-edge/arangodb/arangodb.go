@@ -27,8 +27,8 @@ import (
 	"encoding/json"
 
 	driver "github.com/arangodb/go-driver"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
 	"github.com/cisco-open/jalapeno/linkstate-edge/kafkanotifier"
-	"github.com/cisco-open/jalapeno/topology/dbclient"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/message"
@@ -68,17 +68,17 @@ func NewDBSrvClient(arangoSrv, user, pass, dbname, vcn string, ecn string, notif
 		arango.notifier = notifier
 	}
 
-	// Check if vertex collection exists, if not fail as Jalapeno topology is not running
+	// Check if vertex collection exists, if not fail as Jalapeno gobmp-arango is not running
 	arango.vertex, err = arango.db.Collection(context.TODO(), vcn)
 	if err != nil {
 		return nil, err
 	}
-	// Check if edge collection exists, if not fail as Jalapeno topology is not running
+	// Check if edge collection exists, if not fail as Jalapeno gobmp-arango is not running
 	arango.edge, err = arango.db.Collection(context.TODO(), ecn)
 	if err != nil {
 		return nil, err
 	}
-	// Check if graph exists, if not fail as Jalapeno topology is not running
+	// Check if graph exists, if not fail as Jalapeno gobmp-arango is not running
 	arango.graph, err = arango.db.Collection(context.TODO(), arango.vertex.Name()+"_edge")
 	if err != nil {
 		return nil, err
@@ -115,7 +115,7 @@ func (a *arangoDB) StoreMessage(msgType dbclient.CollectionType, msg []byte) err
 	if err := json.Unmarshal(msg, event); err != nil {
 		return err
 	}
-	glog.V(9).Infof("Received event from topology: %+v", *event)
+	glog.V(9).Infof("Received event from gobmp-arango: %+v", *event)
 	event.TopicType = msgType
 	switch msgType {
 	case bmp.LSLinkMsg:
