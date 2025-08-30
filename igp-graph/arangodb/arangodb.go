@@ -475,15 +475,14 @@ func (a *arangoDB) createIGPGraphEdges(ctx context.Context, link map[string]inte
 	key, _ := link["_key"].(string)
 
 	// Determine if this is IPv4 or IPv6 based on MTID
-	// IPv4: MTID is nil or 0
-	// IPv6: MTID is 2
+	// IPv4: no mt_id_tlv field (or mt_id = 0)
+	// IPv6: mt_id_tlv.mt_id = 2
 	isIPv6 := false
+
 	if mtidTLV, exists := link["mt_id_tlv"]; exists {
-		if mtArray, ok := mtidTLV.([]interface{}); ok && len(mtArray) > 0 {
-			if mtItem, ok := mtArray[0].(map[string]interface{}); ok {
-				if mtID, ok := mtItem["mt_id"].(float64); ok && mtID == 2 {
-					isIPv6 = true
-				}
+		if mtidObj, ok := mtidTLV.(map[string]interface{}); ok {
+			if mtID, ok := mtidObj["mt_id"].(float64); ok && mtID == 2 {
+				isIPv6 = true
 			}
 		}
 	}

@@ -98,11 +98,9 @@ func makeLSLinkKey(bmpData map[string]interface{}) string {
 	// Handle MTID
 	mtid := 0
 	if mtData, ok := bmpData["mt_id_tlv"]; ok {
-		if mtArray, ok := mtData.([]interface{}); ok && len(mtArray) > 0 {
-			if mtItem, ok := mtArray[0].(map[string]interface{}); ok {
-				if mt, ok := mtItem["mt_id"].(float64); ok {
-					mtid = int(mt)
-				}
+		if mtObj, ok := mtData.(map[string]interface{}); ok {
+			if mt, ok := mtObj["mt_id"].(float64); ok {
+				mtid = int(mt)
 			}
 		}
 	}
@@ -159,11 +157,9 @@ func makeLSPrefixKey(bmpData map[string]interface{}) string {
 
 	mtid := 0
 	if mtData, ok := bmpData["mt_id_tlv"]; ok {
-		if mtArray, ok := mtData.([]interface{}); ok && len(mtArray) > 0 {
-			if mtItem, ok := mtArray[0].(map[string]interface{}); ok {
-				if mt, ok := mtItem["mt_id"].(float64); ok {
-					mtid = int(mt)
-				}
+		if mtObj, ok := mtData.(map[string]interface{}); ok {
+			if mt, ok := mtObj["mt_id"].(float64); ok {
+				mtid = int(mt)
 			}
 		}
 	}
