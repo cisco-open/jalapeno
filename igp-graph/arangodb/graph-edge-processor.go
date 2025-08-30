@@ -70,10 +70,11 @@ func (a *arangoDB) getIGPNode(ctx context.Context, link map[string]interface{}, 
 	}
 
 	// Strategy 2: For Level-1 links, try to find Level-2 node (Level-1-2 routers)
+	// After deduplication, Level-1-2 routers only exist as Level-2 nodes
 	if proto, ok := protocolID.(float64); ok && proto == 1 {
 		node, err := a.findNodeByProtocol(ctx, routerID, domainID, float64(2), areaID)
 		if err == nil {
-			glog.V(8).Infof("Found Level-2 node for Level-1 link, router %s (Level-1-2 router)", routerID)
+			glog.V(6).Infof("Found Level-2 node for Level-1 link, router %s (Level-1-2 router)", routerID)
 			return node, nil
 		}
 	}

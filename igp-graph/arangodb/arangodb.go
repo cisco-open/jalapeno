@@ -303,7 +303,17 @@ func (a *arangoDB) loadInitialData() error {
 		return fmt.Errorf("failed to load initial nodes: %w", err)
 	}
 
-	// Load initial links
+	// Run deduplication BEFORE processing links to avoid orphaned references
+	if err := a.runDeduplication(); err != nil {
+		return fmt.Errorf("failed to deduplicate IGP nodes: %w", err)
+	}
+
+	// Clean up any existing orphaned graph edges from previous runs
+	if err := a.cleanupOrphanedEdges(ctx); err != nil {
+		glog.Warningf("Failed to cleanup orphaned edges: %v", err)
+	}
+
+	// Load initial links (after deduplication)
 	if err := a.loadInitialLinks(ctx); err != nil {
 		return fmt.Errorf("failed to load initial links: %w", err)
 	}
@@ -311,11 +321,6 @@ func (a *arangoDB) loadInitialData() error {
 	// Load initial SRv6 SIDs
 	if err := a.loadInitialSRv6SIDs(ctx); err != nil {
 		return fmt.Errorf("failed to load initial SRv6 SIDs: %w", err)
-	}
-
-	// Run deduplication to handle Level-1-2 nodes
-	if err := a.runDeduplication(); err != nil {
-		return fmt.Errorf("failed to deduplicate IGP nodes: %w", err)
 	}
 
 	glog.Info("Initial IGP topology data loaded successfully")
@@ -391,6 +396,67 @@ func (a *arangoDB) loadInitialLinks(ctx context.Context) error {
 	}
 
 	glog.Infof("Loaded %d initial links", count)
+	return nil
+}
+
+// cleanupOrphanedEdges removes graph edges that reference non-existent nodes
+func (a *arangoDB) cleanupOrphanedEdges(ctx context.Context) error {
+	glog.V(6).Info("Cleaning up orphaned graph edges...")
+
+	// Clean up IPv4 graph edges
+	v4Query := fmt.Sprintf(`
+		FOR edge IN %s
+		LET localExists = LENGTH(FOR n IN %s FILTER n._id == edge._from RETURN 1) > 0
+		LET remoteExists = LENGTH(FOR n IN %s FILTER n._id == edge._to RETURN 1) > 0
+		FILTER !localExists OR !remoteExists
+		REMOVE edge IN %s
+		RETURN OLD._key
+	`, a.config.IGPv4Graph, a.config.IGPNode, a.config.IGPNode, a.config.IGPv4Graph)
+
+	cursor, err := a.db.Query(ctx, v4Query, nil)
+	if err != nil {
+		return fmt.Errorf("failed to cleanup IPv4 orphaned edges: %w", err)
+	}
+	v4Count := 0
+	for cursor.HasMore() {
+		var key string
+		_, err := cursor.ReadDocument(ctx, &key)
+		if err != nil {
+			break
+		}
+		v4Count++
+	}
+	cursor.Close()
+
+	// Clean up IPv6 graph edges
+	v6Query := fmt.Sprintf(`
+		FOR edge IN %s
+		LET localExists = LENGTH(FOR n IN %s FILTER n._id == edge._from RETURN 1) > 0
+		LET remoteExists = LENGTH(FOR n IN %s FILTER n._id == edge._to RETURN 1) > 0
+		FILTER !localExists OR !remoteExists
+		REMOVE edge IN %s
+		RETURN OLD._key
+	`, a.config.IGPv6Graph, a.config.IGPNode, a.config.IGPNode, a.config.IGPv6Graph)
+
+	cursor, err = a.db.Query(ctx, v6Query, nil)
+	if err != nil {
+		return fmt.Errorf("failed to cleanup IPv6 orphaned edges: %w", err)
+	}
+	v6Count := 0
+	for cursor.HasMore() {
+		var key string
+		_, err := cursor.ReadDocument(ctx, &key)
+		if err != nil {
+			break
+		}
+		v6Count++
+	}
+	cursor.Close()
+
+	if v4Count > 0 || v6Count > 0 {
+		glog.Infof("Cleaned up %d IPv4 and %d IPv6 orphaned graph edges", v4Count, v6Count)
+	}
+
 	return nil
 }
 
@@ -611,10 +677,10 @@ func (a *arangoDB) monitor() {
 			// Log performance statistics
 			if a.batchProcessor != nil {
 				stats := a.batchProcessor.GetStats()
-				processed := stats.Processed
-				pending := stats.Pending
+				processedCount := stats.Processed.Load()
+				pendingCount := stats.Pending.Load()
 				glog.V(5).Infof("Batch processor stats: processed=%d, pending=%d",
-					processed, pending)
+					processedCount, pendingCount)
 			}
 		}
 	}
