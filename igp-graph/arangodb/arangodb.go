@@ -308,6 +308,11 @@ func (a *arangoDB) loadInitialData() error {
 		return fmt.Errorf("failed to load initial links: %w", err)
 	}
 
+	// Load initial SRv6 SIDs
+	if err := a.loadInitialSRv6SIDs(ctx); err != nil {
+		return fmt.Errorf("failed to load initial SRv6 SIDs: %w", err)
+	}
+
 	glog.Info("Initial IGP topology data loaded successfully")
 	return nil
 }
@@ -391,7 +396,7 @@ func (a *arangoDB) processInitialNode(ctx context.Context, node map[string]inter
 		return fmt.Errorf("invalid node key")
 	}
 
-	// Create IGP node entry
+	// Create IGP node entry with empty SIDS array for SRv6 metadata
 	igpNodeDoc := map[string]interface{}{
 		"_key":          key,
 		"igp_router_id": node["igp_router_id"],
@@ -401,6 +406,7 @@ func (a *arangoDB) processInitialNode(ctx context.Context, node map[string]inter
 		"asn":           node["asn"],
 		"name":          node["name"],
 		"timestamp":     node["timestamp"],
+		"sids":          []SID{}, // Initialize empty SIDs array for SRv6 metadata
 	}
 
 	// Try to create the document
@@ -412,6 +418,15 @@ func (a *arangoDB) processInitialNode(ctx context.Context, node map[string]inter
 		// Document exists, update it
 		if _, err := a.igpNode.UpdateDocument(ctx, key, igpNodeDoc); err != nil {
 			return fmt.Errorf("failed to update igp_node document: %w", err)
+		}
+	}
+
+	// After creating the IGP node, find and process any associated SRv6 SIDs
+	routerID, _ := node["igp_router_id"].(string)
+	domainID := node["domain_id"]
+	if routerID != "" {
+		if err := a.findAndProcessSRv6SIDsForNode(ctx, routerID, domainID); err != nil {
+			glog.Warningf("Failed to process SRv6 SIDs for node %s: %v", routerID, err)
 		}
 	}
 

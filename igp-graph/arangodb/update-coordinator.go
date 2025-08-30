@@ -319,10 +319,41 @@ func (uc *UpdateCoordinator) processPrefixUpdate(event *kafkanotifier.EventMessa
 func (uc *UpdateCoordinator) processSRv6Update(event *kafkanotifier.EventMessage) error {
 	glog.V(7).Infof("Processing SRv6 update: %s action: %s", event.Key, event.Action)
 
-	// TODO: Implement SRv6 processing - for now just log
-	glog.V(7).Infof("SRv6 %s action %s processed (simplified)", event.Key, event.Action)
+	ctx := context.TODO()
 
-	return nil
+	switch event.Action {
+	case "del":
+		// Read SRv6 SID data to get router ID for removal
+		var srv6Data map[string]interface{}
+		_, err := uc.db.lssrv6sid.ReadDocument(ctx, event.Key, &srv6Data)
+		if err != nil {
+			if driver.IsNotFoundGeneral(err) {
+				glog.V(6).Infof("SRv6 SID %s not found for deletion, skipping", event.Key)
+				return nil
+			}
+			return fmt.Errorf("failed to read SRv6 SID %s: %w", event.Key, err)
+		}
+
+		return uc.db.removeSRv6SIDFromIGPNode(ctx, event.Key, srv6Data)
+
+	case "add", "update":
+		// Read SRv6 SID data
+		var srv6Data map[string]interface{}
+		_, err := uc.db.lssrv6sid.ReadDocument(ctx, event.Key, &srv6Data)
+		if err != nil {
+			if driver.IsNotFoundGeneral(err) {
+				glog.V(6).Infof("SRv6 SID %s not found, skipping", event.Key)
+				return nil
+			}
+			return fmt.Errorf("failed to read SRv6 SID %s: %w", event.Key, err)
+		}
+
+		return uc.db.processSRv6SIDUpdate(ctx, event.Action, event.Key, srv6Data)
+
+	default:
+		glog.V(5).Infof("Unknown SRv6 action: %s for key: %s", event.Action, event.Key)
+		return nil
+	}
 }
 
 // Helper functions for real-time processing
