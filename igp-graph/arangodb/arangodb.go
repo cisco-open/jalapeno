@@ -221,7 +221,7 @@ func (a *arangoDB) ensureGraph(graphName, vertexCollection string) (driver.Graph
 	}
 
 	// Create edge collection for the graph
-	edgeCollectionName := graphName + "_edge"
+	edgeCollectionName := graphName
 	if err := a.ensureCollection(edgeCollectionName, true); err != nil {
 		return nil, err
 	}
@@ -389,14 +389,141 @@ func (a *arangoDB) loadInitialLinks(ctx context.Context) error {
 }
 
 func (a *arangoDB) processInitialNode(ctx context.Context, node map[string]interface{}) error {
-	// Placeholder for initial node processing
-	// This will be implemented in the next phase
+	// Convert map to LSNode-like structure for processing
+	key, ok := node["_key"].(string)
+	if !ok {
+		return fmt.Errorf("invalid node key")
+	}
+
+	// Create IGP node entry
+	igpNodeDoc := map[string]interface{}{
+		"_key":          key,
+		"igp_router_id": node["igp_router_id"],
+		"protocol_id":   node["protocol_id"],
+		"domain_id":     node["domain_id"],
+		"area_id":       node["area_id"],
+		"asn":           node["asn"],
+		"name":          node["name"],
+		"timestamp":     node["timestamp"],
+	}
+
+	// Try to create the document
+	_, err := a.igpNode.CreateDocument(ctx, igpNodeDoc)
+	if err != nil {
+		if !driver.IsConflict(err) {
+			return fmt.Errorf("failed to create igp_node document: %w", err)
+		}
+		// Document exists, update it
+		if _, err := a.igpNode.UpdateDocument(ctx, key, igpNodeDoc); err != nil {
+			return fmt.Errorf("failed to update igp_node document: %w", err)
+		}
+	}
+
+	glog.V(9).Infof("Processed initial node: %s", key)
 	return nil
 }
 
 func (a *arangoDB) processInitialLink(ctx context.Context, link map[string]interface{}) error {
-	// Placeholder for initial link processing
-	// This will be implemented in the next phase
+	// Convert map to LSLink-like structure for processing
+	key, ok := link["_key"].(string)
+	if !ok {
+		return fmt.Errorf("invalid link key")
+	}
+
+	// Create ls_node_edge entry for backward compatibility
+	lsNodeEdgeDoc := map[string]interface{}{
+		"_key":                  key,
+		"_from":                 fmt.Sprintf("%s/%s", a.config.LSNode, link["igp_router_id"]),
+		"_to":                   fmt.Sprintf("%s/%s", a.config.LSNode, link["remote_igp_router_id"]),
+		"link":                  key,
+		"protocol_id":           link["protocol_id"],
+		"domain_id":             link["domain_id"],
+		"area_id":               link["area_id"],
+		"local_link_ip":         link["local_link_ip"],
+		"remote_link_ip":        link["remote_link_ip"],
+		"igp_metric":            link["igp_metric"],
+		"local_node_asn":        link["local_node_asn"],
+		"remote_node_asn":       link["remote_node_asn"],
+		"max_link_bw":           link["max_link_bw"],
+		"max_resv_bw":           link["max_resv_bw"],
+		"te_default_metric":     link["te_default_metric"],
+		"unidir_link_delay":     link["unidir_link_delay"],
+		"unidir_packet_loss":    link["unidir_packet_loss"],
+		"unidir_available_bw":   link["unidir_available_bw"],
+		"unidir_bw_utilization": link["unidir_bw_utilization"],
+	}
+
+	// Create ls_node_edge document
+	_, err := a.lsNodeEdge.CreateDocument(ctx, lsNodeEdgeDoc)
+	if err != nil {
+		if !driver.IsConflict(err) {
+			return fmt.Errorf("failed to create ls_node_edge document: %w", err)
+		}
+		// Document exists, update it
+		if _, err := a.lsNodeEdge.UpdateDocument(ctx, key, lsNodeEdgeDoc); err != nil {
+			return fmt.Errorf("failed to update ls_node_edge document: %w", err)
+		}
+	}
+
+	// Create IGP graph edges
+	if err := a.createIGPGraphEdges(ctx, link); err != nil {
+		return fmt.Errorf("failed to create IGP graph edges: %w", err)
+	}
+
+	glog.V(9).Infof("Processed initial link: %s", key)
+	return nil
+}
+
+// createIGPGraphEdges creates edges in both IGPv4 and IGPv6 graphs
+func (a *arangoDB) createIGPGraphEdges(ctx context.Context, link map[string]interface{}) error {
+	key, _ := link["_key"].(string)
+
+	// Create IGP graph edge document
+	igpEdgeDoc := map[string]interface{}{
+		"_key":                  key,
+		"_from":                 fmt.Sprintf("%s/%s", a.config.IGPNode, link["igp_router_id"]),
+		"_to":                   fmt.Sprintf("%s/%s", a.config.IGPNode, link["remote_igp_router_id"]),
+		"link":                  key,
+		"protocol_id":           link["protocol_id"],
+		"domain_id":             link["domain_id"],
+		"area_id":               link["area_id"],
+		"local_link_ip":         link["local_link_ip"],
+		"remote_link_ip":        link["remote_link_ip"],
+		"igp_metric":            link["igp_metric"],
+		"local_node_asn":        link["local_node_asn"],
+		"remote_node_asn":       link["remote_node_asn"],
+		"max_link_bw":           link["max_link_bw"],
+		"max_resv_bw":           link["max_resv_bw"],
+		"te_default_metric":     link["te_default_metric"],
+		"unidir_link_delay":     link["unidir_link_delay"],
+		"unidir_packet_loss":    link["unidir_packet_loss"],
+		"unidir_available_bw":   link["unidir_available_bw"],
+		"unidir_bw_utilization": link["unidir_bw_utilization"],
+	}
+
+	// Get edge collections for both graphs
+	igpv4EdgeCollection, err := a.db.Collection(ctx, a.config.IGPv4Graph)
+	if err != nil {
+		return fmt.Errorf("failed to get IGPv4 edge collection: %w", err)
+	}
+
+	igpv6EdgeCollection, err := a.db.Collection(ctx, a.config.IGPv6Graph)
+	if err != nil {
+		return fmt.Errorf("failed to get IGPv6 edge collection: %w", err)
+	}
+
+	// Create edge in IGPv4 graph
+	_, err = igpv4EdgeCollection.CreateDocument(ctx, igpEdgeDoc)
+	if err != nil && !driver.IsConflict(err) {
+		return fmt.Errorf("failed to create IGPv4 edge: %w", err)
+	}
+
+	// Create edge in IGPv6 graph
+	_, err = igpv6EdgeCollection.CreateDocument(ctx, igpEdgeDoc)
+	if err != nil && !driver.IsConflict(err) {
+		return fmt.Errorf("failed to create IGPv6 edge: %w", err)
+	}
+
 	return nil
 }
 

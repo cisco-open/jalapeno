@@ -342,8 +342,17 @@ func (bp *BatchProcessor) processPrefixBatch(batch []*PrefixOperation, workerID 
 
 // Placeholder processing functions - will be implemented in next phase
 func (bp *BatchProcessor) processNodeOperation(op *NodeOperation) error {
-	// TODO: Implement actual node processing
 	glog.V(9).Infof("Processing node operation: %s %s", op.Type, op.Key)
+
+	// For now, just log the operation
+	// Real processing will be added when we implement the full message handling
+	switch op.Type {
+	case "add", "update":
+		glog.V(7).Infof("Node %s: %s", op.Type, op.Key)
+	case "delete", "del":
+		glog.V(7).Infof("Node deleted: %s", op.Key)
+	}
+
 	return nil
 }
 
