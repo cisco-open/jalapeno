@@ -1,3 +1,5 @@
+# make -f Makefile.gobmp-arango push 
+
 REGISTRY_NAME?=docker.io/iejalapeno
 IMAGE_VERSION?=latest
 
