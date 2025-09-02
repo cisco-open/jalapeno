@@ -5,11 +5,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkstate-graph
+      app: ip-graph
   template:
     metadata:
       labels:
-        app: linkstate-graph
+        app: ip-graph
     spec:
       containers:
         - args:
@@ -21,9 +21,9 @@ spec:
             - "http://arangodb.jalapeno:8529"
             - --database-name
             - "jalapeno"
-          image: docker.io/iejalapeno/linkstate-graph:latest
+          image: docker.io/iejalapeno/ip-graph:latest
           imagePullPolicy: Always
-          name: linkstate-graph
+          name: ip-graph
           volumeMounts:
             - name: credentials
               mountPath: /credentials
@@ -32,5 +32,5 @@ spec:
           secret:
             secretName: jalapeno
 metadata:
-  name: linkstate-graph
+  name: ip-graph
   namespace: jalapeno

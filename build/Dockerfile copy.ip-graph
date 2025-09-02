@@ -1,0 +1,4 @@
+FROM scratch
+
+COPY ./bin/ip-graph /ip-graph
+ENTRYPOINT ["/ip-graph"]

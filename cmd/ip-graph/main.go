@@ -1,25 +1,3 @@
-// Copyright (c) 2022 Cisco Systems, Inc. and its affiliates
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//     * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//
-// The contents of this file are licensed under the Apache License, Version 2.0
-// (the "License"); you may not use this file except in compliance with the
-// License. You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations under
-// the License.
-
 package main
 
 import (
@@ -30,9 +8,9 @@ import (
 	"os/signal"
 	"runtime"
 
-	"github.com/cisco-open/jalapeno/linkstate-edge/arangodb"
-	"github.com/cisco-open/jalapeno/linkstate-edge/kafkamessenger"
-	"github.com/cisco-open/jalapeno/linkstate-edge/kafkanotifier"
+	"github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
+	"github.com/cisco-open/jalapeno/ip-graph/arangodb"
+	"github.com/cisco-open/jalapeno/ip-graph/kafkamessenger"
 	"github.com/golang/glog"
 
 	_ "net/http/pprof"
@@ -50,24 +28,55 @@ const (
 )
 
 var (
-	msgSrvAddr       string
-	dbSrvAddr        string
-	dbName           string
-	dbUser           string
-	dbPass           string
-	vertexCollection string
-	edgeCollection   string
+	msgSrvAddr string
+	dbSrvAddr  string
+	dbName     string
+	dbUser     string
+	dbPass     string
+	// IGP Collections (source data)
+	igpv4Graph string
+	igpv6Graph string
+	igpNode    string
+	igpDomain  string
+	// IP Graph Collections (full topology)
+	ipv4Graph string
+	ipv6Graph string
+	// BGP Collections
+	bgpNode     string
+	bgpPrefixV4 string
+	bgpPrefixV6 string
+	// Performance settings
+	batchSize         int
+	concurrentWorkers int
 )
 
 func init() {
 	runtime.GOMAXPROCS(1)
+
 	flag.StringVar(&msgSrvAddr, "message-server", "", "URL to the messages supplying server")
 	flag.StringVar(&dbSrvAddr, "database-server", "", "{dns name}:port or X.X.X.X:port of the graph database")
 	flag.StringVar(&dbName, "database-name", "", "DB name")
 	flag.StringVar(&dbUser, "database-user", "", "DB User name")
 	flag.StringVar(&dbPass, "database-pass", "", "DB User's password")
-	flag.StringVar(&vertexCollection, "vertex-name", "ls_node", "Vertex Collection name, default: \"ls_node\"")
-	flag.StringVar(&edgeCollection, "edge-name", "ls_link", "Edge Collection name, default \"ls_link\"")
+
+	// IGP Collections (source)
+	flag.StringVar(&igpv4Graph, "igpv4-graph", "igpv4_graph", "IGP IPv4 graph collection name")
+	flag.StringVar(&igpv6Graph, "igpv6-graph", "igpv6_graph", "IGP IPv6 graph collection name")
+	flag.StringVar(&igpNode, "igp-node", "igp_node", "IGP node collection name")
+	flag.StringVar(&igpDomain, "igp-domain", "igp_domain", "IGP domain collection name")
+
+	// IP Graph Collections (full topology)
+	flag.StringVar(&ipv4Graph, "ipv4-graph", "ipv4_graph", "Full IPv4 topology graph collection name")
+	flag.StringVar(&ipv6Graph, "ipv6-graph", "ipv6_graph", "Full IPv6 topology graph collection name")
+
+	// BGP Collections
+	flag.StringVar(&bgpNode, "bgp-node", "bgp_node", "BGP node collection name")
+	flag.StringVar(&bgpPrefixV4, "bgp-prefix-v4", "bgp_prefix_v4", "BGP IPv4 prefix collection name")
+	flag.StringVar(&bgpPrefixV6, "bgp-prefix-v6", "bgp_prefix_v6", "BGP IPv6 prefix collection name")
+
+	// Performance settings
+	flag.IntVar(&batchSize, "batch-size", 1000, "Batch size for database operations")
+	flag.IntVar(&concurrentWorkers, "concurrent-workers", runtime.NumCPU()*2, "Number of concurrent workers for batch processing")
 }
 
 var (
@@ -95,8 +104,6 @@ func main() {
 	flag.Parse()
 	_ = flag.Set("logtostderr", "true")
 
-	// TODO (sbezverk) pass vertex collection type and edge collection type are parameters
-
 	// validateDBCreds check if the user name and the password are provided either as
 	// command line parameters or via files. If both are provided command line parameters
 	// will be used, if neither, processor will fail.
@@ -105,38 +112,61 @@ func main() {
 		os.Exit(1)
 	}
 
-	// initialize kafkanotifier to write back processed events into ls_node_edge_events topic
+	// Initialize event notifier for publishing IP graph events
 	notifier, err := kafkanotifier.NewKafkaNotifier(msgSrvAddr)
 	if err != nil {
 		glog.Errorf("failed to initialize events notifier with error: %+v", err)
 		os.Exit(1)
 	}
 
-	dbSrv, err := arangodb.NewDBSrvClient(dbSrvAddr, dbUser, dbPass, dbName, vertexCollection, edgeCollection, notifier)
+	// Initialize IP graph database client
+	dbSrv, err := arangodb.NewDBSrvClient(arangodb.Config{
+		DatabaseServer: dbSrvAddr,
+		User:           dbUser,
+		Password:       dbPass,
+		Database:       dbName,
+		// IGP source collections
+		IGPv4Graph: igpv4Graph,
+		IGPv6Graph: igpv6Graph,
+		IGPNode:    igpNode,
+		IGPDomain:  igpDomain,
+		// IP graph collections (full topology)
+		IPv4Graph: ipv4Graph,
+		IPv6Graph: ipv6Graph,
+		// BGP collections
+		BGPNode:     bgpNode,
+		BGPPrefixV4: bgpPrefixV4,
+		BGPPrefixV6: bgpPrefixV6,
+		// Performance settings
+		BatchSize:         batchSize,
+		ConcurrentWorkers: concurrentWorkers,
+	}, notifier)
 	if err != nil {
 		glog.Errorf("failed to initialize database client with error: %+v", err)
 		os.Exit(1)
 	}
 
+	glog.Info("IP Graph processor starting...")
 	if err := dbSrv.Start(); err != nil {
-		if err != nil {
-			glog.Errorf("failed to connect to database with error: %+v", err)
-			os.Exit(1)
-		}
+		glog.Errorf("failed to start database client with error: %+v", err)
+		os.Exit(1)
 	}
 
-	// initializing messenger process
-	msgSrv, err := kafkamessenger.NewKafkaMessenger(msgSrvAddr, dbSrv.GetInterface())
+	// Initialize Kafka messenger for consuming BMP messages
+	msgSrv, err := kafkamessenger.NewKafkaMessenger(msgSrvAddr, dbSrv)
 	if err != nil {
 		glog.Errorf("failed to initialize message server with error: %+v", err)
 		os.Exit(1)
 	}
 
+	glog.Info("Starting Kafka messenger...")
 	msgSrv.Start()
 
 	stopCh := setupSignalHandler()
+	glog.Info("IP Graph processor started successfully")
 	<-stopCh
 
+	glog.Info("Shutting down IP Graph processor...")
 	msgSrv.Stop()
 	dbSrv.Stop()
 
