@@ -404,14 +404,20 @@ func (a *arangoDB) loadInitialBGPData(ctx context.Context) error {
 		return nil // Continue without BGP data
 	}
 
-	// Load existing BGP peer data
+	// Step 1: Process BGP peer sessions and create BGP nodes
 	if err := a.loadInitialPeers(ctx); err != nil {
 		glog.Warningf("Failed to load initial peers (continuing): %v", err)
 	}
 
-	// Load existing BGP prefix data
-	if err := a.loadInitialPrefixes(ctx); err != nil {
-		glog.Warningf("Failed to load initial prefixes (continuing): %v", err)
+	// Step 2: Advanced BGP prefix deduplication and classification
+	deduplicationProcessor := NewBGPDeduplicationProcessor(a)
+	if err := deduplicationProcessor.ProcessInitialBGPDeduplication(ctx); err != nil {
+		glog.Warningf("Failed to process BGP prefix deduplication (continuing): %v", err)
+	}
+
+	// Step 3: Create prefix-to-node attachments and edges
+	if err := a.createPrefixToNodeAttachments(ctx); err != nil {
+		glog.Warningf("Failed to create prefix-to-node attachments (continuing): %v", err)
 	}
 
 	glog.Info("Initial BGP data loaded successfully")
@@ -546,6 +552,235 @@ func (a *arangoDB) processInitialPrefix(ctx context.Context, prefixData map[stri
 	// Use the existing BGP prefix processor
 	uc := &UpdateCoordinator{db: a}
 	return uc.processBGPPrefixUpdate(procMsg)
+}
+
+// createPrefixToNodeAttachments creates bidirectional edges between deduplicated prefixes and their origin nodes
+func (a *arangoDB) createPrefixToNodeAttachments(ctx context.Context) error {
+	glog.V(6).Info("Creating prefix-to-node attachments...")
+
+	// Process IPv4 prefix attachments
+	if err := a.createIPv4PrefixAttachments(ctx); err != nil {
+		return fmt.Errorf("failed to create IPv4 prefix attachments: %w", err)
+	}
+
+	// Process IPv6 prefix attachments
+	if err := a.createIPv6PrefixAttachments(ctx); err != nil {
+		return fmt.Errorf("failed to create IPv6 prefix attachments: %w", err)
+	}
+
+	glog.V(6).Info("Prefix-to-node attachments created successfully")
+	return nil
+}
+
+// createIPv4PrefixAttachments creates IPv4 prefix-to-node attachments
+func (a *arangoDB) createIPv4PrefixAttachments(ctx context.Context) error {
+	glog.V(7).Info("Creating IPv4 prefix-to-node attachments...")
+
+	// Query all deduplicated IPv4 prefixes
+	query := fmt.Sprintf("FOR p IN %s RETURN p", a.config.BGPPrefixV4)
+	cursor, err := a.db.Query(ctx, query, nil)
+	if err != nil {
+		return fmt.Errorf("failed to query IPv4 prefixes: %w", err)
+	}
+	defer cursor.Close()
+
+	attachmentCount := 0
+	for cursor.HasMore() {
+		var prefixData map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &prefixData); err != nil {
+			return fmt.Errorf("failed to read IPv4 prefix: %w", err)
+		}
+
+		// Create prefix-to-node attachment
+		if err := a.createPrefixAttachment(ctx, prefixData, true); err != nil {
+			glog.Warningf("Failed to create IPv4 prefix attachment for %s: %v", getString(prefixData, "_key"), err)
+			continue
+		}
+
+		attachmentCount++
+	}
+
+	glog.V(7).Infof("Created %d IPv4 prefix-to-node attachments", attachmentCount)
+	return nil
+}
+
+// createIPv6PrefixAttachments creates IPv6 prefix-to-node attachments
+func (a *arangoDB) createIPv6PrefixAttachments(ctx context.Context) error {
+	glog.V(7).Info("Creating IPv6 prefix-to-node attachments...")
+
+	// Query all deduplicated IPv6 prefixes
+	query := fmt.Sprintf("FOR p IN %s RETURN p", a.config.BGPPrefixV6)
+	cursor, err := a.db.Query(ctx, query, nil)
+	if err != nil {
+		return fmt.Errorf("failed to query IPv6 prefixes: %w", err)
+	}
+	defer cursor.Close()
+
+	attachmentCount := 0
+	for cursor.HasMore() {
+		var prefixData map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &prefixData); err != nil {
+			return fmt.Errorf("failed to read IPv6 prefix: %w", err)
+		}
+
+		// Create prefix-to-node attachment
+		if err := a.createPrefixAttachment(ctx, prefixData, false); err != nil {
+			glog.Warningf("Failed to create IPv6 prefix attachment for %s: %v", getString(prefixData, "_key"), err)
+			continue
+		}
+
+		attachmentCount++
+	}
+
+	glog.V(7).Infof("Created %d IPv6 prefix-to-node attachments", attachmentCount)
+	return nil
+}
+
+// createPrefixAttachment creates bidirectional edges between a prefix and its origin node
+func (a *arangoDB) createPrefixAttachment(ctx context.Context, prefixData map[string]interface{}, isIPv4 bool) error {
+	prefixKey := getString(prefixData, "_key")
+	prefixType := getString(prefixData, "prefix_type")
+	routerID := getString(prefixData, "router_id")
+	originAS := getUint32FromInterface(prefixData["origin_as"])
+
+	// Determine target collections
+	var prefixCollection string
+	if isIPv4 {
+		prefixCollection = a.config.BGPPrefixV4
+	} else {
+		prefixCollection = a.config.BGPPrefixV6
+	}
+
+	// Find the origin node based on prefix type
+	var originNodeID string
+	var err error
+
+	switch prefixType {
+	case "ibgp":
+		// iBGP prefixes attach to IGP nodes
+		originNodeID, err = a.findIGPNodeByRouterIDAndASN(ctx, routerID, originAS)
+	case "ebgp_private", "ebgp_private_4byte", "ebgp_public":
+		// eBGP prefixes attach to BGP nodes
+		originNodeID, err = a.findBGPNodeByRouterIDAndASN(ctx, routerID, originAS)
+	default:
+		return fmt.Errorf("unknown prefix type: %s", prefixType)
+	}
+
+	if err != nil {
+		return fmt.Errorf("failed to find origin node for prefix %s: %w", prefixKey, err)
+	}
+
+	if originNodeID == "" {
+		glog.V(8).Infof("Origin node not found for prefix %s (type: %s, router: %s, AS: %d)",
+			prefixKey, prefixType, routerID, originAS)
+		return nil // Skip if origin node not found
+	}
+
+	// Create bidirectional edges
+	prefixVertexID := fmt.Sprintf("%s/%s", prefixCollection, prefixKey)
+
+	// Edge from origin node to prefix
+	nodeToPrefix := &IPGraphObject{
+		Key:      fmt.Sprintf("%s_to_%s", originNodeID, prefixKey),
+		From:     originNodeID,
+		To:       prefixVertexID,
+		Protocol: fmt.Sprintf("BGP_%s", prefixType),
+		Link:     prefixKey,
+	}
+
+	// Edge from prefix to origin node
+	prefixToNode := &IPGraphObject{
+		Key:      fmt.Sprintf("%s_to_%s", prefixKey, originNodeID),
+		From:     prefixVertexID,
+		To:       originNodeID,
+		Protocol: fmt.Sprintf("BGP_%s", prefixType),
+		Link:     prefixKey,
+	}
+
+	// Insert edges into the graph collection
+	var targetCollection driver.Collection
+	if isIPv4 {
+		targetCollection = a.ipv4Graph
+	} else {
+		targetCollection = a.ipv6Graph
+	}
+
+	// Create both edges
+	for _, edge := range []*IPGraphObject{nodeToPrefix, prefixToNode} {
+		if _, err := targetCollection.CreateDocument(ctx, edge); err != nil {
+			if !driver.IsConflict(err) {
+				return fmt.Errorf("failed to create edge %s: %w", edge.Key, err)
+			}
+			// Update existing edge
+			if _, err := targetCollection.UpdateDocument(ctx, edge.Key, edge); err != nil {
+				return fmt.Errorf("failed to update edge %s: %w", edge.Key, err)
+			}
+		}
+	}
+
+	return nil
+}
+
+// findIGPNodeByRouterIDAndASN finds an IGP node by router ID and ASN
+func (a *arangoDB) findIGPNodeByRouterIDAndASN(ctx context.Context, routerID string, asn uint32) (string, error) {
+	query := fmt.Sprintf(`
+		FOR node IN %s
+		FILTER node.router_id == @routerId AND node.asn == @asn
+		LIMIT 1
+		RETURN node._id
+	`, a.config.IGPNode)
+
+	bindVars := map[string]interface{}{
+		"routerId": routerID,
+		"asn":      asn,
+	}
+
+	cursor, err := a.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return "", fmt.Errorf("failed to query IGP nodes: %w", err)
+	}
+	defer cursor.Close()
+
+	if cursor.HasMore() {
+		var nodeID string
+		if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
+			return "", fmt.Errorf("failed to read IGP node ID: %w", err)
+		}
+		return nodeID, nil
+	}
+
+	return "", nil // Not found
+}
+
+// findBGPNodeByRouterIDAndASN finds a BGP node by router ID and ASN
+func (a *arangoDB) findBGPNodeByRouterIDAndASN(ctx context.Context, routerID string, asn uint32) (string, error) {
+	query := fmt.Sprintf(`
+		FOR node IN %s
+		FILTER node.router_id == @routerId AND node.asn == @asn
+		LIMIT 1
+		RETURN node._id
+	`, a.config.BGPNode)
+
+	bindVars := map[string]interface{}{
+		"routerId": routerID,
+		"asn":      asn,
+	}
+
+	cursor, err := a.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return "", fmt.Errorf("failed to query BGP nodes: %w", err)
+	}
+	defer cursor.Close()
+
+	if cursor.HasMore() {
+		var nodeID string
+		if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
+			return "", fmt.Errorf("failed to read BGP node ID: %w", err)
+		}
+		return nodeID, nil
+	}
+
+	return "", nil // Not found
 }
 
 func (a *arangoDB) monitor() {
