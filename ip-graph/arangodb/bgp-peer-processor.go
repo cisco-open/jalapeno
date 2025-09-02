@@ -12,7 +12,7 @@ import (
 
 // processBGPPeerUpdate processes BGP peer session messages
 func (uc *UpdateCoordinator) processBGPPeerUpdate(msg *ProcessingMessage) error {
-	glog.V(7).Infof("Processing BGP peer update: %s action: %s", msg.Key, msg.Action)
+	glog.Infof("Processing BGP peer update: %s action: %s", msg.Key, msg.Action)
 
 	ctx := context.TODO()
 

@@ -111,6 +111,7 @@ func (uc *UpdateCoordinator) ProcessMessage(msgType dbclient.CollectionType, msg
 	switch msgType {
 	case bmp.LSNodeMsg, bmp.LSLinkMsg, bmp.LSPrefixMsg, bmp.LSSRv6SIDMsg:
 		// IGP sync messages
+		glog.V(7).Infof("Routing IGP message: type=%d, key=%s", msgType, procMsg.Key)
 		select {
 		case uc.igpUpdates <- procMsg:
 			return nil
@@ -122,6 +123,7 @@ func (uc *UpdateCoordinator) ProcessMessage(msgType dbclient.CollectionType, msg
 
 	case bmp.PeerStateChangeMsg:
 		// BGP peer messages
+		glog.V(6).Infof("Routing BGP peer message: key=%s, action=%s", procMsg.Key, procMsg.Action)
 		select {
 		case uc.bgpUpdates <- procMsg:
 			return nil
@@ -133,6 +135,7 @@ func (uc *UpdateCoordinator) ProcessMessage(msgType dbclient.CollectionType, msg
 
 	case bmp.UnicastPrefixV4Msg, bmp.UnicastPrefixV6Msg:
 		// BGP prefix messages
+		glog.V(6).Infof("Routing BGP prefix message: key=%s, action=%s", procMsg.Key, procMsg.Action)
 		select {
 		case uc.prefixUpdates <- procMsg:
 			return nil

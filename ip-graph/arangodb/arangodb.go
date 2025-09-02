@@ -159,12 +159,12 @@ func (a *arangoDB) ensureIPGraphs(ctx context.Context) error {
 		},
 	}
 
-	ipv4Graph, err := a.CreateGraph(ctx, a.config.IPv4Graph+"_graph", ipv4GraphOptions)
+	ipv4Graph, err := a.CreateGraph(ctx, a.config.IPv4Graph, ipv4GraphOptions)
 	if err != nil {
 		return fmt.Errorf("failed to create IPv4 graph: %w", err)
 	}
 	a.ipv4GraphDB = ipv4Graph
-	glog.V(6).Infof("Ensured IPv4 full topology graph: %s", a.config.IPv4Graph+"_graph")
+	glog.V(6).Infof("Ensured IPv4 full topology graph: %s", a.config.IPv4Graph)
 
 	// Create IPv6 full topology graph
 	ipv6GraphOptions := driver.CreateGraphOptions{
@@ -177,12 +177,12 @@ func (a *arangoDB) ensureIPGraphs(ctx context.Context) error {
 		},
 	}
 
-	ipv6Graph, err := a.CreateGraph(ctx, a.config.IPv6Graph+"_graph", ipv6GraphOptions)
+	ipv6Graph, err := a.CreateGraph(ctx, a.config.IPv6Graph, ipv6GraphOptions)
 	if err != nil {
 		return fmt.Errorf("failed to create IPv6 graph: %w", err)
 	}
 	a.ipv6GraphDB = ipv6Graph
-	glog.V(6).Infof("Ensured IPv6 full topology graph: %s", a.config.IPv6Graph+"_graph")
+	glog.V(6).Infof("Ensured IPv6 full topology graph: %s", a.config.IPv6Graph)
 
 	return nil
 }
@@ -280,14 +280,74 @@ func (a *arangoDB) loadInitialData() error {
 func (a *arangoDB) copyIGPGraphData(ctx context.Context) error {
 	glog.V(6).Info("Copying IGP graph data to IP graphs...")
 
+	// Check if IGP collections exist
+	igpDataAvailable := a.checkIGPDataAvailability(ctx)
+	if !igpDataAvailable {
+		glog.Warning("No IGP data found - ip-graph will populate graphs with BGP data only")
+		glog.Info("Note: For full topology, ensure igp-graph processor is running and has processed network data")
+		return nil // Continue without IGP data
+	}
+
 	// Use the dedicated IGP copy processor for enhanced copying logic
 	igpCopyProcessor := NewIGPCopyProcessor(a)
 	if err := igpCopyProcessor.CopyIGPGraphsToFullTopology(ctx); err != nil {
-		return fmt.Errorf("failed to copy IGP graphs: %w", err)
+		glog.Warningf("Failed to copy IGP graphs (continuing with BGP-only): %v", err)
+		return nil // Continue without IGP data rather than failing
 	}
 
 	glog.Info("IGP graph data copied to IP graphs successfully")
 	return nil
+}
+
+func (a *arangoDB) checkIGPDataAvailability(ctx context.Context) bool {
+	// Check if igp_node collection exists and has data
+	igpNodeExists, err := a.db.CollectionExists(ctx, a.config.IGPNode)
+	if err != nil || !igpNodeExists {
+		glog.V(6).Infof("IGP node collection '%s' not found", a.config.IGPNode)
+		return false
+	}
+
+	// Check if igpv4_graph collection exists and has data
+	igpv4GraphExists, err := a.db.CollectionExists(ctx, a.config.IGPv4Graph)
+	if err != nil || !igpv4GraphExists {
+		glog.V(6).Infof("IGPv4 graph collection '%s' not found", a.config.IGPv4Graph)
+		return false
+	}
+
+	// Check if igpv6_graph collection exists and has data
+	igpv6GraphExists, err := a.db.CollectionExists(ctx, a.config.IGPv6Graph)
+	if err != nil || !igpv6GraphExists {
+		glog.V(6).Infof("IGPv6 graph collection '%s' not found", a.config.IGPv6Graph)
+		return false
+	}
+
+	// Check if collections have actual data
+	nodeCount, err := a.getCollectionCount(ctx, a.config.IGPNode)
+	if err != nil || nodeCount == 0 {
+		glog.V(6).Infof("IGP node collection '%s' is empty", a.config.IGPNode)
+		return false
+	}
+
+	glog.V(6).Infof("IGP data available: %d nodes found", nodeCount)
+	return true
+}
+
+func (a *arangoDB) getCollectionCount(ctx context.Context, collectionName string) (int64, error) {
+	query := fmt.Sprintf("RETURN LENGTH(%s)", collectionName)
+	cursor, err := a.db.Query(ctx, query, nil)
+	if err != nil {
+		return 0, err
+	}
+	defer cursor.Close()
+
+	var count int64
+	if cursor.HasMore() {
+		if _, err := cursor.ReadDocument(ctx, &count); err != nil {
+			return 0, err
+		}
+	}
+
+	return count, nil
 }
 
 func (a *arangoDB) copyGraphCollection(ctx context.Context, source, target driver.Collection) error {
@@ -334,10 +394,158 @@ func (a *arangoDB) copyGraphCollection(ctx context.Context, source, target drive
 }
 
 func (a *arangoDB) loadInitialBGPData(ctx context.Context) error {
-	// TODO: Load existing BGP peer and prefix data
-	// This will be implemented in the next phase
-	glog.V(6).Info("BGP data loading will be implemented in next phase")
+	glog.Info("Loading initial BGP peer and prefix data...")
+
+	// Check if BGP data is available
+	bgpDataAvailable := a.checkBGPDataAvailability(ctx)
+	if !bgpDataAvailable {
+		glog.Warning("No BGP data found - ip-graph will contain IGP topology only")
+		glog.Info("Note: BGP data will be populated as peer sessions and prefixes are received")
+		return nil // Continue without BGP data
+	}
+
+	// Load existing BGP peer data
+	if err := a.loadInitialPeers(ctx); err != nil {
+		glog.Warningf("Failed to load initial peers (continuing): %v", err)
+	}
+
+	// Load existing BGP prefix data
+	if err := a.loadInitialPrefixes(ctx); err != nil {
+		glog.Warningf("Failed to load initial prefixes (continuing): %v", err)
+	}
+
+	glog.Info("Initial BGP data loaded successfully")
 	return nil
+}
+
+func (a *arangoDB) checkBGPDataAvailability(ctx context.Context) bool {
+	// Check if peer collection exists and has data
+	peerExists, err := a.db.CollectionExists(ctx, "peer")
+	if err != nil || !peerExists {
+		glog.V(6).Info("BGP peer collection 'peer' not found")
+		return false
+	}
+
+	peerCount, err := a.getCollectionCount(ctx, "peer")
+	if err != nil || peerCount == 0 {
+		glog.V(6).Info("BGP peer collection 'peer' is empty")
+		return false
+	}
+
+	glog.V(6).Infof("BGP data available: %d peers found", peerCount)
+	return true
+}
+
+func (a *arangoDB) loadInitialPeers(ctx context.Context) error {
+	glog.V(6).Info("Loading initial BGP peers...")
+
+	// Query all BGP peer sessions
+	peerQuery := "FOR p IN peer RETURN p"
+	cursor, err := a.db.Query(ctx, peerQuery, nil)
+	if err != nil {
+		return fmt.Errorf("failed to query peers: %w", err)
+	}
+	defer cursor.Close()
+
+	peerCount := 0
+	for cursor.HasMore() {
+		var peerData map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &peerData); err != nil {
+			return fmt.Errorf("failed to read peer document: %w", err)
+		}
+
+		// Process the peer session (create BGP nodes and session edges)
+		if err := a.processInitialPeer(ctx, peerData); err != nil {
+			glog.Warningf("Failed to process initial peer %s: %v", getString(peerData, "_key"), err)
+			continue
+		}
+
+		peerCount++
+	}
+
+	glog.V(6).Infof("Loaded %d initial BGP peers", peerCount)
+	return nil
+}
+
+func (a *arangoDB) loadInitialPrefixes(ctx context.Context) error {
+	glog.V(6).Info("Loading initial BGP prefixes...")
+
+	// Load IPv4 unicast prefixes
+	if err := a.loadInitialUnicastPrefixes(ctx, "unicast_prefix_v4", true); err != nil {
+		return fmt.Errorf("failed to load IPv4 prefixes: %w", err)
+	}
+
+	// Load IPv6 unicast prefixes
+	if err := a.loadInitialUnicastPrefixes(ctx, "unicast_prefix_v6", false); err != nil {
+		return fmt.Errorf("failed to load IPv6 prefixes: %w", err)
+	}
+
+	glog.V(6).Info("Initial BGP prefixes loaded successfully")
+	return nil
+}
+
+func (a *arangoDB) loadInitialUnicastPrefixes(ctx context.Context, collection string, isIPv4 bool) error {
+	ipVersion := "IPv6"
+	if isIPv4 {
+		ipVersion = "IPv4"
+	}
+	glog.V(6).Infof("Loading initial %s unicast prefixes from %s...", ipVersion, collection)
+
+	// Query all unicast prefixes
+	prefixQuery := fmt.Sprintf("FOR u IN %s RETURN u", collection)
+	cursor, err := a.db.Query(ctx, prefixQuery, nil)
+	if err != nil {
+		return fmt.Errorf("failed to query %s: %w", collection, err)
+	}
+	defer cursor.Close()
+
+	prefixCount := 0
+	for cursor.HasMore() {
+		var prefixData map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &prefixData); err != nil {
+			return fmt.Errorf("failed to read prefix document: %w", err)
+		}
+
+		// Add is_ipv4 field to match the processing logic
+		prefixData["is_ipv4"] = isIPv4
+
+		// Process the prefix (create BGP prefix vertices and edges)
+		if err := a.processInitialPrefix(ctx, prefixData); err != nil {
+			glog.Warningf("Failed to process initial prefix %s: %v", getString(prefixData, "_key"), err)
+			continue
+		}
+
+		prefixCount++
+	}
+
+	glog.V(6).Infof("Loaded %d initial %s unicast prefixes", prefixCount, ipVersion)
+	return nil
+}
+
+func (a *arangoDB) processInitialPeer(ctx context.Context, peerData map[string]interface{}) error {
+	// Create a pseudo-message for the BGP peer processor
+	procMsg := &ProcessingMessage{
+		Key:    getString(peerData, "_key"),
+		Action: "add", // Initial load is always "add"
+		Data:   peerData,
+	}
+
+	// Use the existing BGP peer processor
+	uc := &UpdateCoordinator{db: a}
+	return uc.processBGPPeerUpdate(procMsg)
+}
+
+func (a *arangoDB) processInitialPrefix(ctx context.Context, prefixData map[string]interface{}) error {
+	// Create a pseudo-message for the BGP prefix processor
+	procMsg := &ProcessingMessage{
+		Key:    getString(prefixData, "_key"),
+		Action: "add", // Initial load is always "add"
+		Data:   prefixData,
+	}
+
+	// Use the existing BGP prefix processor
+	uc := &UpdateCoordinator{db: a}
+	return uc.processBGPPrefixUpdate(procMsg)
 }
 
 func (a *arangoDB) monitor() {

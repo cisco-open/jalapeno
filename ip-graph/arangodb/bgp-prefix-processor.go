@@ -10,7 +10,7 @@ import (
 
 // processBGPPrefixUpdate processes BGP unicast prefix messages
 func (uc *UpdateCoordinator) processBGPPrefixUpdate(msg *ProcessingMessage) error {
-	glog.V(7).Infof("Processing BGP prefix update: %s action: %s", msg.Key, msg.Action)
+	glog.Infof("Processing BGP prefix update: %s action: %s", msg.Key, msg.Action)
 
 	ctx := context.TODO()
 
