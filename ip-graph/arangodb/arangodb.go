@@ -636,9 +636,8 @@ func (a *arangoDB) createIPv6PrefixAttachments(ctx context.Context) error {
 	return nil
 }
 
-// createPrefixAttachment creates bidirectional edges between a prefix and its origin node
+// createPrefixAttachment creates bidirectional edges between a prefix and its reachable nodes
 func (a *arangoDB) createPrefixAttachment(ctx context.Context, prefixData map[string]interface{}, isIPv4 bool) error {
-	prefixKey := getString(prefixData, "_key")
 	prefixType := getString(prefixData, "prefix_type")
 	routerID := getString(prefixData, "router_id")
 	originAS := getUint32FromInterface(prefixData["origin_as"])
@@ -651,53 +650,169 @@ func (a *arangoDB) createPrefixAttachment(ctx context.Context, prefixData map[st
 		prefixCollection = a.config.BGPPrefixV6
 	}
 
-	// Find the origin node based on prefix type
-	var originNodeID string
-	var err error
-
+	// Find reachable nodes based on prefix type (following original logic)
 	switch prefixType {
 	case "ibgp":
-		// iBGP prefixes attach to IGP nodes
-		originNodeID, err = a.findIGPNodeByRouterIDAndASN(ctx, routerID, originAS)
-	case "ebgp_private", "ebgp_private_4byte", "ebgp_public":
-		// eBGP prefixes attach to BGP nodes
-		originNodeID, err = a.findBGPNodeByRouterIDAndASN(ctx, routerID, originAS)
+		// iBGP prefixes: Connect to IGP nodes by router_id and ASN
+		return a.attachPrefixToIGPNodes(ctx, prefixData, prefixCollection, isIPv4)
+	case "ebgp_private", "ebgp_private_4byte":
+		// eBGP private prefixes: Connect to specific BGP node by router_id and origin_as
+		return a.attachPrefixToSpecificBGPNode(ctx, prefixData, prefixCollection, isIPv4, routerID, originAS)
+	case "ebgp_public":
+		// Internet prefixes: Connect to all BGP peer nodes with public ASNs (like original processInetPrefix)
+		return a.attachPrefixToInternetPeers(ctx, prefixData, prefixCollection, isIPv4)
 	default:
 		return fmt.Errorf("unknown prefix type: %s", prefixType)
 	}
+}
 
+// attachPrefixToIGPNodes attaches iBGP prefixes to IGP nodes (original processIbgpPrefix logic)
+func (a *arangoDB) attachPrefixToIGPNodes(ctx context.Context, prefixData map[string]interface{}, prefixCollection string, isIPv4 bool) error {
+	routerID := getString(prefixData, "router_id")
+	asn := getUint32FromInterface(prefixData["asn"])
+	prefixKey := getString(prefixData, "_key")
+
+	// Query IGP nodes by router_id and ASN (matching original logic)
+	query := fmt.Sprintf(`
+		FOR node IN %s 
+		FILTER node.router_id == @routerId AND node.asn == @asn 
+		RETURN node
+	`, a.config.IGPNode)
+
+	bindVars := map[string]interface{}{
+		"routerId": routerID,
+		"asn":      asn,
+	}
+
+	cursor, err := a.db.Query(ctx, query, bindVars)
 	if err != nil {
-		return fmt.Errorf("failed to find origin node for prefix %s: %w", prefixKey, err)
+		return fmt.Errorf("failed to query IGP nodes: %w", err)
+	}
+	defer cursor.Close()
+
+	// Create edges to all matching IGP nodes
+	for cursor.HasMore() {
+		var igpNode map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &igpNode); err != nil {
+			return fmt.Errorf("failed to read IGP node: %w", err)
+		}
+
+		if err := a.createBidirectionalPrefixEdges(ctx, prefixData, igpNode, prefixCollection, isIPv4); err != nil {
+			glog.Warningf("Failed to create iBGP prefix edges for %s: %v", prefixKey, err)
+		}
 	}
 
-	if originNodeID == "" {
-		glog.V(8).Infof("Origin node not found for prefix %s (type: %s, router: %s, AS: %d)",
-			prefixKey, prefixType, routerID, originAS)
-		return nil // Skip if origin node not found
+	return nil
+}
+
+// attachPrefixToSpecificBGPNode attaches eBGP prefixes to specific BGP node (original processeBgpPrefix logic)
+func (a *arangoDB) attachPrefixToSpecificBGPNode(ctx context.Context, prefixData map[string]interface{}, prefixCollection string, isIPv4 bool, routerID string, originAS uint32) error {
+	prefixKey := getString(prefixData, "_key")
+
+	// Query specific BGP node by router_id and origin_as (matching original logic)
+	query := fmt.Sprintf(`
+		FOR node IN %s 
+		FILTER node.router_id == @routerId AND node.asn == @originAs 
+		RETURN node
+	`, a.config.BGPNode)
+
+	bindVars := map[string]interface{}{
+		"routerId": routerID,
+		"originAs": originAS,
 	}
 
-	// Create bidirectional edges
+	cursor, err := a.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return fmt.Errorf("failed to query BGP nodes: %w", err)
+	}
+	defer cursor.Close()
+
+	// Create edges to all matching BGP nodes
+	for cursor.HasMore() {
+		var bgpNode map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &bgpNode); err != nil {
+			return fmt.Errorf("failed to read BGP node: %w", err)
+		}
+
+		if err := a.createBidirectionalPrefixEdges(ctx, prefixData, bgpNode, prefixCollection, isIPv4); err != nil {
+			glog.Warningf("Failed to create eBGP prefix edges for %s: %v", prefixKey, err)
+		}
+	}
+
+	return nil
+}
+
+// attachPrefixToInternetPeers attaches Internet prefixes to BGP peer nodes (original processInetPrefix logic)
+func (a *arangoDB) attachPrefixToInternetPeers(ctx context.Context, prefixData map[string]interface{}, prefixCollection string, isIPv4 bool) error {
+	prefixKey := getString(prefixData, "_key")
+
+	// Query all BGP nodes with public ASNs (matching original logic)
+	query := fmt.Sprintf(`
+		FOR node IN %s 
+		FILTER node.asn NOT IN 64512..65535 
+		FILTER node.asn NOT IN 4200000000..4294967294 
+		RETURN node
+	`, a.config.BGPNode)
+
+	cursor, err := a.db.Query(ctx, query, nil)
+	if err != nil {
+		return fmt.Errorf("failed to query Internet BGP peers: %w", err)
+	}
+	defer cursor.Close()
+
+	// Create edges to all Internet BGP peer nodes
+	for cursor.HasMore() {
+		var bgpNode map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &bgpNode); err != nil {
+			return fmt.Errorf("failed to read BGP peer node: %w", err)
+		}
+
+		if err := a.createBidirectionalPrefixEdges(ctx, prefixData, bgpNode, prefixCollection, isIPv4); err != nil {
+			glog.Warningf("Failed to create Internet prefix edges for %s: %v", prefixKey, err)
+		}
+	}
+
+	return nil
+}
+
+// createBidirectionalPrefixEdges creates bidirectional edges between prefix and node (matching original edge structure)
+func (a *arangoDB) createBidirectionalPrefixEdges(ctx context.Context, prefixData, nodeData map[string]interface{}, prefixCollection string, isIPv4 bool) error {
+	prefixKey := getString(prefixData, "_key")
+	nodeKey := getString(nodeData, "_key")
+	nodeID := getString(nodeData, "_id")
 	prefixVertexID := fmt.Sprintf("%s/%s", prefixCollection, prefixKey)
 
-	// Edge from origin node to prefix
+	// Extract edge metadata
+	prefix := getString(prefixData, "prefix")
+	prefixLen := getUint32FromInterface(prefixData["prefix_len"])
+	originAS := getUint32FromInterface(prefixData["origin_as"])
+	prefixType := getString(prefixData, "prefix_type")
+
+	// Edge from node to prefix (matching original unicastPrefixEdgeObject structure)
 	nodeToPrefix := &IPGraphObject{
-		Key:      fmt.Sprintf("%s_to_%s", originNodeID, prefixKey),
-		From:     originNodeID,
-		To:       prefixVertexID,
-		Protocol: fmt.Sprintf("BGP_%s", prefixType),
-		Link:     prefixKey,
+		Key:       fmt.Sprintf("%s_%s", nodeKey, prefixKey),
+		From:      nodeID,
+		To:        prefixVertexID,
+		Protocol:  fmt.Sprintf("BGP_%s", prefixType),
+		Link:      prefixKey,
+		Prefix:    prefix,
+		PrefixLen: int32(prefixLen),
+		OriginAS:  int32(originAS),
 	}
 
-	// Edge from prefix to origin node
+	// Edge from prefix to node
 	prefixToNode := &IPGraphObject{
-		Key:      fmt.Sprintf("%s_to_%s", prefixKey, originNodeID),
-		From:     prefixVertexID,
-		To:       originNodeID,
-		Protocol: fmt.Sprintf("BGP_%s", prefixType),
-		Link:     prefixKey,
+		Key:       fmt.Sprintf("%s_%s", prefixKey, nodeKey),
+		From:      prefixVertexID,
+		To:        nodeID,
+		Protocol:  fmt.Sprintf("BGP_%s", prefixType),
+		Link:      prefixKey,
+		Prefix:    prefix,
+		PrefixLen: int32(prefixLen),
+		OriginAS:  int32(originAS),
 	}
 
-	// Insert edges into the graph collection
+	// Insert edges into the appropriate graph collection
 	var targetCollection driver.Collection
 	if isIPv4 {
 		targetCollection = a.ipv4Graph
@@ -705,13 +820,13 @@ func (a *arangoDB) createPrefixAttachment(ctx context.Context, prefixData map[st
 		targetCollection = a.ipv6Graph
 	}
 
-	// Create both edges
+	// Create both edges (with conflict handling like original)
 	for _, edge := range []*IPGraphObject{nodeToPrefix, prefixToNode} {
 		if _, err := targetCollection.CreateDocument(ctx, edge); err != nil {
 			if !driver.IsConflict(err) {
 				return fmt.Errorf("failed to create edge %s: %w", edge.Key, err)
 			}
-			// Update existing edge
+			// Update existing edge (matching original logic)
 			if _, err := targetCollection.UpdateDocument(ctx, edge.Key, edge); err != nil {
 				return fmt.Errorf("failed to update edge %s: %w", edge.Key, err)
 			}
