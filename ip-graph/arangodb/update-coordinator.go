@@ -230,7 +230,17 @@ func (uc *UpdateCoordinator) processPrefixUpdate(msg *ProcessingMessage) error {
 	glog.V(7).Infof("Processing prefix update: %s action: %s", msg.Key, msg.Action)
 
 	// Process BGP unicast prefixes
-	return uc.processBGPPrefixUpdate(msg)
+	if err := uc.processBGPPrefixUpdate(msg); err != nil {
+		return err
+	}
+
+	// Check for IGP-BGP prefix conflicts and handle deduplication
+	if err := uc.handlePrefixConflictUpdate(msg); err != nil {
+		glog.Warningf("Failed to handle prefix conflict for %s: %v", msg.Key, err)
+		// Don't fail the entire update for conflict handling issues
+	}
+
+	return nil
 }
 
 // IGP sync processing methods
@@ -264,4 +274,138 @@ func (uc *UpdateCoordinator) processIGPSRv6Update(msg *ProcessingMessage) error 
 	// TODO: Sync IGP SRv6 changes to full topology
 	glog.V(8).Infof("IGP SRv6 update: %s", msg.Key)
 	return nil
+}
+
+// handlePrefixConflictUpdate handles real-time IGP-BGP prefix conflict resolution
+func (uc *UpdateCoordinator) handlePrefixConflictUpdate(msg *ProcessingMessage) error {
+	ctx := context.TODO()
+
+	// Extract prefix and prefix_len from the message data
+	prefix := getString(msg.Data, "prefix")
+	prefixLen := getUint32FromInterface(msg.Data["prefix_len"])
+	isIPv4 := getBool(msg.Data, "is_ipv4")
+
+	if prefix == "" || prefixLen == 0 {
+		return nil // Skip if we can't determine prefix details
+	}
+
+	// Check if this prefix exists in ls_prefix (IGP)
+	hasIGPConflict, err := uc.checkIGPPrefixConflict(ctx, prefix, prefixLen, isIPv4)
+	if err != nil {
+		return fmt.Errorf("failed to check IGP conflict: %w", err)
+	}
+
+	if hasIGPConflict {
+		glog.V(7).Infof("Detected IGP-BGP prefix conflict for %s/%d, creating unified vertex", prefix, prefixLen)
+
+		// Use the prefix deduplication processor to handle the conflict
+		prefixDeduplicator := NewPrefixDeduplicationProcessor(uc.db)
+
+		// Create a conflict structure similar to the batch processor
+		conflictData := map[string]interface{}{
+			"prefix":      prefix,
+			"prefix_len":  prefixLen,
+			"unified_key": fmt.Sprintf("%s_%d", prefix, prefixLen),
+			"bgp_data":    msg.Data,
+		}
+
+		// Find the corresponding ls_prefix entry
+		lsData, err := uc.findLSPrefixEntry(ctx, prefix, prefixLen, isIPv4)
+		if err != nil {
+			return fmt.Errorf("failed to find ls_prefix entry: %w", err)
+		}
+
+		if lsData != nil {
+			conflictData["ls_data"] = lsData
+
+			// Create unified prefix vertex
+			if err := prefixDeduplicator.createUnifiedPrefixVertex(ctx, conflictData, isIPv4); err != nil {
+				return fmt.Errorf("failed to create unified prefix vertex: %w", err)
+			}
+		}
+	}
+
+	return nil
+}
+
+// checkIGPPrefixConflict checks if a BGP prefix conflicts with an IGP prefix
+func (uc *UpdateCoordinator) checkIGPPrefixConflict(ctx context.Context, prefix string, prefixLen uint32, isIPv4 bool) (bool, error) {
+	// Build query based on IP version
+	var mtidFilter string
+	if isIPv4 {
+		mtidFilter = "FILTER ls.mt_id_tlv == null OR ls.mt_id_tlv.mt_id == 0"
+	} else {
+		mtidFilter = "FILTER ls.mt_id_tlv != null AND ls.mt_id_tlv.mt_id == 2"
+	}
+
+	query := fmt.Sprintf(`
+		FOR ls IN ls_prefix
+		%s
+		FILTER ls.prefix == @prefix AND ls.prefix_len == @prefixLen
+		LIMIT 1
+		RETURN true
+	`, mtidFilter)
+
+	bindVars := map[string]interface{}{
+		"prefix":    prefix,
+		"prefixLen": prefixLen,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return false, err
+	}
+	defer cursor.Close()
+
+	return cursor.HasMore(), nil
+}
+
+// findLSPrefixEntry finds the corresponding ls_prefix entry for conflict resolution
+func (uc *UpdateCoordinator) findLSPrefixEntry(ctx context.Context, prefix string, prefixLen uint32, isIPv4 bool) (map[string]interface{}, error) {
+	// Build query based on IP version
+	var mtidFilter string
+	if isIPv4 {
+		mtidFilter = "FILTER ls.mt_id_tlv == null OR ls.mt_id_tlv.mt_id == 0"
+	} else {
+		mtidFilter = "FILTER ls.mt_id_tlv != null AND ls.mt_id_tlv.mt_id == 2"
+	}
+
+	query := fmt.Sprintf(`
+		FOR ls IN ls_prefix
+		%s
+		FILTER ls.prefix == @prefix AND ls.prefix_len == @prefixLen
+		LIMIT 1
+		RETURN ls
+	`, mtidFilter)
+
+	bindVars := map[string]interface{}{
+		"prefix":    prefix,
+		"prefixLen": prefixLen,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close()
+
+	if cursor.HasMore() {
+		var lsData map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &lsData); err != nil {
+			return nil, err
+		}
+		return lsData, nil
+	}
+
+	return nil, nil
+}
+
+// getBool safely extracts a boolean value from interface{} data
+func getBool(data map[string]interface{}, key string) bool {
+	if val, exists := data[key]; exists {
+		if b, ok := val.(bool); ok {
+			return b
+		}
+	}
+	return false
 }

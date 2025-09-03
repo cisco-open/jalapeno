@@ -420,6 +420,12 @@ func (a *arangoDB) loadInitialBGPData(ctx context.Context) error {
 		glog.Warningf("Failed to create prefix-to-node attachments (continuing): %v", err)
 	}
 
+	// Step 4: Handle IGP-BGP prefix deduplication
+	prefixDeduplicator := NewPrefixDeduplicationProcessor(a)
+	if err := prefixDeduplicator.ProcessPrefixDeduplication(ctx); err != nil {
+		glog.Warningf("Failed to process IGP-BGP prefix deduplication (continuing): %v", err)
+	}
+
 	glog.Info("Initial BGP data loaded successfully")
 	return nil
 }
