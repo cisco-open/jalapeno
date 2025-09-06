@@ -426,6 +426,12 @@ func (a *arangoDB) loadInitialBGPData(ctx context.Context) error {
 		glog.Warningf("Failed to process IGP-BGP prefix deduplication (continuing): %v", err)
 	}
 
+	// Step 5: Handle iBGP-only nodes (e.g., Cilium) that should attach to subnets
+	ibgpSubnetProcessor := NewIBGPSubnetProcessor(a)
+	if err := ibgpSubnetProcessor.ProcessIBGPSubnetAttachment(ctx); err != nil {
+		glog.Warningf("Failed to process iBGP subnet attachments (continuing): %v", err)
+	}
+
 	glog.Info("Initial BGP data loaded successfully")
 	return nil
 }
