@@ -44,10 +44,10 @@ func (pdp *PrefixDeduplicationProcessor) processIPv4PrefixDeduplication(ctx cont
 	glog.V(6).Info("Processing IPv4 IGP-BGP prefix deduplication...")
 
 	// Find IPv4 prefix conflicts using optimized hash-based approach
-	// Create a hash index on prefix+prefix_len for fast lookups
+	// Look for BOTH directions: igp_node→ls_prefix AND ls_prefix→igp_node
 	conflictQuery := `
 		FOR edge IN ` + pdp.db.config.IPv4Graph + `
-		FILTER STARTS_WITH(edge._to, "ls_prefix/")
+		FILTER (STARTS_WITH(edge._to, "ls_prefix/") OR STARTS_WITH(edge._from, "ls_prefix/"))
 		FILTER edge.prefix != null AND edge.prefix_len != null
 		
 		// Use hash-based lookup instead of nested loop for performance
@@ -55,19 +55,22 @@ func (pdp *PrefixDeduplicationProcessor) processIPv4PrefixDeduplication(ctx cont
 		LET bgp_match = DOCUMENT(` + pdp.db.config.BGPPrefixV4 + `, prefix_key)
 		FILTER bgp_match != null
 		
-		// Get the corresponding ls_prefix data for metadata  
-		LET ls_prefix_key = SPLIT(edge._to, "/")[1]
+		// Get the corresponding ls_prefix data for metadata
+		LET ls_prefix_key = STARTS_WITH(edge._to, "ls_prefix/") ? SPLIT(edge._to, "/")[1] : SPLIT(edge._from, "/")[1]
 		LET ls_data = DOCUMENT("ls_prefix", ls_prefix_key)
 		FILTER ls_data != null
 		
+		// Group by prefix to handle both directions together
+		COLLECT prefix = edge.prefix, prefix_len = edge.prefix_len INTO edge_group
+		
 		RETURN {
-			prefix: edge.prefix,
-			prefix_len: edge.prefix_len,
-			ls_data: ls_data,
-			bgp_data: bgp_match,
-			unified_key: prefix_key,
-			conflict_type: "graph_edge",
-			existing_edge: edge
+			prefix: prefix,
+			prefix_len: prefix_len,
+			ls_data: FIRST(edge_group[*].ls_data),
+			bgp_data: FIRST(edge_group[*].bgp_match),
+			unified_key: CONCAT_SEPARATOR("_", prefix, prefix_len),
+			conflict_type: "graph_edge_bidirectional",
+			existing_edges: edge_group[*].edge
 		}
 	`
 
@@ -101,9 +104,10 @@ func (pdp *PrefixDeduplicationProcessor) processIPv6PrefixDeduplication(ctx cont
 	glog.V(6).Info("Processing IPv6 IGP-BGP prefix deduplication...")
 
 	// Find IPv6 prefix conflicts using optimized hash-based approach
+	// Look for BOTH directions: igp_node→ls_prefix AND ls_prefix→igp_node
 	conflictQuery := `
 		FOR edge IN ` + pdp.db.config.IPv6Graph + `
-		FILTER STARTS_WITH(edge._to, "ls_prefix/")
+		FILTER (STARTS_WITH(edge._to, "ls_prefix/") OR STARTS_WITH(edge._from, "ls_prefix/"))
 		FILTER edge.prefix != null AND edge.prefix_len != null
 		FILTER edge.mt_id == 2  // IPv6 topology
 		
@@ -113,18 +117,21 @@ func (pdp *PrefixDeduplicationProcessor) processIPv6PrefixDeduplication(ctx cont
 		FILTER bgp_match != null
 		
 		// Get the corresponding ls_prefix data for metadata
-		LET ls_prefix_key = SPLIT(edge._to, "/")[1]
+		LET ls_prefix_key = STARTS_WITH(edge._to, "ls_prefix/") ? SPLIT(edge._to, "/")[1] : SPLIT(edge._from, "/")[1]
 		LET ls_data = DOCUMENT("ls_prefix", ls_prefix_key)
 		FILTER ls_data != null
 		
+		// Group by prefix to handle both directions together
+		COLLECT prefix = edge.prefix, prefix_len = edge.prefix_len INTO edge_group
+		
 		RETURN {
-			prefix: edge.prefix,
-			prefix_len: edge.prefix_len,
-			ls_data: ls_data,
-			bgp_data: bgp_match,
-			unified_key: prefix_key,
-			conflict_type: "graph_edge",
-			existing_edge: edge
+			prefix: prefix,
+			prefix_len: prefix_len,
+			ls_data: FIRST(edge_group[*].ls_data),
+			bgp_data: FIRST(edge_group[*].bgp_match),
+			unified_key: CONCAT_SEPARATOR("_", prefix, prefix_len),
+			conflict_type: "graph_edge_bidirectional",
+			existing_edges: edge_group[*].edge
 		}
 	`
 
@@ -232,12 +239,29 @@ func (pdp *PrefixDeduplicationProcessor) createUnifiedPrefixVertex(ctx context.C
 	defer cursor.Close()
 
 	// Handle existing IGP edges if this is a graph_edge conflict
-	if conflictType == "graph_edge" {
+	if conflictType == "graph_edge_bidirectional" {
+		if existingEdges, exists := conflict["existing_edges"]; exists {
+			edges := existingEdges.([]interface{})
+			for _, edgeInterface := range edges {
+				if edge, ok := edgeInterface.(map[string]interface{}); ok {
+					if err := pdp.handleExistingIGPEdges(ctx, edge, unifiedKey, isIPv4); err != nil {
+						glog.Warningf("Failed to handle existing IGP edge %s for %s: %v", getString(edge, "_key"), unifiedKey, err)
+					}
+				}
+			}
+		}
+	} else if conflictType == "graph_edge" {
+		// Handle single edge for backward compatibility
 		if existingEdge, exists := conflict["existing_edge"]; exists {
 			if err := pdp.handleExistingIGPEdges(ctx, existingEdge.(map[string]interface{}), unifiedKey, isIPv4); err != nil {
 				glog.Warningf("Failed to handle existing IGP edges for %s: %v", unifiedKey, err)
 			}
 		}
+	}
+
+	// Remove any duplicate BGP edges for this prefix
+	if err := pdp.removeDuplicateBGPEdges(ctx, unifiedKey, isIPv4); err != nil {
+		glog.Warningf("Failed to remove duplicate BGP edges for %s: %v", unifiedKey, err)
 	}
 
 	// Create edges to both IGP and BGP nodes
@@ -552,5 +576,79 @@ func (pdp *PrefixDeduplicationProcessor) handleExistingIGPEdges(ctx context.Cont
 	}
 
 	glog.V(8).Infof("Updated IGP edge %s to point to unified vertex %s", edgeKey, newToVertex)
+	return nil
+}
+
+// removeDuplicateBGPEdges removes duplicate BGP edges for the same prefix
+func (pdp *PrefixDeduplicationProcessor) removeDuplicateBGPEdges(ctx context.Context, unifiedKey string, isIPv4 bool) error {
+	// Determine target collections
+	var targetCollection driver.Collection
+	var bgpPrefixCollection string
+	if isIPv4 {
+		targetCollection = pdp.db.ipv4Graph
+		bgpPrefixCollection = pdp.db.config.BGPPrefixV4
+	} else {
+		targetCollection = pdp.db.ipv6Graph
+		bgpPrefixCollection = pdp.db.config.BGPPrefixV6
+	}
+
+	bgpVertexID := fmt.Sprintf("%s/%s", bgpPrefixCollection, unifiedKey)
+
+	// Find all edges pointing to or from this BGP prefix vertex
+	// Keep only the one with the best metadata (most complete IGP data)
+	query := fmt.Sprintf(`
+		FOR edge IN %s
+		FILTER edge._to == @bgp_vertex OR edge._from == @bgp_vertex
+		FILTER edge.protocol == "IGP_unified" OR edge.protocol_id == null
+		SORT edge.protocol_id DESC, edge.igp_metric DESC  // Prefer edges with IGP metadata
+		RETURN edge
+	`, targetCollection.Name())
+
+	bindVars := map[string]interface{}{
+		"bgp_vertex": bgpVertexID,
+	}
+
+	cursor, err := pdp.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return fmt.Errorf("failed to query duplicate BGP edges: %w", err)
+	}
+	defer cursor.Close()
+
+	var edgesToRemove []string
+	var bestEdgeKey string
+	edgeCount := 0
+
+	for cursor.HasMore() {
+		var edge map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &edge); err != nil {
+			return fmt.Errorf("failed to read duplicate edge: %w", err)
+		}
+
+		edgeKey := getString(edge, "_key")
+		if edgeCount == 0 {
+			// Keep the first (best) edge
+			bestEdgeKey = edgeKey
+		} else {
+			// Mark others for removal
+			edgesToRemove = append(edgesToRemove, edgeKey)
+		}
+		edgeCount++
+	}
+
+	// Remove duplicate edges
+	for _, edgeKey := range edgesToRemove {
+		if _, err := targetCollection.RemoveDocument(ctx, edgeKey); err != nil {
+			if !driver.IsNotFound(err) {
+				glog.Warningf("Failed to remove duplicate BGP edge %s: %v", edgeKey, err)
+			}
+		} else {
+			glog.V(8).Infof("Removed duplicate BGP edge %s, keeping %s", edgeKey, bestEdgeKey)
+		}
+	}
+
+	if len(edgesToRemove) > 0 {
+		glog.V(7).Infof("Removed %d duplicate BGP edges for prefix %s, kept %s", len(edgesToRemove), unifiedKey, bestEdgeKey)
+	}
+
 	return nil
 }
