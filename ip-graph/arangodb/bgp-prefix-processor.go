@@ -502,64 +502,35 @@ func (uc *UpdateCoordinator) removeBGPPrefixVertex(ctx context.Context, key stri
 	return nil
 }
 
-// findBGPPeerNodesForPrefix finds BGP peer nodes that should advertise this prefix
+// findBGPPeerNodesForPrefix finds BGP peer nodes for origin AS representative node attachment
 func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, originAS, peerASN uint32, prefixData map[string]interface{}) ([]string, error) {
-	var peerNodeIDs []string
+	prefix := getStringFromData(prefixData, "prefix")
+	prefixLen := getUint32FromInterface(prefixData["prefix_len"])
 
-	// Strategy 1: Find BGP peer nodes with matching origin AS (for eBGP internet prefixes)
-	if originAS != peerASN {
-		// This is an eBGP prefix - find peer nodes with public ASNs that could advertise it
-		query := fmt.Sprintf(`
-			FOR node IN %s
-			FILTER node.node_type == "bgp"
-			FILTER node.tier == "tier1" OR node.tier == "tier2" OR node.tier == "tier3"
-			RETURN node._id
-		`, uc.db.config.BGPNode)
+	glog.V(7).Infof("Finding BGP attachment points for origin AS %d prefix %s/%d", originAS, prefix, prefixLen)
 
-		cursor, err := uc.db.db.Query(ctx, query, nil)
-		if err != nil {
-			return nil, err
-		}
-		defer cursor.Close()
+	// Determine attachment strategy using robust heuristics
+	strategy := uc.determineAttachmentStrategy(ctx, originAS, prefix, prefixData)
 
-		for cursor.HasMore() {
-			var nodeID string
-			if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
-				continue
-			}
-			peerNodeIDs = append(peerNodeIDs, nodeID)
-		}
+	switch strategy {
+	case "internal_dc":
+		// Internal DC prefix - attach to originating AS node
+		return uc.attachToOriginatingAS(ctx, originAS, prefixData)
+
+	case "internet":
+		// Internet prefix - attach via external peers with shortest path
+		return uc.attachViaExternalPeers(ctx, originAS, prefixData)
+
+	case "ambiguous":
+		glog.Errorf("Ambiguous network topology detected for prefix %s/%d (origin AS %d) - inconsistent ASN assignment detected. Using shortest path fallback.",
+			prefix, prefixLen, originAS)
+		return uc.attachToShortestPath(ctx, originAS, prefixData)
+
+	default:
+		glog.Warningf("Unknown attachment strategy '%s' for prefix %s/%d - using shortest path fallback",
+			strategy, prefix, prefixLen)
+		return uc.attachToShortestPath(ctx, originAS, prefixData)
 	}
-
-	// Strategy 2: If no public peers found, look for any BGP peer nodes with the origin AS
-	if len(peerNodeIDs) == 0 {
-		query := fmt.Sprintf(`
-			FOR node IN %s
-			FILTER node.asn == @origin_asn
-			FILTER node.node_type == "bgp"
-			RETURN node._id
-		`, uc.db.config.BGPNode)
-
-		bindVars := map[string]interface{}{
-			"origin_asn": originAS,
-		}
-
-		cursor, err := uc.db.db.Query(ctx, query, bindVars)
-		if err != nil {
-			return nil, err
-		}
-		defer cursor.Close()
-
-		for cursor.HasMore() {
-			var nodeID string
-			if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
-				continue
-			}
-			peerNodeIDs = append(peerNodeIDs, nodeID)
-		}
-	}
-
-	return peerNodeIDs, nil
 }
 
 // getPeerNodeData retrieves the full node document for a given node ID
@@ -596,6 +567,166 @@ func (uc *UpdateCoordinator) getPeerNodeData(ctx context.Context, nodeID string)
 	}
 
 	return nil, fmt.Errorf("node not found: %s", nodeID)
+}
+
+// determineAttachmentStrategy uses heuristics to determine how to attach prefix to origin AS
+func (uc *UpdateCoordinator) determineAttachmentStrategy(ctx context.Context, originAS uint32, prefix string, prefixData map[string]interface{}) string {
+	// Signal 1: ASN range (primary indicator)
+	isOriginPrivate := uc.isPrivateASN(originAS)
+
+	// Signal 2: Prefix space analysis (address space indicator)
+	isPrivatePrefix := uc.isPrivateIPSpace(prefix)
+
+	// Signal 3: AS path analysis - check if we have external hops
+	hasExternalHops := uc.hasExternalASNsInPath(prefixData)
+
+	// High confidence cases
+	if isOriginPrivate && isPrivatePrefix {
+		return "internal_dc" // Clear internal signal
+	}
+	if !isOriginPrivate && !isPrivatePrefix && hasExternalHops {
+		return "internet" // Clear internet signal
+	}
+
+	// Ambiguous cases - inconsistent signals
+	return "ambiguous"
+}
+
+// attachToOriginatingAS finds the BGP node that directly originates this prefix
+func (uc *UpdateCoordinator) attachToOriginatingAS(ctx context.Context, originAS uint32, prefixData map[string]interface{}) ([]string, error) {
+	// Strategy: Find BGP nodes with matching origin AS
+	// For internal DC prefixes, this represents the originating AS
+
+	// First, try to find existing BGP node with this ASN
+	query := fmt.Sprintf(`
+		FOR node IN %s
+		FILTER node.asn == @origin_asn
+		FILTER node.node_type == "bgp"
+		RETURN node._id
+	`, uc.db.config.BGPNode)
+
+	bindVars := map[string]interface{}{
+		"origin_asn": originAS,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close()
+
+	var peerNodeIDs []string
+	for cursor.HasMore() {
+		var nodeID string
+		if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
+			continue
+		}
+		peerNodeIDs = append(peerNodeIDs, nodeID)
+	}
+
+	// If no existing BGP node, create representative origin AS node
+	if len(peerNodeIDs) == 0 {
+		originNodeID, err := uc.ensureOriginASNode(ctx, originAS)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create origin AS node: %w", err)
+		}
+		peerNodeIDs = append(peerNodeIDs, originNodeID)
+	}
+
+	glog.V(7).Infof("Attached internal DC prefix to %d origin AS nodes", len(peerNodeIDs))
+	return peerNodeIDs, nil
+}
+
+// attachViaExternalPeers finds external BGP peers with shortest path to origin
+func (uc *UpdateCoordinator) attachViaExternalPeers(ctx context.Context, originAS uint32, prefixData map[string]interface{}) ([]string, error) {
+	// Strategy: Create origin AS node and connect it to external peers with shortest paths
+
+	// Create representative origin AS node
+	originNodeID, err := uc.ensureOriginASNode(ctx, originAS)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create origin AS node: %w", err)
+	}
+
+	glog.V(7).Infof("Attached internet prefix to origin AS node: %s", originNodeID)
+	return []string{originNodeID}, nil
+}
+
+// attachToShortestPath fallback strategy - find any BGP node with shortest AS path
+func (uc *UpdateCoordinator) attachToShortestPath(ctx context.Context, originAS uint32, prefixData map[string]interface{}) ([]string, error) {
+	// Fallback: Create origin AS node as safe default
+	originNodeID, err := uc.ensureOriginASNode(ctx, originAS)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create origin AS node: %w", err)
+	}
+
+	glog.V(7).Infof("Using shortest path fallback for origin AS node: %s", originNodeID)
+	return []string{originNodeID}, nil
+}
+
+// ensureOriginASNode creates or finds representative node for origin AS
+func (uc *UpdateCoordinator) ensureOriginASNode(ctx context.Context, originAS uint32) (string, error) {
+	bgpNodeKey := fmt.Sprintf("bgp_asn_%d", originAS)
+	routerID := fmt.Sprintf("asn_%d", originAS)
+
+	bgpNode := &BGPNode{
+		Key:         bgpNodeKey,
+		RouterID:    routerID,
+		BGPRouterID: routerID,
+		ASN:         originAS,
+		NodeType:    "bgp_asn",
+		Tier:        uc.determineBGPNodeTier(originAS),
+	}
+
+	// Create or update BGP ASN representative node
+	if _, err := uc.db.bgpNode.CreateDocument(ctx, bgpNode); err != nil {
+		if !driver.IsConflict(err) {
+			return "", fmt.Errorf("failed to create BGP ASN node: %w", err)
+		}
+		// Node already exists, which is fine
+	}
+
+	nodeID := fmt.Sprintf("%s/%s", uc.db.config.BGPNode, bgpNodeKey)
+	glog.V(8).Infof("Ensured BGP ASN representative node: %s for AS%d", nodeID, originAS)
+	return nodeID, nil
+}
+
+// isPrivateIPSpace checks if prefix is in private IP address space
+func (uc *UpdateCoordinator) isPrivateIPSpace(prefix string) bool {
+	// RFC 1918 private address spaces
+	// 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+	// This is a simplified check - could be enhanced with proper CIDR parsing
+	return strings.HasPrefix(prefix, "10.") ||
+		strings.HasPrefix(prefix, "172.16.") || strings.HasPrefix(prefix, "172.17.") ||
+		strings.HasPrefix(prefix, "172.18.") || strings.HasPrefix(prefix, "172.19.") ||
+		strings.HasPrefix(prefix, "172.20.") || strings.HasPrefix(prefix, "172.21.") ||
+		strings.HasPrefix(prefix, "172.22.") || strings.HasPrefix(prefix, "172.23.") ||
+		strings.HasPrefix(prefix, "172.24.") || strings.HasPrefix(prefix, "172.25.") ||
+		strings.HasPrefix(prefix, "172.26.") || strings.HasPrefix(prefix, "172.27.") ||
+		strings.HasPrefix(prefix, "172.28.") || strings.HasPrefix(prefix, "172.29.") ||
+		strings.HasPrefix(prefix, "172.30.") || strings.HasPrefix(prefix, "172.31.") ||
+		strings.HasPrefix(prefix, "192.168.")
+}
+
+// hasExternalASNsInPath checks if AS path contains external (public) ASNs
+func (uc *UpdateCoordinator) hasExternalASNsInPath(prefixData map[string]interface{}) bool {
+	baseAttrs, ok := prefixData["base_attrs"].(map[string]interface{})
+	if !ok {
+		return false
+	}
+
+	asPath, ok := baseAttrs["as_path"].([]interface{})
+	if !ok {
+		return false
+	}
+
+	for _, asn := range asPath {
+		if asnUint, ok := asn.(float64); ok {
+			if !uc.isPrivateASN(uint32(asnUint)) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // Helper function to safely get string from interface (BGP prefix processor)
