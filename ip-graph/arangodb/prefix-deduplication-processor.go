@@ -43,24 +43,29 @@ func (pdp *PrefixDeduplicationProcessor) ProcessPrefixDeduplication(ctx context.
 func (pdp *PrefixDeduplicationProcessor) processIPv4PrefixDeduplication(ctx context.Context) error {
 	glog.V(6).Info("Processing IPv4 IGP-BGP prefix deduplication...")
 
-	// Find IPv4 prefix conflicts by looking at existing graph edges pointing to ls_prefix vertices
-	// that have corresponding BGP prefixes
+	// Find IPv4 prefix conflicts using optimized hash-based approach
+	// Create a hash index on prefix+prefix_len for fast lookups
 	conflictQuery := `
 		FOR edge IN ` + pdp.db.config.IPv4Graph + `
 		FILTER STARTS_WITH(edge._to, "ls_prefix/")
-		FILTER edge.prefix != null AND edge.prefix_len != null  // Must have prefix data
-		FOR bgp IN ` + pdp.db.config.BGPPrefixV4 + `
-		FILTER edge.prefix == bgp.prefix AND edge.prefix_len == bgp.prefix_len
-		// Get the corresponding ls_prefix data for metadata
+		FILTER edge.prefix != null AND edge.prefix_len != null
+		
+		// Use hash-based lookup instead of nested loop for performance
+		LET prefix_key = CONCAT_SEPARATOR("_", edge.prefix, edge.prefix_len)
+		LET bgp_match = DOCUMENT(` + pdp.db.config.BGPPrefixV4 + `, prefix_key)
+		FILTER bgp_match != null
+		
+		// Get the corresponding ls_prefix data for metadata  
 		LET ls_prefix_key = SPLIT(edge._to, "/")[1]
-		FOR ls IN ls_prefix
-		FILTER ls._key == ls_prefix_key
+		LET ls_data = DOCUMENT("ls_prefix", ls_prefix_key)
+		FILTER ls_data != null
+		
 		RETURN {
 			prefix: edge.prefix,
 			prefix_len: edge.prefix_len,
-			ls_data: ls,
-			bgp_data: bgp,
-			unified_key: CONCAT_SEPARATOR("_", edge.prefix, edge.prefix_len),
+			ls_data: ls_data,
+			bgp_data: bgp_match,
+			unified_key: prefix_key,
 			conflict_type: "graph_edge",
 			existing_edge: edge
 		}
@@ -95,25 +100,29 @@ func (pdp *PrefixDeduplicationProcessor) processIPv4PrefixDeduplication(ctx cont
 func (pdp *PrefixDeduplicationProcessor) processIPv6PrefixDeduplication(ctx context.Context) error {
 	glog.V(6).Info("Processing IPv6 IGP-BGP prefix deduplication...")
 
-	// Find IPv6 prefix conflicts by looking at existing graph edges pointing to ls_prefix vertices
-	// that have corresponding BGP prefixes
+	// Find IPv6 prefix conflicts using optimized hash-based approach
 	conflictQuery := `
 		FOR edge IN ` + pdp.db.config.IPv6Graph + `
 		FILTER STARTS_WITH(edge._to, "ls_prefix/")
-		FILTER edge.prefix != null AND edge.prefix_len != null  // Must have prefix data
+		FILTER edge.prefix != null AND edge.prefix_len != null
 		FILTER edge.mt_id == 2  // IPv6 topology
-		FOR bgp IN ` + pdp.db.config.BGPPrefixV6 + `
-		FILTER edge.prefix == bgp.prefix AND edge.prefix_len == bgp.prefix_len
+		
+		// Use hash-based lookup instead of nested loop for performance
+		LET prefix_key = CONCAT_SEPARATOR("_", edge.prefix, edge.prefix_len)
+		LET bgp_match = DOCUMENT(` + pdp.db.config.BGPPrefixV6 + `, prefix_key)
+		FILTER bgp_match != null
+		
 		// Get the corresponding ls_prefix data for metadata
 		LET ls_prefix_key = SPLIT(edge._to, "/")[1]
-		FOR ls IN ls_prefix
-		FILTER ls._key == ls_prefix_key
+		LET ls_data = DOCUMENT("ls_prefix", ls_prefix_key)
+		FILTER ls_data != null
+		
 		RETURN {
 			prefix: edge.prefix,
 			prefix_len: edge.prefix_len,
-			ls_data: ls,
-			bgp_data: bgp,
-			unified_key: CONCAT_SEPARATOR("_", edge.prefix, edge.prefix_len),
+			ls_data: ls_data,
+			bgp_data: bgp_match,
+			unified_key: prefix_key,
 			conflict_type: "graph_edge",
 			existing_edge: edge
 		}
