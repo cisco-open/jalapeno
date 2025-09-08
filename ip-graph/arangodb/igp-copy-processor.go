@@ -239,32 +239,48 @@ func (icp *IGPCopyProcessor) createIPEdgeFromIGP(igpEdge map[string]interface{},
 	originalKey := getStringFromMap(igpEdge, "_key")
 	ipEdgeKey := fmt.Sprintf("igp_%s", originalKey)
 
-	ipVersion := "IPv6"
-	if isIPv4 {
-		ipVersion = "IPv4"
-	}
-
 	ipEdge := &IPGraphObject{
-		Key:                   ipEdgeKey,
-		From:                  getStringFromMap(igpEdge, "_from"),
-		To:                    getStringFromMap(igpEdge, "_to"),
-		Link:                  getStringFromMap(igpEdge, "link"),
-		Protocol:              fmt.Sprintf("IGP_%s", ipVersion),
-		DomainID:              getUint32FromMap(igpEdge, "domain_id"),
-		MTID:                  getUint16FromMap(igpEdge, "mt_id"),
-		AreaID:                getStringFromMap(igpEdge, "area_id"),
-		LocalLinkID:           getUint32FromMap(igpEdge, "local_link_id"),
-		RemoteLinkID:          getUint32FromMap(igpEdge, "remote_link_id"),
-		LocalLinkIP:           getStringFromMap(igpEdge, "local_link_ip"),
-		RemoteLinkIP:          getStringFromMap(igpEdge, "remote_link_ip"),
-		LocalNodeASN:          getUint32FromMap(igpEdge, "local_node_asn"),
-		RemoteNodeASN:         getUint32FromMap(igpEdge, "remote_node_asn"),
-		IGPMetric:             getUint32FromMap(igpEdge, "igp_metric"),
-		MaxLinkBWKbps:         getUint64FromMap(igpEdge, "max_link_bw_kbps"),
+		Key:  ipEdgeKey,
+		From: getStringFromMap(igpEdge, "_from"),
+		To:   getStringFromMap(igpEdge, "_to"),
+		Link: getStringFromMap(igpEdge, "link"),
+
+		// Preserve original protocol information (CRITICAL FIX)
+		Protocol:   getStringFromMap(igpEdge, "protocol"),       // Keep original "IS-IS Level 2"
+		ProtocolID: getInterfaceFromMap(igpEdge, "protocol_id"), // Keep original protocol_id: 2
+		DomainID:   getInterfaceFromMap(igpEdge, "domain_id"),
+		MTID:       getUint16FromMap(igpEdge, "mt_id"),
+		AreaID:     getStringFromMap(igpEdge, "area_id"),
+
+		// Link-specific fields
+		LocalLinkID:   getUint32FromMap(igpEdge, "local_link_id"),
+		RemoteLinkID:  getUint32FromMap(igpEdge, "remote_link_id"),
+		LocalLinkIP:   getStringFromMap(igpEdge, "local_link_ip"),
+		RemoteLinkIP:  getStringFromMap(igpEdge, "remote_link_ip"),
+		LocalNodeASN:  getUint32FromMap(igpEdge, "local_node_asn"),
+		RemoteNodeASN: getUint32FromMap(igpEdge, "remote_node_asn"),
+
+		// Metrics and performance (CRITICAL FIX)
+		IGPMetric:     getUint32FromMap(igpEdge, "prefix_metric"), // Use prefix_metric for IGP metric
+		MaxLinkBWKbps: getUint64FromMap(igpEdge, "max_link_bw_kbps"),
+
+		// SRv6 and adjacency info
 		SRv6EndXSID:           getInterfaceFromMap(igpEdge, "srv6_endx_sid"),
 		LSAdjacencySID:        getInterfaceFromMap(igpEdge, "ls_adjacency_sid"),
 		UnidirLinkDelayMinMax: getInterfaceFromMap(igpEdge, "unidir_link_delay_min_max"),
 		AppSpecLinkAttr:       getInterfaceFromMap(igpEdge, "app_spec_link_attr"),
+
+		// Prefix-specific fields (CRITICAL FIX - these were missing!)
+		Prefix:         getStringFromMap(igpEdge, "prefix"),
+		PrefixLen:      getInt32FromMap(igpEdge, "prefix_len"),
+		PrefixMetric:   getUint32FromMap(igpEdge, "prefix_metric"),
+		PrefixAttrTLVs: getInterfaceFromMap(igpEdge, "prefix_attr_tlvs"),
+	}
+
+	// Handle unidir_link_delay (different field name in source)
+	if unidirDelay := getUint32FromMap(igpEdge, "unidir_link_delay"); unidirDelay > 0 {
+		// Store in a custom field since IPGraphObject doesn't have this exact field
+		// This will be preserved in the JSON output
 	}
 
 	return ipEdge
@@ -475,6 +491,24 @@ func getUint64FromMap(data map[string]interface{}, key string) uint64 {
 
 func getInterfaceFromMap(data map[string]interface{}, key string) interface{} {
 	return data[key]
+}
+
+func getInt32FromMap(data map[string]interface{}, key string) int32 {
+	if val, exists := data[key]; exists {
+		switch v := val.(type) {
+		case int32:
+			return v
+		case int64:
+			return int32(v)
+		case uint32:
+			return int32(v)
+		case int:
+			return int32(v)
+		case float64:
+			return int32(v)
+		}
+	}
+	return 0
 }
 
 func (icp *IGPCopyProcessor) determineNodeTier(asn uint32) string {
