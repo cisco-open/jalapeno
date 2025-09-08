@@ -43,18 +43,26 @@ func (pdp *PrefixDeduplicationProcessor) ProcessPrefixDeduplication(ctx context.
 func (pdp *PrefixDeduplicationProcessor) processIPv4PrefixDeduplication(ctx context.Context) error {
 	glog.V(6).Info("Processing IPv4 IGP-BGP prefix deduplication...")
 
-	// Find IPv4 prefix conflicts between ls_prefix and bgp_prefix_v4
+	// Find IPv4 prefix conflicts by looking at existing graph edges pointing to ls_prefix vertices
+	// that have corresponding BGP prefixes
 	conflictQuery := `
-		FOR ls IN ls_prefix
-		FILTER ls.mt_id_tlv == null OR ls.mt_id_tlv.mt_id == 0  // IPv4 prefixes
+		FOR edge IN ` + pdp.db.config.IPv4Graph + `
+		FILTER STARTS_WITH(edge._to, "ls_prefix/")
+		FILTER edge.prefix != null AND edge.prefix_len != null  // Must have prefix data
 		FOR bgp IN ` + pdp.db.config.BGPPrefixV4 + `
-		FILTER ls.prefix == bgp.prefix AND ls.prefix_len == bgp.prefix_len
+		FILTER edge.prefix == bgp.prefix AND edge.prefix_len == bgp.prefix_len
+		// Get the corresponding ls_prefix data for metadata
+		LET ls_prefix_key = SPLIT(edge._to, "/")[1]
+		FOR ls IN ls_prefix
+		FILTER ls._key == ls_prefix_key
 		RETURN {
-			prefix: ls.prefix,
-			prefix_len: ls.prefix_len,
+			prefix: edge.prefix,
+			prefix_len: edge.prefix_len,
 			ls_data: ls,
 			bgp_data: bgp,
-			unified_key: CONCAT_SEPARATOR("_", ls.prefix, ls.prefix_len)
+			unified_key: CONCAT_SEPARATOR("_", edge.prefix, edge.prefix_len),
+			conflict_type: "graph_edge",
+			existing_edge: edge
 		}
 	`
 
@@ -87,18 +95,27 @@ func (pdp *PrefixDeduplicationProcessor) processIPv4PrefixDeduplication(ctx cont
 func (pdp *PrefixDeduplicationProcessor) processIPv6PrefixDeduplication(ctx context.Context) error {
 	glog.V(6).Info("Processing IPv6 IGP-BGP prefix deduplication...")
 
-	// Find IPv6 prefix conflicts between ls_prefix and bgp_prefix_v6
+	// Find IPv6 prefix conflicts by looking at existing graph edges pointing to ls_prefix vertices
+	// that have corresponding BGP prefixes
 	conflictQuery := `
-		FOR ls IN ls_prefix
-		FILTER ls.mt_id_tlv != null AND ls.mt_id_tlv.mt_id == 2  // IPv6 prefixes
+		FOR edge IN ` + pdp.db.config.IPv6Graph + `
+		FILTER STARTS_WITH(edge._to, "ls_prefix/")
+		FILTER edge.prefix != null AND edge.prefix_len != null  // Must have prefix data
+		FILTER edge.mt_id == 2  // IPv6 topology
 		FOR bgp IN ` + pdp.db.config.BGPPrefixV6 + `
-		FILTER ls.prefix == bgp.prefix AND ls.prefix_len == bgp.prefix_len
+		FILTER edge.prefix == bgp.prefix AND edge.prefix_len == bgp.prefix_len
+		// Get the corresponding ls_prefix data for metadata
+		LET ls_prefix_key = SPLIT(edge._to, "/")[1]
+		FOR ls IN ls_prefix
+		FILTER ls._key == ls_prefix_key
 		RETURN {
-			prefix: ls.prefix,
-			prefix_len: ls.prefix_len,
+			prefix: edge.prefix,
+			prefix_len: edge.prefix_len,
 			ls_data: ls,
 			bgp_data: bgp,
-			unified_key: CONCAT_SEPARATOR("_", ls.prefix, ls.prefix_len)
+			unified_key: CONCAT_SEPARATOR("_", edge.prefix, edge.prefix_len),
+			conflict_type: "graph_edge",
+			existing_edge: edge
 		}
 	`
 
@@ -132,12 +149,18 @@ func (pdp *PrefixDeduplicationProcessor) createUnifiedPrefixVertex(ctx context.C
 	prefix := getString(conflict, "prefix")
 	prefixLen := getUint32FromInterface(conflict["prefix_len"])
 	unifiedKey := getString(conflict, "unified_key")
+	conflictType := getString(conflict, "conflict_type")
 
 	// Extract IGP and BGP data
 	lsData := conflict["ls_data"].(map[string]interface{})
 	bgpData := conflict["bgp_data"].(map[string]interface{})
 
-	glog.V(7).Infof("Creating unified prefix vertex for %s/%d", prefix, prefixLen)
+	// Handle missing conflict_type for backward compatibility
+	if conflictType == "" {
+		conflictType = "collection" // Default for older logic
+	}
+
+	glog.V(7).Infof("Creating unified prefix vertex for %s/%d (conflict type: %s)", prefix, prefixLen, conflictType)
 
 	// Create unified prefix document with metadata from both sources
 	unifiedPrefix := map[string]interface{}{
@@ -198,6 +221,15 @@ func (pdp *PrefixDeduplicationProcessor) createUnifiedPrefixVertex(ctx context.C
 		return fmt.Errorf("failed to create unified prefix vertex: %w", err)
 	}
 	defer cursor.Close()
+
+	// Handle existing IGP edges if this is a graph_edge conflict
+	if conflictType == "graph_edge" {
+		if existingEdge, exists := conflict["existing_edge"]; exists {
+			if err := pdp.handleExistingIGPEdges(ctx, existingEdge.(map[string]interface{}), unifiedKey, isIPv4); err != nil {
+				glog.Warningf("Failed to handle existing IGP edges for %s: %v", unifiedKey, err)
+			}
+		}
+	}
 
 	// Create edges to both IGP and BGP nodes
 	if err := pdp.createUnifiedPrefixEdges(ctx, unifiedPrefix, lsData, bgpData, isIPv4); err != nil {
@@ -448,4 +480,68 @@ func extractKeyFromID(id string) string {
 		return id[idx+1:]
 	}
 	return id // fallback if no slash found
+}
+
+// handleExistingIGPEdges removes existing IGP edges pointing to ls_prefix and updates them to point to unified vertex
+func (pdp *PrefixDeduplicationProcessor) handleExistingIGPEdges(ctx context.Context, existingEdge map[string]interface{}, unifiedKey string, isIPv4 bool) error {
+	edgeKey := getString(existingEdge, "_key")
+	fromNode := getString(existingEdge, "_from")
+	oldToVertex := getString(existingEdge, "_to") // ls_prefix/xxx
+
+	glog.V(8).Infof("Handling existing IGP edge: %s from %s to %s", edgeKey, fromNode, oldToVertex)
+
+	// Determine target collections
+	var targetCollection driver.Collection
+	var newPrefixCollection string
+	if isIPv4 {
+		targetCollection = pdp.db.ipv4Graph
+		newPrefixCollection = pdp.db.config.BGPPrefixV4
+	} else {
+		targetCollection = pdp.db.ipv6Graph
+		newPrefixCollection = pdp.db.config.BGPPrefixV6
+	}
+
+	// Create new unified vertex ID
+	newToVertex := fmt.Sprintf("%s/%s", newPrefixCollection, unifiedKey)
+
+	// Remove the old IGP edge
+	if _, err := targetCollection.RemoveDocument(ctx, edgeKey); err != nil {
+		if !driver.IsNotFound(err) {
+			return fmt.Errorf("failed to remove old IGP edge %s: %w", edgeKey, err)
+		}
+	}
+
+	// Create new edge pointing to unified vertex with preserved IGP metadata
+	newEdge := &IPGraphObject{
+		Key:            edgeKey, // Keep same key for consistency
+		From:           fromNode,
+		To:             newToVertex,
+		Protocol:       "IGP_unified", // Mark as unified
+		Link:           unifiedKey,
+		ProtocolID:     existingEdge["protocol_id"],
+		DomainID:       existingEdge["domain_id"],
+		MTID:           uint16(getUint32FromInterface(existingEdge["mt_id"])),
+		AreaID:         getString(existingEdge, "area_id"),
+		LocalNodeASN:   getUint32FromInterface(existingEdge["local_node_asn"]),
+		RemoteNodeASN:  getUint32FromInterface(existingEdge["remote_node_asn"]),
+		IGPMetric:      getUint32FromInterface(existingEdge["igp_metric"]),
+		Prefix:         getString(existingEdge, "prefix"),
+		PrefixLen:      int32(getUint32FromInterface(existingEdge["prefix_len"])),
+		PrefixMetric:   getUint32FromInterface(existingEdge["prefix_metric"]),
+		PrefixAttrTLVs: existingEdge["prefix_attr_tlvs"],
+	}
+
+	// Create the updated edge
+	if _, err := targetCollection.CreateDocument(ctx, newEdge); err != nil {
+		if !driver.IsConflict(err) {
+			return fmt.Errorf("failed to create updated IGP edge %s: %w", edgeKey, err)
+		}
+		// Update if it already exists
+		if _, err := targetCollection.UpdateDocument(ctx, edgeKey, newEdge); err != nil {
+			return fmt.Errorf("failed to update IGP edge %s: %w", edgeKey, err)
+		}
+	}
+
+	glog.V(8).Infof("Updated IGP edge %s to point to unified vertex %s", edgeKey, newToVertex)
+	return nil
 }
