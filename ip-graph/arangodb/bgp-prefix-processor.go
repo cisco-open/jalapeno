@@ -3,6 +3,7 @@ package arangodb
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
@@ -128,9 +129,16 @@ func (uc *UpdateCoordinator) findOriginNode(ctx context.Context, originAS uint32
 		return igpNodeID, nil
 	}
 
-	// Strategy 2: Look for existing BGP nodes with matching ASN
-	// For now, we'll create a representative BGP node using origin_as
-	// In a more sophisticated implementation, we might track all BGP speakers per AS
+	// Strategy 2: Look for existing BGP peer nodes with matching ASN
+	bgpNodeID, err := uc.findBGPNodeByASN(ctx, originAS)
+	if err != nil {
+		return "", err
+	}
+	if bgpNodeID != "" {
+		return bgpNodeID, nil
+	}
+
+	// Strategy 3: No existing node found - will need to create one
 	return "", nil // Indicates node doesn't exist yet
 }
 
@@ -157,6 +165,37 @@ func (uc *UpdateCoordinator) findIGPNodeByASN(ctx context.Context, asn uint32) (
 		var nodeID string
 		if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
 			return "", fmt.Errorf("failed to read IGP node ID: %w", err)
+		}
+		return nodeID, nil
+	}
+
+	return "", nil
+}
+
+func (uc *UpdateCoordinator) findBGPNodeByASN(ctx context.Context, asn uint32) (string, error) {
+	// Query BGP nodes for matching ASN (prefer real peer nodes over origin nodes)
+	query := fmt.Sprintf(`
+		FOR node IN %s
+		FILTER node.asn == @asn
+		FILTER node.node_type == "bgp"  // Prefer real BGP peer nodes
+		LIMIT 1
+		RETURN node._id
+	`, uc.db.config.BGPNode)
+
+	bindVars := map[string]interface{}{
+		"asn": asn,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return "", err
+	}
+	defer cursor.Close()
+
+	if cursor.HasMore() {
+		var nodeID string
+		if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
+			return "", err
 		}
 		return nodeID, nil
 	}
@@ -303,69 +342,45 @@ func (uc *UpdateCoordinator) createBGPPrefixVertex(ctx context.Context, key stri
 
 func (uc *UpdateCoordinator) createPrefixToOriginEdge(ctx context.Context, prefixKey string, prefixData map[string]interface{}, isIPv4 bool) error {
 	originAS := getUint32FromInterface(prefixData["origin_as"])
+	peerASN := getUint32FromInterface(prefixData["peer_asn"])
 
-	// Find origin node
-	originNodeID, err := uc.findOriginNode(ctx, originAS, prefixData)
+	// For internet prefixes, attach to BGP peer nodes that advertise them
+	// rather than creating artificial origin nodes
+	peerNodeIDs, err := uc.findBGPPeerNodesForPrefix(ctx, originAS, peerASN, prefixData)
 	if err != nil {
-		return fmt.Errorf("failed to find origin node: %w", err)
+		return fmt.Errorf("failed to find BGP peer nodes: %w", err)
 	}
 
-	if originNodeID == "" {
-		// Create origin node if it doesn't exist
-		originNodeID, err = uc.createOriginBGPNode(ctx, originAS, prefixData)
-		if err != nil {
-			return fmt.Errorf("failed to create origin node: %w", err)
-		}
+	if len(peerNodeIDs) == 0 {
+		glog.V(6).Infof("No BGP peer nodes found for prefix %s from AS%d via AS%d - skipping edge creation", prefixKey, originAS, peerASN)
+		return nil // Don't create artificial origin nodes
 	}
 
-	// Determine target graph collection
-	var targetCollection driver.Collection
+	// Determine target prefix collection
 	var prefixCollection string
 	if isIPv4 {
-		targetCollection = uc.db.ipv4Graph
 		prefixCollection = uc.db.config.BGPPrefixV4
 	} else {
-		targetCollection = uc.db.ipv6Graph
 		prefixCollection = uc.db.config.BGPPrefixV6
 	}
 
-	// Create bidirectional edges between origin node and prefix
-	prefixVertexID := fmt.Sprintf("%s/%s", prefixCollection, prefixKey)
-
-	// Edge from origin to prefix
-	edgeKey1 := fmt.Sprintf("%s_to_prefix", prefixKey)
-	edge1 := &IPGraphObject{
-		Key:      edgeKey1,
-		From:     originNodeID,
-		To:       prefixVertexID,
-		Protocol: "BGP_PREFIX",
-		Link:     prefixKey,
-	}
-
-	// Edge from prefix to origin
-	edgeKey2 := fmt.Sprintf("prefix_to_%s", prefixKey)
-	edge2 := &IPGraphObject{
-		Key:      edgeKey2,
-		From:     prefixVertexID,
-		To:       originNodeID,
-		Protocol: "BGP_PREFIX",
-		Link:     prefixKey,
-	}
-
-	// Create both edges
-	for _, edge := range []*IPGraphObject{edge1, edge2} {
-		if _, err := targetCollection.CreateDocument(ctx, edge); err != nil {
-			if !driver.IsConflict(err) {
-				return fmt.Errorf("failed to create prefix edge %s: %w", edge.Key, err)
-			}
-			// Update existing edge
-			if _, err := targetCollection.UpdateDocument(ctx, edge.Key, edge); err != nil {
-				return fmt.Errorf("failed to update prefix edge %s: %w", edge.Key, err)
-			}
+	// Create bidirectional edges between all peer nodes and prefix vertex
+	for _, peerNodeID := range peerNodeIDs {
+		// Get the peer node data
+		peerNodeData, err := uc.getPeerNodeData(ctx, peerNodeID)
+		if err != nil {
+			glog.Warningf("Failed to get peer node data for %s: %v", peerNodeID, err)
+			continue
 		}
+
+		if err := uc.db.createBidirectionalPrefixEdges(ctx, prefixData, peerNodeData, prefixCollection, isIPv4); err != nil {
+			glog.Warningf("Failed to create bidirectional prefix edges for peer %s: %v", peerNodeID, err)
+			continue
+		}
+		glog.V(8).Infof("Created prefix edges: %s ↔ %s", peerNodeID, fmt.Sprintf("%s/%s", prefixCollection, prefixKey))
 	}
 
-	glog.V(8).Infof("Created prefix-to-origin edges for: %s", prefixKey)
+	glog.V(8).Infof("Created prefix-to-peer edges for: %s (%d peers)", prefixKey, len(peerNodeIDs))
 	return nil
 }
 
@@ -443,6 +458,102 @@ func (uc *UpdateCoordinator) removeBGPPrefixVertex(ctx context.Context, key stri
 
 	glog.V(8).Infof("Removed BGP prefix vertex and edges: %s", key)
 	return nil
+}
+
+// findBGPPeerNodesForPrefix finds BGP peer nodes that should advertise this prefix
+func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, originAS, peerASN uint32, prefixData map[string]interface{}) ([]string, error) {
+	var peerNodeIDs []string
+
+	// Strategy 1: Find BGP peer nodes with matching origin AS (for eBGP internet prefixes)
+	if originAS != peerASN {
+		// This is an eBGP prefix - find peer nodes with public ASNs that could advertise it
+		query := fmt.Sprintf(`
+			FOR node IN %s
+			FILTER node.node_type == "bgp"
+			FILTER node.tier == "tier1" OR node.tier == "tier2" OR node.tier == "tier3"
+			RETURN node._id
+		`, uc.db.config.BGPNode)
+
+		cursor, err := uc.db.db.Query(ctx, query, nil)
+		if err != nil {
+			return nil, err
+		}
+		defer cursor.Close()
+
+		for cursor.HasMore() {
+			var nodeID string
+			if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
+				continue
+			}
+			peerNodeIDs = append(peerNodeIDs, nodeID)
+		}
+	}
+
+	// Strategy 2: If no public peers found, look for any BGP peer nodes with the origin AS
+	if len(peerNodeIDs) == 0 {
+		query := fmt.Sprintf(`
+			FOR node IN %s
+			FILTER node.asn == @origin_asn
+			FILTER node.node_type == "bgp"
+			RETURN node._id
+		`, uc.db.config.BGPNode)
+
+		bindVars := map[string]interface{}{
+			"origin_asn": originAS,
+		}
+
+		cursor, err := uc.db.db.Query(ctx, query, bindVars)
+		if err != nil {
+			return nil, err
+		}
+		defer cursor.Close()
+
+		for cursor.HasMore() {
+			var nodeID string
+			if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
+				continue
+			}
+			peerNodeIDs = append(peerNodeIDs, nodeID)
+		}
+	}
+
+	return peerNodeIDs, nil
+}
+
+// getPeerNodeData retrieves the full node document for a given node ID
+func (uc *UpdateCoordinator) getPeerNodeData(ctx context.Context, nodeID string) (map[string]interface{}, error) {
+	// Extract collection name from node ID (format: "collection/key")
+	collectionName := "igp_node" // Default
+	if idx := strings.Index(nodeID, "/"); idx != -1 {
+		collectionName = nodeID[:idx]
+	}
+
+	// Query for the node document
+	query := fmt.Sprintf(`
+		FOR node IN %s
+		FILTER node._id == @nodeId
+		RETURN node
+	`, collectionName)
+
+	bindVars := map[string]interface{}{
+		"nodeId": nodeID,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close()
+
+	if cursor.HasMore() {
+		var nodeData map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &nodeData); err != nil {
+			return nil, err
+		}
+		return nodeData, nil
+	}
+
+	return nil, fmt.Errorf("node not found: %s", nodeID)
 }
 
 // Helper function to safely get string from interface (BGP prefix processor)
