@@ -58,12 +58,18 @@ func (uc *UpdateCoordinator) processPrefixWithdrawal(ctx context.Context, key st
 	originAS := getUint32FromInterface(prefixData["origin_as"])
 	isIPv4, _ := prefixData["is_ipv4"].(bool)
 
-	glog.V(7).Infof("Withdrawing BGP prefix: %s/%d from AS%d", prefix, prefixLen, originAS)
+	glog.Infof("Withdrawing BGP prefix: %s/%d from AS%d (key: %s)", prefix, prefixLen, originAS, key)
 
 	// Determine if this was node metadata or separate vertex
 	if uc.shouldAttachAsNodeMetadata(prefixLen, isIPv4) {
+		// For loopback prefixes (/32, /128) - remove from node metadata
+		if originAS == 0 {
+			glog.V(6).Infof("Origin AS missing for loopback withdrawal %s - skipping node metadata removal", key)
+			return nil
+		}
 		return uc.removePrefixFromOriginNode(ctx, prefix, prefixLen, originAS, isIPv4)
 	} else {
+		// For transit prefixes - remove vertex and edges
 		return uc.removeBGPPrefixVertex(ctx, key, prefixData, isIPv4)
 	}
 }
@@ -427,32 +433,62 @@ func (uc *UpdateCoordinator) removePrefixFromOriginNode(ctx context.Context, pre
 }
 
 func (uc *UpdateCoordinator) removeBGPPrefixVertex(ctx context.Context, key string, prefixData map[string]interface{}, isIPv4 bool) error {
-	// Remove prefix vertex and associated edges
-	var targetCollections []driver.Collection
+	// Determine target collections
+	var prefixCollection driver.Collection
+	var graphCollection driver.Collection
+	var prefixCollectionName string
+
 	if isIPv4 {
-		targetCollections = []driver.Collection{uc.db.bgpPrefixV4, uc.db.ipv4Graph}
+		prefixCollection = uc.db.bgpPrefixV4
+		graphCollection = uc.db.ipv4Graph
+		prefixCollectionName = uc.db.config.BGPPrefixV4
 	} else {
-		targetCollections = []driver.Collection{uc.db.bgpPrefixV6, uc.db.ipv6Graph}
+		prefixCollection = uc.db.bgpPrefixV6
+		graphCollection = uc.db.ipv6Graph
+		prefixCollectionName = uc.db.config.BGPPrefixV6
+	}
+
+	prefixVertexID := fmt.Sprintf("%s/%s", prefixCollectionName, key)
+
+	// Find and remove all edges connected to this prefix vertex
+	edgeQuery := fmt.Sprintf(`
+		FOR edge IN %s
+		FILTER edge._to == @prefixVertex OR edge._from == @prefixVertex
+		RETURN edge._key
+	`, graphCollection.Name())
+
+	bindVars := map[string]interface{}{
+		"prefixVertex": prefixVertexID,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, edgeQuery, bindVars)
+	if err != nil {
+		glog.Warningf("Failed to query prefix edges for %s: %v", key, err)
+	} else {
+		defer cursor.Close()
+
+		edgeCount := 0
+		for cursor.HasMore() {
+			var edgeKey string
+			if _, err := cursor.ReadDocument(ctx, &edgeKey); err != nil {
+				continue
+			}
+
+			if _, err := graphCollection.RemoveDocument(ctx, edgeKey); err != nil {
+				if !driver.IsNotFoundGeneral(err) {
+					glog.V(6).Infof("Failed to remove prefix edge %s: %v", edgeKey, err)
+				}
+			} else {
+				edgeCount++
+			}
+		}
+		glog.V(7).Infof("Removed %d edges for prefix %s", edgeCount, key)
 	}
 
 	// Remove prefix vertex
-	if _, err := targetCollections[0].RemoveDocument(ctx, key); err != nil {
+	if _, err := prefixCollection.RemoveDocument(ctx, key); err != nil {
 		if !driver.IsNotFoundGeneral(err) {
 			glog.Warningf("Failed to remove BGP prefix vertex %s: %v", key, err)
-		}
-	}
-
-	// Remove associated edges
-	edgeKeys := []string{
-		fmt.Sprintf("%s_to_prefix", key),
-		fmt.Sprintf("prefix_to_%s", key),
-	}
-
-	for _, edgeKey := range edgeKeys {
-		if _, err := targetCollections[1].RemoveDocument(ctx, edgeKey); err != nil {
-			if !driver.IsNotFoundGeneral(err) {
-				glog.V(6).Infof("Failed to remove prefix edge %s: %v", edgeKey, err)
-			}
 		}
 	}
 
