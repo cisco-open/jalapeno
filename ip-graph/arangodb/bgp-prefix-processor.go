@@ -38,17 +38,20 @@ func (uc *UpdateCoordinator) processPrefixAdvertisement(ctx context.Context, key
 		return fmt.Errorf("invalid prefix data: missing prefix or origin_as")
 	}
 
+	// Use consistent key format (prefix_prefixlen) to match initial loading
+	consistentKey := fmt.Sprintf("%s_%d", prefix, prefixLen)
+
 	// Classify prefix type and determine processing strategy
 	prefixType := uc.classifyBGPPrefix(prefix, prefixLen, originAS, peerASN, isIPv4)
 
-	glog.V(8).Infof("Processing %s BGP prefix: %s/%d from AS%d via AS%d",
-		prefixType, prefix, prefixLen, originAS, peerASN)
+	glog.V(8).Infof("Processing %s BGP prefix: %s/%d from AS%d via AS%d (key: %s)",
+		prefixType, prefix, prefixLen, originAS, peerASN, consistentKey)
 
 	// Determine if this should be node metadata or separate vertex
 	if uc.shouldAttachAsNodeMetadata(prefixLen, isIPv4) {
 		return uc.attachPrefixToOriginNode(ctx, prefix, prefixLen, originAS, prefixData, isIPv4)
 	} else {
-		return uc.createBGPPrefixVertex(ctx, key, prefixData, prefixType, isIPv4)
+		return uc.createBGPPrefixVertex(ctx, consistentKey, prefixData, prefixType, isIPv4)
 	}
 }
 
@@ -58,19 +61,22 @@ func (uc *UpdateCoordinator) processPrefixWithdrawal(ctx context.Context, key st
 	originAS := getUint32FromInterface(prefixData["origin_as"])
 	isIPv4, _ := prefixData["is_ipv4"].(bool)
 
-	glog.Infof("Withdrawing BGP prefix: %s/%d from AS%d (key: %s)", prefix, prefixLen, originAS, key)
+	// Use consistent key format (prefix_prefixlen) to match initial loading
+	consistentKey := fmt.Sprintf("%s_%d", prefix, prefixLen)
+
+	glog.Infof("Withdrawing BGP prefix: %s/%d from AS%d (BMP key: %s, consistent key: %s)", prefix, prefixLen, originAS, key, consistentKey)
 
 	// Determine if this was node metadata or separate vertex
 	if uc.shouldAttachAsNodeMetadata(prefixLen, isIPv4) {
 		// For loopback prefixes (/32, /128) - remove from node metadata
 		if originAS == 0 {
-			glog.V(6).Infof("Origin AS missing for loopback withdrawal %s - skipping node metadata removal", key)
+			glog.V(6).Infof("Origin AS missing for loopback withdrawal %s - skipping node metadata removal", consistentKey)
 			return nil
 		}
 		return uc.removePrefixFromOriginNode(ctx, prefix, prefixLen, originAS, isIPv4)
 	} else {
 		// For transit prefixes - remove vertex and edges
-		return uc.removeBGPPrefixVertex(ctx, key, prefixData, isIPv4)
+		return uc.removeBGPPrefixVertex(ctx, consistentKey, prefixData, isIPv4)
 	}
 }
 
