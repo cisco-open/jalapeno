@@ -44,7 +44,7 @@ func (uc *UpdateCoordinator) processPrefixAdvertisement(ctx context.Context, key
 	// Classify prefix type and determine processing strategy
 	prefixType := uc.classifyBGPPrefix(prefix, prefixLen, originAS, peerASN, isIPv4)
 
-	glog.V(8).Infof("Processing %s BGP prefix: %s/%d from AS%d via AS%d (key: %s)",
+	glog.Infof("Processing %s BGP prefix: %s/%d from AS%d via AS%d (key: %s)",
 		prefixType, prefix, prefixLen, originAS, peerASN, consistentKey)
 
 	// Determine if this should be node metadata or separate vertex
@@ -81,19 +81,15 @@ func (uc *UpdateCoordinator) processPrefixWithdrawal(ctx context.Context, key st
 }
 
 func (uc *UpdateCoordinator) classifyBGPPrefix(prefix string, prefixLen, originAS, peerASN uint32, isIPv4 bool) string {
-	// Classify based on AS characteristics
-	isOriginPrivate := uc.isPrivateASN(originAS)
+	// BMP-based classification: Focus on the peer ASN (the monitored BGP peer)
 	isPeerPrivate := uc.isPrivateASN(peerASN)
 
-	if originAS == peerASN {
-		return "ibgp"
-	} else if isOriginPrivate && isPeerPrivate {
+	if isPeerPrivate {
+		// Private peer ASN -> eBGP private (could be DC-to-DC or internal)
 		return "ebgp_private"
-	} else if !isOriginPrivate && !isPeerPrivate {
-		return "ebgp_public"
 	} else {
-		// Mixed private/public - typically customer/provider relationships
-		return "ebgp_hybrid"
+		// Public peer ASN -> Internet prefix (external BGP peer)
+		return "ebgp_public"
 	}
 }
 
@@ -515,7 +511,7 @@ func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, orig
 
 	switch prefixType {
 	case "ebgp_public":
-		// Internet prefixes - attach to all public BGP peers
+		// Internet prefixes from public peers - attach to all public BGP peers (original processInetPrefix logic)
 		query := fmt.Sprintf(`
 			FOR node IN %s
 			FILTER node.node_type == "bgp"
@@ -537,45 +533,23 @@ func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, orig
 			peerNodeIDs = append(peerNodeIDs, nodeID)
 		}
 
-	case "ebgp_hybrid":
-		// Hybrid prefixes - attach to the specific peer that advertised it
-		peerIP := getStringFromData(prefixData, "peer_ip")
-		query := fmt.Sprintf(`
-			FOR node IN %s
-			FILTER node.node_type == "bgp"
-			FILTER node.local_ip == @peer_ip OR node.router_id == @peer_ip
-			RETURN node._id
-		`, uc.db.config.BGPNode)
-
-		bindVars := map[string]interface{}{
-			"peer_ip": peerIP,
-		}
-
-		cursor, err := uc.db.db.Query(ctx, query, bindVars)
-		if err != nil {
-			return nil, err
-		}
-		defer cursor.Close()
-
-		for cursor.HasMore() {
-			var nodeID string
-			if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
-				continue
-			}
-			peerNodeIDs = append(peerNodeIDs, nodeID)
-		}
-
 	case "ebgp_private":
-		// Private eBGP prefixes - attach to specific BGP node with matching ASN
+		// Private peer prefixes - use BMP peer correlation (original processeNewPrefix logic)
+		peerIP := getStringFromData(prefixData, "peer_ip")
+
+		glog.V(7).Infof("Processing eBGP private prefix %s/%d - correlating peer_ip %s with origin_as %d",
+			prefix, prefixLen, peerIP, originAS)
+
+		// Match your original logic: router_id == peer_ip AND asn == origin_as
 		query := fmt.Sprintf(`
 			FOR node IN %s
-			FILTER node.asn == @origin_asn
-			FILTER node.node_type == "bgp"
+			FILTER node.router_id == @peer_ip AND node.asn == @origin_as
 			RETURN node._id
 		`, uc.db.config.BGPNode)
 
 		bindVars := map[string]interface{}{
-			"origin_asn": originAS,
+			"peer_ip":   peerIP,
+			"origin_as": originAS,
 		}
 
 		cursor, err := uc.db.db.Query(ctx, query, bindVars)
@@ -592,58 +566,18 @@ func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, orig
 			peerNodeIDs = append(peerNodeIDs, nodeID)
 		}
 
-	case "ibgp":
-		// iBGP prefixes - attach to IGP nodes or BGP nodes with matching ASN
-		query := fmt.Sprintf(`
-			FOR node IN %s
-			FILTER node.asn == @asn
-			RETURN node._id
-		`, uc.db.config.IGPNode)
-
-		bindVars := map[string]interface{}{
-			"asn": originAS,
-		}
-
-		cursor, err := uc.db.db.Query(ctx, query, bindVars)
-		if err != nil {
-			return nil, err
-		}
-		defer cursor.Close()
-
-		for cursor.HasMore() {
-			var nodeID string
-			if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
-				continue
-			}
-			peerNodeIDs = append(peerNodeIDs, nodeID)
-		}
-
-		// If no IGP nodes found, look for BGP nodes
-		if len(peerNodeIDs) == 0 {
-			query := fmt.Sprintf(`
-				FOR node IN %s
-				FILTER node.asn == @asn
-				FILTER node.node_type == "bgp"
-				RETURN node._id
-			`, uc.db.config.BGPNode)
-
-			cursor, err := uc.db.db.Query(ctx, query, bindVars)
-			if err != nil {
-				return nil, err
-			}
-			defer cursor.Close()
-
-			for cursor.HasMore() {
-				var nodeID string
-				if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
-					continue
-				}
-				peerNodeIDs = append(peerNodeIDs, nodeID)
-			}
-		}
+		glog.V(7).Infof("Found %d BGP nodes for eBGP private prefix %s/%d (peer_ip: %s, origin_as: %d)",
+			len(peerNodeIDs), prefix, prefixLen, peerIP, originAS)
 	}
 
 	glog.V(7).Infof("Found %d BGP peer nodes for prefix %s/%d (type: %s)", len(peerNodeIDs), prefix, prefixLen, prefixType)
+
+	// Enhanced debug logging for missing prefixes
+	if len(peerNodeIDs) == 0 {
+		glog.Warningf("No BGP peer nodes found for prefix %s/%d (type: %s, origin AS: %d, peer ASN: %d) - this prefix will not be attached to the graph",
+			prefix, prefixLen, prefixType, originAS, peerASN)
+	}
+
 	return peerNodeIDs, nil
 }
 
