@@ -55,7 +55,7 @@ func (uc *UpdateCoordinator) processPeerAddUpdate(ctx context.Context, key strin
 		return fmt.Errorf("failed to ensure remote BGP node: %w", err)
 	}
 
-	// Create/update BGP session edges
+	// Create bidirectional BGP session edges
 	if err := uc.createBGPSessionEdges(ctx, key, peerData, sessionType); err != nil {
 		return fmt.Errorf("failed to create BGP session edges: %w", err)
 	}
@@ -195,6 +195,57 @@ func (uc *UpdateCoordinator) createBGPSessionEdges(ctx context.Context, sessionK
 	return nil
 }
 
+func (uc *UpdateCoordinator) createSessionEdge(ctx context.Context, sessionKey, fromNodeID, toNodeID string, peerData map[string]interface{}, sessionType string, isForward bool) error {
+	// Create edge key
+	direction := "fwd"
+	if !isForward {
+		direction = "rev"
+	}
+	edgeKey := fmt.Sprintf("%s_%s", sessionKey, direction)
+
+	// Determine which graph collections to use based on IP version
+	isIPv4, _ := peerData["is_ipv4"].(bool)
+
+	var targetCollection driver.Collection
+	if isIPv4 {
+		targetCollection = uc.db.ipv4Graph
+	} else {
+		targetCollection = uc.db.ipv6Graph
+	}
+
+	// Extract session data
+	localIP, _ := peerData["local_ip"].(string)
+	remoteIP, _ := peerData["remote_ip"].(string)
+	localASN := getUint32FromInterface(peerData["local_asn"])
+	remoteASN := getUint32FromInterface(peerData["remote_asn"])
+
+	// Create session edge object
+	sessionEdge := &IPGraphObject{
+		Key:           edgeKey,
+		From:          fromNodeID,
+		To:            toNodeID,
+		LocalIP:       localIP,
+		RemoteIP:      remoteIP,
+		LocalNodeASN:  localASN,
+		RemoteNodeASN: remoteASN,
+		Protocol:      fmt.Sprintf("BGP_%s", sessionType),
+	}
+
+	// Create edge
+	if _, err := targetCollection.CreateDocument(ctx, sessionEdge); err != nil {
+		if !driver.IsConflict(err) {
+			return fmt.Errorf("failed to create session edge: %w", err)
+		}
+		// Update existing edge
+		if _, err := targetCollection.UpdateDocument(ctx, edgeKey, sessionEdge); err != nil {
+			return fmt.Errorf("failed to update session edge: %w", err)
+		}
+	}
+
+	glog.V(8).Infof("Created BGP session edge: %s (%s)", edgeKey, sessionType)
+	return nil
+}
+
 func (uc *UpdateCoordinator) getBGPNodeID(ctx context.Context, bgpID string, asn uint32, ip string) (string, error) {
 	// Check if this ASN exists in IGP domain
 	igpASNExists, err := uc.checkIGPASNExists(ctx, asn)
@@ -234,66 +285,6 @@ func (uc *UpdateCoordinator) getBGPNodeID(ctx context.Context, bgpID string, asn
 	// Return BGP node ID using original key format
 	bgpNodeKey := fmt.Sprintf("%s_%d", bgpID, asn)
 	return fmt.Sprintf("%s/%s", uc.db.config.BGPNode, bgpNodeKey), nil
-}
-
-func (uc *UpdateCoordinator) createSessionEdge(ctx context.Context, sessionKey, fromNodeID, toNodeID string, peerData map[string]interface{}, sessionType string, isForward bool) error {
-	// Create edge key
-	direction := "fwd"
-	if !isForward {
-		direction = "rev"
-	}
-	edgeKey := fmt.Sprintf("%s_%s", sessionKey, direction)
-
-	// Determine which graph collections to use based on IP version
-	isIPv4, _ := peerData["is_ipv4"].(bool)
-
-	var targetCollections []driver.Collection
-	var ipVersion string
-	if isIPv4 {
-		targetCollections = append(targetCollections, uc.db.ipv4Graph)
-		ipVersion = "IPv4"
-	} else {
-		targetCollections = append(targetCollections, uc.db.ipv6Graph)
-		ipVersion = "IPv6"
-	}
-
-	// Extract additional session data
-	localIP, _ := peerData["local_ip"].(string)
-	remoteIP, _ := peerData["remote_ip"].(string)
-	localASN := getUint32FromInterface(peerData["local_asn"])
-	remoteASN := getUint32FromInterface(peerData["remote_asn"])
-
-	// Create session edge object
-	sessionEdge := &IPGraphObject{
-		Key:           edgeKey,
-		From:          fromNodeID,
-		To:            toNodeID,
-		Link:          sessionKey,
-		Protocol:      fmt.Sprintf("BGP_%s", sessionType),
-		LocalIP:       localIP,
-		RemoteIP:      remoteIP,
-		LocalNodeASN:  localASN,
-		RemoteNodeASN: remoteASN,
-		LocalBGPID:    getString(peerData, "local_bgp_id"),
-		RemoteBGPID:   getString(peerData, "remote_bgp_id"),
-		PeerASN:       remoteASN,
-	}
-
-	// Create edges in appropriate graph collections
-	for _, collection := range targetCollections {
-		if _, err := collection.CreateDocument(ctx, sessionEdge); err != nil {
-			if !driver.IsConflict(err) {
-				return fmt.Errorf("failed to create session edge in %s: %w", collection.Name(), err)
-			}
-			// Update existing edge
-			if _, err := collection.UpdateDocument(ctx, edgeKey, sessionEdge); err != nil {
-				return fmt.Errorf("failed to update session edge in %s: %w", collection.Name(), err)
-			}
-		}
-	}
-
-	glog.V(8).Infof("Created %s BGP session edge: %s (%s)", ipVersion, edgeKey, sessionType)
-	return nil
 }
 
 func (uc *UpdateCoordinator) removeBGPSessionEdges(ctx context.Context, sessionKey string) error {

@@ -504,20 +504,21 @@ func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, orig
 		// BMP peer-centric approach: Connect prefix to the BGP peer that advertised it
 		peerIP := getStringFromData(prefixData, "peer_ip")
 
-		glog.V(7).Infof("Processing BGP prefix %s/%d - looking for BGP peer with router_id matching peer_ip %s and asn %d",
-			prefix, prefixLen, peerIP, peerASN)
+		glog.Infof("DEBUG: Processing BGP prefix %s/%d - peer_ip: %s, peer_asn: %d, origin_as: %d",
+			prefix, prefixLen, peerIP, peerASN, originAS)
+		glog.Infof("DEBUG: Looking for BGP node with router_id == %s AND asn == %d (using origin_as, not peer_asn)", peerIP, originAS)
 
-		// Match your original processeNewPrefix logic: router_id == peer_ip AND asn == peer_asn
+		// Match your original processeNewPrefix logic: router_id == peer_ip AND asn == origin_as
 		// This finds the BGP peer node that advertised this prefix
 		query := fmt.Sprintf(`
 			FOR node IN %s
-			FILTER node.router_id == @peer_ip AND node.asn == @peer_asn
-			RETURN node._id
+			FILTER node.router_id == @peer_ip AND node.asn == @origin_as
+			RETURN {_id: node._id, router_id: node.router_id, asn: node.asn}
 		`, uc.db.config.BGPNode)
 
 		bindVars := map[string]interface{}{
-			"peer_ip":  peerIP,
-			"peer_asn": peerASN,
+			"peer_ip":   peerIP,
+			"origin_as": originAS,
 		}
 
 		cursor, err := uc.db.db.Query(ctx, query, bindVars)
@@ -527,15 +528,17 @@ func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, orig
 		defer cursor.Close()
 
 		for cursor.HasMore() {
-			var nodeID string
-			if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
+			var nodeInfo map[string]interface{}
+			if _, err := cursor.ReadDocument(ctx, &nodeInfo); err != nil {
 				continue
 			}
+			nodeID := nodeInfo["_id"].(string)
 			peerNodeIDs = append(peerNodeIDs, nodeID)
+			glog.Infof("DEBUG: Found matching BGP node: %v", nodeInfo)
 		}
 
-		glog.V(7).Infof("Found %d BGP peer nodes for prefix %s/%d (peer_ip: %s, peer_asn: %d)",
-			len(peerNodeIDs), prefix, prefixLen, peerIP, peerASN)
+		glog.Infof("DEBUG: Found %d BGP peer nodes for prefix %s/%d (peer_ip: %s, origin_as: %d)",
+			len(peerNodeIDs), prefix, prefixLen, peerIP, originAS)
 	}
 
 	glog.V(7).Infof("Found %d BGP peer nodes for prefix %s/%d (type: %s)", len(peerNodeIDs), prefix, prefixLen, prefixType)
