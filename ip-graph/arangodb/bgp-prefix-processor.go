@@ -211,12 +211,9 @@ func (uc *UpdateCoordinator) createOriginBGPNode(ctx context.Context, originAS u
 	routerID := fmt.Sprintf("origin_as_%d", originAS)
 
 	bgpNode := &BGPNode{
-		Key:         bgpNodeKey,
-		RouterID:    routerID,
-		BGPRouterID: routerID,
-		ASN:         originAS,
-		NodeType:    "bgp_origin",
-		Tier:        uc.determineBGPNodeTier(originAS),
+		Key:      bgpNodeKey,
+		RouterID: routerID,
+		ASN:      originAS,
 	}
 
 	// Create BGP node
@@ -545,8 +542,31 @@ func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, orig
 
 	// Enhanced debug logging for missing prefixes
 	if len(peerNodeIDs) == 0 {
-		glog.Warningf("No BGP peer nodes found for prefix %s/%d (type: %s, origin AS: %d, peer ASN: %d) - this prefix will not be attached to the graph",
-			prefix, prefixLen, prefixType, originAS, peerASN)
+		peerIP := getStringFromData(prefixData, "peer_ip")
+		glog.Warningf("No BGP peer nodes found for prefix %s/%d (type: %s, origin AS: %d, peer ASN: %d, peer IP: %s)",
+			prefix, prefixLen, prefixType, originAS, peerASN, peerIP)
+
+		// Debug: Check what BGP nodes exist for this ASN
+		debugQuery := fmt.Sprintf(`
+				FOR node IN %s
+				FILTER node.asn == @peer_asn
+				RETURN {_id: node._id, router_id: node.router_id, asn: node.asn, tier: node.tier}
+			`, uc.db.config.BGPNode)
+
+		debugBindVars := map[string]interface{}{
+			"peer_asn": peerASN,
+		}
+
+		if debugCursor, err := uc.db.db.Query(ctx, debugQuery, debugBindVars); err == nil {
+			defer debugCursor.Close()
+			glog.Warningf("Available BGP nodes for ASN %d:", peerASN)
+			for debugCursor.HasMore() {
+				var nodeInfo map[string]interface{}
+				if _, err := debugCursor.ReadDocument(ctx, &nodeInfo); err == nil {
+					glog.Warningf("  - Node: %v", nodeInfo)
+				}
+			}
+		}
 	}
 
 	return peerNodeIDs, nil

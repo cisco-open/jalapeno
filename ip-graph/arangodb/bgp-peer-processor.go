@@ -97,39 +97,30 @@ func (uc *UpdateCoordinator) classifyBGPSession(localASN, remoteASN uint32) stri
 }
 
 func (uc *UpdateCoordinator) ensureBGPNode(ctx context.Context, bgpID string, asn uint32, ip string, peerData map[string]interface{}, isLocal bool) error {
-	// Check if this is an IGP node (already exists in igp_node collection)
-	igpNodeExists, err := uc.checkIGPNodeExists(ctx, bgpID, ip)
-	if err != nil {
-		return fmt.Errorf("failed to check IGP node existence: %w", err)
-	}
-
-	if igpNodeExists {
-		glog.V(8).Infof("BGP node %s (AS%d) is an IGP node, skipping BGP node creation", bgpID, asn)
-		// IGP nodes are already in the graph, no need to create separate BGP nodes
-		// The IGP-graph processor handles these nodes
+	// Skip local nodes - we only create BGP nodes for remote peers (matching original logic)
+	if isLocal {
 		return nil
 	}
 
-	// Create/update BGP-only node
-	bgpNodeKey := fmt.Sprintf("bgp_%d_%s", asn, bgpID)
-
-	// Extract capabilities
-	var advCap *bgp.Capability
-	if isLocal {
-		advCap = uc.extractCapabilities(peerData, "adv_cap")
-		// recvCap could be used for enhanced peer analysis in future
-		// recvCap = uc.extractCapabilities(peerData, "recv_cap")
+	// Check if this ASN is already in IGP domain (matching original filter logic)
+	igpASNExists, err := uc.checkIGPASNExists(ctx, asn)
+	if err != nil {
+		return fmt.Errorf("failed to check IGP ASN existence: %w", err)
 	}
 
+	if igpASNExists {
+		glog.V(8).Infof("ASN %d exists in IGP domain, skipping BGP node creation", asn)
+		return nil
+	}
+
+	// Create BGP node using original format: router_id + asn as key
+	bgpNodeKey := fmt.Sprintf("%s_%d", bgpID, asn)
+
+	// Simple BGP node structure (matching original)
 	bgpNode := &BGPNode{
-		Key:             bgpNodeKey,
-		RouterID:        bgpID,
-		BGPRouterID:     bgpID,
-		ASN:             asn,
-		LocalIP:         ip,
-		AdvCapabilities: advCap,
-		NodeType:        "bgp",
-		Tier:            uc.determineBGPNodeTier(asn),
+		Key:      bgpNodeKey,
+		RouterID: bgpID, // Use BGP Router ID from peer message
+		ASN:      asn,
 	}
 
 	// Create or update BGP node
@@ -137,55 +128,33 @@ func (uc *UpdateCoordinator) ensureBGPNode(ctx context.Context, bgpID string, as
 		if !driver.IsConflict(err) {
 			return fmt.Errorf("failed to create BGP node: %w", err)
 		}
-		// Update existing node
-		if _, err := uc.db.bgpNode.UpdateDocument(ctx, bgpNodeKey, bgpNode); err != nil {
-			return fmt.Errorf("failed to update BGP node: %w", err)
-		}
+		// Node already exists, which is fine (ignoreErrors: true in original)
 	}
 
-	glog.V(8).Infof("Ensured BGP node: %s (AS%d, tier: %s)", bgpID, asn, bgpNode.Tier)
+	glog.V(8).Infof("Ensured BGP node: %s (AS%d)", bgpID, asn)
 	return nil
 }
 
-func (uc *UpdateCoordinator) checkIGPNodeExists(ctx context.Context, routerID, ip string) (bool, error) {
-	// Check if a node with this router_id or bgp_router_id exists in igp_node
+func (uc *UpdateCoordinator) checkIGPASNExists(ctx context.Context, asn uint32) (bool, error) {
+	// Check if this ASN exists in IGP domain (matching original filter logic)
 	query := fmt.Sprintf(`
 		FOR node IN %s
-		FILTER node.router_id == @routerId OR node.bgp_router_id == @routerId
+		FILTER node.asn == @asn
 		LIMIT 1
 		RETURN node._key
 	`, uc.db.config.IGPNode)
 
 	bindVars := map[string]interface{}{
-		"routerId": routerID,
+		"asn": asn,
 	}
 
 	cursor, err := uc.db.db.Query(ctx, query, bindVars)
 	if err != nil {
-		return false, fmt.Errorf("failed to query IGP nodes: %w", err)
+		return false, fmt.Errorf("failed to query IGP ASNs: %w", err)
 	}
 	defer cursor.Close()
 
 	return cursor.HasMore(), nil
-}
-
-func (uc *UpdateCoordinator) determineBGPNodeTier(asn uint32) string {
-	// Classify BGP nodes by ASN ranges
-	if asn >= 64512 && asn <= 65535 {
-		return "private"
-	} else if asn >= 4200000000 && asn <= 4294967294 {
-		return "private_4byte"
-	} else if asn >= 1 && asn <= 64511 {
-		if asn <= 100 {
-			return "tier1" // Major transit providers typically have low ASNs
-		} else if asn <= 10000 {
-			return "tier2" // Regional providers
-		} else {
-			return "tier3" // Customer networks
-		}
-	} else {
-		return "unknown"
-	}
 }
 
 func (uc *UpdateCoordinator) extractCapabilities(peerData map[string]interface{}, capField string) *bgp.Capability {
@@ -227,23 +196,24 @@ func (uc *UpdateCoordinator) createBGPSessionEdges(ctx context.Context, sessionK
 }
 
 func (uc *UpdateCoordinator) getBGPNodeID(ctx context.Context, bgpID string, asn uint32, ip string) (string, error) {
-	// First check if this is an IGP node
-	igpExists, err := uc.checkIGPNodeExists(ctx, bgpID, ip)
+	// Check if this ASN exists in IGP domain
+	igpASNExists, err := uc.checkIGPASNExists(ctx, asn)
 	if err != nil {
 		return "", err
 	}
 
-	if igpExists {
-		// Return IGP node ID
+	if igpASNExists {
+		// Return IGP node ID - look for IGP node with matching router_id or bgp_router_id
 		query := fmt.Sprintf(`
 			FOR node IN %s
-			FILTER node.router_id == @routerId OR node.bgp_router_id == @routerId
+			FILTER (node.router_id == @routerId OR node.bgp_router_id == @routerId) AND node.asn == @asn
 			LIMIT 1
 			RETURN node._id
 		`, uc.db.config.IGPNode)
 
 		bindVars := map[string]interface{}{
 			"routerId": bgpID,
+			"asn":      asn,
 		}
 
 		cursor, err := uc.db.db.Query(ctx, query, bindVars)
@@ -252,16 +222,17 @@ func (uc *UpdateCoordinator) getBGPNodeID(ctx context.Context, bgpID string, asn
 		}
 		defer cursor.Close()
 
-		var nodeID string
-		if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
-			return "", fmt.Errorf("failed to read IGP node ID: %w", err)
+		if cursor.HasMore() {
+			var nodeID string
+			if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
+				return "", fmt.Errorf("failed to read IGP node ID: %w", err)
+			}
+			return nodeID, nil
 		}
-
-		return nodeID, nil
 	}
 
-	// Return BGP node ID
-	bgpNodeKey := fmt.Sprintf("bgp_%d_%s", asn, bgpID)
+	// Return BGP node ID using original key format
+	bgpNodeKey := fmt.Sprintf("%s_%d", bgpID, asn)
 	return fmt.Sprintf("%s/%s", uc.db.config.BGPNode, bgpNodeKey), nil
 }
 

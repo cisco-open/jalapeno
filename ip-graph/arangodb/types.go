@@ -71,23 +71,13 @@ type IPGraphObject struct {
 	PrefixAttrTLVs interface{} `json:"prefix_attr_tlvs,omitempty"`
 }
 
-// BGPNode represents a BGP peer/router in the topology
+// BGPNode represents a BGP peer/router in the topology (clean original structure)
 type BGPNode struct {
-	Key             string          `json:"_key,omitempty"`
-	ID              string          `json:"_id,omitempty"`
-	Rev             string          `json:"_rev,omitempty"`
-	RouterID        string          `json:"router_id,omitempty"`
-	BGPRouterID     string          `json:"bgp_router_id,omitempty"`
-	ASN             uint32          `json:"asn"`
-	LocalBGPID      string          `json:"local_bgp_id,omitempty"`
-	RemoteBGPID     string          `json:"remote_bgp_id,omitempty"`
-	LocalIP         string          `json:"local_ip,omitempty"`
-	RemoteIP        string          `json:"remote_ip,omitempty"`
-	PeerASN         uint32          `json:"peer_asn,omitempty"`
-	AdvCapabilities *bgp.Capability `json:"adv_cap,omitempty"`
-	Name            string          `json:"name,omitempty"`
-	Tier            string          `json:"tier,omitempty"`
-	NodeType        string          `json:"node_type,omitempty"` // "igp", "bgp", "hybrid"
+	Key      string `json:"_key,omitempty"`
+	ID       string `json:"_id,omitempty"`
+	Rev      string `json:"_rev,omitempty"`
+	RouterID string `json:"router_id,omitempty"`
+	ASN      uint32 `json:"asn"`
 }
 
 // BGPPrefix represents a BGP prefix in the topology
