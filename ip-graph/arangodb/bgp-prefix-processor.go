@@ -501,44 +501,9 @@ func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, orig
 
 	switch prefixType {
 	case "ebgp_peer_centric":
-		// BMP peer-centric approach: Connect prefix to the BGP peer that advertised it
-		peerIP := getStringFromData(prefixData, "peer_ip")
-
-		glog.Infof("DEBUG: Processing BGP prefix %s/%d - peer_ip: %s, peer_asn: %d, origin_as: %d",
-			prefix, prefixLen, peerIP, peerASN, originAS)
-		glog.Infof("DEBUG: Looking for BGP node with router_id == %s AND asn == %d (using origin_as, not peer_asn)", peerIP, originAS)
-
-		// Match your original processeNewPrefix logic: router_id == peer_ip AND asn == origin_as
-		// This finds the BGP peer node that advertised this prefix
-		query := fmt.Sprintf(`
-			FOR node IN %s
-			FILTER node.router_id == @peer_ip AND node.asn == @origin_as
-			RETURN {_id: node._id, router_id: node.router_id, asn: node.asn}
-		`, uc.db.config.BGPNode)
-
-		bindVars := map[string]interface{}{
-			"peer_ip":   peerIP,
-			"origin_as": originAS,
-		}
-
-		cursor, err := uc.db.db.Query(ctx, query, bindVars)
-		if err != nil {
-			return nil, err
-		}
-		defer cursor.Close()
-
-		for cursor.HasMore() {
-			var nodeInfo map[string]interface{}
-			if _, err := cursor.ReadDocument(ctx, &nodeInfo); err != nil {
-				continue
-			}
-			nodeID := nodeInfo["_id"].(string)
-			peerNodeIDs = append(peerNodeIDs, nodeID)
-			glog.Infof("DEBUG: Found matching BGP node: %v", nodeInfo)
-		}
-
-		glog.Infof("DEBUG: Found %d BGP peer nodes for prefix %s/%d (peer_ip: %s, origin_as: %d)",
-			len(peerNodeIDs), prefix, prefixLen, peerIP, originAS)
+		// All prefixes (both private and public ASN) connect to the BGP peer that advertised them
+		// This matches the working initial loading logic
+		return uc.findAdvertisingBGPPeer(ctx, prefix, prefixLen, originAS, peerASN, prefixData)
 	}
 
 	glog.V(7).Infof("Found %d BGP peer nodes for prefix %s/%d (type: %s)", len(peerNodeIDs), prefix, prefixLen, prefixType)
@@ -609,6 +574,200 @@ func (uc *UpdateCoordinator) getPeerNodeData(ctx context.Context, nodeID string)
 	}
 
 	return nil, fmt.Errorf("node not found: %s", nodeID)
+}
+
+// findPublicBGPPeers finds specific public BGP peers that advertised this internet prefix (based on BMP data)
+func (uc *UpdateCoordinator) findPublicBGPPeers(ctx context.Context, prefix string, prefixLen uint32, originAS, peerASN uint32) ([]string, error) {
+	var peerNodeIDs []string
+
+	glog.Infof("DEBUG: Internet prefix %s/%d from AS%d - finding all BGP peers that advertised it", prefix, prefixLen, originAS)
+
+	// Find all BMP unicast_prefix_v4 entries for this prefix to get all advertising peers
+	unicastQuery := fmt.Sprintf(`
+		FOR u IN unicast_prefix_v4
+		FILTER u.prefix == @prefix AND u.prefix_len == @prefix_len AND u.origin_as == @origin_as
+		FOR p IN peer
+		FILTER u.peer_ip == p.remote_ip AND u.peer_asn == p.remote_asn
+		FOR bgp IN %s
+		FILTER bgp.router_id == p.remote_bgp_id AND bgp.asn == p.remote_asn
+		RETURN DISTINCT {_id: bgp._id, router_id: bgp.router_id, asn: bgp.asn, peer_ip: u.peer_ip}
+	`, uc.db.config.BGPNode)
+
+	bindVars := map[string]interface{}{
+		"prefix":     prefix,
+		"prefix_len": prefixLen,
+		"origin_as":  originAS,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, unicastQuery, bindVars)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query BGP peers that advertised prefix: %w", err)
+	}
+	defer cursor.Close()
+
+	for cursor.HasMore() {
+		var nodeInfo map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &nodeInfo); err != nil {
+			continue
+		}
+		nodeID := nodeInfo["_id"].(string)
+		peerNodeIDs = append(peerNodeIDs, nodeID)
+		glog.Infof("DEBUG: Found BGP peer that advertised internet prefix: %v", nodeInfo)
+	}
+
+	glog.Infof("DEBUG: Found %d BGP peers that advertised internet prefix %s/%d", len(peerNodeIDs), prefix, prefixLen)
+	return peerNodeIDs, nil
+}
+
+// findSpecificBGPPeer finds a specific BGP peer for private ASN prefixes
+func (uc *UpdateCoordinator) findSpecificBGPPeer(ctx context.Context, prefix string, prefixLen uint32, originAS, peerASN uint32, prefixData map[string]interface{}) ([]string, error) {
+	var peerNodeIDs []string
+	peerIP := getStringFromData(prefixData, "peer_ip")
+
+	glog.Infof("DEBUG: Private ASN prefix %s/%d - finding specific peer (peer_ip: %s, peer_asn: %d, origin_as: %d)", prefix, prefixLen, peerIP, peerASN, originAS)
+
+	// First, find the peer session to get the remote_bgp_id
+	peerQuery := `
+		FOR p IN peer
+		FILTER p.remote_ip == @peer_ip AND p.remote_asn == @peer_asn
+		RETURN {remote_bgp_id: p.remote_bgp_id, remote_asn: p.remote_asn}
+	`
+
+	peerBindVars := map[string]interface{}{
+		"peer_ip":  peerIP,
+		"peer_asn": peerASN,
+	}
+
+	peerCursor, err := uc.db.db.Query(ctx, peerQuery, peerBindVars)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query peer table: %w", err)
+	}
+	defer peerCursor.Close()
+
+	var remoteBGPID string
+	if peerCursor.HasMore() {
+		var peerInfo map[string]interface{}
+		if _, err := peerCursor.ReadDocument(ctx, &peerInfo); err == nil {
+			if bgpID, ok := peerInfo["remote_bgp_id"].(string); ok {
+				remoteBGPID = bgpID
+			}
+		}
+	}
+
+	if remoteBGPID == "" {
+		glog.Warningf("No peer session found for prefix %s/%d (peer_ip: %s, peer_asn: %d)", prefix, prefixLen, peerIP, peerASN)
+		return peerNodeIDs, nil
+	}
+
+	// Now find the BGP node using the correct router_id and peer ASN
+	query := fmt.Sprintf(`
+		FOR node IN %s
+		FILTER node.router_id == @router_id AND node.asn == @peer_asn
+		RETURN {_id: node._id, router_id: node.router_id, asn: node.asn}
+	`, uc.db.config.BGPNode)
+
+	bindVars := map[string]interface{}{
+		"router_id": remoteBGPID,
+		"peer_asn":  peerASN,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query specific BGP peer: %w", err)
+	}
+	defer cursor.Close()
+
+	for cursor.HasMore() {
+		var nodeInfo map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &nodeInfo); err != nil {
+			continue
+		}
+		nodeID := nodeInfo["_id"].(string)
+		peerNodeIDs = append(peerNodeIDs, nodeID)
+		glog.Infof("DEBUG: Found specific BGP peer: %v", nodeInfo)
+	}
+
+	glog.Infof("DEBUG: Found %d specific BGP peers for private prefix %s/%d", len(peerNodeIDs), prefix, prefixLen)
+	return peerNodeIDs, nil
+}
+
+// findAdvertisingBGPPeer finds the BGP peer that advertised this prefix (replicating working initial loading logic)
+func (uc *UpdateCoordinator) findAdvertisingBGPPeer(ctx context.Context, prefix string, prefixLen uint32, originAS, peerASN uint32, prefixData map[string]interface{}) ([]string, error) {
+	var peerNodeIDs []string
+	peerIP := getStringFromData(prefixData, "peer_ip")
+
+	glog.Infof("DEBUG: Finding BGP peer that advertised prefix %s/%d (peer_ip: %s, peer_asn: %d, origin_as: %d)",
+		prefix, prefixLen, peerIP, peerASN, originAS)
+
+	// Replicate the working initial loading logic:
+	// 1. Find the peer session to get remote_bgp_id
+	// 2. Find BGP node with router_id == remote_bgp_id AND asn == peer_asn
+	// This matches your working example: bgp_node/10.109.9.1_100009
+
+	peerQuery := `
+		FOR p IN peer
+		FILTER p.remote_ip == @peer_ip AND p.remote_asn == @peer_asn
+		RETURN {remote_bgp_id: p.remote_bgp_id, remote_asn: p.remote_asn}
+	`
+
+	peerBindVars := map[string]interface{}{
+		"peer_ip":  peerIP,
+		"peer_asn": peerASN,
+	}
+
+	peerCursor, err := uc.db.db.Query(ctx, peerQuery, peerBindVars)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query peer table: %w", err)
+	}
+	defer peerCursor.Close()
+
+	var remoteBGPID string
+	if peerCursor.HasMore() {
+		var peerInfo map[string]interface{}
+		if _, err := peerCursor.ReadDocument(ctx, &peerInfo); err == nil {
+			if bgpID, ok := peerInfo["remote_bgp_id"].(string); ok {
+				remoteBGPID = bgpID
+			}
+		}
+	}
+
+	if remoteBGPID == "" {
+		glog.Warningf("No peer session found for prefix %s/%d (peer_ip: %s, peer_asn: %d)", prefix, prefixLen, peerIP, peerASN)
+		return peerNodeIDs, nil
+	}
+
+	glog.Infof("DEBUG: Found peer session - looking for BGP node with router_id == %s AND asn == %d", remoteBGPID, peerASN)
+
+	// Find the BGP node that matches this peer session
+	query := fmt.Sprintf(`
+		FOR node IN %s
+		FILTER node.router_id == @router_id AND node.asn == @peer_asn
+		RETURN {_id: node._id, router_id: node.router_id, asn: node.asn}
+	`, uc.db.config.BGPNode)
+
+	bindVars := map[string]interface{}{
+		"router_id": remoteBGPID,
+		"peer_asn":  peerASN,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query advertising BGP peer: %w", err)
+	}
+	defer cursor.Close()
+
+	for cursor.HasMore() {
+		var nodeInfo map[string]interface{}
+		if _, err := cursor.ReadDocument(ctx, &nodeInfo); err != nil {
+			continue
+		}
+		nodeID := nodeInfo["_id"].(string)
+		peerNodeIDs = append(peerNodeIDs, nodeID)
+		glog.Infof("DEBUG: Found advertising BGP peer: %v", nodeInfo)
+	}
+
+	glog.Infof("DEBUG: Found %d BGP peers for prefix %s/%d", len(peerNodeIDs), prefix, prefixLen)
+	return peerNodeIDs, nil
 }
 
 // Helper function to safely get string from interface (BGP prefix processor)
