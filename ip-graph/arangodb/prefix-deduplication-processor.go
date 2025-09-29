@@ -290,24 +290,51 @@ func (pdp *PrefixDeduplicationProcessor) createUnifiedPrefixEdges(ctx context.Co
 
 	prefixVertexID := fmt.Sprintf("%s/%s", prefixCollection, prefixKey)
 
-	// 1. Create edge to IGP node (based on ls_prefix data)
-	igpRouterID := getString(lsData, "igp_router_id")
-	igpNodeID, err := pdp.findIGPNodeByRouterID(ctx, igpRouterID)
-	if err != nil {
-		glog.Warningf("Failed to find IGP node for router %s: %v", igpRouterID, err)
-	} else if igpNodeID != "" {
-		// Create bidirectional edges to IGP node
-		if err := pdp.createBidirectionalEdges(ctx, prefixVertexID, igpNodeID, prefixKey, prefix, int32(prefixLen), "IGP_unified", graphCollection); err != nil {
-			glog.Warningf("Failed to create IGP edges for unified prefix %s: %v", prefixKey, err)
+	// 1. Create edge to IGP node (based on ls_prefix data) - ONLY for appropriate prefix types
+	// For eBGP private prefixes where origin_as == peer_asn, don't create IGP edges
+	// The prefix originates from the BGP peer, not from IGP redistribution
+	bgpPrefixType := getString(bgpData, "prefix_type")
+	bgpOriginAS := getUint32FromInterface(bgpData["origin_as"])
+	bgpPeerASN := getUint32FromInterface(bgpData["peer_asn"])
+
+	shouldCreateIGPEdge := false
+	switch bgpPrefixType {
+	case "ibgp":
+		// iBGP prefixes can have IGP edges (internal redistribution)
+		shouldCreateIGPEdge = true
+	case "ebgp_private", "ebgp_private_4byte":
+		// eBGP private: only create IGP edge if origin_as != peer_asn (redistribution case)
+		// If origin_as == peer_asn, the prefix originates from the BGP peer directly
+		shouldCreateIGPEdge = (bgpOriginAS != bgpPeerASN)
+	case "ebgp_public":
+		// Internet prefixes: don't create IGP edges, they connect to BGP peers
+		shouldCreateIGPEdge = false
+	default:
+		// Unknown type: be conservative and allow IGP edge
+		shouldCreateIGPEdge = true
+	}
+
+	if shouldCreateIGPEdge {
+		igpRouterID := getString(lsData, "igp_router_id")
+		igpNodeID, err := pdp.findIGPNodeByRouterID(ctx, igpRouterID)
+		if err != nil {
+			glog.Warningf("Failed to find IGP node for router %s: %v", igpRouterID, err)
+		} else if igpNodeID != "" {
+			// Create bidirectional edges to IGP node
+			if err := pdp.createBidirectionalEdges(ctx, prefixVertexID, igpNodeID, prefixKey, prefix, int32(prefixLen), "IGP_unified", graphCollection); err != nil {
+				glog.Warningf("Failed to create IGP edges for unified prefix %s: %v", prefixKey, err)
+			}
 		}
+	} else {
+		glog.V(7).Infof("Skipping IGP edge for %s prefix %s (origin_as=%d, peer_asn=%d)", bgpPrefixType, prefixKey, bgpOriginAS, bgpPeerASN)
 	}
 
 	// 2. Create edge to BGP node (based on bgp_prefix data)
 	bgpRouterID := getString(bgpData, "router_id")
-	bgpOriginAS := getUint32FromInterface(bgpData["origin_as"])
-	bgpPrefixType := getString(bgpData, "prefix_type")
+	// bgpOriginAS and bgpPrefixType already declared above
 
 	var bgpNodeID string
+	var err error
 	switch bgpPrefixType {
 	case "ibgp":
 		// iBGP: Look for IGP node
