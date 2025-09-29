@@ -20,7 +20,6 @@
 // License for the specific language governing permissions and limitations under
 // the License.
 
-
 // We call this aio because we're taking Kafka out of the middle.
 
 package main
@@ -34,16 +33,17 @@ import (
 	"runtime"
 	"strconv"
 
-	"github.com/cisco-open/jalapeno/topology/arangodb"
-	"github.com/cisco-open/jalapeno/topology/dbclient"
-	"github.com/cisco-open/jalapeno/topology/mockdb"
-	"github.com/cisco-open/jalapeno/topology/kafkanotifier"
+	"github.com/cisco-open/jalapeno/gobmp-arango/arangodb"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
+	"github.com/cisco-open/jalapeno/gobmp-arango/kafkanotifier"
+	"github.com/cisco-open/jalapeno/gobmp-arango/mockdb"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/gobmpsrv"
 	"github.com/sbezverk/gobmp/pkg/pub"
-//	"github.com/byzek/gobmp/pkg/gobmpsrv"
-//	"github.com/byzek/gobmp/pkg/pub"
-//	pubarango "github.com/byzek/gobmp/pkg/arangodb"
+
+	//	"github.com/byzek/gobmp/pkg/gobmpsrv"
+	//	"github.com/byzek/gobmp/pkg/pub"
+	//	pubarango "github.com/byzek/gobmp/pkg/arangodb"
 
 	"net/http"
 	_ "net/http/pprof"
@@ -61,16 +61,16 @@ const (
 )
 
 var (
-	dstPort		int
-	srcPort		int
-	dbSrvAddr   string
-	intercept   string
-	splitAF     string
-	mockDB      string
-	dbName      string
-	dbUser      string
-	dbPass		string
-	perfPort    = 56768
+	dstPort   int
+	srcPort   int
+	dbSrvAddr string
+	intercept string
+	splitAF   string
+	mockDB    string
+	dbName    string
+	dbUser    string
+	dbPass    string
+	perfPort  = 56768
 )
 
 func init() {
@@ -178,7 +178,6 @@ func main() {
 	}
 	// Starting Interceptor server
 	bmpSrv.Start()
-
 
 	stopCh := setupSignalHandler()
 	<-stopCh

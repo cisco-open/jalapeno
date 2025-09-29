@@ -25,7 +25,7 @@ package mockmessenger
 import (
 	"time"
 
-	"github.com/cisco-open/jalapeno/topology/dbclient"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 )
