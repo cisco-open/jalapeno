@@ -409,7 +409,7 @@ func (a *arangoDB) loadInitialBGPData(ctx context.Context) error {
 		glog.Warningf("Failed to load initial peers (continuing): %v", err)
 	}
 
-	// Step 2: Advanced BGP prefix deduplication and classification
+	// Step 2: BGP prefix classification and deduplication (keep existing logic)
 	deduplicationProcessor := NewBGPDeduplicationProcessor(a)
 	if err := deduplicationProcessor.ProcessInitialBGPDeduplication(ctx); err != nil {
 		glog.Warningf("Failed to process BGP prefix deduplication (continuing): %v", err)
@@ -420,10 +420,9 @@ func (a *arangoDB) loadInitialBGPData(ctx context.Context) error {
 		glog.Warningf("Failed to create prefix-to-node attachments (continuing): %v", err)
 	}
 
-	// Step 4: Handle IGP-BGP prefix deduplication
-	prefixDeduplicator := NewPrefixDeduplicationProcessor(a)
-	if err := prefixDeduplicator.ProcessPrefixDeduplication(ctx); err != nil {
-		glog.Warningf("Failed to process IGP-BGP prefix deduplication (continuing): %v", err)
+	// Step 4: Apply simple BGP routing precedence (replaces complex unified prefix logic)
+	if err := a.applyBGPPrecedence(ctx); err != nil {
+		glog.Warningf("Failed to apply BGP precedence (continuing): %v", err)
 	}
 
 	// Step 5: Handle iBGP-only nodes (e.g., Cilium) that should attach to subnets
@@ -433,6 +432,81 @@ func (a *arangoDB) loadInitialBGPData(ctx context.Context) error {
 	}
 
 	glog.Info("Initial BGP data loaded successfully")
+	return nil
+}
+
+// applyBGPPrecedence applies simple routing precedence: BGP beats IGP
+// Removes IGP edges where eBGP prefixes exist (iBGP keeps IGP edges for internal redistribution)
+func (a *arangoDB) applyBGPPrecedence(ctx context.Context) error {
+	glog.V(6).Info("Applying BGP routing precedence (removing conflicting IGP edges)...")
+
+	// Apply precedence for IPv4
+	if err := a.applyBGPPrecedenceIPv4(ctx); err != nil {
+		return fmt.Errorf("failed to apply IPv4 BGP precedence: %w", err)
+	}
+
+	// Apply precedence for IPv6
+	if err := a.applyBGPPrecedenceIPv6(ctx); err != nil {
+		return fmt.Errorf("failed to apply IPv6 BGP precedence: %w", err)
+	}
+
+	glog.V(6).Info("BGP routing precedence applied successfully")
+	return nil
+}
+
+// applyBGPPrecedenceIPv4 removes conflicting IPv4 IGP edges where eBGP takes precedence
+func (a *arangoDB) applyBGPPrecedenceIPv4(ctx context.Context) error {
+	glog.V(7).Info("Applying IPv4 BGP precedence...")
+
+	// Remove IGP edges where eBGP takes precedence
+	// iBGP prefixes keep their IGP edges (internal redistribution)
+	query := fmt.Sprintf(`
+		FOR bgp IN %s
+		FILTER bgp.prefix_type IN ["ebgp_private", "ebgp_private_4byte", "ebgp_public"]
+		FOR igp_edge IN %s
+		FILTER igp_edge.prefix == bgp.prefix 
+		FILTER igp_edge.prefix_len == bgp.prefix_len
+		FILTER STARTS_WITH(igp_edge._to, "ls_prefix/") OR STARTS_WITH(igp_edge._from, "ls_prefix/")
+		
+		// BGP takes precedence over IGP - remove IGP edge
+		REMOVE igp_edge IN %s
+	`, a.config.BGPPrefixV4, a.config.IPv4Graph, a.config.IPv4Graph)
+
+	cursor, err := a.db.Query(ctx, query, nil)
+	if err != nil {
+		return fmt.Errorf("failed to apply IPv4 BGP precedence: %w", err)
+	}
+	defer cursor.Close()
+
+	glog.V(7).Info("IPv4 BGP precedence applied")
+	return nil
+}
+
+// applyBGPPrecedenceIPv6 removes conflicting IPv6 IGP edges where eBGP takes precedence
+func (a *arangoDB) applyBGPPrecedenceIPv6(ctx context.Context) error {
+	glog.V(7).Info("Applying IPv6 BGP precedence...")
+
+	// Remove IGP edges where eBGP takes precedence
+	// iBGP prefixes keep their IGP edges (internal redistribution)
+	query := fmt.Sprintf(`
+		FOR bgp IN %s
+		FILTER bgp.prefix_type IN ["ebgp_private", "ebgp_private_4byte", "ebgp_public"]
+		FOR igp_edge IN %s
+		FILTER igp_edge.prefix == bgp.prefix 
+		FILTER igp_edge.prefix_len == bgp.prefix_len
+		FILTER STARTS_WITH(igp_edge._to, "ls_prefix/") OR STARTS_WITH(igp_edge._from, "ls_prefix/")
+		
+		// BGP takes precedence over IGP - remove IGP edge
+		REMOVE igp_edge IN %s
+	`, a.config.BGPPrefixV6, a.config.IPv6Graph, a.config.IPv6Graph)
+
+	cursor, err := a.db.Query(ctx, query, nil)
+	if err != nil {
+		return fmt.Errorf("failed to apply IPv6 BGP precedence: %w", err)
+	}
+	defer cursor.Close()
+
+	glog.V(7).Info("IPv6 BGP precedence applied")
 	return nil
 }
 

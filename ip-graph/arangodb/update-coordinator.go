@@ -298,8 +298,10 @@ func (uc *UpdateCoordinator) handlePrefixConflictUpdate(msg *ProcessingMessage) 
 	if hasIGPConflict {
 		glog.V(7).Infof("Detected IGP-BGP prefix conflict for %s/%d, creating unified vertex", prefix, prefixLen)
 
-		// Use the prefix deduplication processor to handle the conflict
-		prefixDeduplicator := NewPrefixDeduplicationProcessor(uc.db)
+		// Apply simple BGP precedence instead of complex unified prefix logic
+		if err := uc.db.applyBGPPrecedence(ctx); err != nil {
+			glog.Warningf("Failed to apply BGP precedence for conflict %s/%d: %v", prefix, prefixLen, err)
+		}
 
 		// Create a conflict structure similar to the batch processor
 		conflictData := map[string]interface{}{
@@ -318,10 +320,8 @@ func (uc *UpdateCoordinator) handlePrefixConflictUpdate(msg *ProcessingMessage) 
 		if lsData != nil {
 			conflictData["ls_data"] = lsData
 
-			// Create unified prefix vertex
-			if err := prefixDeduplicator.createUnifiedPrefixVertex(ctx, conflictData, isIPv4); err != nil {
-				return fmt.Errorf("failed to create unified prefix vertex: %w", err)
-			}
+			// Simple precedence approach - no need for unified prefix vertex
+			glog.V(7).Infof("BGP precedence applied for prefix %s/%d", prefix, prefixLen)
 		}
 	}
 

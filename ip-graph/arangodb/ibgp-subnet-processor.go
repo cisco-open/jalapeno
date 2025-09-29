@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"strings"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
@@ -285,7 +286,10 @@ func (isp *IBGPSubnetProcessor) createSubnetAttachment(ctx context.Context, node
 	subnetVertexID := fmt.Sprintf("%s/%s", collection, subnetKey)
 
 	// Extract node key from node ID
-	nodeKey := extractKeyFromID(nodeID)
+	nodeKey := nodeID
+	if idx := strings.LastIndex(nodeID, "/"); idx != -1 {
+		nodeKey = nodeID[idx+1:]
+	}
 
 	// Create bidirectional edges
 	edges := []*IPGraphObject{
