@@ -239,6 +239,7 @@ func ensureTopic(br *sarama.Broker, timeout time.Duration, topicName string) err
 				},
 			},
 		},
+		Timeout: timeout,
 	}
 
 	for {
