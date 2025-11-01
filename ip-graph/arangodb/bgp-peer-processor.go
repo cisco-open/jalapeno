@@ -115,20 +115,26 @@ func (uc *UpdateCoordinator) ensureBGPNode(ctx context.Context, bgpID string, as
 
 	// Create BGP node using original format: router_id + asn as key
 	bgpNodeKey := fmt.Sprintf("%s_%d", bgpID, asn)
+	remoteIP := getStringFromPeerData(peerData, "remote_ip")
 
-	// Simple BGP node structure (matching original)
+	// Enhanced BGP node structure with RemoteIPs array
 	bgpNode := &BGPNode{
-		Key:      bgpNodeKey,
-		RouterID: bgpID, // Use BGP Router ID from peer message
-		ASN:      asn,
+		Key:       bgpNodeKey,
+		RouterID:  bgpID, // Use BGP Router ID from peer message
+		ASN:       asn,
+		RemoteIPs: []string{remoteIP}, // Initialize with current remote IP
 	}
 
-	// Create or update BGP node
+	// Create or update BGP node (handle multiple remote IPs per RouterID)
 	if _, err := uc.db.bgpNode.CreateDocument(ctx, bgpNode); err != nil {
-		if !driver.IsConflict(err) {
+		if driver.IsConflict(err) {
+			// Node exists - update RemoteIPs array if needed
+			if err := uc.addRemoteIPToBGPNode(ctx, bgpNodeKey, remoteIP); err != nil {
+				glog.Warningf("Failed to add remote IP %s to BGP node %s: %v", remoteIP, bgpNodeKey, err)
+			}
+		} else {
 			return fmt.Errorf("failed to create BGP node: %w", err)
 		}
-		// Node already exists, which is fine (ignoreErrors: true in original)
 	}
 
 	glog.V(8).Infof("Ensured BGP node: %s (AS%d)", bgpID, asn)
@@ -327,4 +333,41 @@ func getUint32FromInterface(v interface{}) uint32 {
 		}
 	}
 	return 0
+}
+
+// addRemoteIPToBGPNode adds a remote IP to existing BGP node's RemoteIPs array
+func (uc *UpdateCoordinator) addRemoteIPToBGPNode(ctx context.Context, nodeKey, remoteIP string) error {
+	// Read existing node
+	var existingNode BGPNode
+	_, err := uc.db.bgpNode.ReadDocument(ctx, nodeKey, &existingNode)
+	if err != nil {
+		return fmt.Errorf("failed to read existing BGP node: %w", err)
+	}
+
+	// Check if remote IP already exists
+	for _, ip := range existingNode.RemoteIPs {
+		if ip == remoteIP {
+			glog.V(9).Infof("Remote IP %s already exists in BGP node %s", remoteIP, nodeKey)
+			return nil
+		}
+	}
+
+	// Add new remote IP
+	existingNode.RemoteIPs = append(existingNode.RemoteIPs, remoteIP)
+
+	// Update node
+	_, err = uc.db.bgpNode.UpdateDocument(ctx, nodeKey, &existingNode)
+	if err != nil {
+		return fmt.Errorf("failed to update BGP node with new remote IP: %w", err)
+	}
+
+	glog.V(8).Infof("Added remote IP %s to BGP node %s", remoteIP, nodeKey)
+	return nil
+}
+
+func getStringFromPeerData(data map[string]interface{}, key string) string {
+	if val, ok := data[key].(string); ok {
+		return val
+	}
+	return ""
 }

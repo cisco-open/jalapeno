@@ -41,6 +41,14 @@ func (uc *UpdateCoordinator) processPrefixAdvertisement(ctx context.Context, key
 	// Use consistent key format (prefix_prefixlen) to match initial loading
 	consistentKey := fmt.Sprintf("%s_%d", prefix, prefixLen)
 
+	// BGP Best Path Selection: Check if we should update existing prefix
+	if shouldUpdate, err := uc.shouldUpdateBGPPrefix(ctx, consistentKey, prefixData, isIPv4); err != nil {
+		return fmt.Errorf("failed to check BGP best path: %w", err)
+	} else if !shouldUpdate {
+		glog.V(7).Infof("BGP prefix %s/%d - existing path is better, skipping update", prefix, prefixLen)
+		return nil
+	}
+
 	// Classify prefix type and determine processing strategy
 	prefixType := uc.classifyBGPPrefix(prefix, prefixLen, originAS, peerASN, isIPv4)
 
@@ -768,6 +776,104 @@ func (uc *UpdateCoordinator) findAdvertisingBGPPeer(ctx context.Context, prefix 
 
 	glog.Infof("DEBUG: Found %d BGP peers for prefix %s/%d", len(peerNodeIDs), prefix, prefixLen)
 	return peerNodeIDs, nil
+}
+
+// shouldUpdateBGPPrefix implements BGP best path selection
+func (uc *UpdateCoordinator) shouldUpdateBGPPrefix(ctx context.Context, prefixKey string, newPrefixData map[string]interface{}, isIPv4 bool) (bool, error) {
+	// Determine target collection
+	var collection driver.Collection
+	if isIPv4 {
+		collection = uc.db.bgpPrefixV4
+	} else {
+		collection = uc.db.bgpPrefixV6
+	}
+
+	// Check if prefix already exists
+	var existingPrefix BGPPrefix
+	_, err := collection.ReadDocument(ctx, prefixKey, &existingPrefix)
+	if driver.IsNotFound(err) {
+		// No existing prefix - accept new one
+		return true, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("failed to read existing prefix: %w", err)
+	}
+
+	// Extract BGP attributes from new prefix data
+	newASPath := getBGPASPath(newPrefixData)
+	newLocalPref := getBGPLocalPref(newPrefixData)
+	newASPathCount := len(newASPath)
+
+	// Get existing prefix attributes (we need to query the original BMP data)
+	existingASPathCount := uc.getStoredASPathCount(existingPrefix)
+	existingIsIBGP := uc.isIBGPPrefix(existingPrefix)
+	newIsIBGP := (newLocalPref > 0) // iBGP has local_pref
+
+	glog.V(8).Infof("BGP best path comparison for %s: existing(ibgp=%v, path_len=%d) vs new(ibgp=%v, path_len=%d)",
+		prefixKey, existingIsIBGP, existingASPathCount, newIsIBGP, newASPathCount)
+
+	// BGP Best Path Selection Rules:
+	// 1. eBGP > iBGP
+	if existingIsIBGP && !newIsIBGP {
+		glog.V(7).Infof("BGP best path: eBGP beats iBGP for %s", prefixKey)
+		return true, nil
+	}
+	if !existingIsIBGP && newIsIBGP {
+		glog.V(7).Infof("BGP best path: existing eBGP beats new iBGP for %s", prefixKey)
+		return false, nil
+	}
+
+	// 2. Shorter AS path wins (if same eBGP/iBGP type)
+	if newASPathCount < existingASPathCount {
+		glog.V(7).Infof("BGP best path: shorter AS path (%d < %d) for %s", newASPathCount, existingASPathCount, prefixKey)
+		return true, nil
+	}
+	if newASPathCount > existingASPathCount {
+		glog.V(7).Infof("BGP best path: existing shorter AS path (%d < %d) for %s", existingASPathCount, newASPathCount, prefixKey)
+		return false, nil
+	}
+
+	// 3. If tie, keep existing (first wins)
+	glog.V(7).Infof("BGP best path: tie - keeping existing path for %s", prefixKey)
+	return false, nil
+}
+
+// Helper functions for BGP best path selection
+func getBGPASPath(prefixData map[string]interface{}) []interface{} {
+	if baseAttrs, ok := prefixData["base_attrs"].(map[string]interface{}); ok {
+		if asPath, ok := baseAttrs["as_path"].([]interface{}); ok {
+			return asPath
+		}
+	}
+	return []interface{}{}
+}
+
+func getBGPLocalPref(prefixData map[string]interface{}) uint32 {
+	if baseAttrs, ok := prefixData["base_attrs"].(map[string]interface{}); ok {
+		if localPref, ok := baseAttrs["local_pref"].(float64); ok {
+			return uint32(localPref)
+		}
+	}
+	return 0
+}
+
+func (uc *UpdateCoordinator) getStoredASPathCount(prefix BGPPrefix) int {
+	// For now, estimate based on prefix_type
+	// TODO: Store AS path count in BGPPrefix struct for accurate comparison
+	switch prefix.PrefixType {
+	case "ibgp":
+		return 1 // Typically internal
+	case "ebgp_private", "ebgp_private_4byte":
+		return 2 // Typically 1-2 hops
+	case "ebgp_public":
+		return 3 // Typically longer paths
+	default:
+		return 2 // Default estimate
+	}
+}
+
+func (uc *UpdateCoordinator) isIBGPPrefix(prefix BGPPrefix) bool {
+	return prefix.PrefixType == "ibgp"
 }
 
 // Helper function to safely get string from interface (BGP prefix processor)
