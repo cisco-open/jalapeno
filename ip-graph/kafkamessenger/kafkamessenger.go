@@ -47,16 +47,9 @@ func (h *MessageHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim
 
 func (h *MessageHandler) processMessage(message *sarama.ConsumerMessage) error {
 	// Determine message type based on topic
+	// Note: IGP topics are handled by igp-graph processor, not ip-graph
 	var msgType dbclient.CollectionType
 	switch message.Topic {
-	case "gobmp.parsed.ls_node":
-		msgType = bmp.LSNodeMsg
-	case "gobmp.parsed.ls_link":
-		msgType = bmp.LSLinkMsg
-	case "gobmp.parsed.ls_prefix":
-		msgType = bmp.LSPrefixMsg
-	case "gobmp.parsed.ls_srv6_sid":
-		msgType = bmp.LSSRv6SIDMsg
 	case "gobmp.parsed.peer":
 		msgType = bmp.PeerStateChangeMsg
 	case "gobmp.parsed.unicast_prefix_v4":
@@ -105,12 +98,11 @@ func NewKafkaMessenger(kafkaConn string, dbSrv dbclient.Srv) (Srv, error) {
 
 	brokers := strings.Split(kafkaConn, ",")
 
-	// Topics that the IP graph processor subscribes to - raw BMP data topics
+	// Topics that the IP graph processor subscribes to
+	// Note: IGP topics are NOT included here - ip-graph syncs IGP data from
+	// igp-graph's processed output (igpv4_graph/igpv6_graph) via periodic reconciliation
+	// This avoids race conditions and code duplication
 	topics := []string{
-		"gobmp.parsed.ls_node",           // IGP sync
-		"gobmp.parsed.ls_link",           // IGP sync
-		"gobmp.parsed.ls_prefix",         // IGP prefix sync (optional)
-		"gobmp.parsed.ls_srv6_sid",       // IGP SRv6 sync (optional)
 		"gobmp.parsed.peer",              // BGP peer sessions
 		"gobmp.parsed.unicast_prefix_v4", // BGP IPv4 prefixes
 		"gobmp.parsed.unicast_prefix_v6", // BGP IPv6 prefixes

@@ -11,17 +11,7 @@ import (
 type IGPNode struct {
 	Key                  string                          `json:"_key,omitempty"`
 	ID                   string                          `json:"_id,omitempty"`
-	Rev                  string                          `json:"_rev,omitempty"`
-	Action               string                          `json:"action,omitempty"` // Action can be "add" or "del"
-	Sequence             int                             `json:"sequence,omitempty"`
-	Hash                 string                          `json:"hash,omitempty"`
-	RouterHash           string                          `json:"router_hash,omitempty"`
 	DomainID             int64                           `json:"domain_id"`
-	RouterIP             string                          `json:"router_ip,omitempty"`
-	PeerHash             string                          `json:"peer_hash,omitempty"`
-	PeerIP               string                          `json:"peer_ip,omitempty"`
-	PeerASN              uint32                          `json:"peer_asn,omitempty"`
-	Timestamp            string                          `json:"timestamp,omitempty"`
 	IGPRouterID          string                          `json:"igp_router_id,omitempty"`
 	RouterID             string                          `json:"router_id,omitempty"`
 	ASN                  uint32                          `json:"asn,omitempty"`

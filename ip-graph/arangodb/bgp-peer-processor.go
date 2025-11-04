@@ -46,7 +46,13 @@ func (uc *UpdateCoordinator) processPeerAddUpdate(ctx context.Context, key strin
 	glog.V(8).Infof("Processing %s session: %s (AS%d) ↔ %s (AS%d)",
 		sessionType, localBGPID, localASN, remoteBGPID, remoteASN)
 
-	// Process local and remote BGP nodes
+	// Skip iBGP sessions - they run over IGP infrastructure, no separate edges needed
+	if sessionType == "ibgp" {
+		glog.V(7).Infof("Skipping edge creation for iBGP session %s (uses IGP connectivity)", key)
+		return nil
+	}
+
+	// Process local and remote BGP nodes (only for eBGP)
 	if err := uc.ensureBGPNode(ctx, localBGPID, localASN, localIP, peerData, true); err != nil {
 		return fmt.Errorf("failed to ensure local BGP node: %w", err)
 	}
@@ -55,7 +61,7 @@ func (uc *UpdateCoordinator) processPeerAddUpdate(ctx context.Context, key strin
 		return fmt.Errorf("failed to ensure remote BGP node: %w", err)
 	}
 
-	// Create bidirectional BGP session edges
+	// Create BGP session edges (only for eBGP sessions)
 	if err := uc.createBGPSessionEdges(ctx, key, peerData, sessionType); err != nil {
 		return fmt.Errorf("failed to create BGP session edges: %w", err)
 	}
@@ -102,35 +108,33 @@ func (uc *UpdateCoordinator) ensureBGPNode(ctx context.Context, bgpID string, as
 		return nil
 	}
 
-	// Check if this ASN is already in IGP domain (matching original filter logic)
-	igpASNExists, err := uc.checkIGPASNExists(ctx, asn)
+	// Check if this ASN is already in IGP domain (matching original filter logic using peer_asn)
+	igpASNExists, err := uc.checkIGPPeerASNExists(ctx, asn)
 	if err != nil {
-		return fmt.Errorf("failed to check IGP ASN existence: %w", err)
+		return fmt.Errorf("failed to check IGP peer ASN existence: %w", err)
 	}
 
 	if igpASNExists {
-		glog.V(8).Infof("ASN %d exists in IGP domain, skipping BGP node creation", asn)
+		glog.V(8).Infof("ASN %d exists in IGP domain (peer_asn), skipping BGP node creation", asn)
 		return nil
 	}
 
 	// Create BGP node using original format: router_id + asn as key
 	bgpNodeKey := fmt.Sprintf("%s_%d", bgpID, asn)
-	remoteIP := getStringFromPeerData(peerData, "remote_ip")
 
-	// Enhanced BGP node structure with RemoteIPs array
+	// Simple BGP node structure matching original
 	bgpNode := &BGPNode{
-		Key:       bgpNodeKey,
-		RouterID:  bgpID, // Use BGP Router ID from peer message
-		ASN:       asn,
-		RemoteIPs: []string{remoteIP}, // Initialize with current remote IP
+		Key:      bgpNodeKey,
+		RouterID: bgpID, // Use BGP Router ID from peer message
+		ASN:      asn,
 	}
 
-	// Create or update BGP node (handle multiple remote IPs per RouterID)
+	// Create or update BGP node
 	if _, err := uc.db.bgpNode.CreateDocument(ctx, bgpNode); err != nil {
 		if driver.IsConflict(err) {
-			// Node exists - update RemoteIPs array if needed
-			if err := uc.addRemoteIPToBGPNode(ctx, bgpNodeKey, remoteIP); err != nil {
-				glog.Warningf("Failed to add remote IP %s to BGP node %s: %v", remoteIP, bgpNodeKey, err)
+			// Node already exists, that's fine - just update it
+			if _, err := uc.db.bgpNode.UpdateDocument(ctx, bgpNodeKey, bgpNode); err != nil {
+				glog.Warningf("Failed to update BGP node %s: %v", bgpNodeKey, err)
 			}
 		} else {
 			return fmt.Errorf("failed to create BGP node: %w", err)
@@ -141,11 +145,12 @@ func (uc *UpdateCoordinator) ensureBGPNode(ctx context.Context, bgpID string, as
 	return nil
 }
 
-func (uc *UpdateCoordinator) checkIGPASNExists(ctx context.Context, asn uint32) (bool, error) {
-	// Check if this ASN exists in IGP domain (matching original filter logic)
+// checkIGPPeerASNExists checks if an ASN exists in IGP domain using peer_asn field (original logic)
+func (uc *UpdateCoordinator) checkIGPPeerASNExists(ctx context.Context, asn uint32) (bool, error) {
+	// Check if this ASN exists in IGP domain using peer_asn (matching original filter logic)
 	query := fmt.Sprintf(`
 		FOR node IN %s
-		FILTER node.asn == @asn
+		FILTER node.peer_asn == @asn
 		LIMIT 1
 		RETURN node._key
 	`, uc.db.config.IGPNode)
@@ -156,7 +161,7 @@ func (uc *UpdateCoordinator) checkIGPASNExists(ctx context.Context, asn uint32) 
 
 	cursor, err := uc.db.db.Query(ctx, query, bindVars)
 	if err != nil {
-		return false, fmt.Errorf("failed to query IGP ASNs: %w", err)
+		return false, fmt.Errorf("failed to query IGP peer ASNs: %w", err)
 	}
 	defer cursor.Close()
 
@@ -189,25 +194,27 @@ func (uc *UpdateCoordinator) createBGPSessionEdges(ctx context.Context, sessionK
 		return fmt.Errorf("failed to get remote node ID: %w", err)
 	}
 
-	// Create bidirectional session edges
-	if err := uc.createSessionEdge(ctx, sessionKey, localNodeID, remoteNodeID, peerData, sessionType, true); err != nil {
-		return fmt.Errorf("failed to create local->remote session edge: %w", err)
-	}
-
-	if err := uc.createSessionEdge(ctx, sessionKey, remoteNodeID, localNodeID, peerData, sessionType, false); err != nil {
-		return fmt.Errorf("failed to create remote->local session edge: %w", err)
+	// Create ONE edge per peer message (matching original logic)
+	// BMP sends peer messages from both routers, providing natural bidirectionality
+	// Edge key format: remote_bgp_id_remote_asn_remote_ip
+	if err := uc.createSessionEdge(ctx, sessionKey, localNodeID, remoteNodeID, peerData, sessionType); err != nil {
+		return fmt.Errorf("failed to create session edge: %w", err)
 	}
 
 	return nil
 }
 
-func (uc *UpdateCoordinator) createSessionEdge(ctx context.Context, sessionKey, fromNodeID, toNodeID string, peerData map[string]interface{}, sessionType string, isForward bool) error {
-	// Create edge key
-	direction := "fwd"
-	if !isForward {
-		direction = "rev"
-	}
-	edgeKey := fmt.Sprintf("%s_%s", sessionKey, direction)
+func (uc *UpdateCoordinator) createSessionEdge(ctx context.Context, sessionKey, fromNodeID, toNodeID string, peerData map[string]interface{}, sessionType string) error {
+	// Extract session data
+	localIP, _ := peerData["local_ip"].(string)
+	remoteIP, _ := peerData["remote_ip"].(string)
+	localASN := getUint32FromInterface(peerData["local_asn"])
+	remoteASN := getUint32FromInterface(peerData["remote_asn"])
+	remoteBGPID, _ := peerData["remote_bgp_id"].(string)
+
+	// Create edge key matching original format: remote_bgp_id_remote_asn_remote_ip
+	// The original code uses this key format in both ipv4-graph and ipv6-graph
+	edgeKey := fmt.Sprintf("%s_%d_%s", remoteBGPID, remoteASN, remoteIP)
 
 	// Determine which graph collections to use based on IP version
 	isIPv4, _ := peerData["is_ipv4"].(bool)
@@ -219,19 +226,14 @@ func (uc *UpdateCoordinator) createSessionEdge(ctx context.Context, sessionKey, 
 		targetCollection = uc.db.ipv6Graph
 	}
 
-	// Extract session data
-	localIP, _ := peerData["local_ip"].(string)
-	remoteIP, _ := peerData["remote_ip"].(string)
-	localASN := getUint32FromInterface(peerData["local_asn"])
-	remoteASN := getUint32FromInterface(peerData["remote_asn"])
-
-	// Create session edge object
+	// Create session edge object matching original structure
 	sessionEdge := &IPGraphObject{
-		Key:           edgeKey,
-		From:          fromNodeID,
-		To:            toNodeID,
-		LocalIP:       localIP,
-		RemoteIP:      remoteIP,
+		Key:      edgeKey,
+		From:     fromNodeID,
+		To:       toNodeID,
+		LocalIP:  localIP,
+		RemoteIP: remoteIP,
+		// Store as LocalNodeASN and RemoteNodeASN to match the field names in types
 		LocalNodeASN:  localASN,
 		RemoteNodeASN: remoteASN,
 		Protocol:      fmt.Sprintf("BGP_%s", sessionType),
@@ -253,24 +255,24 @@ func (uc *UpdateCoordinator) createSessionEdge(ctx context.Context, sessionKey, 
 }
 
 func (uc *UpdateCoordinator) getBGPNodeID(ctx context.Context, bgpID string, asn uint32, ip string) (string, error) {
-	// Check if this ASN exists in IGP domain
-	igpASNExists, err := uc.checkIGPASNExists(ctx, asn)
+	// Check if this ASN exists in IGP domain using peer_asn
+	igpPeerASNExists, err := uc.checkIGPPeerASNExists(ctx, asn)
 	if err != nil {
 		return "", err
 	}
 
-	if igpASNExists {
+	if igpPeerASNExists {
 		// Return IGP node ID - look for IGP node with matching router_id or bgp_router_id
+		// This handles connections from IGP domain to external BGP peers
 		query := fmt.Sprintf(`
 			FOR node IN %s
-			FILTER (node.router_id == @routerId OR node.bgp_router_id == @routerId) AND node.asn == @asn
+			FILTER (node.router_id == @routerId OR node.bgp_router_id == @routerId)
 			LIMIT 1
 			RETURN node._id
 		`, uc.db.config.IGPNode)
 
 		bindVars := map[string]interface{}{
 			"routerId": bgpID,
-			"asn":      asn,
 		}
 
 		cursor, err := uc.db.db.Query(ctx, query, bindVars)
@@ -288,28 +290,65 @@ func (uc *UpdateCoordinator) getBGPNodeID(ctx context.Context, bgpID string, asn
 		}
 	}
 
-	// Return BGP node ID using original key format
+	// Return BGP node ID using original key format: router_id_asn
+	// Query bgp_node collection to find existing node by router_id (matching original logic)
+	query := fmt.Sprintf(`
+		FOR node IN %s
+		FILTER node.router_id == @routerId
+		LIMIT 1
+		RETURN node._id
+	`, uc.db.config.BGPNode)
+
+	bindVars := map[string]interface{}{
+		"routerId": bgpID,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return "", fmt.Errorf("failed to query BGP node ID: %w", err)
+	}
+	defer cursor.Close()
+
+	if cursor.HasMore() {
+		var nodeID string
+		if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
+			return "", fmt.Errorf("failed to read BGP node ID: %w", err)
+		}
+		return nodeID, nil
+	}
+
+	// If not found, construct the expected node ID
 	bgpNodeKey := fmt.Sprintf("%s_%d", bgpID, asn)
 	return fmt.Sprintf("%s/%s", uc.db.config.BGPNode, bgpNodeKey), nil
 }
 
 func (uc *UpdateCoordinator) removeBGPSessionEdges(ctx context.Context, sessionKey string) error {
-	// Remove both directions of the session edge
-	edgeKeys := []string{
-		fmt.Sprintf("%s_fwd", sessionKey),
-		fmt.Sprintf("%s_rev", sessionKey),
-	}
+	// Query and remove all edges related to this peer session
+	// Since we don't have the full peer data at deletion time, we query by session key pattern
+	// The sessionKey format from peer collection is typically "router_ip:peer_ip"
 
 	collections := []driver.Collection{uc.db.ipv4Graph, uc.db.ipv6Graph}
 
 	for _, collection := range collections {
-		for _, edgeKey := range edgeKeys {
-			if _, err := collection.RemoveDocument(ctx, edgeKey); err != nil {
-				if !driver.IsNotFoundGeneral(err) {
-					glog.Warningf("Failed to remove session edge %s from %s: %v", edgeKey, collection.Name(), err)
-				}
-			}
+		// Query for edges where local_ip or remote_ip match the session IPs
+		// This is safer than trying to construct exact keys
+		query := fmt.Sprintf(`
+			FOR edge IN %s
+			FILTER edge.protocol LIKE "BGP_%%"
+			FILTER CONTAINS(edge._key, @sessionKey)
+			REMOVE edge IN %s
+		`, collection.Name(), collection.Name())
+
+		bindVars := map[string]interface{}{
+			"sessionKey": sessionKey,
 		}
+
+		cursor, err := uc.db.db.Query(ctx, query, bindVars)
+		if err != nil {
+			glog.Warningf("Failed to query session edges for %s in %s: %v", sessionKey, collection.Name(), err)
+			continue
+		}
+		cursor.Close()
 	}
 
 	glog.V(8).Infof("Removed BGP session edges for: %s", sessionKey)
@@ -333,36 +372,6 @@ func getUint32FromInterface(v interface{}) uint32 {
 		}
 	}
 	return 0
-}
-
-// addRemoteIPToBGPNode adds a remote IP to existing BGP node's RemoteIPs array
-func (uc *UpdateCoordinator) addRemoteIPToBGPNode(ctx context.Context, nodeKey, remoteIP string) error {
-	// Read existing node
-	var existingNode BGPNode
-	_, err := uc.db.bgpNode.ReadDocument(ctx, nodeKey, &existingNode)
-	if err != nil {
-		return fmt.Errorf("failed to read existing BGP node: %w", err)
-	}
-
-	// Check if remote IP already exists
-	for _, ip := range existingNode.RemoteIPs {
-		if ip == remoteIP {
-			glog.V(9).Infof("Remote IP %s already exists in BGP node %s", remoteIP, nodeKey)
-			return nil
-		}
-	}
-
-	// Add new remote IP
-	existingNode.RemoteIPs = append(existingNode.RemoteIPs, remoteIP)
-
-	// Update node
-	_, err = uc.db.bgpNode.UpdateDocument(ctx, nodeKey, &existingNode)
-	if err != nil {
-		return fmt.Errorf("failed to update BGP node with new remote IP: %w", err)
-	}
-
-	glog.V(8).Infof("Added remote IP %s to BGP node %s", remoteIP, nodeKey)
-	return nil
 }
 
 func getStringFromPeerData(data map[string]interface{}, key string) string {

@@ -54,6 +54,12 @@ func init() {
 	flag.StringVar(&dbUser, "database-user", "", "DB User name")
 	flag.StringVar(&dbPass, "database-pass", "", "DB User's password")
 
+	// flag.StringVar(&msgSrvAddr, "message-server", "198.18.133.112:30092", "URL to the messages supplying server")
+	// flag.StringVar(&dbSrvAddr, "database-server", "http://198.18.133.112:30852", "{dns name}:port or X.X.X.X:port of the graph database")
+	// flag.StringVar(&dbName, "database-name", "jalapeno", "DB name")
+	// flag.StringVar(&dbUser, "database-user", "root", "DB User name")
+	// flag.StringVar(&dbPass, "database-pass", "jalapeno", "DB User's password")
+
 	flag.StringVar(&lsprefix, "ls_prefix", "ls_prefix", "ls_prefix Collection name, default: \"ls_prefix\"")
 	flag.StringVar(&lslink, "ls_link", "ls_link", "ls_link Collection name, default \"ls_link\"")
 	flag.StringVar(&lssrv6sid, "ls_srv6_sid", "ls_srv6_sid", "ls_srv6_sid Collection name, default: \"ls_srv6_sid\"")

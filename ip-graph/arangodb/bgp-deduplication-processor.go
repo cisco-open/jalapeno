@@ -162,14 +162,16 @@ func (bdp *BGPDeduplicationProcessor) processInternetIPv4Prefixes(ctx context.Co
 	glog.V(7).Info("Processing Internet IPv4 prefixes...")
 
 	// Based on original ipv4-graph logic
+	// Note: Original used 'u.remote_asn != u.origin_as' but remote_asn doesn't exist in unicast_prefix
+	// This effectively made it a no-op, capturing all prefixes including direct announcements
+	// Removed the peer_asn != origin_as filter to match original behavior and capture direct announcements
 	query := `
 		FOR u IN unicast_prefix_v4 
-		LET internal_asns = (FOR l IN igp_node RETURN l.asn) 
+		LET internal_asns = (FOR l IN igp_node RETURN l.peer_asn) 
 		FILTER u.peer_asn NOT IN internal_asns 
 		FILTER u.peer_asn NOT IN 64512..65535 
 		FILTER u.origin_as NOT IN 64512..65535 
 		FILTER u.prefix_len < 30 
-		FILTER u.peer_asn != u.origin_as 
 		INSERT { 
 			_key: CONCAT_SEPARATOR("_", u.prefix, u.prefix_len), 
 			prefix: u.prefix, 
@@ -309,15 +311,18 @@ func (bdp *BGPDeduplicationProcessor) processEBGP4BytePrivateIPv6Prefixes(ctx co
 func (bdp *BGPDeduplicationProcessor) processInternetIPv6Prefixes(ctx context.Context) error {
 	glog.V(7).Info("Processing Internet IPv6 prefixes...")
 
+	// Based on original ipv6-graph logic
+	// Note: Original used 'u.remote_asn != u.origin_as' but remote_asn doesn't exist in unicast_prefix
+	// This effectively made it a no-op, capturing all prefixes including direct announcements
+	// Removed the peer_asn != origin_as filter to match original behavior and capture direct announcements
 	query := `
 		FOR u IN unicast_prefix_v6 
-		LET internal_asns = (FOR l IN igp_node RETURN l.asn) 
+		LET internal_asns = (FOR l IN igp_node RETURN l.peer_asn) 
 		FILTER u.peer_asn NOT IN internal_asns 
 		FILTER u.peer_asn NOT IN 64512..65535 
 		FILTER u.peer_asn NOT IN 4200000000..4294967294 
 		FILTER u.origin_as NOT IN 64512..65535 
 		FILTER u.prefix_len < 96 
-		FILTER u.peer_asn != u.origin_as 
 		INSERT { 
 			_key: CONCAT_SEPARATOR("_", u.prefix, u.prefix_len), 
 			prefix: u.prefix, 

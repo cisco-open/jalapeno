@@ -71,14 +71,13 @@ type IPGraphObject struct {
 	PrefixAttrTLVs interface{} `json:"prefix_attr_tlvs,omitempty"`
 }
 
-// BGPNode represents a BGP peer/router in the topology (enhanced with RemoteIPs)
+// BGPNode represents a BGP peer/router in the topology
 type BGPNode struct {
-	Key       string   `json:"_key,omitempty"`
-	ID        string   `json:"_id,omitempty"`
-	Rev       string   `json:"_rev,omitempty"`
-	RouterID  string   `json:"router_id,omitempty"`
-	ASN       uint32   `json:"asn"`
-	RemoteIPs []string `json:"remote_ips,omitempty"` // All peer IPs for this RouterID
+	Key      string `json:"_key,omitempty"`
+	ID       string `json:"_id,omitempty"`
+	Rev      string `json:"_rev,omitempty"`
+	RouterID string `json:"router_id,omitempty"` // Use router_id to match original format
+	ASN      uint32 `json:"asn"`                 // Keep as uint32 for compatibility
 }
 
 // BGPPrefix represents a BGP prefix in the topology

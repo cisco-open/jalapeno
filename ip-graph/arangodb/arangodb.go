@@ -36,6 +36,7 @@ type arangoDB struct {
 	// Processing components
 	batchProcessor    *BatchProcessor
 	updateCoordinator *UpdateCoordinator
+	igpSyncProcessor  *IGPSyncProcessor
 
 	// Control channels
 	stop    chan struct{}
@@ -212,6 +213,11 @@ func (a *arangoDB) Start() error {
 		return fmt.Errorf("failed to start update coordinator: %w", err)
 	}
 
+	// Initialize and start IGP sync processor for periodic reconciliation
+	a.igpSyncProcessor = NewIGPSyncProcessor(a)
+	a.igpSyncProcessor.StartReconciliation()
+	glog.Info("IGP topology reconciliation started")
+
 	// Start monitoring goroutine
 	go a.monitor()
 
@@ -233,6 +239,11 @@ func (a *arangoDB) Stop() error {
 
 	// Stop components
 	close(a.stop)
+
+	if a.igpSyncProcessor != nil {
+		a.igpSyncProcessor.StopReconciliation()
+		glog.Info("IGP topology reconciliation stopped")
+	}
 
 	if a.updateCoordinator != nil {
 		a.updateCoordinator.Stop()
@@ -288,14 +299,15 @@ func (a *arangoDB) copyIGPGraphData(ctx context.Context) error {
 		return nil // Continue without IGP data
 	}
 
-	// Use the dedicated IGP copy processor for enhanced copying logic
-	igpCopyProcessor := NewIGPCopyProcessor(a)
-	if err := igpCopyProcessor.CopyIGPGraphsToFullTopology(ctx); err != nil {
-		glog.Warningf("Failed to copy IGP graphs (continuing with BGP-only): %v", err)
+	// Use the IGP sync processor to copy edges from igpv4_graph/igpv6_graph to ipv4_graph/ipv6_graph
+	// This syncs the already-processed IGP topology from igp-graph processor
+	igpSyncProcessor := NewIGPSyncProcessor(a)
+	if err := igpSyncProcessor.InitialIGPSync(ctx); err != nil {
+		glog.Warningf("Failed to sync IGP graphs (continuing with BGP-only): %v", err)
 		return nil // Continue without IGP data rather than failing
 	}
 
-	glog.Info("IGP graph data copied to IP graphs successfully")
+	glog.Info("IGP graph data synced to IP graphs successfully")
 	return nil
 }
 
@@ -404,7 +416,12 @@ func (a *arangoDB) loadInitialBGPData(ctx context.Context) error {
 		return nil // Continue without BGP data
 	}
 
-	// Step 1: Process BGP peer sessions and create BGP nodes
+	// Step 1: Create BGP nodes using bulk query (matching original logic)
+	if err := a.createInitialBGPNodes(ctx); err != nil {
+		glog.Warningf("Failed to create initial BGP nodes (continuing): %v", err)
+	}
+
+	// Step 2: Process BGP peer sessions to create session edges
 	if err := a.loadInitialPeers(ctx); err != nil {
 		glog.Warningf("Failed to load initial peers (continuing): %v", err)
 	}
@@ -507,6 +524,32 @@ func (a *arangoDB) applyBGPPrecedenceIPv6(ctx context.Context) error {
 	defer cursor.Close()
 
 	glog.V(7).Info("IPv6 BGP precedence applied")
+	return nil
+}
+
+func (a *arangoDB) createInitialBGPNodes(ctx context.Context) error {
+	glog.V(6).Info("Creating initial BGP nodes using bulk query (matching original logic)...")
+
+	// Create BGP nodes for all remote peers NOT in IGP domain (using peer_asn)
+	// This matches the original query exactly
+	bgpNodeQuery := fmt.Sprintf(`
+		FOR p IN peer 
+		LET igp_asns = (FOR n IN %s RETURN n.peer_asn)
+		FILTER p.remote_asn NOT IN igp_asns
+		INSERT { 
+			_key: CONCAT_SEPARATOR("_", p.remote_bgp_id, p.remote_asn),
+			router_id: p.remote_bgp_id,
+			asn: p.remote_asn
+		} INTO %s OPTIONS { ignoreErrors: true }
+	`, a.config.IGPNode, a.config.BGPNode)
+
+	cursor, err := a.db.Query(ctx, bgpNodeQuery, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create BGP nodes: %w", err)
+	}
+	defer cursor.Close()
+
+	glog.V(6).Info("Initial BGP nodes created successfully")
 	return nil
 }
 

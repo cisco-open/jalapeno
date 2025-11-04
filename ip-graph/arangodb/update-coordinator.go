@@ -202,18 +202,20 @@ func (uc *UpdateCoordinator) prefixUpdateWorker() {
 func (uc *UpdateCoordinator) processIGPUpdate(msg *ProcessingMessage) error {
 	glog.V(7).Infof("Processing IGP update: %s action: %s", msg.Key, msg.Action)
 
-	// TODO: Implement IGP sync logic
-	// This will sync changes from igpv4_graph/igpv6_graph to ipv4_graph/ipv6_graph
+	// Sync changes from igpv4_graph/igpv6_graph (maintained by igp-graph processor)
+	// to ipv4_graph/ipv6_graph (full topology maintained by ip-graph processor)
+
+	igpSync := NewIGPSyncProcessor(uc.db)
 
 	switch msg.Type {
 	case bmp.LSNodeMsg:
-		return uc.processIGPNodeUpdate(msg)
+		return igpSync.syncIGPNodeUpdate(context.TODO(), msg.Key, msg.Action)
 	case bmp.LSLinkMsg:
-		return uc.processIGPLinkUpdate(msg)
+		return uc.processIGPLinkUpdate(msg, igpSync)
 	case bmp.LSPrefixMsg:
-		return uc.processIGPPrefixUpdate(msg)
+		return igpSync.syncIGPPrefixUpdate(context.TODO(), msg.Key, msg.Action)
 	case bmp.LSSRv6SIDMsg:
-		return uc.processIGPSRv6Update(msg)
+		return igpSync.syncIGPSRv6Update(context.TODO(), msg.Key, msg.Action)
 	}
 
 	return nil
@@ -229,6 +231,12 @@ func (uc *UpdateCoordinator) processBGPUpdate(msg *ProcessingMessage) error {
 func (uc *UpdateCoordinator) processPrefixUpdate(msg *ProcessingMessage) error {
 	glog.V(7).Infof("Processing prefix update: %s action: %s", msg.Key, msg.Action)
 
+	// Skip messages with empty keys (malformed BMP messages)
+	if msg.Key == "" {
+		glog.V(6).Info("Skipping prefix update with empty key (malformed BMP message)")
+		return nil
+	}
+
 	// Process BGP unicast prefixes
 	if err := uc.processBGPPrefixUpdate(msg); err != nil {
 		return err
@@ -243,37 +251,32 @@ func (uc *UpdateCoordinator) processPrefixUpdate(msg *ProcessingMessage) error {
 	return nil
 }
 
-// IGP sync processing methods
-func (uc *UpdateCoordinator) processIGPNodeUpdate(msg *ProcessingMessage) error {
-	// Sync IGP node changes to full topology
-	return uc.syncIGPNodeUpdate(context.TODO(), msg.Key, msg.Action)
-}
-
-func (uc *UpdateCoordinator) processIGPLinkUpdate(msg *ProcessingMessage) error {
+// IGP sync processing methods (delegated to IGPSyncProcessor)
+func (uc *UpdateCoordinator) processIGPLinkUpdate(msg *ProcessingMessage, igpSync *IGPSyncProcessor) error {
 	// Sync IGP link changes to full topology
 	// Determine if this is IPv4 or IPv6 based on message data
 	isIPv4 := true
 	if mtidData, ok := msg.Data["mt_id_tlv"]; ok {
-		if mtidMap, ok := mtidData.(map[string]interface{}); ok {
+		// Handle both array and object formats
+		if mtidArray, ok := mtidData.([]interface{}); ok {
+			// Array format: search for mt_id = 2
+			for _, mtItem := range mtidArray {
+				if mtObj, ok := mtItem.(map[string]interface{}); ok {
+					if mtid, ok := mtObj["mt_id"].(float64); ok && mtid == 2 {
+						isIPv4 = false
+						break
+					}
+				}
+			}
+		} else if mtidMap, ok := mtidData.(map[string]interface{}); ok {
+			// Object format: direct check
 			if mtid, ok := mtidMap["mt_id"].(float64); ok && mtid == 2 {
 				isIPv4 = false
 			}
 		}
 	}
 
-	return uc.syncIGPLinkUpdate(context.TODO(), msg.Key, msg.Action, isIPv4)
-}
-
-func (uc *UpdateCoordinator) processIGPPrefixUpdate(msg *ProcessingMessage) error {
-	// TODO: Sync IGP prefix changes to full topology
-	glog.V(8).Infof("IGP prefix update: %s", msg.Key)
-	return nil
-}
-
-func (uc *UpdateCoordinator) processIGPSRv6Update(msg *ProcessingMessage) error {
-	// TODO: Sync IGP SRv6 changes to full topology
-	glog.V(8).Infof("IGP SRv6 update: %s", msg.Key)
-	return nil
+	return igpSync.syncIGPLinkUpdate(context.TODO(), msg.Key, msg.Action, isIPv4)
 }
 
 // handlePrefixConflictUpdate handles real-time IGP-BGP prefix conflict resolution

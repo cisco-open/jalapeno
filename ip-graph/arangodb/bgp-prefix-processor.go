@@ -32,10 +32,28 @@ func (uc *UpdateCoordinator) processPrefixAdvertisement(ctx context.Context, key
 	prefixLen := getUint32FromInterface(prefixData["prefix_len"])
 	originAS := getUint32FromInterface(prefixData["origin_as"])
 	peerASN := getUint32FromInterface(prefixData["peer_asn"])
+	peerIP := getStringFromData(prefixData, "peer_ip")
 	isIPv4, _ := prefixData["is_ipv4"].(bool)
 
-	if prefix == "" || originAS == 0 {
-		return fmt.Errorf("invalid prefix data: missing prefix or origin_as")
+	// If origin_as is missing, try to extract it from the AS path
+	if originAS == 0 {
+		originAS = uc.extractOriginASFromPath(prefixData)
+		if originAS != 0 {
+			glog.V(7).Infof("Extracted origin_as %d from AS path for prefix %s/%d", originAS, prefix, prefixLen)
+			prefixData["origin_as"] = originAS // Update the map for downstream use
+		}
+	}
+
+	if prefix == "" {
+		glog.Warningf("Invalid prefix data for key %s: prefix is empty (peer_ip: %s, peer_asn: %d, origin_as: %d)",
+			key, peerIP, peerASN, originAS)
+		return fmt.Errorf("invalid prefix data: missing prefix")
+	}
+
+	if originAS == 0 {
+		glog.Warningf("Invalid prefix data for key %s: origin_as is 0 (prefix: %s/%d, peer_ip: %s, peer_asn: %d)",
+			key, prefix, prefixLen, peerIP, peerASN)
+		return fmt.Errorf("invalid prefix data: missing origin_as")
 	}
 
 	// Use consistent key format (prefix_prefixlen) to match initial loading
@@ -67,12 +85,24 @@ func (uc *UpdateCoordinator) processPrefixWithdrawal(ctx context.Context, key st
 	prefix, _ := prefixData["prefix"].(string)
 	prefixLen := getUint32FromInterface(prefixData["prefix_len"])
 	originAS := getUint32FromInterface(prefixData["origin_as"])
+	peerASN := getUint32FromInterface(prefixData["peer_asn"])
+	peerIP, _ := prefixData["peer_ip"].(string)
 	isIPv4, _ := prefixData["is_ipv4"].(bool)
+
+	// If origin_as is missing, try to extract it from the AS path
+	if originAS == 0 {
+		originAS = uc.extractOriginASFromPath(prefixData)
+		if originAS != 0 {
+			glog.V(7).Infof("Extracted origin_as %d from AS path for withdrawal of prefix %s/%d", originAS, prefix, prefixLen)
+			prefixData["origin_as"] = originAS // Update the map for downstream use
+		}
+	}
 
 	// Use consistent key format (prefix_prefixlen) to match initial loading
 	consistentKey := fmt.Sprintf("%s_%d", prefix, prefixLen)
 
-	glog.Infof("Withdrawing BGP prefix: %s/%d from AS%d (BMP key: %s, consistent key: %s)", prefix, prefixLen, originAS, key, consistentKey)
+	glog.Infof("Withdrawing BGP prefix: %s/%d from AS%d via peer %s (AS%d) (BMP key: %s, consistent key: %s)",
+		prefix, prefixLen, originAS, peerIP, peerASN, key, consistentKey)
 
 	// Determine if this was node metadata or separate vertex
 	if uc.shouldAttachAsNodeMetadata(prefixLen, isIPv4) {
@@ -83,8 +113,41 @@ func (uc *UpdateCoordinator) processPrefixWithdrawal(ctx context.Context, key st
 		}
 		return uc.removePrefixFromOriginNode(ctx, prefix, prefixLen, originAS, isIPv4)
 	} else {
-		// For transit prefixes - remove vertex and edges
-		return uc.removeBGPPrefixVertex(ctx, consistentKey, prefixData, isIPv4)
+		// For transit prefixes - remove edges from specific peer only
+		return uc.removeBGPPrefixFromPeer(ctx, consistentKey, prefixData, isIPv4)
+	}
+}
+
+// extractOriginASFromPath extracts the origin AS from the base_attrs.as_path
+// The origin AS is the last AS in the AS path
+func (uc *UpdateCoordinator) extractOriginASFromPath(prefixData map[string]interface{}) uint32 {
+	baseAttrs, ok := prefixData["base_attrs"].(map[string]interface{})
+	if !ok {
+		return 0
+	}
+
+	asPath, ok := baseAttrs["as_path"].([]interface{})
+	if !ok || len(asPath) == 0 {
+		return 0
+	}
+
+	// The origin AS is the last AS in the path
+	lastAS := asPath[len(asPath)-1]
+
+	// Handle both float64 (from JSON) and int
+	switch v := lastAS.(type) {
+	case float64:
+		return uint32(v)
+	case int:
+		return uint32(v)
+	case int32:
+		return uint32(v)
+	case uint32:
+		return v
+	case int64:
+		return uint32(v)
+	default:
+		return 0
 	}
 }
 
@@ -152,10 +215,10 @@ func (uc *UpdateCoordinator) findOriginNode(ctx context.Context, originAS uint32
 }
 
 func (uc *UpdateCoordinator) findIGPNodeByASN(ctx context.Context, asn uint32) (string, error) {
-	// Query IGP nodes for matching ASN
+	// Query IGP nodes for matching peer_asn (the AS of the IGP domain)
 	query := fmt.Sprintf(`
 		FOR node IN %s
-		FILTER node.asn == @asn
+		FILTER node.peer_asn == @asn
 		LIMIT 1
 		RETURN node._id
 	`, uc.db.config.IGPNode)
@@ -182,11 +245,14 @@ func (uc *UpdateCoordinator) findIGPNodeByASN(ctx context.Context, asn uint32) (
 }
 
 func (uc *UpdateCoordinator) findBGPNodeByASN(ctx context.Context, asn uint32) (string, error) {
-	// Query BGP nodes for matching ASN (prefer real peer nodes over origin nodes)
+	// Query BGP nodes for matching ASN
+	// Prefer real peer nodes (with router_id) over artificial origin nodes
 	query := fmt.Sprintf(`
 		FOR node IN %s
 		FILTER node.asn == @asn
-		FILTER node.node_type == "bgp"  // Prefer real BGP peer nodes
+		FILTER node.router_id != null AND node.router_id != ""
+		FILTER !STARTS_WITH(node._key, "bgp_") OR !CONTAINS(node._key, "_origin")
+		SORT node.router_id ASC
 		LIMIT 1
 		RETURN node._id
 	`, uc.db.config.BGPNode)
@@ -337,6 +403,9 @@ func (uc *UpdateCoordinator) createBGPPrefixVertex(ctx context.Context, key stri
 		}
 	}
 
+	// Add the _key field to prefixData for edge creation (needed by createBidirectionalPrefixEdges)
+	prefixData["_key"] = key
+
 	// Create edge from origin node to prefix vertex
 	if err := uc.createPrefixToOriginEdge(ctx, key, prefixData, isIPv4); err != nil {
 		return fmt.Errorf("failed to create prefix-to-origin edge: %w", err)
@@ -432,6 +501,131 @@ func (uc *UpdateCoordinator) removePrefixFromOriginNode(ctx context.Context, pre
 	return nil
 }
 
+// removeBGPPrefixFromPeer removes edges between a specific peer and a prefix
+// Only removes the prefix vertex if no more peers are advertising it
+func (uc *UpdateCoordinator) removeBGPPrefixFromPeer(ctx context.Context, key string, prefixData map[string]interface{}, isIPv4 bool) error {
+	// Determine target collections
+	var prefixCollection driver.Collection
+	var graphCollection driver.Collection
+	var prefixCollectionName string
+
+	if isIPv4 {
+		prefixCollection = uc.db.bgpPrefixV4
+		graphCollection = uc.db.ipv4Graph
+		prefixCollectionName = uc.db.config.BGPPrefixV4
+	} else {
+		prefixCollection = uc.db.bgpPrefixV6
+		graphCollection = uc.db.ipv6Graph
+		prefixCollectionName = uc.db.config.BGPPrefixV6
+	}
+
+	prefixVertexID := fmt.Sprintf("%s/%s", prefixCollectionName, key)
+
+	// Find the specific BGP peer node that withdrew this prefix
+	peerIP := getStringFromData(prefixData, "peer_ip")
+	peerASN := getUint32FromInterface(prefixData["peer_asn"])
+	originAS := getUint32FromInterface(prefixData["origin_as"])
+	prefix := getStringFromData(prefixData, "prefix")
+	prefixLen := getUint32FromInterface(prefixData["prefix_len"])
+
+	glog.V(7).Infof("DEBUG: Finding BGP peer that withdrew prefix %s/%d (peer_ip: %s, peer_asn: %d, origin_as: %d)",
+		prefix, prefixLen, peerIP, peerASN, originAS)
+
+	// Find the advertising peer node ID (reuse existing logic)
+	peerNodeIDs, err := uc.findAdvertisingBGPPeer(ctx, prefix, prefixLen, originAS, peerASN, prefixData)
+	if err != nil {
+		glog.Warningf("Failed to find peer node for withdrawal: %v", err)
+		return nil // Don't fail the withdrawal
+	}
+
+	if len(peerNodeIDs) == 0 {
+		glog.V(6).Infof("No peer node found for prefix %s withdrawal from %s - may already be removed", key, peerIP)
+		return nil
+	}
+
+	// Remove edges only between this specific peer and the prefix
+	edgesRemoved := 0
+	for _, peerNodeID := range peerNodeIDs {
+		glog.V(7).Infof("DEBUG: Removing edges between peer %s and prefix %s", peerNodeID, prefixVertexID)
+
+		// Find edges specifically for this peer-prefix pair
+		edgeQuery := fmt.Sprintf(`
+			FOR edge IN %s
+			FILTER (edge._from == @peerNode AND edge._to == @prefixVertex) OR
+			       (edge._from == @prefixVertex AND edge._to == @peerNode)
+			RETURN edge._key
+		`, graphCollection.Name())
+
+		bindVars := map[string]interface{}{
+			"peerNode":     peerNodeID,
+			"prefixVertex": prefixVertexID,
+		}
+
+		cursor, err := uc.db.db.Query(ctx, edgeQuery, bindVars)
+		if err != nil {
+			glog.Warningf("Failed to query edges for peer %s and prefix %s: %v", peerNodeID, key, err)
+			continue
+		}
+
+		for cursor.HasMore() {
+			var edgeKey string
+			if _, err := cursor.ReadDocument(ctx, &edgeKey); err != nil {
+				continue
+			}
+
+			if _, err := graphCollection.RemoveDocument(ctx, edgeKey); err != nil {
+				if !driver.IsNotFoundGeneral(err) {
+					glog.V(6).Infof("Failed to remove edge %s: %v", edgeKey, err)
+				}
+			} else {
+				edgesRemoved++
+				glog.V(7).Infof("Removed edge %s between peer %s and prefix %s", edgeKey, peerNodeID, key)
+			}
+		}
+		cursor.Close()
+	}
+
+	glog.V(7).Infof("Removed %d edges for prefix %s from peer %s", edgesRemoved, key, peerIP)
+
+	// Check if any edges remain for this prefix
+	remainingEdgesQuery := fmt.Sprintf(`
+		FOR edge IN %s
+		FILTER edge._to == @prefixVertex OR edge._from == @prefixVertex
+		LIMIT 1
+		RETURN edge._key
+	`, graphCollection.Name())
+
+	bindVars := map[string]interface{}{
+		"prefixVertex": prefixVertexID,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, remainingEdgesQuery, bindVars)
+	if err != nil {
+		glog.Warningf("Failed to check remaining edges for prefix %s: %v", key, err)
+		return nil
+	}
+	defer cursor.Close()
+
+	hasRemainingEdges := cursor.HasMore()
+
+	if !hasRemainingEdges {
+		// No more peers advertising this prefix - remove the vertex
+		glog.V(7).Infof("No more peers advertising prefix %s - removing vertex", key)
+		if _, err := prefixCollection.RemoveDocument(ctx, key); err != nil {
+			if !driver.IsNotFoundGeneral(err) {
+				glog.Warningf("Failed to remove BGP prefix vertex %s: %v", key, err)
+			}
+		} else {
+			glog.V(7).Infof("Removed BGP prefix vertex: %s", key)
+		}
+	} else {
+		glog.V(7).Infof("Prefix %s still advertised by other peers - keeping vertex", key)
+	}
+
+	return nil
+}
+
+// removeBGPPrefixVertex removes a BGP prefix vertex and all its edges (for cleanup/legacy use)
 func (uc *UpdateCoordinator) removeBGPPrefixVertex(ctx context.Context, key string, prefixData map[string]interface{}, isIPv4 bool) error {
 	// Determine target collections
 	var prefixCollection driver.Collection
