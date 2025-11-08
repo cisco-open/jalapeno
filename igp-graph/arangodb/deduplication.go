@@ -98,14 +98,110 @@ func (a *arangoDB) dedupeIGPNode() error {
 	return nil
 }
 
-// runDeduplication runs the deduplication process and logs results
-func (a *arangoDB) runDeduplication() error {
-	glog.Info("Starting IGP node deduplication process...")
+// dedupeIGPPrefix removes duplicate prefix entries in the ls_prefix collection
+// ISIS generates both Level-1 and Level-2 entries when prefixes are re-advertised
+// This function keeps only the original prefix (Level 1, r_flag: false) and removes
+// re-advertised duplicates (Level 2, r_flag: true) to ensure prefixes are attached
+// to their true originating routers
+func (a *arangoDB) dedupeIGPPrefix() error {
+	ctx := context.TODO()
 
-	if err := a.dedupeIGPNode(); err != nil {
-		return fmt.Errorf("deduplication failed: %w", err)
+	// Query to find duplicate prefixes (same prefix, prefix_len, domain_id)
+	// For each duplicate set, remove entries with higher protocol_id or r_flag: true
+	dupQuery := fmt.Sprintf(`
+		FOR p IN %s
+		LET prefix_key = CONCAT(p.prefix, "_", p.prefix_len, "_", p.domain_id)
+		COLLECT pk = prefix_key INTO duplicates = {
+			_key: p._key,
+			protocol_id: p.protocol_id,
+			igp_router_id: p.igp_router_id,
+			prefix: p.prefix,
+			prefix_len: p.prefix_len,
+			r_flag: p.prefix_attr_tlvs.flags.r_flag
+		}
+		FILTER LENGTH(duplicates) > 1
+		LET originals = (
+			FOR d IN duplicates
+			FILTER d.r_flag == false OR d.protocol_id == 1
+			RETURN d
+		)
+		LET readvertised = (
+			FOR d IN duplicates
+			FILTER d.r_flag == true OR d.protocol_id == 2
+			RETURN d
+		)
+		FILTER LENGTH(originals) > 0 AND LENGTH(readvertised) > 0
+		FOR reAdv IN readvertised
+		RETURN {
+			_key: reAdv._key,
+			prefix: reAdv.prefix,
+			prefix_len: reAdv.prefix_len,
+			protocol_id: reAdv.protocol_id,
+			igp_router_id: reAdv.igp_router_id,
+			r_flag: reAdv.r_flag
+		}
+	`, "ls_prefix")
+
+	glog.V(6).Infof("ISIS prefix deduplication query: %s", dupQuery)
+
+	cursor, err := a.db.Query(ctx, dupQuery, nil)
+	if err != nil {
+		return fmt.Errorf("failed to execute prefix deduplication query: %w", err)
+	}
+	defer cursor.Close()
+
+	collection, err := a.db.Collection(ctx, "ls_prefix")
+	if err != nil {
+		return fmt.Errorf("failed to get ls_prefix collection: %w", err)
 	}
 
-	glog.Info("IGP node deduplication completed successfully")
+	count := 0
+	for {
+		var doc map[string]interface{}
+		_, err := cursor.ReadDocument(ctx, &doc)
+		if err != nil {
+			if driver.IsNoMoreDocuments(err) {
+				break
+			}
+			return fmt.Errorf("error reading duplicate prefix document: %w", err)
+		}
+
+		prefixKey, _ := doc["_key"].(string)
+		prefix, _ := doc["prefix"].(string)
+		prefixLen, _ := doc["prefix_len"].(float64)
+		protocolID, _ := doc["protocol_id"].(float64)
+		routerID, _ := doc["igp_router_id"].(string)
+
+		glog.Infof("Removing re-advertised duplicate prefix: %s/%d from router %s (protocol_id: %d)",
+			prefix, int(prefixLen), routerID, int(protocolID))
+
+		if _, err := collection.RemoveDocument(ctx, prefixKey); err != nil {
+			if !driver.IsNotFound(err) {
+				return fmt.Errorf("failed to remove duplicate prefix %s: %w", prefixKey, err)
+			}
+		}
+		count++
+	}
+
+	if count > 0 {
+		glog.Infof("Removed %d re-advertised prefix duplicates", count)
+	}
+
+	return nil
+}
+
+// runDeduplication runs the deduplication process and logs results
+func (a *arangoDB) runDeduplication() error {
+	glog.Info("Starting IGP deduplication process...")
+
+	if err := a.dedupeIGPNode(); err != nil {
+		return fmt.Errorf("node deduplication failed: %w", err)
+	}
+
+	if err := a.dedupeIGPPrefix(); err != nil {
+		return fmt.Errorf("prefix deduplication failed: %w", err)
+	}
+
+	glog.Info("IGP deduplication completed successfully")
 	return nil
 }

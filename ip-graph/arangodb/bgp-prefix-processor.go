@@ -692,54 +692,81 @@ func (uc *UpdateCoordinator) removeBGPPrefixVertex(ctx context.Context, key stri
 
 // findBGPPeerNodesForPrefix finds BGP peer nodes that should advertise this prefix
 func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, originAS, peerASN uint32, prefixData map[string]interface{}) ([]string, error) {
-	var peerNodeIDs []string
-
 	// Get prefix type to determine attachment strategy
 	prefix := getStringFromData(prefixData, "prefix")
 	prefixLen := getUint32FromInterface(prefixData["prefix_len"])
-	prefixType := uc.classifyBGPPrefix(prefix, prefixLen, originAS, peerASN, true)
 
-	glog.V(7).Infof("Finding BGP peers for prefix %s/%d (type: %s, origin AS: %d, peer ASN: %d)", prefix, prefixLen, prefixType, originAS, peerASN)
+	glog.V(7).Infof("Finding nodes for prefix %s/%d (origin AS: %d, peer ASN: %d)", prefix, prefixLen, originAS, peerASN)
 
-	switch prefixType {
-	case "ebgp_peer_centric":
-		// All prefixes (both private and public ASN) connect to the BGP peer that advertised them
-		// This matches the working initial loading logic
-		return uc.findAdvertisingBGPPeer(ctx, prefix, prefixLen, originAS, peerASN, prefixData)
+	// Check if this prefix originates from the internal IGP network
+	// If origin_as matches an IGP peer_asn, attach to IGP nodes instead of BGP peers
+	isIGPOrigin, err := uc.checkIfIGPOrigin(ctx, originAS)
+	if err != nil {
+		glog.Warningf("Failed to check if AS%d is IGP origin: %v", originAS, err)
 	}
 
-	glog.V(7).Infof("Found %d BGP peer nodes for prefix %s/%d (type: %s)", len(peerNodeIDs), prefix, prefixLen, prefixType)
-
-	// Enhanced debug logging for missing prefixes
-	if len(peerNodeIDs) == 0 {
-		peerIP := getStringFromData(prefixData, "peer_ip")
-		glog.Warningf("No BGP peer nodes found for prefix %s/%d (type: %s, origin AS: %d, peer ASN: %d, peer IP: %s)",
-			prefix, prefixLen, prefixType, originAS, peerASN, peerIP)
-
-		// Debug: Check what BGP nodes exist for this ASN
-		debugQuery := fmt.Sprintf(`
-				FOR node IN %s
-				FILTER node.asn == @peer_asn
-				RETURN {_id: node._id, router_id: node.router_id, asn: node.asn, tier: node.tier}
-			`, uc.db.config.BGPNode)
-
-		debugBindVars := map[string]interface{}{
-			"peer_asn": peerASN,
-		}
-
-		if debugCursor, err := uc.db.db.Query(ctx, debugQuery, debugBindVars); err == nil {
-			defer debugCursor.Close()
-			glog.Warningf("Available BGP nodes for ASN %d:", peerASN)
-			for debugCursor.HasMore() {
-				var nodeInfo map[string]interface{}
-				if _, err := debugCursor.ReadDocument(ctx, &nodeInfo); err == nil {
-					glog.Warningf("  - Node: %v", nodeInfo)
-				}
-			}
-		}
+	if isIGPOrigin {
+		glog.V(6).Infof("Prefix %s/%d originates from internal IGP (AS%d) - attaching to IGP nodes", prefix, prefixLen, originAS)
+		return uc.findIGPNodesForPrefix(ctx, originAS)
 	}
 
-	return peerNodeIDs, nil
+	// For external prefixes, use peer-centric approach
+	glog.V(7).Infof("Prefix %s/%d is external (origin AS: %d) - attaching to advertising BGP peer", prefix, prefixLen, originAS)
+	return uc.findAdvertisingBGPPeer(ctx, prefix, prefixLen, originAS, peerASN, prefixData)
+}
+
+// checkIfIGPOrigin checks if the given ASN is an IGP peer_asn (internal network)
+func (uc *UpdateCoordinator) checkIfIGPOrigin(ctx context.Context, originAS uint32) (bool, error) {
+	query := fmt.Sprintf(`
+		FOR node IN %s
+		FILTER node.peer_asn == @asn
+		LIMIT 1
+		RETURN node.peer_asn
+	`, uc.db.config.IGPNode)
+
+	bindVars := map[string]interface{}{
+		"asn": originAS,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return false, fmt.Errorf("failed to check IGP origin: %w", err)
+	}
+	defer cursor.Close()
+
+	return cursor.HasMore(), nil
+}
+
+// findIGPNodesForPrefix finds IGP nodes that should be attached to an internal prefix
+func (uc *UpdateCoordinator) findIGPNodesForPrefix(ctx context.Context, originAS uint32) ([]string, error) {
+	// Find IGP nodes with matching peer_asn (the AS of the IGP domain)
+	query := fmt.Sprintf(`
+		FOR node IN %s
+		FILTER node.peer_asn == @asn
+		RETURN node._id
+	`, uc.db.config.IGPNode)
+
+	bindVars := map[string]interface{}{
+		"asn": originAS,
+	}
+
+	cursor, err := uc.db.db.Query(ctx, query, bindVars)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query IGP nodes: %w", err)
+	}
+	defer cursor.Close()
+
+	var nodeIDs []string
+	for cursor.HasMore() {
+		var nodeID string
+		if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
+			continue
+		}
+		nodeIDs = append(nodeIDs, nodeID)
+	}
+
+	glog.V(7).Infof("Found %d IGP nodes for AS%d", len(nodeIDs), originAS)
+	return nodeIDs, nil
 }
 
 // getPeerNodeData retrieves the full node document for a given node ID
