@@ -6,6 +6,7 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/golang/glog"
+	"github.com/sbezverk/gobmp/pkg/srv6"
 )
 
 // loadInitialSRv6SIDs loads and processes all existing SRv6 SIDs during initialization
@@ -69,16 +70,25 @@ func (a *arangoDB) processInitialSRv6SID(ctx context.Context, srv6Data map[strin
 	// Process endpoint behavior if present
 	if epBehavior, exists := srv6Data["srv6_endpoint_behavior"]; exists {
 		if epMap, ok := epBehavior.(map[string]interface{}); ok {
-			// Convert to proper structure - simplified for now
-			glog.V(8).Infof("Processing endpoint behavior: %+v", epMap)
+			endpointBehavior := extractEndpointBehavior(epMap)
+			if endpointBehavior != nil {
+				sid.SRv6EndpointBehavior = endpointBehavior
+				glog.V(8).Infof("Added endpoint behavior to SID %s: algo=%d, behavior=%d",
+					sid.SRv6SID, endpointBehavior.Algorithm, endpointBehavior.EndpointBehavior)
+			}
 		}
 	}
 
 	// Process SID structure if present
 	if sidStruct, exists := srv6Data["srv6_sid_structure"]; exists {
 		if structMap, ok := sidStruct.(map[string]interface{}); ok {
-			// Convert to proper structure - simplified for now
-			glog.V(8).Infof("Processing SID structure: %+v", structMap)
+			sidStructure := extractSIDStructure(structMap)
+			if sidStructure != nil {
+				sid.SRv6SIDStructure = sidStructure
+				glog.V(8).Infof("Added SID structure to SID %s: locator_block=%d, locator_node=%d, function=%d, argument=%d",
+					sid.SRv6SID, sidStructure.LBLength, sidStructure.LNLength,
+					sidStructure.FunLength, sidStructure.ArgLength)
+			}
 		}
 	}
 
@@ -263,6 +273,77 @@ func (a *arangoDB) findAndProcessSRv6SIDsForNode(ctx context.Context, routerID s
 	}
 
 	return nil
+}
+
+// extractEndpointBehavior converts raw endpoint behavior data to srv6.EndpointBehavior
+func extractEndpointBehavior(data map[string]interface{}) *srv6.EndpointBehavior {
+	if data == nil {
+		return nil
+	}
+
+	epb := &srv6.EndpointBehavior{}
+
+	// Extract algorithm (this is the key field the user wants)
+	if algo, ok := data["algo"].(float64); ok {
+		epb.Algorithm = uint8(algo)
+	} else if algo, ok := data["algo"].(int); ok {
+		epb.Algorithm = uint8(algo)
+	}
+
+	// Extract endpoint behavior code
+	if behavior, ok := data["endpoint_behavior"].(float64); ok {
+		epb.EndpointBehavior = uint16(behavior)
+	} else if behavior, ok := data["endpoint_behavior"].(int); ok {
+		epb.EndpointBehavior = uint16(behavior)
+	}
+
+	// Extract flags
+	if flag, ok := data["flag"].(float64); ok {
+		epb.Flag = uint8(flag)
+	} else if flag, ok := data["flag"].(int); ok {
+		epb.Flag = uint8(flag)
+	}
+
+	return epb
+}
+
+// extractSIDStructure converts raw SID structure data to srv6.SIDStructure
+func extractSIDStructure(data map[string]interface{}) *srv6.SIDStructure {
+	if data == nil {
+		return nil
+	}
+
+	sidStruct := &srv6.SIDStructure{}
+
+	// Extract locator block length
+	if val, ok := data["locator_block_length"].(float64); ok {
+		sidStruct.LBLength = uint8(val)
+	} else if val, ok := data["locator_block_length"].(int); ok {
+		sidStruct.LBLength = uint8(val)
+	}
+
+	// Extract locator node length
+	if val, ok := data["locator_node_length"].(float64); ok {
+		sidStruct.LNLength = uint8(val)
+	} else if val, ok := data["locator_node_length"].(int); ok {
+		sidStruct.LNLength = uint8(val)
+	}
+
+	// Extract function length
+	if val, ok := data["function_length"].(float64); ok {
+		sidStruct.FunLength = uint8(val)
+	} else if val, ok := data["function_length"].(int); ok {
+		sidStruct.FunLength = uint8(val)
+	}
+
+	// Extract argument length
+	if val, ok := data["argument_length"].(float64); ok {
+		sidStruct.ArgLength = uint8(val)
+	} else if val, ok := data["argument_length"].(int); ok {
+		sidStruct.ArgLength = uint8(val)
+	}
+
+	return sidStruct
 }
 
 // Helper function to safely get string values from map
