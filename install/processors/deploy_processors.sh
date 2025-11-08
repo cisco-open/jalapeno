@@ -6,8 +6,8 @@ if [ -z "$1" ]
     KUBE=kubectl
 fi
 
-echo "Deploying Topology"
-${KUBE} create -f ${PWD}/${BASEDIR}/topology/topology.yaml
+echo "Deploying GoBMP ArangoDB"
+${KUBE} create -f ${PWD}/${BASEDIR}/gobmp-arango/gobmp-arango.yaml
 
 echo "Deploying Telegraf-Egress"
 ${KUBE} create -f ${PWD}/${BASEDIR}/telegraf-egress/.
