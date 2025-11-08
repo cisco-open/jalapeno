@@ -21,7 +21,7 @@ spec:
             - "http://arangodb.jalapeno:8529"
             - --database-name
             - "jalapeno"
-          image: docker.io/iejalapeno/igp-graph:1.1
+          image: docker.io/iejalapeno/igp-graph:latest
           imagePullPolicy: Always
           name: igp-graph
           volumeMounts:
