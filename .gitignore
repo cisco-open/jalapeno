@@ -41,7 +41,6 @@ pip-delete-this-directory.txt
 .pytest_cache/
 *.egg-info/
 dist/
-build/
 *.egg
 .eggs/
 .tox/
