@@ -27,8 +27,8 @@ import (
 	"encoding/json"
 
 	driver "github.com/arangodb/go-driver"
+	"github.com/cisco-open/jalapeno/gobmp-arango/dbclient"
 	"github.com/cisco-open/jalapeno/linkstate-edge/kafkanotifier"
-	"github.com/cisco-open/jalapeno/topology/dbclient"
 	"github.com/golang/glog"
 	"github.com/sbezverk/gobmp/pkg/bmp"
 	"github.com/sbezverk/gobmp/pkg/message"
