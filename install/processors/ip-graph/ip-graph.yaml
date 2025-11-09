@@ -18,8 +18,8 @@ spec:
             - sh
             - -c
             - |
-              echo "Waiting 10 seconds for bmp-arango to start base collection processing..."
-              sleep 10
+              echo "Waiting 30 seconds for bmp-arango to start base collection processing..."
+              sleep 30
               
               # Wait for peer collection to have data
               echo "Checking for BGP peer data..."
@@ -45,7 +45,7 @@ spec:
                 diff=$((curr_v4 - prev_v4))
                 echo "unicast_prefix_v4: $curr_v4 prefixes (delta: +$diff)"
                 
-                if [ $diff -lt 1000 ] && [ $prev_v4 -gt 0 ]; then
+                if [ $diff -lt 100 ] && [ $prev_v4 -gt 0 ]; then
                   echo "unicast_prefix_v4 stabilized at $curr_v4 prefixes"
                   break;
                 fi
@@ -70,7 +70,7 @@ spec:
                 diff=$((curr_v6 - prev_v6))
                 echo "unicast_prefix_v6: $curr_v6 prefixes (delta: +$diff)"
                 
-                if [ $diff -lt 1000 ] && [ $prev_v6 -gt 0 ]; then
+                if [ $diff -lt 100 ] && [ $prev_v6 -gt 0 ]; then
                   echo "unicast_prefix_v6 stabilized at $curr_v6 prefixes"
                   break;
                 fi

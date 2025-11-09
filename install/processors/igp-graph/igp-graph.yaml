@@ -18,6 +18,8 @@ spec:
             - sh
             - -c
             - |
+              echo "Waiting 15 seconds for bmp-arango to start base collection processing..."
+              sleep 15
               echo "Waiting for base link-state collections to have data..."
               until [ $(curl -s -u root:jalapeno "http://arangodb.jalapeno:8529/_db/jalapeno/_api/collection/ls_node/count" | grep -o '"count":[0-9]*' | cut -d':' -f2) -gt 0 ] 2>/dev/null; do
                 echo "ls_node collection empty, waiting...";
