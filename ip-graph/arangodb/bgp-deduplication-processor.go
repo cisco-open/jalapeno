@@ -1,3 +1,25 @@
+// Copyright (c) 2022-2025 Cisco Systems, Inc. and its affiliates
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//     * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//
+// The contents of this file are licensed under the Apache License, Version 2.0
+// (the "License"); you may not use this file except in compliance with the
+// License. You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations under
+// the License.
+
 package arangodb
 
 import (
@@ -142,7 +164,6 @@ func (bdp *BGPDeduplicationProcessor) processEBGPPrivateIPv4Prefixes(ctx context
 			remote_ip: p.remote_ip, 
 			router_id: p.remote_bgp_id,
 			prefix_type: "ebgp_private",
-			is_host: u.prefix_len == 32
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV4 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -180,7 +201,6 @@ func (bdp *BGPDeduplicationProcessor) processInternetIPv4Prefixes(ctx context.Co
 			peer_asn: u.peer_asn,
 			nexthop: u.nexthop,
 			prefix_type: "ebgp_public",
-			is_host: u.prefix_len == 32
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV4 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -217,7 +237,6 @@ func (bdp *BGPDeduplicationProcessor) processIBGPIPv4Prefixes(ctx context.Contex
 			asn: u.peer_asn, 
 			local_pref: u.base_attrs.local_pref,
 			prefix_type: "ibgp",
-			is_host: u.prefix_len == 32
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV4 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -255,7 +274,6 @@ func (bdp *BGPDeduplicationProcessor) processEBGPPrivateIPv6Prefixes(ctx context
 			remote_ip: p.remote_ip, 
 			router_id: p.remote_bgp_id,
 			prefix_type: "ebgp_private",
-			is_host: u.prefix_len == 128
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV6 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -292,7 +310,6 @@ func (bdp *BGPDeduplicationProcessor) processEBGP4BytePrivateIPv6Prefixes(ctx co
 			remote_ip: p.remote_ip, 
 			router_id: p.remote_bgp_id,
 			prefix_type: "ebgp_private_4byte",
-			is_host: u.prefix_len == 128
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV6 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -331,7 +348,6 @@ func (bdp *BGPDeduplicationProcessor) processInternetIPv6Prefixes(ctx context.Co
 			peer_asn: u.peer_asn,
 			nexthop: u.nexthop,
 			prefix_type: "ebgp_public",
-			is_host: u.prefix_len == 128
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV6 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -367,7 +383,6 @@ func (bdp *BGPDeduplicationProcessor) processIBGPIPv6Prefixes(ctx context.Contex
 			asn: u.peer_asn, 
 			local_pref: u.base_attrs.local_pref,
 			prefix_type: "ibgp",
-			is_host: u.prefix_len == 128
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV6 + ` 
 		OPTIONS { ignoreErrors: true }`

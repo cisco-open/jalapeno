@@ -1,3 +1,25 @@
+// Copyright (c) 2022-2025 Cisco Systems, Inc. and its affiliates
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//     * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//
+// The contents of this file are licensed under the Apache License, Version 2.0
+// (the "License"); you may not use this file except in compliance with the
+// License. You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations under
+// the License.
+
 package arangodb
 
 import (
@@ -73,12 +95,8 @@ func (uc *UpdateCoordinator) processPrefixAdvertisement(ctx context.Context, key
 	glog.Infof("Processing %s BGP prefix: %s/%d from AS%d via AS%d (key: %s)",
 		prefixType, prefix, prefixLen, originAS, peerASN, consistentKey)
 
-	// Determine if this should be node metadata or separate vertex
-	if uc.shouldAttachAsNodeMetadata(prefixLen, isIPv4) {
-		return uc.attachPrefixToOriginNode(ctx, prefix, prefixLen, originAS, prefixData, isIPv4)
-	} else {
-		return uc.createBGPPrefixVertex(ctx, consistentKey, prefixData, prefixType, isIPv4)
-	}
+	// All prefixes create proper vertices (including /32 and /128 loopbacks)
+	return uc.createBGPPrefixVertex(ctx, consistentKey, prefixData, prefixType, isIPv4)
 }
 
 func (uc *UpdateCoordinator) processPrefixWithdrawal(ctx context.Context, key string, prefixData map[string]interface{}) error {
@@ -104,18 +122,8 @@ func (uc *UpdateCoordinator) processPrefixWithdrawal(ctx context.Context, key st
 	glog.Infof("Withdrawing BGP prefix: %s/%d from AS%d via peer %s (AS%d) (BMP key: %s, consistent key: %s)",
 		prefix, prefixLen, originAS, peerIP, peerASN, key, consistentKey)
 
-	// Determine if this was node metadata or separate vertex
-	if uc.shouldAttachAsNodeMetadata(prefixLen, isIPv4) {
-		// For loopback prefixes (/32, /128) - remove from node metadata
-		if originAS == 0 {
-			glog.V(6).Infof("Origin AS missing for loopback withdrawal %s - skipping node metadata removal", consistentKey)
-			return nil
-		}
-		return uc.removePrefixFromOriginNode(ctx, prefix, prefixLen, originAS, isIPv4)
-	} else {
-		// For transit prefixes - remove edges from specific peer only
-		return uc.removeBGPPrefixFromPeer(ctx, consistentKey, prefixData, isIPv4)
-	}
+	// All prefixes are vertices - remove edges from specific peer only
+	return uc.removeBGPPrefixFromPeer(ctx, consistentKey, prefixData, isIPv4)
 }
 
 // extractOriginASFromPath extracts the origin AS from the base_attrs.as_path
@@ -161,204 +169,6 @@ func (uc *UpdateCoordinator) isPrivateASN(asn uint32) bool {
 	return (asn >= 64512 && asn <= 65535) || (asn >= 4200000000 && asn <= 4294967294)
 }
 
-func (uc *UpdateCoordinator) shouldAttachAsNodeMetadata(prefixLen uint32, isIPv4 bool) bool {
-	// Following IGP-graph pattern: /32 (IPv4) and /128 (IPv6) loopbacks as node metadata
-	if isIPv4 && prefixLen == 32 {
-		return true
-	}
-	if !isIPv4 && prefixLen == 128 {
-		return true
-	}
-	return false
-}
-
-func (uc *UpdateCoordinator) attachPrefixToOriginNode(ctx context.Context, prefix string, prefixLen, originAS uint32, prefixData map[string]interface{}, isIPv4 bool) error {
-	// Find the origin node (could be IGP node or BGP node)
-	originNodeID, err := uc.findOriginNode(ctx, originAS, prefixData)
-	if err != nil {
-		return fmt.Errorf("failed to find origin node for AS%d: %w", originAS, err)
-	}
-
-	if originNodeID == "" {
-		// Origin node doesn't exist - create BGP node for this AS
-		originNodeID, err = uc.createOriginBGPNode(ctx, originAS, prefixData)
-		if err != nil {
-			return fmt.Errorf("failed to create origin BGP node for AS%d: %w", originAS, err)
-		}
-	}
-
-	// Add prefix to node's metadata
-	return uc.addPrefixToNodeMetadata(ctx, originNodeID, prefix, prefixLen, prefixData)
-}
-
-func (uc *UpdateCoordinator) findOriginNode(ctx context.Context, originAS uint32, prefixData map[string]interface{}) (string, error) {
-	// Strategy 1: Look for IGP nodes with matching ASN
-	igpNodeID, err := uc.findIGPNodeByASN(ctx, originAS)
-	if err != nil {
-		return "", err
-	}
-	if igpNodeID != "" {
-		return igpNodeID, nil
-	}
-
-	// Strategy 2: Look for existing BGP peer nodes with matching ASN
-	bgpNodeID, err := uc.findBGPNodeByASN(ctx, originAS)
-	if err != nil {
-		return "", err
-	}
-	if bgpNodeID != "" {
-		return bgpNodeID, nil
-	}
-
-	// Strategy 3: No existing node found - will need to create one
-	return "", nil // Indicates node doesn't exist yet
-}
-
-func (uc *UpdateCoordinator) findIGPNodeByASN(ctx context.Context, asn uint32) (string, error) {
-	// Query IGP nodes for matching peer_asn (the AS of the IGP domain)
-	query := fmt.Sprintf(`
-		FOR node IN %s
-		FILTER node.peer_asn == @asn
-		LIMIT 1
-		RETURN node._id
-	`, uc.db.config.IGPNode)
-
-	bindVars := map[string]interface{}{
-		"asn": asn,
-	}
-
-	cursor, err := uc.db.db.Query(ctx, query, bindVars)
-	if err != nil {
-		return "", fmt.Errorf("failed to query IGP nodes by ASN: %w", err)
-	}
-	defer cursor.Close()
-
-	if cursor.HasMore() {
-		var nodeID string
-		if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
-			return "", fmt.Errorf("failed to read IGP node ID: %w", err)
-		}
-		return nodeID, nil
-	}
-
-	return "", nil
-}
-
-func (uc *UpdateCoordinator) findBGPNodeByASN(ctx context.Context, asn uint32) (string, error) {
-	// Query BGP nodes for matching ASN
-	// Prefer real peer nodes (with router_id) over artificial origin nodes
-	query := fmt.Sprintf(`
-		FOR node IN %s
-		FILTER node.asn == @asn
-		FILTER node.router_id != null AND node.router_id != ""
-		FILTER !STARTS_WITH(node._key, "bgp_") OR !CONTAINS(node._key, "_origin")
-		SORT node.router_id ASC
-		LIMIT 1
-		RETURN node._id
-	`, uc.db.config.BGPNode)
-
-	bindVars := map[string]interface{}{
-		"asn": asn,
-	}
-
-	cursor, err := uc.db.db.Query(ctx, query, bindVars)
-	if err != nil {
-		return "", err
-	}
-	defer cursor.Close()
-
-	if cursor.HasMore() {
-		var nodeID string
-		if _, err := cursor.ReadDocument(ctx, &nodeID); err != nil {
-			return "", err
-		}
-		return nodeID, nil
-	}
-
-	return "", nil
-}
-
-func (uc *UpdateCoordinator) createOriginBGPNode(ctx context.Context, originAS uint32, prefixData map[string]interface{}) (string, error) {
-	// Create a representative BGP node for this AS
-	// Use origin AS as the router ID since we don't have specific router info
-	bgpNodeKey := fmt.Sprintf("bgp_%d_origin", originAS)
-	routerID := fmt.Sprintf("origin_as_%d", originAS)
-
-	bgpNode := &BGPNode{
-		Key:      bgpNodeKey,
-		RouterID: routerID,
-		ASN:      originAS,
-	}
-
-	// Create BGP node
-	if _, err := uc.db.bgpNode.CreateDocument(ctx, bgpNode); err != nil {
-		if !driver.IsConflict(err) {
-			return "", fmt.Errorf("failed to create origin BGP node: %w", err)
-		}
-		// Node already exists, which is fine
-	}
-
-	nodeID := fmt.Sprintf("%s/%s", uc.db.config.BGPNode, bgpNodeKey)
-	glog.V(8).Infof("Created origin BGP node: %s for AS%d", nodeID, originAS)
-	return nodeID, nil
-}
-
-func (uc *UpdateCoordinator) addPrefixToNodeMetadata(ctx context.Context, nodeID, prefix string, prefixLen uint32, prefixData map[string]interface{}) error {
-	// Create prefix metadata object
-	prefixMetadata := map[string]interface{}{
-		"prefix":     prefix,
-		"prefix_len": prefixLen,
-		"origin_as":  getUint32FromInterface(prefixData["origin_as"]),
-		"peer_asn":   getUint32FromInterface(prefixData["peer_asn"]),
-		"nexthop":    getStringFromData(prefixData, "nexthop"),
-		"timestamp":  getStringFromData(prefixData, "timestamp"),
-	}
-
-	// Add AS path if available
-	if asPath, ok := prefixData["base_attrs"].(map[string]interface{}); ok {
-		if path, ok := asPath["as_path"].([]interface{}); ok {
-			prefixMetadata["as_path"] = path
-		}
-	}
-
-	// Update node to add prefix to metadata
-	// This requires reading the node, updating the prefixes array, and writing it back
-	updateQuery := fmt.Sprintf(`
-		FOR node IN %s
-		FILTER node._id == @nodeId
-		LET currentPrefixes = node.prefixes || []
-		LET newPrefixes = APPEND(currentPrefixes, @prefixData)
-		UPDATE node WITH { prefixes: newPrefixes } IN %s
-		RETURN NEW
-	`, uc.getNodeCollectionFromID(nodeID), uc.getNodeCollectionFromID(nodeID))
-
-	bindVars := map[string]interface{}{
-		"nodeId":     nodeID,
-		"prefixData": prefixMetadata,
-	}
-
-	cursor, err := uc.db.db.Query(ctx, updateQuery, bindVars)
-	if err != nil {
-		return fmt.Errorf("failed to add prefix to node metadata: %w", err)
-	}
-	defer cursor.Close()
-
-	glog.V(8).Infof("Added prefix %s/%d to node %s metadata", prefix, prefixLen, nodeID)
-	return nil
-}
-
-func (uc *UpdateCoordinator) getNodeCollectionFromID(nodeID string) string {
-	// Extract collection name from node ID (format: "collection/key")
-	if len(nodeID) > 0 {
-		for i, char := range nodeID {
-			if char == '/' {
-				return nodeID[:i]
-			}
-		}
-	}
-	return uc.db.config.IGPNode // Default fallback
-}
-
 func (uc *UpdateCoordinator) createBGPPrefixVertex(ctx context.Context, key string, prefixData map[string]interface{}, prefixType string, isIPv4 bool) error {
 	prefix, _ := prefixData["prefix"].(string)
 	prefixLen := getUint32FromInterface(prefixData["prefix_len"])
@@ -374,7 +184,6 @@ func (uc *UpdateCoordinator) createBGPPrefixVertex(ctx context.Context, key stri
 		PeerASN:    peerASN,
 		PrefixType: prefixType,
 		Nexthop:    getStringFromData(prefixData, "nexthop"),
-		IsHost:     uc.shouldAttachAsNodeMetadata(prefixLen, isIPv4),
 	}
 
 	// Add base attributes if available
@@ -456,48 +265,6 @@ func (uc *UpdateCoordinator) createPrefixToOriginEdge(ctx context.Context, prefi
 	}
 
 	glog.V(8).Infof("Created prefix-to-peer edges for: %s (%d peers)", prefixKey, len(peerNodeIDs))
-	return nil
-}
-
-func (uc *UpdateCoordinator) removePrefixFromOriginNode(ctx context.Context, prefix string, prefixLen, originAS uint32, isIPv4 bool) error {
-	// Find the origin node
-	originNodeID, err := uc.findOriginNode(ctx, originAS, map[string]interface{}{})
-	if err != nil {
-		return fmt.Errorf("failed to find origin node for prefix removal: %w", err)
-	}
-
-	if originNodeID == "" {
-		glog.V(6).Infof("Origin node not found for AS%d during prefix removal", originAS)
-		return nil // Node doesn't exist, nothing to remove
-	}
-
-	// Remove prefix from node's metadata
-	removeQuery := fmt.Sprintf(`
-		FOR node IN %s
-		FILTER node._id == @nodeId
-		LET currentPrefixes = node.prefixes || []
-		LET filteredPrefixes = (
-			FOR p IN currentPrefixes
-			FILTER NOT (p.prefix == @prefix AND p.prefix_len == @prefixLen)
-			RETURN p
-		)
-		UPDATE node WITH { prefixes: filteredPrefixes } IN %s
-		RETURN NEW
-	`, uc.getNodeCollectionFromID(originNodeID), uc.getNodeCollectionFromID(originNodeID))
-
-	bindVars := map[string]interface{}{
-		"nodeId":    originNodeID,
-		"prefix":    prefix,
-		"prefixLen": prefixLen,
-	}
-
-	cursor, err := uc.db.db.Query(ctx, removeQuery, bindVars)
-	if err != nil {
-		return fmt.Errorf("failed to remove prefix from node metadata: %w", err)
-	}
-	defer cursor.Close()
-
-	glog.V(8).Infof("Removed prefix %s/%d from node %s metadata", prefix, prefixLen, originNodeID)
 	return nil
 }
 
@@ -706,8 +473,8 @@ func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, orig
 	}
 
 	if isIGPOrigin {
-		glog.V(6).Infof("Prefix %s/%d originates from internal IGP (AS%d) - attaching to IGP nodes", prefix, prefixLen, originAS)
-		return uc.findIGPNodesForPrefix(ctx, originAS)
+		glog.V(6).Infof("Prefix %s/%d originates from internal IGP (AS%d) - attaching to specific IGP node", prefix, prefixLen, originAS)
+		return uc.findIGPNodesForPrefix(ctx, originAS, prefixData)
 	}
 
 	// For external prefixes, use peer-centric approach
@@ -738,16 +505,26 @@ func (uc *UpdateCoordinator) checkIfIGPOrigin(ctx context.Context, originAS uint
 }
 
 // findIGPNodesForPrefix finds IGP nodes that should be attached to an internal prefix
-func (uc *UpdateCoordinator) findIGPNodesForPrefix(ctx context.Context, originAS uint32) ([]string, error) {
-	// Find IGP nodes with matching peer_asn (the AS of the IGP domain)
+func (uc *UpdateCoordinator) findIGPNodesForPrefix(ctx context.Context, originAS uint32, prefixData map[string]interface{}) ([]string, error) {
+	// For internal prefixes, attach to the SPECIFIC node identified by router_id
+	// NOT all nodes in the AS domain
+	routerID := getStringFromData(prefixData, "router_id")
+
+	if routerID == "" {
+		glog.Warningf("No router_id found for internal prefix from AS%d - cannot attach to specific node", originAS)
+		return nil, nil
+	}
+
+	// Find the specific IGP node with matching router_id and peer_asn
 	query := fmt.Sprintf(`
 		FOR node IN %s
-		FILTER node.peer_asn == @asn
+		FILTER node.router_id == @routerId AND node.peer_asn == @asn
 		RETURN node._id
 	`, uc.db.config.IGPNode)
 
 	bindVars := map[string]interface{}{
-		"asn": originAS,
+		"routerId": routerID,
+		"asn":      originAS,
 	}
 
 	cursor, err := uc.db.db.Query(ctx, query, bindVars)
@@ -765,7 +542,11 @@ func (uc *UpdateCoordinator) findIGPNodesForPrefix(ctx context.Context, originAS
 		nodeIDs = append(nodeIDs, nodeID)
 	}
 
-	glog.V(7).Infof("Found %d IGP nodes for AS%d", len(nodeIDs), originAS)
+	if len(nodeIDs) == 0 {
+		glog.V(6).Infof("No IGP node found with router_id=%s and peer_asn=%d", routerID, originAS)
+	} else {
+		glog.V(7).Infof("Found %d IGP node(s) with router_id=%s for AS%d prefix", len(nodeIDs), routerID, originAS)
+	}
 	return nodeIDs, nil
 }
 

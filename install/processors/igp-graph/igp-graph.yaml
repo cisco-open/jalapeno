@@ -11,6 +11,23 @@ spec:
       labels:
         app: igp-graph
     spec:
+      initContainers:
+        - name: wait-for-data
+          image: curlimages/curl:8.5.0
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting 15 seconds for bmp-arango to start base collection processing..."
+              sleep 15
+              echo "Waiting for base link-state collections to have data..."
+              until [ $(curl -s -u root:jalapeno "http://arangodb.jalapeno:8529/_db/jalapeno/_api/collection/ls_node/count" | grep -o '"count":[0-9]*' | cut -d':' -f2) -gt 0 ] 2>/dev/null; do
+                echo "ls_node collection empty, waiting...";
+                sleep 5;
+              done
+              echo "Base link-state data available, waiting 10 more seconds for processing..."
+              sleep 10
+              echo "Starting IGP graph processor"
       containers:
         - args:
             - --v
