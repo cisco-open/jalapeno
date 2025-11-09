@@ -11,6 +11,77 @@ spec:
       labels:
         app: ip-graph
     spec:
+      initContainers:
+        - name: wait-for-data
+          image: curlimages/curl:8.5.0
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting 10 seconds for bmp-arango to start base collection processing..."
+              sleep 10
+              
+              # Wait for peer collection to have data
+              echo "Checking for BGP peer data..."
+              until [ $(curl -s -u root:jalapeno "http://arangodb.jalapeno:8529/_db/jalapeno/_api/collection/peer/count" | grep -o '"count":[0-9]*' | cut -d':' -f2) -gt 0 ] 2>/dev/null; do
+                echo "peer collection empty, waiting...";
+                sleep 5;
+              done
+              echo "BGP peer data found"
+              
+              # Wait for unicast_prefix_v4 collection to stabilize
+              echo "Waiting for unicast_prefix_v4 collection to stabilize..."
+              prev_v4=0
+              while true; do
+                curr_v4=$(curl -s -u root:jalapeno "http://arangodb.jalapeno:8529/_db/jalapeno/_api/collection/unicast_prefix_v4/count" | grep -o '"count":[0-9]*' | cut -d':' -f2)
+                curr_v4=${curr_v4:-0}
+                
+                if [ $curr_v4 -eq 0 ]; then
+                  echo "unicast_prefix_v4 still empty, waiting...";
+                  sleep 5;
+                  continue;
+                fi
+                
+                diff=$((curr_v4 - prev_v4))
+                echo "unicast_prefix_v4: $curr_v4 prefixes (delta: +$diff)"
+                
+                if [ $diff -lt 1000 ] && [ $prev_v4 -gt 0 ]; then
+                  echo "unicast_prefix_v4 stabilized at $curr_v4 prefixes"
+                  break;
+                fi
+                
+                prev_v4=$curr_v4
+                sleep 5;
+              done
+              
+              # Wait for unicast_prefix_v6 collection to stabilize
+              echo "Waiting for unicast_prefix_v6 collection to stabilize..."
+              prev_v6=0
+              while true; do
+                curr_v6=$(curl -s -u root:jalapeno "http://arangodb.jalapeno:8529/_db/jalapeno/_api/collection/unicast_prefix_v6/count" | grep -o '"count":[0-9]*' | cut -d':' -f2)
+                curr_v6=${curr_v6:-0}
+                
+                if [ $curr_v6 -eq 0 ]; then
+                  echo "unicast_prefix_v6 still empty, waiting...";
+                  sleep 5;
+                  continue;
+                fi
+                
+                diff=$((curr_v6 - prev_v6))
+                echo "unicast_prefix_v6: $curr_v6 prefixes (delta: +$diff)"
+                
+                if [ $diff -lt 1000 ] && [ $prev_v6 -gt 0 ]; then
+                  echo "unicast_prefix_v6 stabilized at $curr_v6 prefixes"
+                  break;
+                fi
+                
+                prev_v6=$curr_v6
+                sleep 5;
+              done
+              
+              echo "All BGP data stabilized, waiting 10 more seconds for final processing..."
+              sleep 10
+              echo "Starting IP graph processor"
       containers:
         - args:
             - --v
