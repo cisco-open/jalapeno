@@ -812,6 +812,11 @@ func (a *arangoDB) createPrefixAttachment(ctx context.Context, prefixData map[st
 	case "ebgp_public":
 		// Internet prefixes: Connect to all BGP peer nodes with public ASNs (like original processInetPrefix)
 		return a.attachPrefixToInternetPeers(ctx, prefixData, prefixCollection, isIPv4)
+	case "ebgp_peer_centric":
+		// BMP peer-centric approach: Skip during initial load (real-time processor handles these)
+		// These are created by the real-time update processor which has its own edge creation logic
+		glog.V(8).Infof("Skipping ebgp_peer_centric prefix during initial load (handled by real-time processor)")
+		return nil
 	default:
 		return fmt.Errorf("unknown prefix type: %s", prefixType)
 	}

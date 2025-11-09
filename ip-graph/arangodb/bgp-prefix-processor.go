@@ -473,8 +473,8 @@ func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, orig
 	}
 
 	if isIGPOrigin {
-		glog.V(6).Infof("Prefix %s/%d originates from internal IGP (AS%d) - attaching to IGP nodes", prefix, prefixLen, originAS)
-		return uc.findIGPNodesForPrefix(ctx, originAS)
+		glog.V(6).Infof("Prefix %s/%d originates from internal IGP (AS%d) - attaching to specific IGP node", prefix, prefixLen, originAS)
+		return uc.findIGPNodesForPrefix(ctx, originAS, prefixData)
 	}
 
 	// For external prefixes, use peer-centric approach
@@ -505,16 +505,26 @@ func (uc *UpdateCoordinator) checkIfIGPOrigin(ctx context.Context, originAS uint
 }
 
 // findIGPNodesForPrefix finds IGP nodes that should be attached to an internal prefix
-func (uc *UpdateCoordinator) findIGPNodesForPrefix(ctx context.Context, originAS uint32) ([]string, error) {
-	// Find IGP nodes with matching peer_asn (the AS of the IGP domain)
+func (uc *UpdateCoordinator) findIGPNodesForPrefix(ctx context.Context, originAS uint32, prefixData map[string]interface{}) ([]string, error) {
+	// For internal prefixes, attach to the SPECIFIC node identified by router_id
+	// NOT all nodes in the AS domain
+	routerID := getStringFromData(prefixData, "router_id")
+
+	if routerID == "" {
+		glog.Warningf("No router_id found for internal prefix from AS%d - cannot attach to specific node", originAS)
+		return nil, nil
+	}
+
+	// Find the specific IGP node with matching router_id and peer_asn
 	query := fmt.Sprintf(`
 		FOR node IN %s
-		FILTER node.peer_asn == @asn
+		FILTER node.router_id == @routerId AND node.peer_asn == @asn
 		RETURN node._id
 	`, uc.db.config.IGPNode)
 
 	bindVars := map[string]interface{}{
-		"asn": originAS,
+		"routerId": routerID,
+		"asn":      originAS,
 	}
 
 	cursor, err := uc.db.db.Query(ctx, query, bindVars)
@@ -532,7 +542,11 @@ func (uc *UpdateCoordinator) findIGPNodesForPrefix(ctx context.Context, originAS
 		nodeIDs = append(nodeIDs, nodeID)
 	}
 
-	glog.V(7).Infof("Found %d IGP nodes for AS%d", len(nodeIDs), originAS)
+	if len(nodeIDs) == 0 {
+		glog.V(6).Infof("No IGP node found with router_id=%s and peer_asn=%d", routerID, originAS)
+	} else {
+		glog.V(7).Infof("Found %d IGP node(s) with router_id=%s for AS%d prefix", len(nodeIDs), routerID, originAS)
+	}
 	return nodeIDs, nil
 }
 

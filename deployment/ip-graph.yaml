@@ -31,8 +31,8 @@ spec:
               fi
               
               echo "Detected fresh install - performing full stabilization checks..."
-              echo "Waiting 10 seconds for bmp-arango to start base collection processing..."
-              sleep 10
+              echo "Waiting 15 seconds for bmp-arango to start base collection processing..."
+              sleep 15
               
               # First, wait for igp_node collection to stabilize (igp-graph must complete first)
               echo "Waiting for igp_node collection to stabilize (igp-graph processing)..."

@@ -18,12 +18,26 @@ spec:
             - sh
             - -c
             - |
+              # Check if this is a restart (ip-graph collections already have data) or fresh install
+              bgp_node_count=$(curl -s -u root:jalapeno "http://arangodb.jalapeno:8529/_db/jalapeno/_api/collection/bgp_node/count" 2>/dev/null | grep -o '"count":[0-9]*' | cut -d':' -f2)
+              bgp_node_count=${bgp_node_count:-0}
+              
+              if [ $bgp_node_count -gt 0 ]; then
+                echo "Detected restart scenario (bgp_node has $bgp_node_count nodes)"
+                echo "Performing quick sanity checks..."
+                sleep 5
+                echo "Starting IP graph processor"
+                exit 0
+              fi
+              
+              echo "Detected fresh install - performing full stabilization checks..."
               echo "Waiting 10 seconds for bmp-arango to start base collection processing..."
               sleep 10
               
               # First, wait for igp_node collection to stabilize (igp-graph must complete first)
               echo "Waiting for igp_node collection to stabilize (igp-graph processing)..."
               prev_igp=0
+              stable_count=0
               while true; do
                 curr_igp=$(curl -s -u root:jalapeno "http://arangodb.jalapeno:8529/_db/jalapeno/_api/collection/igp_node/count" | grep -o '"count":[0-9]*' | cut -d':' -f2)
                 curr_igp=${curr_igp:-0}
@@ -38,8 +52,14 @@ spec:
                 echo "igp_node: $curr_igp nodes (delta: +$diff)"
                 
                 if [ $diff -eq 0 ] && [ $prev_igp -gt 0 ]; then
-                  echo "igp_node stabilized at $curr_igp nodes - igp-graph processing complete"
-                  break;
+                  stable_count=$((stable_count + 1))
+                  echo "igp_node stable check $stable_count/2"
+                  if [ $stable_count -ge 2 ]; then
+                    echo "igp_node stabilized at $curr_igp nodes - igp-graph processing complete"
+                    break;
+                  fi
+                else
+                  stable_count=0
                 fi
                 
                 prev_igp=$curr_igp
@@ -57,6 +77,7 @@ spec:
               # Wait for unicast_prefix_v4 collection to stabilize
               echo "Waiting for unicast_prefix_v4 collection to stabilize..."
               prev_v4=0
+              stable_v4=0
               while true; do
                 curr_v4=$(curl -s -u root:jalapeno "http://arangodb.jalapeno:8529/_db/jalapeno/_api/collection/unicast_prefix_v4/count" | grep -o '"count":[0-9]*' | cut -d':' -f2)
                 curr_v4=${curr_v4:-0}
@@ -71,8 +92,14 @@ spec:
                 echo "unicast_prefix_v4: $curr_v4 prefixes (delta: +$diff)"
                 
                 if [ $diff -lt 100 ] && [ $prev_v4 -gt 0 ]; then
-                  echo "unicast_prefix_v4 stabilized at $curr_v4 prefixes"
-                  break;
+                  stable_v4=$((stable_v4 + 1))
+                  echo "unicast_prefix_v4 stable check $stable_v4/2"
+                  if [ $stable_v4 -ge 2 ]; then
+                    echo "unicast_prefix_v4 stabilized at $curr_v4 prefixes"
+                    break;
+                  fi
+                else
+                  stable_v4=0
                 fi
                 
                 prev_v4=$curr_v4
@@ -82,6 +109,7 @@ spec:
               # Wait for unicast_prefix_v6 collection to stabilize
               echo "Waiting for unicast_prefix_v6 collection to stabilize..."
               prev_v6=0
+              stable_v6=0
               while true; do
                 curr_v6=$(curl -s -u root:jalapeno "http://arangodb.jalapeno:8529/_db/jalapeno/_api/collection/unicast_prefix_v6/count" | grep -o '"count":[0-9]*' | cut -d':' -f2)
                 curr_v6=${curr_v6:-0}
@@ -96,16 +124,23 @@ spec:
                 echo "unicast_prefix_v6: $curr_v6 prefixes (delta: +$diff)"
                 
                 if [ $diff -lt 100 ] && [ $prev_v6 -gt 0 ]; then
-                  echo "unicast_prefix_v6 stabilized at $curr_v6 prefixes"
-                  break;
+                  stable_v6=$((stable_v6 + 1))
+                  echo "unicast_prefix_v6 stable check $stable_v6/2"
+                  if [ $stable_v6 -ge 2 ]; then
+                    echo "unicast_prefix_v6 stabilized at $curr_v6 prefixes"
+                    break;
+                  fi
+                else
+                  stable_v6=0
                 fi
                 
                 prev_v6=$curr_v6
                 sleep 5;
               done
               
-              echo "All IGP and BGP data stabilized, waiting 5 more seconds for final processing..."
-              sleep 5
+              echo "All IGP and BGP data stabilized"
+              echo "Waiting 15 seconds for gobmp-arango to complete final deduplication and best-path processing..."
+              sleep 15
               echo "Starting IP graph processor"
       containers:
         - args:
