@@ -200,8 +200,10 @@ func (isp *IGPSyncProcessor) syncAllIGPEdges(ctx context.Context, isIPv4 bool) e
 		graphVersion, sourceCollection.Name(), targetCollection.Name())
 
 	// Use AQL query to copy all edges efficiently
+	// Filter out any BGP edges (safety check - igpv4/v6_graph should only have IGP edges)
 	query := fmt.Sprintf(`
 		FOR edge IN %s
+		FILTER edge.protocol_id != null OR edge.protocol NOT LIKE "BGP_%%"
 		INSERT UNSET(edge, "_id", "_rev") INTO %s
 		OPTIONS { overwriteMode: "update" }
 	`, sourceCollection.Name(), targetCollection.Name())
@@ -275,9 +277,10 @@ func (isp *IGPSyncProcessor) reconcile() error {
 // reconcileIPv4Edges ensures all edges from igpv4_graph exist in ipv4_graph
 func (isp *IGPSyncProcessor) reconcileIPv4Edges(ctx context.Context) error {
 	// Query to find edges in igpv4_graph that don't exist in ipv4_graph
-	// and copy them over
+	// and copy them over (excluding any BGP edges as a safety check)
 	query := fmt.Sprintf(`
 		FOR igp_edge IN %s
+		FILTER igp_edge.protocol_id != null OR igp_edge.protocol NOT LIKE "BGP_%%"
 		LET exists = (
 			FOR ip_edge IN %s
 			FILTER ip_edge._key == igp_edge._key
@@ -315,9 +318,10 @@ func (isp *IGPSyncProcessor) reconcileIPv4Edges(ctx context.Context) error {
 // reconcileIPv6Edges ensures all edges from igpv6_graph exist in ipv6_graph
 func (isp *IGPSyncProcessor) reconcileIPv6Edges(ctx context.Context) error {
 	// Query to find edges in igpv6_graph that don't exist in ipv6_graph
-	// and copy them over
+	// and copy them over (excluding any BGP edges as a safety check)
 	query := fmt.Sprintf(`
 		FOR igp_edge IN %s
+		FILTER igp_edge.protocol_id != null OR igp_edge.protocol NOT LIKE "BGP_%%"
 		LET exists = (
 			FOR ip_edge IN %s
 			FILTER ip_edge._key == igp_edge._key
