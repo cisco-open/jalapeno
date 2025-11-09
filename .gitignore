@@ -21,3 +21,7 @@ perf
 
 # .DS_Store
 .DS_Store
+
+# reference ipv4/6-graph files
+./ipv4-graph
+./ipv6-graph

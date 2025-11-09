@@ -1,0 +1,41 @@
+# make -f Makefile.gobmp-arango push 
+
+REGISTRY_NAME?=docker.io/iejalapeno
+IMAGE_VERSION?=latest
+
+.PHONY: all gobmp-arango container push-aio clean test
+
+ifdef V
+TESTARGS = -v -args -alsologtostderr -v 5
+else
+TESTARGS =
+endif
+
+all: gobmp-arango
+
+gobmp-arango:
+	mkdir -p bin
+	$(MAKE) -C ./cmd/gobmp-arango compile-gobmp-arango
+
+gobmp-arango-aio:
+	mkdir -p bin
+	$(MAKE) -C ./cmd/gobmp-arango-aio compile-gobmp-arango-aio
+
+gobmp-arango-container: gobmp-arango
+	docker build -t $(REGISTRY_NAME)/gobmp-arango:$(IMAGE_VERSION) -f ./build/Dockerfile.gobmp-arango .
+
+gobmp-arango-aio-container: gobmp-arango-aio
+	docker build -t $(REGISTRY_NAME)/gobmp-arango-aio:$(IMAGE_VERSION) -f ./build/Dockerfile.gobmp-arango-aio .
+
+push: gobmp-arango-container
+	docker push $(REGISTRY_NAME)/gobmp-arango:$(IMAGE_VERSION)
+
+push-aio: gobmp-arango-aio-container
+	docker push $(REGISTRY_NAME)/gobmp-arango-aio:$(IMAGE_VERSION)
+
+clean:
+	rm -rf bin
+
+test:
+	GO111MODULE=on go test `go list ./... | grep -v 'vendor'` $(TESTARGS)
+	GO111MODULE=on go vet `go list ./... | grep -v vendor`
