@@ -164,7 +164,6 @@ func (bdp *BGPDeduplicationProcessor) processEBGPPrivateIPv4Prefixes(ctx context
 			remote_ip: p.remote_ip, 
 			router_id: p.remote_bgp_id,
 			prefix_type: "ebgp_private",
-			is_host: u.prefix_len == 32
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV4 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -202,7 +201,6 @@ func (bdp *BGPDeduplicationProcessor) processInternetIPv4Prefixes(ctx context.Co
 			peer_asn: u.peer_asn,
 			nexthop: u.nexthop,
 			prefix_type: "ebgp_public",
-			is_host: u.prefix_len == 32
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV4 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -239,7 +237,6 @@ func (bdp *BGPDeduplicationProcessor) processIBGPIPv4Prefixes(ctx context.Contex
 			asn: u.peer_asn, 
 			local_pref: u.base_attrs.local_pref,
 			prefix_type: "ibgp",
-			is_host: u.prefix_len == 32
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV4 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -277,7 +274,6 @@ func (bdp *BGPDeduplicationProcessor) processEBGPPrivateIPv6Prefixes(ctx context
 			remote_ip: p.remote_ip, 
 			router_id: p.remote_bgp_id,
 			prefix_type: "ebgp_private",
-			is_host: u.prefix_len == 128
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV6 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -314,7 +310,6 @@ func (bdp *BGPDeduplicationProcessor) processEBGP4BytePrivateIPv6Prefixes(ctx co
 			remote_ip: p.remote_ip, 
 			router_id: p.remote_bgp_id,
 			prefix_type: "ebgp_private_4byte",
-			is_host: u.prefix_len == 128
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV6 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -353,7 +348,6 @@ func (bdp *BGPDeduplicationProcessor) processInternetIPv6Prefixes(ctx context.Co
 			peer_asn: u.peer_asn,
 			nexthop: u.nexthop,
 			prefix_type: "ebgp_public",
-			is_host: u.prefix_len == 128
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV6 + ` 
 		OPTIONS { ignoreErrors: true }`
@@ -389,7 +383,6 @@ func (bdp *BGPDeduplicationProcessor) processIBGPIPv6Prefixes(ctx context.Contex
 			asn: u.peer_asn, 
 			local_pref: u.base_attrs.local_pref,
 			prefix_type: "ibgp",
-			is_host: u.prefix_len == 128
 		} 
 		INTO ` + bdp.db.config.BGPPrefixV6 + ` 
 		OPTIONS { ignoreErrors: true }`

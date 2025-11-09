@@ -123,7 +123,6 @@ type BGPPrefix struct {
 	Name       string              `json:"name,omitempty"`
 	PeerName   string              `json:"peer_name,omitempty"`
 	PrefixType string              `json:"prefix_type"` // "ibgp", "ebgp_private", "ebgp_public", "inet"
-	IsHost     bool                `json:"is_host"`     // true for /32 and /128 prefixes
 }
 
 // IPNode represents a node in the full IP topology (can be IGP, BGP, or hybrid)
