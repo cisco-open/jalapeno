@@ -23,7 +23,7 @@ spec:
               bgp_node_count=${bgp_node_count:-0}
               
               if [ $bgp_node_count -gt 0 ]; then
-                echo "Detected restart scenario (bgp_node has $bgp_node_count nodes)"
+                echo "Detected pod restart (bgp_node has $bgp_node_count nodes)"
                 echo "Performing quick sanity checks..."
                 sleep 5
                 echo "Starting IP graph processor"
@@ -31,8 +31,8 @@ spec:
               fi
               
               echo "Detected fresh install - performing full stabilization checks..."
-              echo "Waiting 10 seconds for bmp-arango to start base collection processing..."
-              sleep 10
+              echo "Waiting 15 seconds for bmp-arango to start base collection processing..."
+              sleep 15
               
               # First, wait for igp_node collection to stabilize (igp-graph must complete first)
               echo "Waiting for igp_node collection to stabilize (igp-graph processing)..."
@@ -139,8 +139,6 @@ spec:
               done
               
               echo "All IGP and BGP data stabilized"
-              echo "Waiting 15 seconds for gobmp-arango to complete final deduplication and best-path processing..."
-              sleep 15
               echo "Starting IP graph processor"
       containers:
         - args:
