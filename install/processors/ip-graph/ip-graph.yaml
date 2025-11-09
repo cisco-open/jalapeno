@@ -18,8 +18,33 @@ spec:
             - sh
             - -c
             - |
-              echo "Waiting 30 seconds for bmp-arango to start base collection processing..."
-              sleep 30
+              echo "Waiting 10 seconds for bmp-arango to start base collection processing..."
+              sleep 10
+              
+              # First, wait for igp_node collection to stabilize (igp-graph must complete first)
+              echo "Waiting for igp_node collection to stabilize (igp-graph processing)..."
+              prev_igp=0
+              while true; do
+                curr_igp=$(curl -s -u root:jalapeno "http://arangodb.jalapeno:8529/_db/jalapeno/_api/collection/igp_node/count" | grep -o '"count":[0-9]*' | cut -d':' -f2)
+                curr_igp=${curr_igp:-0}
+                
+                if [ $curr_igp -eq 0 ]; then
+                  echo "igp_node collection still empty, waiting...";
+                  sleep 5;
+                  continue;
+                fi
+                
+                diff=$((curr_igp - prev_igp))
+                echo "igp_node: $curr_igp nodes (delta: +$diff)"
+                
+                if [ $diff -eq 0 ] && [ $prev_igp -gt 0 ]; then
+                  echo "igp_node stabilized at $curr_igp nodes - igp-graph processing complete"
+                  break;
+                fi
+                
+                prev_igp=$curr_igp
+                sleep 5;
+              done
               
               # Wait for peer collection to have data
               echo "Checking for BGP peer data..."
@@ -79,7 +104,7 @@ spec:
                 sleep 5;
               done
               
-              echo "All BGP data stabilized, waiting 10 more seconds for final processing..."
+              echo "All IGP and BGP data stabilized, waiting 10 more seconds for final processing..."
               sleep 10
               echo "Starting IP graph processor"
       containers:
