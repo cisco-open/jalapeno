@@ -104,8 +104,8 @@ spec:
                 sleep 5;
               done
               
-              echo "All IGP and BGP data stabilized, waiting 10 more seconds for final processing..."
-              sleep 10
+              echo "All IGP and BGP data stabilized, waiting 5 more seconds for final processing..."
+              sleep 5
               echo "Starting IP graph processor"
       containers:
         - args:
