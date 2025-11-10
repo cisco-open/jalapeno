@@ -95,7 +95,22 @@ func (uc *UpdateCoordinator) processPrefixAdvertisement(ctx context.Context, key
 	glog.Infof("Processing %s BGP prefix: %s/%d from AS%d via AS%d (key: %s)",
 		prefixType, prefix, prefixLen, originAS, peerASN, consistentKey)
 
-	// All prefixes create proper vertices (including /32 and /128 loopbacks)
+	// Skip /32 and /128 host routes from external eBGP neighbors
+	// These are typically loopbacks that create incorrect topology when re-advertised
+	// Only process them if they originate from internal IGP network
+	if prefixLen == 32 || prefixLen == 128 {
+		isIGPOrigin, err := uc.checkIfIGPOrigin(ctx, originAS)
+		if err != nil {
+			glog.Warningf("Failed to check IGP origin for %s/%d: %v", prefix, prefixLen, err)
+		}
+		if !isIGPOrigin {
+			glog.V(6).Infof("Skipping external eBGP host route %s/%d from AS%d (loopback re-advertisement)", prefix, prefixLen, originAS)
+			return nil
+		}
+		glog.V(6).Infof("Processing internal IGP host route %s/%d from AS%d", prefix, prefixLen, originAS)
+	}
+
+	// All prefixes create proper vertices (including internal /32 and /128 loopbacks)
 	return uc.createBGPPrefixVertex(ctx, consistentKey, prefixData, prefixType, isIPv4)
 }
 
@@ -475,6 +490,15 @@ func (uc *UpdateCoordinator) findBGPPeerNodesForPrefix(ctx context.Context, orig
 	if isIGPOrigin {
 		glog.V(6).Infof("Prefix %s/%d originates from internal IGP (AS%d) - attaching to specific IGP node", prefix, prefixLen, originAS)
 		return uc.findIGPNodesForPrefix(ctx, originAS, prefixData)
+	}
+
+	// Skip /32 and /128 host routes from external eBGP neighbors
+	// These are typically loopbacks that get re-advertised through the network
+	// Creating edges for every peer that received them creates incorrect topology
+	// (matches the deduplication processor logic: FILTER u.prefix_len < 30)
+	if (prefixLen == 32) || (prefixLen == 128) {
+		glog.V(6).Infof("Skipping external eBGP host route %s/%d from AS%d (loopback re-advertisement)", prefix, prefixLen, originAS)
+		return nil, nil
 	}
 
 	// For external prefixes, use peer-centric approach
