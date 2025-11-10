@@ -111,6 +111,7 @@ func (uc *UpdateCoordinator) processPrefixAdvertisement(ctx context.Context, key
 	}
 
 	// All prefixes create proper vertices (including internal /32 and /128 loopbacks)
+	// All prefixes create proper vertices (including /32 and /128 loopbacks)
 	return uc.createBGPPrefixVertex(ctx, consistentKey, prefixData, prefixType, isIPv4)
 }
 
