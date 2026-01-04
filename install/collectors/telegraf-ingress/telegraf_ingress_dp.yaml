@@ -17,14 +17,12 @@ spec:
     spec:
       containers:
         - name: telegraf
-          image: telegraf:1.15-alpine
+          image: telegraf:1.30.0-alpine
           volumeMounts:
             - mountPath: /etc/telegraf/telegraf.conf
               name: telegraf-ingress-config
               subPath: telegraf.conf
               readOnly: true
-      imagePullSecrets:
-        - name: regcred
       volumes:
         - name: telegraf-ingress-config
           configMap:
