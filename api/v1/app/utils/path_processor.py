@@ -27,8 +27,9 @@ def process_path_data(
         print(f"Hopcount: {hopcount}, Algo: {algo}")
         
         # Extract SID locators filtered by algo
+        # Skip the first node (source) as we only need intermediate + destination SIDs
         locators = []
-        for node in path_data:
+        for node in path_data[1:]:
             # print(f"Processing node: {json.dumps(node, indent=2)}")
             # Check for vertex and sids in the vertex object
             if 'vertex' in node and 'sids' in node['vertex']:
@@ -44,6 +45,11 @@ def process_path_data(
                                 sid_entry['srv6_endpoint_behavior']['algo'] == algo):
                                 matching_sid = sid_entry.get('srv6_sid')
                                 break
+                            # Also accept SIDs without endpoint behavior (e.g., host endpoints)
+                            # These are algo-agnostic and should be included regardless
+                            elif 'srv6_endpoint_behavior' not in sid_entry and matching_sid is None:
+                                matching_sid = sid_entry.get('srv6_sid')
+                                # Don't break - keep looking for an algo-specific SID
                     
                     # If we found a matching SID, add it to locators
                     if matching_sid:
