@@ -14,7 +14,12 @@ InfluxDB is deployed using `kubectl`, as seen in the `/install/infra/deploy_infr
 
 ## Accessing InfluxDB
 
-To access InfluxDB via Kubernetes, enter the pod's terminal and run:
+To access InfluxDB via Kubernetes, enter the pod's terminal:
+```
+kubectl exec -it -n jalapeno influxdb-0 -- sh
+```
+
+and run:
 
 ```bash
 influx
