@@ -40,7 +40,11 @@ Using InfluxDB as a historical data-store, Jalapeno [Processors](./processors.md
 
 InfluxDB is deployed using `kubectl`, as seen in the `deploy_infrastructure.sh` script. The configurations for InfluxDB's deployment are in the YAML files in the `jalapeno/infra/influxdb/` directory.  
 
-To access InfluxDB via Kubernetes, enter the pod's terminal and run:
+To access InfluxDB via Kubernetes, enter the pod's terminal:
+```
+kubectl exec -it -n jalapeno influxdb-0 -- sh
+```
+and run:
 
 ```bash
 influx
